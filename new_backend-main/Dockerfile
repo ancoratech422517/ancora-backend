@@ -18,4 +18,4 @@ EXPOSE 5000
 
 # 7. Comando para rodar a aplicação (ajuste para o seu arquivo principal)
 # Se usar WebSockets/Socket.IO com Eventlet/Gevent, o Gunicorn gerencia isso bem:
-CMD ["gunicorn", "-k", "eventlet", "-w", "1", "app:app"]
+CMD ["gunicorn", "-k", "geventwebsocket.gunicorn.workers.GeventWebSocketWorker", "-w", "1", "app:app"]
