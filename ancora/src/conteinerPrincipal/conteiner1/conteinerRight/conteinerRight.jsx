@@ -9,7 +9,8 @@ import IMGPERFIL from "../../../assets/IMGPERFIL.png";
 import CHAT from "../../../assets/chat.png"
 import Notificacao from "../../../assets/notificacao.png";
 import Loja from "../../../assets/loja.png";
-import CursoVideo from "../../../assets/cursoVideo.png";
+import CursoVideo from "../../../assets/curso_video.png";
+
 
 export default function ConteinerRight({ ativarConteiner }) {
     const { ChatAtivo , MostrarChat , estado_conteiner_live , Dados_Live_Ancora} = useUserStore();
