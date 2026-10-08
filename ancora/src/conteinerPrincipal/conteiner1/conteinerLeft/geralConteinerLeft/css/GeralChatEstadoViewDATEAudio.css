@@ -1,0 +1,256 @@
+:root[data-theme=dark]{
+    --bg:#0e0b21;
+    --fg:#ece9ff;
+    --mut:#a29dc9;
+    --ac:#a78bfa
+}
+.GeralChatEstadoViewDateAudioBox{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+}
+
+.st{
+    width: 100%;
+    height: 40vh;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+   
+}
+.pl{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    position:relative;
+
+    
+}
+.bar{
+    -webkit-appearance:none;
+    appearance:none;
+    width:min(260px,60vw);
+    height:8px;
+    border-radius:9px;
+    cursor:pointer;
+    background:linear-gradient(90deg,#22d3ee var(--p,0%),#ffffff2e 0);
+
+}
+.bar::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:20px;height:20px;
+    border-radius:50%;
+    background:#fff;
+    transition:transform .2s;
+    box-shadow:0 0 0 4px #22d3ee66,0 0 16px #22d3ee;
+}
+.bar::-moz-range-thumb{
+    width:20px;
+    height:20px;
+    border:0;
+    border-radius:50%;
+    background:#fff;
+    transition:transform .2s;
+    box-shadow:0 0 0 4px #22d3ee66,0 0 16px #22d3ee;
+}
+.bar:hover::-webkit-slider-thumb{transform:scale(1.3)}
+.bar:hover::-moz-range-thumb{transform:scale(1.3)}
+.btn{
+width:90px;
+height:90px;
+border:0;
+border-radius:50%;
+cursor:pointer;
+display:grid;
+place-items:center;
+background:linear-gradient(135deg,#7c3aed,#22d3ee);
+box-shadow:0 8px 26px #7c3aed99;
+transition:transform .2s,box-shadow .2s;
+display: flex;
+text-align: center;
+align-items: center;
+justify-content: center;
+}
+.btn svg{
+    width: 40px;
+    height: 40px;
+    color: var(--white);
+}
+.btn:hover{transform:scale(1.1);box-shadow:0 10px 34px #22d3ee88}
+.btn:active{transform:scale(.92)}
+.btn i{
+    width:50px;
+    height:50px;
+    margin-left:5px;
+    border-style:solid;
+    border-width:12px 0 12px 20px;
+    border-color:transparent transparent transparent #fff;
+    transition:.25s;
+
+}
+.on .btn i{
+    margin-left:0;
+    border-style:double;
+    border-width:0 0 0 20px;border-color:#fff;
+}
+
+
+
+.vinyl{
+    position:relative;
+    width:250px;
+    aspect-ratio:1;
+    border-radius:50%;
+    background:
+        conic-gradient(#0000 0 35%,#fff3 45%,#0000 55% 85%,#fff2 95%,#0000),
+        repeating-radial-gradient(#0d0d12 0 2px,#23232b 3px 4px);
+    box-shadow:0 14px 40px #000b;
+    animation:spin 2.4s linear infinite;
+    animation-play-state:paused;
+
+}
+.vinyl::before{
+    content:"";
+    position:absolute;
+    inset:33%;
+    border-radius:50%;
+    background:conic-gradient(#ff2d95,#7c3aed,#22d3ee,#ff2d95);
+    box-shadow:0 0 0 6px #0d0d12;
+}
+.vinyl::after{
+    content:"";
+    position:absolute;
+    inset:48.5%;
+    border-radius:50%;
+    background:#0b0920
+}
+.on .vinyl{animation-play-state:running}
+@keyframes spin{
+    to{
+        transform:rotate(360deg)
+    }
+}
+.GeralChatEstadoViewDateAudioBoxDadosPerfil{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    padding: 2%;
+    gap: 10px;
+}
+.GeralChatEstadoViewDateAudioBoxDadosPerfilBox1{
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+
+}
+.GeralChatEstadoViewDateAudioBoxDadosPerfilBox1Conteudo{
+    width: 80%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 5px;
+}
+.GeralChatEstadoViewDateAudioBoxDadosPerfilBox1Conteudo h2{
+    color: var(--teal-600);
+}
+.GeralChatEstadoViewDateAudioBoxDadosPerfilBox1Conteudo li{
+    color: #1f1f1f;
+
+}
+.GeralChatEstadoViewDateAudioBoxDadosPerfilBox1FotoUser{
+    width: 70px;
+    height: 70px;
+    background-color: #f1f1f1;
+    border: 1px solid #d2d2d2;
+    border-radius: 50%;
+}
+.GeralChatEstadoViewDateAudioBoxDadosPerfilBox1FotoUser img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.GeralChatEstadoViewDateAudioBoxDadosPerfilBox2{
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    text-align: left;
+    align-items: center;
+
+}
+.GeralChatEstadoViewDateAudioBoxDadosPerfilBox2 li{
+    color: #1f1f1f;
+    line-height: 22px;
+}
+.GeralChatEstadoViewDateAudioBoxBUTOON{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #000;
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #fff;
+    cursor: pointer;
+    transition: .2s ease;
+
+}
+.GeralChatEstadoViewDateAudioBoxBUTOON:active{
+    transform: scale(0.9);
+}
+.GeralChatEstadoViewDateAudioBoxReacao{
+    width: 100%;
+    height: 10%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 15px;
+    padding: 2%;
+
+}
+.GeralChatEstadoViewDateAudioBoxReacaoBox{
+    width: 55px;
+    height: 55px;
+    background-color: var(--white);
+    border-radius: 50%;
+    border: 1px solid #d2d2d2;
+    cursor: pointer;
+    transition: .2s ease;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+
+}
+.GeralChatEstadoViewDateAudioBoxReacaoBox:hover{
+    background-color: var(--teal-600);
+    transition: .2s ease;
+    border: none;
+}
+.GeralChatEstadoViewDateAudioBoxReacaoBox:active{
+    transform: scale(0.9);
+}
+.GeralChatEstadoViewDateAudioBoxReacaoBox svg{
+    width: 25px;
+    height: 25px;
+    color: black;
+}
+.GeralChatEstadoViewDateAudioBoxReacaoBox:hover svg{
+    transition: .2s ease;
+    color: var(--white);
+}

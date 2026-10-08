@@ -1,0 +1,147 @@
+.Conteiner7{
+    width: 100%;
+    height: 100%;
+    background-color: var(--gray-50);
+    background-color: white;
+}
+.Menssagem_modal_notificacao{
+    position: absolute;
+    top: 0;
+    width: 70%;
+    height: 7vh;
+    background-color: var(--teal-600);
+    border-radius: 0px 0px 25px 25px;
+    margin-left: 15%;
+    margin-top: 0%;
+    display: none;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    align-items: center;
+    color: var(--white);
+    font-weight: 600;
+    border-top: 3px solid #000;
+    animation: anima_notificacao_modal .2s ease;
+}
+@keyframes anima_notificacao_modal {
+    0%{
+        opacity: 0;
+        margin-top: -20%;
+    }
+    100%{
+        opacity: 1;
+        margin-top: 0%;
+    }
+}
+
+.Box_Modal_dados_produtto{
+    width: 85%;
+    height: 60%;
+    background-color: var(--white);
+    border-radius: 20px;
+    box-shadow: var(--shadow-sm);
+    margin-top: 40%;
+    margin-left: 7.5%;
+    position: absolute;
+    top: 0;
+    border: 1px solid #d2d2d2;
+    padding: 6%;
+    border-bottom: 4px solid var(--teal-600);
+}
+.Box_Modal_dados_produttoImage{
+    width: 100%;
+    height: 100%;
+    border-radius: 20px 20px 0px 0px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.Box_Modal_dados_produttoImageIcone{
+    width: 100%;
+    height: 50%;
+    border-radius: 20px;
+}
+.Box_Modal_dados_produttoImageIcone img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+
+}
+.Box_Modal_dados_produttoImageIcone button{
+    position: absolute;
+    top: 0;
+    width: 90px;
+    height: 5vh;
+    background-color: var(--teal-400);
+    color: var(--white);
+    font-weight: 600;
+    border-radius: 40px;
+    border: none;
+    transition: .2s ease;
+    cursor: pointer;
+    margin-top: 5%;
+    right: 0;
+    margin-right: 5%;
+}
+.Box_Modal_dados_produttoImageIcone button:hover{
+    transition: .2s ease;
+    box-shadow: 0px 20px 30px var(--teal-400);
+}
+.Box_Modal_dados_produttoImageIcone button:active{
+    transform: scale(0.9);
+}
+.Box_Modal_dados_produttoImageCont{
+    width: 100%;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 7px;
+
+}
+.Box_Modal_dados_produttoImageCont h2{
+    color: var(--teal-400);
+}
+.Box_Modal_dados_produttoImageCont  li{
+    color: var(--gray-500);
+}
+
+.Credencias_vendedor{
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    margin-top: 10%;
+}
+.Credencias_vendedorImage{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+.Credencias_vendedorImage img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid var(--teal-600);
+}
+.Credencias_vendedorCont{
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+}
+.Credencias_vendedorCont b{
+    color: var(--teal-600);
+    font-size: 1.2em;
+}
+.Credencias_vendedorCont li{
+    color: var(--gray-500);
+}
+@media screen and (max-width: 880px) {
+    .Box_Modal_dados_produtto{
+        height: 73%;
+    }
+}

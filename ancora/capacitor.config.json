@@ -1,0 +1,12 @@
+{
+  "appId": "com.ancora.ecommerce",
+  "appName": "ancora",
+  "webDir": "dist",
+  "server":{
+    "url":"https://ancora-ecommerce.vercel.app",
+    "cleartext":true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

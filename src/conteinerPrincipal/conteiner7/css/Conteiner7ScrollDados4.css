@@ -1,0 +1,91 @@
+.Conteiner7ScrollDados4{
+    width: 100%;
+    height: 20vh;
+    display: flex;
+    text-align:left;
+    align-items: center;
+    padding: 2%;
+    margin-top: 4%;
+    gap: 30px;
+
+}
+.Conteiner7ScrollDados4BoxIcone{
+    width: 10%;
+    height: 100%;
+}
+.Conteiner7ScrollDados4BoxIconeIcone{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+.Conteiner7ScrollDados4BoxIconeIcone img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 2px solid var(--teal-600);
+    border-radius: 50%;
+}
+.Conteiner7ScrollDados4BoxCont{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 5px;
+    height: 100%;
+    width: 90%;
+
+}
+.Conteiner7ScrollDados4BoxCont b{
+    font-size: 1.2em;
+    color: var(--teal-600);
+}
+.Conteiner7ScrollDados4BoxCont li{
+    font-size: 14px;
+
+}
+.Conteiner7ScrollDados4BoxCont strong{
+    font-size: 14px;
+    color: var(--gray-500);
+    display: flex;
+    text-align: center;
+    align-items: center;
+    gap: 10px;
+}
+.Conteiner7ScrollDadosBoxBtns{
+    width: 100%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+    margin-top: 2%;
+}
+.Conteiner7ScrollDadosBoxBtns button{
+    width: 110px;
+    height: 5vh;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: .2s ease;
+    font-weight: 600;
+    background-color: var(--white);
+    background-color: var(--teal-600);
+    color: var(--white);
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.Conteiner7ScrollDadosBoxBtns button svg{
+    color: var(--white);
+}
+.Conteiner7ScrollDadosBoxBtns button:active{
+    transform: scale(0.9);
+    transition: .2s ease;
+}
+.Conteiner7ScrollDadosBoxBtns button:nth-child(1) {
+    background-color: maroon;
+    border: none;
+    color: var(--white);
+    font-weight: 600;
+}
+

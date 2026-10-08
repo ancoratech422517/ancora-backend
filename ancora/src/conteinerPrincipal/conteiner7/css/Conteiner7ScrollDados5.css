@@ -1,0 +1,97 @@
+.Conteiner7ScrollDados5{
+    width: 100%;
+    height: 15vh;
+    /* border: 1px solid red; */
+    margin-top: 2%;
+    padding: 2%;
+    display: flex;
+    margin-top: 10%;
+}
+.Conteiner7ScrollDados5Icone{
+    width: 20%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+
+}
+.Conteiner7ScrollDados5IconeImg{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+.Conteiner7ScrollDados5IconeImg img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--teal-600);
+}
+.Conteiner7ScrollDados5Cont{
+    width: 80%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+}
+.Conteiner7ScrollDadosContBox{
+    width: 100%;
+    height: 50%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+}
+.Conteiner7ScrollDadosContBox .divBox{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 3px;
+}
+.Conteiner7ScrollDadosContBox .divBox h3{
+    color: var(--teal-600);
+
+}
+.Conteiner7ScrollDadosContBox b li:nth-child(2){
+    color: var(--gray-400);
+    font-size: 12px;
+    font-weight: 400;
+
+}
+.link{
+    color: var(--teal-600);
+    text-decoration: none;
+}
+.Conteiner7ScrollDadosContBox  button{
+    width: 110px;
+    height: 5vh;
+    border: none;
+    cursor: pointer;
+    transition: .2s ease;
+    border-radius: 10px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.Conteiner7ScrollDadosContBox  button svg{
+    color: var(--white);
+}
+.Conteiner7ScrollDadosContBox button:active{
+    transform: scale(0.9);
+    transition: .2s ease;
+}
+.Conteiner7ScrollDadosContBox  button:nth-child(1){
+    background-color: maroon;
+    color: var(--white);
+    font-size: 600;
+}
+.Conteiner7ScrollDadosContBox  button:nth-child(2){
+    background-color: var(--teal-600);
+    color: var(--white);
+    font-weight: 600;
+}

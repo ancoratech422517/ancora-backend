@@ -1,0 +1,108 @@
+.Conteiner5WindowConteinerGrupo{
+    width: 100%;
+    height: 40vh;
+    background-color: var(--white);
+    border-radius: 20px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.Conteiner5WindowConteinerGrupo svg{
+    width: 50px;
+    height: 50px;
+}
+.Conteiner5WindowConteinerGrupo button{
+    width: 47%;
+    height: 7vh;
+    border: none;
+    background-color: var(--teal-600);
+    color: var(--white);
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: .2s ease;
+    margin-top: 2%;
+}
+.Conteiner5WindowConteinerGrupo button:active{
+    transform: scale(0.9);
+    transition: .2s ease;
+}
+.Conteiner5WindowConteinerGrupo li{
+    font-size: 14px;
+    color: var(--gray-500);
+}
+.Conteiner5WindowConteinerGrupoFormulario{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    background-color: var(--white);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+.Conteiner5WindowConteinerGrupoFormulario input{
+    width: 60%;
+    height: 7vh;
+    border: 1px solid #d2d2d2;
+    background-color: #f1f1f1;
+    padding-left: 2%;
+    outline-color: var(--teal-600);
+    border-radius: 10px;
+}
+.Conteiner5WindowConteinerGrupoFormulario label{
+    width: 60%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.Conteiner5WindowConteinerGrupoFormulario label:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.labelImg{
+    height: 7vh;
+    background-color: var(--teal-600);
+    color: var(--white);
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+.Conteiner5WindowConteinerGrupoFormularioBtn{
+    width: 60%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+}
+.Conteiner5WindowConteinerGrupoFormularioBtn button:nth-child(2){
+    background-color: red;
+}
+@media screen and (max-width:880px) {
+    .Conteiner5WindowConteinerGrupoFormulario input{
+        width: 85%;
+    }
+    .Conteiner5WindowConteinerGrupoFormulario label{
+        width: 85%;
+    }
+    .Conteiner5WindowConteinerGrupoFormulario button{
+        width: 85%;
+    }
+    .Conteiner5WindowConteinerGrupoFormularioBtn{
+        width: 85%;
+        gap: 10px;
+    }
+    
+}

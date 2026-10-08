@@ -1,0 +1,182 @@
+.ConteinerRightMenuBottom{
+    width: 96%;
+    background-color: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: absolute;
+    bottom: 0;
+    min-height: 15%;
+    border-radius: 20px;
+    margin: 2% auto;
+    margin-left: 2%;
+    padding: 1%;
+    box-shadow: 0px 0px 5px 1px #11111111;
+    z-index: 50;
+}
+
+.ConteinerRigtMenuBottomBoxsTop{
+    width: 100%;
+    min-height: 50%;
+
+}
+.ConteinerRigtMenuBottomBoxsBottom{
+
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    height: 50%;
+
+
+}
+.ConteinerRightMenuBottomCaxa1{
+    width: 20%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 10px;
+
+}
+.ConteinerRightMenuBottomCaxa1 button:active{
+    transform: scale(0.9);
+}
+.ConteinerRightMenuBottomCaxa3 button:active{
+    transform: scale(0.9);
+}
+.ConteinerRightMenuBottomCaxa2{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.ConteinerRightMenuBottomCaxa2 textarea{
+    width: 90%;
+    height: auto;                    /* ← essencial */
+    min-height: 6vh;                 /* altura inicial */
+    max-height: 35vh;                /* ← aqui defines o limite máximo (podes mudar) */
+    outline: none;
+    border: none;
+    background-color: var(--grey-50);
+    padding: 12px 16px;              /* melhorei um pouco o padding */
+    resize: none;
+    line-height: 1.4;
+    box-sizing: border-box;
+    overflow-y: auto;                /* barra só aparece quando chega no limite */
+}
+.ConteinerRightMenuBottomCaxa3{
+    width: 20%;
+    height: 100%;
+    display: flex;
+    gap: 10px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+
+}
+.ConteinerRightMenuBottomCaxa3 svg{
+    color: var(--white);
+}
+.ConteinerRightMenuBottomCaxa1 button{
+    width: 35px;
+    height: 35px;
+    border: none;
+    background-color: transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.ConteinerRightMenuBottomCaxa1 button:hover{
+    transition: .2s ease;
+    background-color: #f1f1f1;
+}
+.ConteinerRightMenuBottomCaxa3 button{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--teal-400);
+    cursor: pointer;
+    transition: .2s ease;
+}
+.ConteinerRightMenuBottomCaxa3 button:hover{
+    transition: .2s ease;
+   
+}
+.conteinerRightMenuBottomBox{
+    width: 100%;
+    height: 50vh;
+    position: absolute;
+    top: 0;
+    margin-top: -50vh;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999999999999999999999;
+    display: none;
+    pointer-events: none;
+
+}
+.conteinerRightMenuBottomBoxCont{
+    width: 25%;
+    height: 90%;
+    border-radius: 10px;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    border-bottom: 2px solid var(--teal-400);
+    pointer-events: auto;
+}
+.conteinerRightMenuBottomBoxCont li{
+    width: 100%;
+    height: 20%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7%;
+    font-size: 14px;
+    transition: .2s ease;cursor: pointer;
+}
+.conteinerRightMenuBottomBoxCont li b{
+    font-weight: 500;
+}
+.conteinerRightMenuBottomBoxCont li svg{
+    color: var(--teal-400);
+}
+.conteinerRightMenuBottomBoxCont li:first-child{
+    border-radius: 10px 10px 0px 0px;
+}
+.conteinerRightMenuBottomBoxCont li:last-child{
+    border-radius: 0px 0px 10px 10px;
+}
+.conteinerRightMenuBottomBoxCont li:hover{
+    transition: .2s ease;
+    background-color: var(--gray-50);
+
+}
+
+@media screen and (max-width: 700px) {
+    .ConteinerRightMenuBottom{
+        padding: 2%;
+        min-height: 110px;
+    }
+    .ConteinerRightMenuBottomCaxa2{
+        width: 100%;
+  
+    }
+    .ConteinerRightMenuBottomCaxa1{
+        width: 30%;
+        padding-left: 2%;
+    }
+    .ConteinerRightMenuBottomCaxa2 textarea{
+        padding-top: 3%;
+    }
+    
+}

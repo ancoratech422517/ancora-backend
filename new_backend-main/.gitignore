@@ -1,0 +1,19 @@
+# Isso diz ao Git: "Não suba o arquivo onde estão minhas chaves!"
+.env
+
+# Isso diz ao Git: "Não suba o meu banco de dados com saldo dos usuários!"
+*.db
+instance/
+
+# Isso diz ao Git: "Não suba a pasta de bibliotecas!"
+venv/
+__pycache__/
+
+*.pyc
+.env
+instance/
+static/files/*
+!static/files/.gitkeep
+ecommerce.db
+venv/
+*backend/

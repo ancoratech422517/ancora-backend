@@ -1,0 +1,328 @@
+.Conteiner2RightWindowProdutoCompra{
+    width: 35%;
+    height: 80%;
+    background-color: var(--white);
+    border-radius: 10px;
+    border-bottom: 7px solid var(--teal-600);
+
+}
+.Conteiner2RightWindowProdutoCompraEscolha{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+}
+.Conteiner2RightWindowProdutoCompraBox{
+    width: 78%;
+    height: 8vh;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2%;
+}
+.Conteiner2RightWindowProdutoCompraEscolhaTirar{
+    width: 130px;
+    height: 6vh;
+    border-radius: 30px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 5%;
+    margin-right: 5%;
+    background-color: var(--teal-600);
+    color: var(--white);
+    font-weight: 600;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.Conteiner2RightWindowProdutoCompraEscolhaTirar:active{
+    transform: scale(0.95);
+    transition: .2s ease;
+}
+.Conteiner2RightWindowProdutoCompraBoxIcone{
+    width: 70px;
+    height: 70px;
+
+    border-radius: 20px;
+}
+.Conteiner2RightWindowProdutoCompraBoxIcone img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+}
+.Conteiner2RightWindowProdutoCompraBox button{
+    width: 80%;
+    height: 70px;
+    border-radius: 40px;
+    outline: none;
+    border: none;
+    font-size: 1.3em;
+    cursor: pointer;
+    transition: .2s ease;
+
+}
+.Conteiner2RightWindowProdutoCompraBox button:active{
+    transform: scale(0.95);
+    transition: .2s ease;
+}
+.Multicaixa{
+    background-color: rgb(255, 127, 22);
+    color: var(--white);
+    font-weight: 600;
+}
+.ancoraPay{
+    background-color: var(--teal-600);
+    color: var(--white);
+}
+.conteiner2RightWindowProdutoCompraEscolhaProduto{
+    width: 80%;
+    height: 15vh;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.conteiner2RightWindowProdutoCompraEscolhaProdutoImage{
+    width: 100px;
+    height: 100px;
+    border-radius: 20px;
+}
+.conteiner2RightWindowProdutoCompraEscolhaProdutoCont{
+    width: 70%;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 3px;
+}
+.conteiner2RightWindowProdutoCompraEscolhaProdutoCont h2{
+    color: var(--teal-600);
+}
+.conteiner2RightWindowProdutoCompraEscolhaProdutoCont li{
+    color: var(--gray-400);
+}
+.Conteiner2RightWindowProdutoCompraEscolhaImageTop{
+    width: 110px;
+    height: 110px;
+    border-radius: 20px;
+}
+.Conteiner2RightWindowProdutoCompraEscolhaImageTop img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.conteiner2RightWindowProdutoCompraEscolhaProdutoImage img{
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    object-fit: cover;
+}
+.Conteiner2RightWindowProdutoCarteiraEscolhida{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+}
+.iconeCarteira{
+    width: 70px;
+    height: 70px;
+    border-radius: 20px;
+}
+.iconeCarteira img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+}
+.Conteiner2RightWindowProdutoCarteiraEscolhida input{
+    width: 75%;
+    height: 7vh;
+    border: 1px solid #d2d2d2;
+    background-color: var(--gray-100);
+    border-radius: 20px;
+    outline-color: var(--teal-600);
+    text-align: center;
+    font-size: 1.1rem;
+    letter-spacing: 10px;
+    
+}
+.Conteiner2RightWindowProdutoCarteiraEscolhida label{
+    width: 75%;
+    display: flex;
+    text-align: left;
+}
+.Conteiner2RightWindowProdutoCarteiraEscolhida h3{
+    width: 75%;
+    display: flex;
+    text-align: left;
+    font-size: 16px;
+}
+.Conteiner2RightWindowProdutoCarteiraEscolhida h3 b{
+    color: var(--teal-600);
+}
+.Conteiner2RightWindowProdutoCarteiraEscolhida button{
+    width: 75%;
+    height: 7vh;
+    background-color: var(--teal-600);
+    color: var(--white);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: .2s ease;
+    border: none;
+    font-weight: 600;
+}
+.Conteiner2RightWindowProdutoCarteiraEscolhida button:active{
+    transform: scale(0.95);
+    transition: .2s ease;
+}
+.DadosProdutosCompraCarteira{
+    width: 75%;
+    height: 15vh;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.3em;
+
+}
+.DadosProdutosCompraCarteira b{
+    color: var(--teal-600);
+}
+.DadosProdutosCompraCarteiraIcone{
+    width: 100px;
+    height: 100px;
+    border-radius: 20px;
+
+}
+.DadosProdutosCompraCarteiraCont{
+    width: 70%;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+    gap: 5px;
+}
+.DadosProdutosCompraCarteiraIcone img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+}
+.Conteiner2RightWindowProdutoCompraLoading{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+
+}
+.Conteiner2RightWindowProdutoCompraLoadingBoxTop{
+    width: 100%;
+    height: 20%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.resposta_pagamento{
+    width: 60%;
+    height: 8vh;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--teal-400);
+    border-radius: 40px;
+    color: var(--white);
+    font-weight: 600;
+    animation: anima_resposta_pagamento .2s ease;
+}
+@keyframes anima_resposta_pagamento {
+    0%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 1;
+    }
+}
+.btnCloseCardText{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--gray-400);
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 5%;
+    margin-right: 5%;
+    border: none;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.btnCloseCardText:active{
+    transition: .2s ease;
+    transform: scale(0.95);
+}
+.btnCloseCardText svg{
+    color: var(--white);
+}
+
+@media screen and (max-width: 880px) {
+    .Conteiner2RightWindowProdutoCompra{
+        width: 100%;
+        height: 100%;
+        border-radius: 0px;
+        border-bottom: 0px;
+
+    }
+    .Conteiner2RightWindowProdutoCompra .Conteiner2RightWindowProdutoCompraEscolha{
+        gap: 20px;
+        border-bottom: 0px;
+    }
+    .conteiner2RightWindowProdutoCompraEscolhaProduto{
+        width: 95%;
+        gap: 20px;
+    }
+    .Conteiner2RightWindowProdutoCompraBox{
+        width: 93%;
+        gap: 14px;
+    }
+    .DadosProdutosCompraCarteira{
+        width: 95%;
+    }
+    .iconeCarteira{
+        width: 100px;
+        height: 100px;
+    }
+    .Conteiner2RightWindowProdutoCarteiraEscolhida label{
+        width: 90%;
+    }
+    .Conteiner2RightWindowProdutoCarteiraEscolhida input{
+        width: 95%;
+        height: 60px;
+        border-radius: 50px;
+    }
+    .Conteiner2RightWindowProdutoCarteiraEscolhida button{
+        height: 65px;
+        width: 95%;
+        border-radius: 50px;
+    }
+}

@@ -1,0 +1,206 @@
+.Conteiner2RightWindowProdutsSombraCard{
+    width: 60%;
+    height: 55vh;
+    background-color: var(--white);
+    border-radius: 30px;
+    display: flex;
+
+    
+}
+.ImageCardSombra{
+    width: 45%;
+    height: 100%;
+    border-radius: 30px 0px 0px 30px;
+}
+.ImageCardSombra img{
+    width: 100%;
+    height: 100%;
+    border-radius: 30px 0px 0px 30px;
+    object-fit: cover;
+}
+.textCardSombra{
+    width: 55%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    padding: 4%;
+    gap: 10px;
+}
+.titleCardText{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+}
+.btnCloseCardText{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--gray-500);
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: .2s ease;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 9999999999999999;
+    
+}
+.btnCloseCardText svg{
+    color: var(--white);
+}
+.btnCloseCardText:hover{
+    transition: .2s ease;
+    background-color: var(--teal-500);
+
+}
+.btnCloseCardText:hover svg{
+    color: var(--white);
+}
+.btnCloseCardText:active{
+    transform: scale(0.9);
+}
+.titleCardText h3{
+    color: var(--teal-500);
+}
+.comentarioCard{
+    color: var(--gray-500);
+    font-size: 13px;
+}
+.textCardSombraBox1{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+}
+.textCardSombraBox1 h3{
+    color: var(--teal-500);
+    font-size: 2rem;
+}
+.boxBox1CardText{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+.boxBox1CardText li{
+    color: orange;
+}
+.boxBox1CardText b{
+    color: var(--gray-500);
+    font-size: 12px;
+    font-weight: 500;
+}
+.btnCardText{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+}
+.btnCardText button{
+    width: 45%;
+    height: 7vh;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.btnCardText button:active{
+    transform: scale(0.9);
+}
+.btnCardText button:nth-child(1){
+    background-color: var(--teal-500);
+    color: var(--white);
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+
+}
+.btnCardText button:nth-child(2){
+    border: 1px solid #d2d2d2;
+    font-weight: bold;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.btnCardText button:nth-child(2):hover{
+    transition: .2s ease;
+    border: 1px solid var(--teal-500);
+    color: var(--teal-500);
+}
+.dados_vendedor{
+    width: 100%;
+    height: 70px;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+}
+.dados_vendedorIcone{
+    width: 60px;
+    height: 60px;
+    background-color: #f1f1f1;
+    border-radius: 50%;
+    border: 1px solid #d2d2d2;
+}
+.dados_vendedorIconeIcone{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+.dados_vendedorIconeIcone img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.dados_vendedorCont{
+    width: 80%;
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 5px;
+}
+@media screen and (max-width: 880px) {
+    .Conteiner2RightWindowProdutsSombraCard{
+        width: 100%;
+        height: 100%;
+        border-radius: 0px;
+        display: block;
+        overflow: hidden;
+        overflow-y: scroll;
+        scrollbar-width: none;
+        
+    }
+    .ImageCardSombra{
+        width: 100%;
+        border-radius: 0px;
+        padding: 5%;
+        height: 60%;
+    }
+    .textCardSombra{
+        width: 100%;
+        height: 50%;
+        gap: 10px;
+    }
+    .ImageCardSombra img{
+        border-radius: 20px;
+    }
+    .Conteiner2RightWindowProdutsSombraCard{
+        gap: 2px;
+        display: flex;
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,103 @@
+.ConteinerRightDadosWindowMensageEle {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 20px;
+    gap: 3px;
+}
+
+.iconeUserEle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-weight: 600;
+}
+
+.iconeUserEleIcone {
+    width: 100%;
+    height: 100%;
+}
+
+.iconeUserEleIcone img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--teal-600);
+}
+
+/* --- ALTERAÇÕES NO BALÃO COMEÇAM AQUI --- */
+.textoUserEle {
+    /* 1. ADICIONADO: Necessário para segurar a pontinha e a data (span) no lugar certo */
+    position: relative; 
+    
+    max-width: 450px;
+    height: fit-content;
+    padding: 10px 12px;
+    background-color: var(--white);
+    
+    /* 2. ALTERADO: Deixamos o canto superior esquerdo reto (0px) para encaixar a ponta */
+    border-radius: 0px 10px 10px 10px; 
+    
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    box-shadow: var(--shadow-md);
+    font-size: 14px;
+    /* border: 1px solid #a3a3a3; */
+    width: max-content;
+    padding-right: 7%;
+    box-shadow: 1px 0.6px 2.5px 1.5px #11111122;
+}
+
+/* 3. ADICIONADO: A ponta cinza (que simula a borda) */
+.textoUserEle::before {
+    content: "";
+    position: absolute;
+    top: -1px; /* Alinha com o topo exato do balão */
+    left: -11px; /* Joga para fora do balão à esquerda */
+    width: 0;
+    height: 0;
+    border-top: 0px solid transparent;
+    border-bottom: 12px solid transparent;
+    /* border-right: 11px solid #a3a3a3; Cor da sua borda */
+        box-shadow: 0px 0px 3px 2px #11111100;
+}
+
+/* 4. ADICIONADO: A ponta branca (fundo do balão) que vai por cima da cinza */
+.textoUserEle::after {
+    content: "";
+    position: absolute;
+    top: 0px; 
+    left: -9px; /* Um pouco menos para fora para revelar a borda cinza de trás */
+    width: 0;
+    height: 0;
+    border-top: 0px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 10px solid var(--white); /* Cor do fundo do balão */
+}
+
+/* --- O RESTO CONTINUA IGUAL --- */
+.textoUserEle span {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin-right: 7%;
+    margin-bottom: 5%;
+    font-size: 12px;
+    color: var(--gray-500);
+}
+
+@media screen and (max-width: 700px) {
+    .textoUserEle {
+        max-width: 280px;
+        min-width: 80px;
+        padding-right: 15%;
+    }
+}

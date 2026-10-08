@@ -1,0 +1,125 @@
+.GeralChatEstadoViewDateImagem{
+    width: 100%;
+    height: 100%;
+}
+.GeralChatEstadoViewDateImagem img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.GeralChatEstadoViewDateImagemConteudo{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+
+
+}
+.GeralChatEstadoViewDateImagemConteudoBox{
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0px -300px 70px 1px #111111af;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+}
+.GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuario{
+    width: 100%;
+    height: 35%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 2%;
+}
+.GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox1{
+    width: 100%;
+    height: 33%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 7px;
+}
+.GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox1Foto{
+    width: 60px;
+    height: 60px;
+    background-color: #f1f1f1;
+    border-radius: 50%;
+}
+.GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox1Foto img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--teal-600);
+}
+.GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox1Conteudo h2{
+    color: var(--teal-600);
+}
+.GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox1Conteudo li{
+    color: #f1f1f1;
+    /* font-weight: 600; */
+}
+.GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox2{
+    display: flex;
+    text-align: left;
+    align-items: center;
+    color: #fff;
+    line-height: 22px;
+}
+.GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox3{
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+}
+.GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox3IconeReacao{
+    width: 50px;
+    height: 50px;
+    background-color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox3IconeReacao svg{
+    width: 30px;
+    height: 30px;
+    transition: .2s ease;
+    color: black;
+}
+.GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox3IconeReacao:hover{
+    transition: .2s ease;
+    background-color: var(--teal-600);
+}
+.GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox3IconeReacao:hover svg{
+    color: var(--white);
+    transition: .2s ease;
+}
+.GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox3IconeReacao:active{
+    transform: scale(0.8);
+}
+.GeralChatEstadoViewDateImagemVoltar{
+    width: 50px;
+    height: 50px;
+    /* border: 1px solid red; */
+    border-radius: 50%;
+    position: absolute;
+    top: 2%;
+    left: 2%;
+    cursor: pointer;
+    transition: .2s ease;
+
+}
+.GeralChatEstadoViewDateImagemVoltar svg{
+    width: 50px;
+    height: 50px;
+    color: var(--white);
+}
+.GeralChatEstadoViewDateImagemVoltar:active{
+    transition: .2s ease;
+    transform: scale(0.8);
+}

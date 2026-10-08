@@ -1,0 +1,79 @@
+.Conteiner4RightWindowMenuTop{
+    width: 100%;
+    height: 15%;
+    background-color: var(--white);
+    border-bottom: 1px solid #d2d2d2;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    padding-left: 3%;
+    gap: 10px;
+}
+.Conteiner4RightWindowMenuTop b{
+    font-weight: 300;
+    
+}
+.Conteiner4RightWindowMenuTopBoxBottom {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 2%;
+}
+.Conteiner4RightWindowMenuTopBoxBottom li{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+
+    cursor: pointer;
+}
+.Conteiner4RightWindowMenuTopBoxBottomLiSetaBaixo{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+}
+.ativoMenuTopRight4{
+    color: var(--teal-700);
+}
+.ativoMenuTopRight4 .anima{
+    background-color: var(--teal-700);
+    width: 100%;
+}
+.anima{
+    height: 5px;
+    background-color: transparent;
+    border-radius: 10px;
+    transition: .2s ease;
+    
+}
+.Conteiner4RightWindowMenuTopBoxBottom li:hover{
+    color: var(--teal-700);
+}
+.Conteiner4RightWindowMenuTopBoxBottom li:hover:not(.ativoMenuTopRight4) .anima{
+    background-color: var(--teal-700);
+    animation: animaText .2s ease;
+
+}
+
+@keyframes animaText {
+    0%{
+        width: 0%;
+    }
+    100%{
+        width: 100%;
+    }
+}
+@media screen and (max-width: 700px) {
+    .Conteiner4RightWindowMenuTopBoxBottom li {
+        font-size: 12px;
+        
+    }
+    .Conteiner4RightWindowMenuTopBoxBottom svg{
+        width: 12px;
+        height: 12px;
+    }
+}

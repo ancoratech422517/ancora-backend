@@ -1,0 +1,83 @@
+.Conteiner7Menu{
+    width: 100%;
+    height: 17%;
+    display: flex;
+    flex-direction: column;
+    padding: 4%;
+}
+.Conteiner7MenuTitle{
+    width: 100%;
+    height: 40%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    justify-content: space-between;
+
+}
+.Conteiner7MenuTitleBox1 button{
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.Conteiner7MenuTitleBox1 button:active{
+    transform: scale(0.9);
+}
+.Conteiner7MenuTitleBox1 button:hover svg{
+    transition: .2s ease;
+    color: #1f1f1f;
+}
+.Conteiner7MenuTitleBox1 button svg{
+    width: 27px;
+    height: 27px;
+}
+.Conteiner7MenuTitleBox2{
+    width: 60%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.Conteiner7MenuText{
+    width: 100%;
+    height: 60%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-around;
+
+}
+.Conteiner7MenuText li{
+    width: 32%;
+    height: 5.5vh;
+    background-color: var(--teal-100);
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.Conteiner7MenuText li:hover{
+    transition: .2s ease;
+    background-color: var(--teal-600);
+    color: var(--white);
+    
+}
+.Conteiner7Menu li:active{
+    transform: scale(0.9);
+}
+.ativaNoti{
+    background-color: var(--teal-600);
+    color: var(--white);
+}
+@media screen and (max-width: 700px) {
+    .Conteiner7Menu{
+        height: 22%;
+    }
+}

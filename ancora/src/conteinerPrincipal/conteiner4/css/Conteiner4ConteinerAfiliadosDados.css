@@ -1,0 +1,53 @@
+.Conteiner4ConteinerAfiliadosDados{
+    width: 95%;
+    height: 15%;
+    border-radius: 10px;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    padding-left: 1%;
+    gap: 10px;
+    margin: 4% auto;
+}
+.Conteiner4ConteinerAfiliadoDadosIcone{
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: #f1f1f1;
+    border: 1px solid #d2d2d2;
+}
+.Conteiner4ConteinerAfiliadoDadosText{
+    width: 40%;
+    height: 70px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 5px;
+}
+.Conteiner4ConteinerAfiliadoDadosBtn{
+    width: 40%;
+    height: 70px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-around;
+}
+.Conteiner4ConteinerAfiliadoDadosBtn button{
+    width: 45%;
+    height: 7vh;
+    border: none;
+    border-radius: 30px;
+    background-color: #1f1f1f;
+    color: var(--white);
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.Conteiner4ConteinerAfiliadoDadosBtn button:hover{
+    transition: .2s ease;
+    background-color: var(--teal-500);
+}
+.Conteiner4ConteinerAfiliadoDadosBtn button:active{
+    transform: scale(0.9);
+}

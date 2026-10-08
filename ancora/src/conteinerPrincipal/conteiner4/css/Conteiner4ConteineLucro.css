@@ -1,0 +1,222 @@
+.Conteiner4ConteineLucro{
+    width: 100%;
+    height: 85%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1%;
+    background-color: var(--white);
+}
+.Conteiner4ConteinerLucroBox:nth-child(1){
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+
+}
+.Conteiner4ConteinerLucroBox:nth-child(2) {
+    width: 48%;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+
+}
+.Conteiner4ConteinerLucroBoxCaxa:nth-child(1) {
+    width: 100%;
+    height: 40%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+
+}
+.Conteiner4ConteinerLucroBoxCaxaCartao{
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    
+
+
+}
+.Conteiner4ConteinerLucroBoxCaxaCartao img{
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+
+}
+.Conteiner4ConteinerLucroBoxGrafico{
+    width: 100%;
+    height: 70vh;
+
+}
+.Conteiner4ConteinerLucroBoxScrollBottom{
+    width: 100%;
+    height: 40%;
+    margin-top: 4%;
+}
+.Conteiner4ConteinerLucroBoxScrollBottomFundo{
+    width: 100%;
+    height: 100%;
+}
+.Conteiner4ConteinerLucroBoxScrollBottomFundo img{
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+.Conteiner4ConteinerLucroBoxScrollText{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    background-color: #11111122;
+    backdrop-filter: blur(5px);
+    padding: 1%;
+    gap: 5px;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+.Conteiner4ConteinerLucroBoxScrollTextCaxa{
+    width: 100%;
+    height: 32%;
+    border-bottom: 1px solid #5b5b5b;
+    display: flex;
+    margin-top: 1%;
+    gap: 5px;
+
+
+}
+.Conteiner4ConteinerLucroBoxScrollTextCaxa .TextCaxaLucro{
+    width: 48%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2%;
+    
+}
+.Conteiner4ConteinerLucroBoxScrollTextCaxa .TextCaxaLucro:nth-child(2){
+    border-left: 1px solid #5b5b5b;
+}
+.TextCaxaLucro{
+    color: #fff;
+}
+.TextCaxaLucro .dados1{
+    color: greenyellow;
+}
+.menos{
+    color: red;
+}
+.Conteiner4ConteinerLucroBoxCaxaText{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    padding: 3%;
+
+}
+.Conteiner4ConteinerLucroBoxCaxaTextCaxa{
+    width: 100%;
+    height: 25%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+}
+.Conteiner4ConteinerLucroBoxCaxaTextCaxa h1{
+    font-size: 2rem;
+}
+.Conteiner4ConteinerLucroBoxCaxaTextCaxa b{
+    color: greenyellow;
+}
+.Conteiner4ConteinerLucroBoxCaxa:nth-child(2) {
+
+    width: 100%;
+    height: 50vh;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    
+
+}
+.Conteiner4ConteinerLucroBoxCaxaDados1{
+    width: 49%;
+    height: 23vh;
+    border: 1px solid #d2d2d2;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #d2d2d2;
+    margin-top: 1%;
+
+}
+.Conteiner4ConteinerLucroBoxCaxaDados1Cont{
+    width: 100%;
+    height: 32%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+    padding: 5%;
+
+}
+.carregar{
+    width: 60%;
+    height: 18px;
+    border-radius: 7px;
+    border: 1px solid #000;
+}
+.dadosCarregar{
+    width: 70%;
+    height: 100%;
+    background-color: var(--teal-700);
+    border-radius: 7px;
+}
+.positivo{
+    color: green;
+    font-weight: 500;
+}
+.Conteiner4ConteinerLucroBoxCaxaDados1Cont svg{
+    color: green;
+}
+@media screen and (max-width: 880px) {
+    .Conteiner4ConteineLucro{
+        display: block;
+        overflow: hidden;
+        overflow-y: scroll;
+        scrollbar-width: none;
+    }
+    .Conteiner4ConteinerLucroBox:nth-child(1){
+        width: 100%;
+        height: 80vh;
+    }
+    .Conteiner4ConteinerLucroBox:nth-child(2){
+        width: 100%;
+        height: 80vh;
+        margin-top: 5%;
+    }
+    .Conteiner4ConteinerLucroBoxScrollTextCaxa .TextCaxaLucro{
+        width: 100%;
+    }
+    .Conteiner4ConteinerLucroBoxCaxaDados1{
+        width: 100%;
+        margin-top: 4%;
+    }
+    .Conteiner4ConteinerLucroBoxCaxaDados1:last-child{
+        margin-bottom: 4%;
+    }
+}

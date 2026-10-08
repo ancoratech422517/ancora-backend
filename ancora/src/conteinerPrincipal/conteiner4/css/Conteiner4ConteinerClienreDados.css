@@ -1,0 +1,76 @@
+.Conteiner4ConteinerClienreDados{
+    width: 98%;
+    height: 15%;
+    border-radius: 10px;
+    margin: 4% auto;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    padding-left: 1%;
+    gap: 10px;
+}
+.Conteiner4ConteinerClienreDadosIcone{
+    width: 70px;
+    height: 70px;
+    background-color: #f1f1f1;
+    border: 1px solid #d2d2d2;
+    border-radius: 50%;
+
+}
+.Conteiner4ConteinerClienreDadosText{
+    width: 50%;
+    height: 70px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 5px;
+}
+.Conteiner4ConteinerClienreDadosText b{
+    font-size: 1.1em;
+}
+.Conteiner4ConteinerClienreDadosBtn{
+    width: 25%;
+    height: 70px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+.Conteiner4ConteinerClienreDadosBtn button{
+    width: 90%;
+    height: 7vh;
+    background-color: #1f1f1f;
+    color: var(--white);
+    border: none;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s ease;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.Conteiner4ConteinerClienreDadosBtn button:hover{
+    transition: .2s ease;
+    background-color: var(--teal-500);
+    border: none;
+}
+.Conteiner4ConteinerClienreDadosBtn button:active{
+    transform: scale(0.9);
+}
+.Conteiner4ConteinerClienreDadosBtn svg{
+    color: var(--white);
+}
+@media screen and (max-width: 700px) {
+    .Conteiner4ConteinerClienreDadosBtn {
+        width: 30%;
+    }
+    .Conteiner4ConteinerClienreDadosBtn button{
+        height: 6vh;
+        font-size: 12px;
+    }
+}

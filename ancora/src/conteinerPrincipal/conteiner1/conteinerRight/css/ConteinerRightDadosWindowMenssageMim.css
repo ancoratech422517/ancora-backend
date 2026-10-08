@@ -1,0 +1,116 @@
+.ConteinerRightDadosWindowMenssageMim {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+         /* ← ícone fica embaixo quando o balão for alto */
+    gap: 2px;
+    margin-top: 0%;
+    padding: 1%;
+}
+
+.ativar_selecao_menssagem {
+    background-color: var(--teal-100);
+    
+}
+
+.IconeUserMim {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+    cursor: default;
+}
+
+.IconeUserMimIcone {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.IconeUserMimIcone img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--teal-600);
+}
+
+/* --- ALTERAÇÕES NO SEU BALÃO COMEÇAM AQUI --- */
+.textoUserMim {
+    /* 1. ADICIONADO: Necessário para prender a pontinha ao balão */
+    position: relative; 
+    
+    background-color: var(--teal-500);
+    
+    /* 2. PADRONIZADO: Canto superior direito reto (0px) para encaixar a ponta. Resto em 10px. */
+    border-radius: 10px 0px 10px 10px; 
+    
+    height: fit-content;
+    
+    /* 3. PADRONIZADO: Mesmo padding e max-width do outro balão */
+    padding: 10px 12px; 
+    max-width: 450px; 
+    min-width: 100px;
+    padding-right: 10%;
+
+    
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    font-size: 14px;
+    box-shadow: var(--shadow-teal);
+    cursor: default;
+    box-shadow: 1px 1.5px 3px 2px #11111122;
+}
+
+/* 4. ADICIONADO: A pontinha apontando para a DIREITA */
+.textoUserMim::after {
+    content: "";
+    position: absolute;
+    top: 0px; 
+    right: -9px; /* Joga a ponta para fora, do lado direito */
+    width: 0;
+    height: 0;
+    border-top: 0px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid var(--teal-500); /* O triângulo usa a exata mesma cor do balão */
+}
+
+/* --- O RESTO CONTINUA IGUAL --- */
+.horaMim {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-right: 3%;
+    margin-bottom: 1%;
+    color: #1f1f1f;
+    font-size: 12px;
+
+}
+
+@media screen and (max-width: 700px) {
+    .textoUserMim {
+        max-width: 280px;
+        min-width: 80px;
+        padding-right: 20%;
+ 
+  
+    }
+}
+
+.menuUserMim {
+    width: 200px;
+    height: 30vh;
+    top: 0;
+    border: 1px solid red;
+
+}

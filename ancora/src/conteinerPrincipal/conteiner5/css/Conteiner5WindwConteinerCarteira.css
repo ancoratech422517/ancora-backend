@@ -1,0 +1,292 @@
+.Conteiner5WindwConteinerCarteira{
+    width: 100%;
+    
+}
+.Conteiner5WindwConteinerCarteiraDados{
+    width: 100%;
+    border-radius: 20px;
+}
+/* INICIO DA FORMATAÇÃO DA CARTEIRA DIGITAL */
+  /* ── DIGITAL CARD ── */
+.card-container{
+    perspective:1200px;
+    margin-bottom:36px;
+}
+.credit-card{
+    width:100%;max-width:420px;height:240px;
+    border-radius:22px;
+    position:relative;overflow:hidden;cursor:pointer;
+    transform-style:preserve-3d;
+    transition:transform .7s cubic-bezier(.23,1,.32,1);
+    box-shadow:0 20px 60px rgba(26,171,138,.3),0 4px 20px rgba(0,0,0,.15);
+}
+.credit-card.flipped{
+    transform:rotateY(180deg);
+}
+
+  /* card face shared */
+.card-face{
+    position:absolute;inset:0;border-radius:22px;
+    backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    padding:28px;display:flex;flex-direction:column;
+}
+
+/* FRONT */
+.card-front{
+    background:linear-gradient(135deg,#0f4c3a 0%,#1aab8a 55%,#0d8f72 100%);
+    z-index:2;
+}
+/* noise grain overlay */
+.card-front::before{
+    content:'';position:absolute;inset:0;border-radius:22px;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+    opacity:.15;pointer-events:none;
+}
+/* glossy orbs */
+.card-front::after{
+    content:'';position:absolute;
+    width:320px;height:320px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,.12) 0%,transparent 70%);
+    top:-80px;right:-80px;pointer-events:none;
+}
+.card-orb{
+    position:absolute;width:200px;height:200px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,.08) 0%,transparent 70%);
+    bottom:-60px;left:-40px;pointer-events:none;
+}
+
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.card-brand{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:#fff;letter-spacing:1px;}
+.card-brand span{color:rgba(255,255,255,.6);}
+  .chip{display:flex;gap:3px;align-items:center;margin-top:auto;margin-bottom:16px;}
+  .chip-body{width:40px;height:30px;border-radius:6px;background:linear-gradient(135deg,#d4a854,#f0c96a);box-shadow:0 2px 6px rgba(0,0,0,.2);position:relative;overflow:hidden;}
+  .chip-line{position:absolute;background:rgba(0,0,0,.15);height:1px;width:100%;top:50%;}
+  .chip-vline{position:absolute;background:rgba(0,0,0,.1);width:1px;height:100%;left:50%;}
+  .card-number{font-family:'Syne',sans-serif;font-size:17px;letter-spacing:3px;color:#fff;font-weight:600;display:flex;gap:14px;}
+  .card-number span{opacity:.5;}
+  .card-bottom{display:flex;justify-content:space-between;align-items:flex-end;margin-top:auto;}
+  .card-holder-label{font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,.5);text-transform:uppercase;margin-bottom:3px;}
+  .card-holder-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#fff;letter-spacing:.5px;}
+  .card-expiry-block{text-align:right;}
+  .card-network{display:flex;align-items:center;gap:-4px;}
+  .network-circle{width:30px;height:30px;border-radius:50%;opacity:.9;}
+  .network-circle:first-child{background:#eb001b;margin-right:-10px;z-index:1;}
+  .network-circle:last-child{background:#f79e1b;z-index:0;}
+
+  /* BACK */
+  .card-back{
+    background:linear-gradient(135deg,#0d3d30 0%,#0f5040 100%);
+    transform:rotateY(180deg);
+  }
+  .card-back::before{
+    content:'';position:absolute;inset:0;border-radius:22px;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+    opacity:.15;pointer-events:none;
+  }
+  .magnetic-strip{position:absolute;top:40px;left:0;right:0;height:48px;background:#111;}
+  .cvv-section{position:absolute;top:110px;left:28px;right:28px;}
+  .cvv-label{font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:6px;}
+  .cvv-bar{background:#fff;border-radius:5px;padding:9px 14px;display:flex;justify-content:flex-end;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#333;letter-spacing:4px;}
+  .back-brand{position:absolute;bottom:28px;right:28px;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:rgba(255,255,255,.8);letter-spacing:1px;}
+  .back-site{position:absolute;bottom:28px;left:28px;font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.5px;}
+
+/* FIM DA FORMATAÇÃO DA CARTEIRA DIGITAL */
+
+.Conteiner5windwConteinerCarteiraValores{
+    width: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 3%;
+}
+.Conteiner5WindowConteinerCarteiraValoresBox{
+    width: 32%;
+    height: 20vh;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 7px;
+    padding: 3%;
+    overflow: hidden;
+}
+.Conteiner5WindowConteinerCarteiraValoresBox h5{
+    color: var(--gray-400);
+}
+.Conteiner5WindowConteinerCarteiraValoresBox span{
+    width: 90px;
+    height: 90px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-right: -5%;
+    background-color: var(--teal-100);
+    border-radius: 50%;
+    margin-top: -10%;
+
+}
+.Conteiner5WindowConteinerCarteiraValoresBox .green{
+    color: var(--teal-600);
+}
+.Conteiner5WindowConteinerCarteiraValoresBox .red{
+    color: red;
+}
+
+.Conteiner5WindowConteinerCarteiraAction{
+    width: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 3%;
+}
+.Conteiner5WindowConteinerCarteiraAction li{
+    width: 22%;
+    height: 15vh;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: .2s ease;
+    border: 1px solid transparent;
+}
+.Conteiner5WindowConteinerCarteiraAction li:hover{
+    transition: .2s ease;
+    background-color: var(--teal-50);
+    border: 1px solid var(--teal-600);
+}
+.Conteiner5WindowConteinerCarteiraAction li:active{
+    transform: scale(0.9);
+}
+.Conteiner5WindowConteinerCarteiraAction svg{
+    width: 25px;
+    height: 25px;
+}
+.Conteiner5WindowConteinerCarteiraAction b{
+    font-weight: 500;
+}
+.Conteiner5WindowConteinerCarteiraAtividadesRecentes{
+    width: 100%;
+    height: 50vh;
+    margin-top: 3%;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+    border-radius: 20px;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+.Conteiner5WindowConteinerCarteiraAtividadesRecentesDados{
+    width: 100%;
+    height: 14vh;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+    padding: 2%;    
+    border-bottom: 1px solid #d2d2d2;
+}
+.Conteiner5WindowConteinerCarteiraAtividadesRecentesDadosIcone{
+    width: 45px;
+    height: 45px;
+    background-color: var(--teal-50);
+    border-radius: 10px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.Conteiner5WindowConteinerCarteiraAtividadesRecentesDadosText{
+    width: 50%;
+    height: 45px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 2px;
+}
+.Conteiner5WindowConteinerCarteiraAtividadesRecentesDadosText li{
+    font-size: 14px;
+    color: var(--gray-400);
+}
+.Conteiner5WindowConteinerCarteiraAtividadesRecentesDadosEstado{
+    width: 25%;
+    height: 7vh;
+    background-color: var(--teal-400);
+    border-radius: 40px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+}
+.Conteiner5WindowConteinerCarteiraAtividadesRecentesDadosValor{
+    width: 20%;
+    height: 7vh;
+    background-color: var(--teal-400);
+    border-radius: 40px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    
+}
+.Conteiner5WindowConteinerCarteiraAtividadesRecentesDadosValor span{
+    color: var(--white);
+    font-weight: 600;
+}
+@media screen and (max-width: 880px) {
+    .Conteiner5windwConteinerCarteiraValores{
+        overflow: hidden;
+        overflow-x: scroll;
+        scrollbar-width: none;
+        gap: 10px;
+    }
+    .Conteiner5windwConteinerCarteiraValores div{
+        width: 30vh;
+        flex-shrink: 0;
+        
+    }
+    .Conteiner5WindowConteinerCarteiraAction li{
+        height: 10vh;
+        gap: 10px;
+    }
+    .Conteiner5WindowConteinerCarteiraAction span{
+        width: 20px;
+        height: 20px;
+    }
+    .Conteiner5WindowConteinerCarteiraAction b{
+        font-size: 12px;
+    }
+    .Conteiner5WindowConteinerCarteiraAtividadesRecentesDados{
+        gap: 15px;
+    }
+    .Conteiner5WindowConteinerCarteiraAtividadesRecentesDadosText{
+        width: 40%;
+    }
+    .Conteiner5WindowConteinerCarteiraAtividadesRecentesDadosText b{
+        font-size: 12px;
+    }
+    .Conteiner5WindowConteinerCarteiraAtividadesRecentesDadosEstado{
+        height: 5vh;
+        width: 15%;
+        font-size: 12px;
+        padding: 2%;
+    }
+    .Conteiner5WindowConteinerCarteiraAtividadesRecentesDadosValor{
+        height: 5vh;
+        width: 25%;
+        font-size: 12px;
+        padding: 2%;
+    }
+}

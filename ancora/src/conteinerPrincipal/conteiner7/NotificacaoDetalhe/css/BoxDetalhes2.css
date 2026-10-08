@@ -1,0 +1,105 @@
+.BoxDetalhes2{
+    width: 90%;
+    height: 220px;
+
+    position: absolute;
+    top: 0;
+    margin-left: 5%;
+    margin-top: 35%;
+    background-color: var(--white);
+    border-radius: 20px;
+    border-bottom: 4px solid var(--teal-600);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 2%;
+}
+.BoxDetalhes2Box{
+    width: 100%;
+    height: 50%;
+    display: flex;
+    gap: 5px;
+}
+.BoxDetalhes2BoxIcone{
+    width: 20%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    
+}
+.BoxDetalhes2BoxIconeImg{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+.BoxDetalhes2BoxIconeImg img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.BoxDetalhes2BoxCont{
+    width: 80%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 2px;
+}
+.BoxDetalhes2BoxCont h3{
+    color: var(--teal-600);
+}
+.BoxDetalhes2BoxCont li{
+    color: var(--gray-400);
+}
+
+.BoxDetalhes2BoxImageProduto{
+    width: 150px;
+    height: 100px;
+    border-radius: 10px;
+}
+.BoxDetalhes2BoxContProduto{
+    width: 190px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+}
+.BoxDetalhes2BoxContProduto li{
+    font-size: 14px;
+}
+.BoxDetalhes2BoxImageProduto img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid var(--teal-600);
+}
+.CloseDetalhes{
+    width: 30px;
+    height: 30px;
+    background-color: var(--teal-600);
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 2%;
+    margin-right: 2%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: .2s ease;
+
+}
+.CloseDetalhes:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.CloseDetalhes svg{
+    color: var(--white);
+}

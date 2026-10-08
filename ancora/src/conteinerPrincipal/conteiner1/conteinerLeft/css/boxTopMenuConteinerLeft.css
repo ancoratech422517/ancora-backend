@@ -1,0 +1,59 @@
+.boxTopMenuConteinerLeft{
+    width: 100%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: space-around;
+}
+.boxTopMenuConteinerLeftBTN{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+
+}
+.boxTopMenuConteinerLeftBTN li{
+    color: var(--gray-300);
+    font-size: 12px;
+}
+.boxTopMenuConteinerLeft svg{
+    color: var(--gray-300);
+}
+.GeralChatMenuTopText{
+    display: flex;
+    gap: 5px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.GeralChatMenuTopText h3{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+
+}
+.GeralChatMenuTopTextLogo{
+    width: 50px;
+    height: 80px;
+
+}
+.GeralChatMenuTopTextLogo img{
+    width: 100%;
+    height: 100%;
+}
+@media screen and (max-width: 700px) {
+    .boxTopMenuConteinerLeft{
+        flex-direction: row;
+        padding-left: 2%;
+        width: 100%;
+    }
+    .boxTopMenuConteinerLeft svg{
+    color: var(--gray-300);
+}
+}

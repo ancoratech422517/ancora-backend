@@ -1,0 +1,366 @@
+.Conteiner5WindowBottom{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    background-color: #f9f9f9;
+
+}
+.Conteiner5WindowBottomPerfil{
+    width: 50%;
+    height: 100%;
+    border-right: 1px solid #d2d2d2;
+}
+.Conteiner5WindowBottomPerfilBox:nth-child(1){
+    width: 100%;
+    height: 30%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    border-bottom: 1px solid #d2d2d2;
+    padding-left: 2%;
+    gap: 5px;
+}
+.Conteiner5WindowBottomPerfilBoxIcone{
+    width: 80px;
+    height: 80px;
+    border: 1px solid red;
+    border-radius: 50%;
+}
+.Conteiner5WindowBottomPerfilBoxText{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 5px;
+}
+.Conteiner5WindowBottomPerfilBoxEditar{
+    width: 30%;
+    height: 8vh;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10%;
+}
+.Conteiner5WindowBottomPerfilBoxEditar button{
+    width: 90%;
+    height: 7vh;
+    background-color: #1f1f1f;
+    color: var(--white);
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.Conteiner5WindowBottomPerfilBoxEditar button:hover{
+    transition: .2s ease;
+    background-color: var(--teal-600);
+
+}
+.Conteiner5WindowBottomPerfilBoxEditar button:active{
+    transform: scale(0.9);
+}
+.Conteiner5WindowBottomPerfilBox:nth-child(2){
+    width: 100%;
+    height: 70%;
+    border-bottom: 1px solid #d2d2d2;
+    display: flex;
+    flex-direction: column;
+    padding: 2%;
+    gap: 5px;
+}
+.Conteiner5WindowBottomPerfilBoxTel{
+    width: 100%;
+    height: 30%;
+    border-bottom: 1px solid #d2d2d2;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 10px;
+}
+.Conteiner5WindowBottomPerfilBoxEndereco{
+    width: 100%;
+    height: 30%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 10px;
+    border-bottom: 1px solid #d2d2d2;
+}
+.Conteiner5WindowBottomPerfilBox h4{
+    color: var(--teal-600);
+}
+.Conteiner5WindowBottomPerfilBox li{
+    color: var(--gray-500);
+}
+.Conteiner5WindowBottomPerfilBox strong{
+    color: orange;
+}
+.Conteiner5WindowBottomPerfilBoxAvaliacao{
+    width: 100%;
+    height: 30%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 10px;
+}
+.Conteiner5WindowBottomConfiguracao{
+    width: 50%;
+    height: 100%;
+
+}
+.Conteiner5WindowBottomConfiguracapMenu{
+    width: 100%;
+    height: 12%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2%;
+    border-bottom: 1px solid #d2d2d2;
+}
+.Conteiner5WindowBottomConfiguracapMenu li{
+    width: 22%;
+    height: 6vh;
+    border: 1px solid #d2d2d2;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px;
+    background-color: var(--gray-50);
+    cursor: pointer;
+    transition: .2s ease;
+}
+.Conteiner5WindowBottomConfiguracapMenu li:hover{
+    background-color: var(--teal-600);
+    color: var(--white);
+    transition: .2s ease;
+    border: none;
+}
+.Conteiner5WindowBottomConfiguracapMenu li:active{
+    transform: scale(0.9);
+}
+.ConteinerDepositarDinheiro{
+    position: absolute;
+    top: 0;
+    width: 40%;
+    height: 40%;
+    margin-left: 30%;
+    margin-top: 15%;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-bottom: 4px solid var(--teal-600);
+}
+.ConteMainConteinerDepositarDinheiro{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+.ConteinerDepositarDinheiro b{
+    font-size: 1.2em;
+    color: #1f1f1f;
+}
+.ConteinerDepositarDinheiroBoxCarteira{
+    width: 80%;
+    height: 9vh;
+    border-radius: 40px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.ConteinerDepositarDinheiroBoxCarteiraIcone{
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+}
+.ConteinerDepositarDinheiroBoxCarteiraIcone img{
+    width: 100%;
+    height: 100%;
+    border-radius: 30px;
+}
+.ConteinerDepositarDinheiroBoxCarteiraCont{
+    width: 80%;
+    height: 9vh;
+    border-radius: 40px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    transition: .2s ease;
+    cursor: pointer;
+}
+.ConteinerDepositarDinheiroBoxCarteiraCont:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.ConteinerDepositarDinheiroBoxCarteira:nth-child(2) .ConteinerDepositarDinheiroBoxCarteiraCont {
+    background-color: rgb(255, 149, 0);
+    color: var(--white);
+    font-size: 1.1em;
+    font-weight: 600;
+
+}
+.ConteinerDepositarDinheiroBoxCarteira:nth-child(3) .ConteinerDepositarDinheiroBoxCarteiraCont{
+    background-color: var(--teal-600);
+    color: var(--white);
+    font-size: 1.1em;
+    font-weight: 600;
+}
+.CloseConteinerDepositarDinheiro{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-right: 5%;
+    margin-top: 5%;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    background-color: var(--teal-600);
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: .2s ease;
+    z-index: 99999999999999;
+}
+.CloseConteinerDepositarDinheiro:active{
+    transform: scale(0.9);
+    transition: .2s ease;
+}
+.CloseConteinerDepositarDinheiro svg{
+    font-size: 20px;
+    height: 20px;
+    color: var(--white);
+}
+/* ----------------------------------------------------------- */
+.SecondConteinerDepositarDinheiro{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.SecondConteinerDepositarDinheiro label{
+    width: 80%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+}
+.SecondConteinerDepositarDinheiro input{
+    width: 80%;
+    height: 7vh;
+    background-color: #f1f1f1;
+    border: 1px solid #d2d2d2;
+    border-radius: 40px;
+    padding-left: 4%;
+    outline-color: var(--teal-600);
+    letter-spacing: 3px;
+    font-size: 1.1em;
+
+}
+.SecondConteinerDepositarDinheiro select{
+    width: 80%;
+    height: 7vh;
+    border-radius: 40px;
+    background-color: #f1f1f1;
+    border: 1px solid #d2d2d2;
+    outline-color: var(--teal-600);
+    padding-left: 4%;
+    letter-spacing: 3px;
+    font-size: 1.1em;
+}
+.SecondConteinerDepositarDinheiro button{
+    width: 80%;
+    height: 7vh;
+    border-radius: 40px;
+    background-color: var(--teal-600);
+    color: var(--white);
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.SecondConteinerDepositarDinheiro button:active{
+    transform: scale(0.9);
+    transition: .2s ease;
+}
+.ConteinerLoadingDeposito{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999999999999999999999999999999999;
+}
+.BunnerTopMenssage{
+    width: 60%;
+    height: 8vh;
+    border-radius: 50px;
+    background-color: var(--teal-500);
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    margin-top: 4%;
+    margin-left: 7%;
+    animation: animaBaner 1.5s ease;
+    gap: 10px;
+    color: var(--white);
+    font-weight: 600;
+}
+.BunnerTopMenssage svg{
+    color: var(--teal-600);
+}
+@keyframes animaBaner {
+    0%{
+        opacity: 0;
+        margin-top: -10%;
+    }
+    100%{
+        opacity: 1;
+        margin-top: 4%;
+    }
+}
+
+@media screen and (max-width: 880px) {
+    .ConteinerBoxProdutosEscolhaTrafego{
+        width: 100%;
+        border: 1px solid red;
+    }
+    .Conteiner5WindowBottom .ConteinerBoxProdutosEscolhaTrafego{
+
+        width: 100%;
+        margin-left: 0%;
+        margin-top: 0%;
+        border-radius: 0px;
+    }
+}

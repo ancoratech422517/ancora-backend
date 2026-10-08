@@ -1,0 +1,132 @@
+.GeralChatEstadoViewDateVideo{
+    width: 100%;
+    height: 100%;
+}
+.GeralChatEstadoViewDateVideo video{
+    width: 100%;
+    height: 100%;
+    background-image: url(../../../../../assets/imgEstadoVideo.jpg);
+    background-size: cover;
+
+}
+.GeralChatEstadoViewDateVideoConnteudo{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    box-shadow: inset 0px -300px 70px 10px #11111199;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2%;
+
+}
+.GeralChatEstadoViewDateVideoConnteudoBox{
+    width: 100%;
+    height: 32%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+}
+.GeralChatEstadoViewDateVideoConnteudoBox1{
+    width: 100%;
+    height: 32%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+}
+.GeralChatEstadoViewDateVideoConnteudoBox1FotoUsuario{
+    width: 60px;
+    height: 60px;
+    background-color: var(--white);
+    border-radius: 50%;
+}
+.GeralChatEstadoViewDateVideoConnteudoBox1FotoUsuario img{
+    width: 100%;
+    height: 100%;
+    border: 3px solid var(--teal-600);
+    object-fit: cover;
+    border-radius: 50%;
+}
+.GeralChatEstadoViewDateVideoConnteudoBox1Conteudo {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 2px;
+
+}
+.GeralChatEstadoViewDateVideoConnteudoBox1Conteudo h2{
+    color: var(--teal-600);
+}
+.GeralChatEstadoViewDateVideoConnteudoBox1Conteudo li{
+    color: var(--white);
+}
+.GeralChatEstadoViewDateVideoConnteudoBox2{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    color: #f1f1f1;
+    line-height: 22px;
+}
+.GeralChatEstadoViewDateVideoConnteudoBox3{
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+}
+.GeralChatEstadoViewDateVideoConnteudoBox3IconeeReacao{
+    width: 50px;
+    height: 50px;
+    background-color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    transition: .2s ease;
+    cursor: pointer;
+}
+.GeralChatEstadoViewDateVideoConnteudoBox3IconeeReacao:hover{
+    background-color: var(--teal-600);
+    transition: .2s ease;
+}
+.GeralChatEstadoViewDateVideoConnteudoBox3IconeeReacao:active{
+    transform: scale(0.8);
+}
+.GeralChatEstadoViewDateVideoConnteudoBox3IconeeReacao:hover svg{
+    color: var(--white);
+    transition: .2s ease;
+}
+
+.GeralChatEstadoViewDateVideoConnteudoBox3IconeeReacao svg{
+    color: #000;
+    width: 30px;
+    height: 30px;
+    transition: .2s ease;
+}
+.GeralChatEstadoViewDateVideoVoltar{
+    width: 40px;
+    height: 40px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 2%;
+    left: 2%;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.GeralChatEstadoViewDateVideoVoltar:active{
+    transition: .2s ease;
+    transform: scale(0.8);
+}
+.GeralChatEstadoViewDateVideoVoltar svg{
+    color: var(--white);
+    width: 40px;
+    height: 40px;
+}

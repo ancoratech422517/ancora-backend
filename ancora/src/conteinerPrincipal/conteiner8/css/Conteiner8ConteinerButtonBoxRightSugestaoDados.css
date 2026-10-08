@@ -1,0 +1,49 @@
+.Conteiner8ConteinerButtonBoxRightSugestaoDados{
+    width: 100%;
+    height: 11vh;
+    border-radius: 10px;
+    margin-top: 2%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+    
+
+}
+.Conteiner8ConteinerButtonBoxRightSugestaoDadosFoto{
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: 1px solid red;
+}
+.Conteiner8ConteinerButtonBoxRightSugestaoDadosCont{
+    width: 60%;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 3px;
+}
+.Conteiner8ConteinerButtonBoxRightSugestaoDadosCont b{
+    font-size: 15px;
+}
+.Conteiner8ConteinerButtonBoxRightSugestaoDadosCont li{
+    font-size: 13px;
+}
+.Conteiner8ConteinerButtonBoxRightSugestaoDadosEsta{
+    width: 15%;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+.Conteiner8ConteinerButtonBoxRightSugestaoDadosEsta li{
+    color: var(--teal-600);
+    transition: .2s ease;
+    cursor: pointer;
+}
+.Conteiner8ConteinerButtonBoxRightSugestaoDadosEsta li:hover{
+    transition: .2s ease;
+    color: var(--teal-700);
+}

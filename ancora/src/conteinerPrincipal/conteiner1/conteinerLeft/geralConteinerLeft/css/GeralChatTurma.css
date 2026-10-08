@@ -1,0 +1,119 @@
+.widgetTurma{
+    position: absolute;
+    bottom: 0;
+    margin-right: 5%;
+    margin-bottom: 5%;
+    width: 40px;
+    height: 40px;
+    background-color: var(--teal-600);
+    border-radius: 50%;
+    right: 0;
+    transition: .2s ease;
+    cursor: pointer;
+    transition: .2s ease;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.widgetTurma svg{
+    width: 20px;
+    height: 20px;
+    color: #fff;
+}
+.widgetTurma:active{
+    transform: scale(0.9);
+    transition: .2s ease;
+}
+.widgetConteinerTurma{
+    position: absolute;
+    bottom: 0;
+    width: 85%;
+    height: 60%;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 18%;
+    margin-left: 5%;
+    border: 1px solid #d2d2d2;
+    border-bottom: 4px solid var(--teal-600);
+}
+.widgetConteinerTurmaMenuTop{
+    width: 100%;
+    height: 15%;
+    border-bottom: 1px solid #d2d2d2;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.widgetConteinerTurmaMenuTopIcone{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+.widgetConteinerTurmaMenuTopIcone img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--teal-600);
+}
+.widgetConteinerTurmaMenuTopConteudo{
+    width: 70%;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 2px;
+}
+.widgetConteinerTurmaMenuTopConteudo li{
+    font-size: 11px;
+    color: var(--gray-400);
+}
+.widgetConteinerTurmaMenuTopScroll{
+    width: 100%;
+    height: 85%;
+    border-radius: 0px 0px 10px 10px;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+.widgetConteinerTurmaMenuTopScrollDados{
+    width: 100%;
+    height: 20%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: .2s ease;
+    cursor: pointer;
+}
+.widgetConteinerTurmaMenuTopScrollDados:hover{
+    transition: .2s ease;
+    background-color: var(--gray-100);
+}
+.widgetConteinerTurmaMenuTopScrollDadosIcone{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+.widgetConteinerTurmaMenuTopScrollDadosIcone img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--teal-600);
+}
+.widgetConteinerTurmaMenuTopScrollDadosConteudo{
+    width: 75%;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 1px;
+}

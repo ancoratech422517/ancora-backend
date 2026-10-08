@@ -1,0 +1,85 @@
+.ConteinerRightDadosWindowMenssageMim{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;           /* ← ícone fica embaixo quando o balão for alto */
+    gap: 10px;
+    margin-top: 4%;
+    border-radius: 20px;
+    padding: 1%;
+
+}
+.ativar_selecao_menssagem{
+    background-color: var(--teal-100);
+}
+.IconeUserMim{
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+    cursor: default;
+}
+.IconeUserMimIcone{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+.IconeUserMimIcone img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--teal-600);
+}
+
+.textoUserMim{
+    background-color: var(--teal-500);
+    border-radius: 20px 20px 5px 20px;
+    height: fit-content;
+    padding: 12px 18px;
+    color: var(--white);
+    max-width: 480px;
+    min-width: 100px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    font-size: 14px;
+    box-shadow: var(--shadow-teal);
+    cursor: default;
+}
+
+.horaMim{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    color: var(--grey-600);
+    font-size: 12px;
+    margin-top: -4px;
+}
+
+@media screen and (max-width: 700px) {
+    .textoUserMim{
+        max-width: 280px;
+        padding: 12px 16px;
+        min-width: 80px;
+    }
+    .IconeUserMim{
+        width: 42px;
+        height: 42px;
+    }
+}
+.menuUserMim{
+    width: 200px;
+    height: 30vh;
+    top: 0;
+    border: 1px solid red;
+
+}

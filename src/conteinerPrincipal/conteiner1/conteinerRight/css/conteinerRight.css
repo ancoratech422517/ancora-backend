@@ -1,0 +1,42 @@
+
+.conteinerRight{
+    width: 72%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2314b8a6' fill-opacity='0.03'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-size: auto;
+    background-image: url(../../../../assets/fundo_chat4.png);
+}
+
+.ConteinerRightInicial{
+    width: 72%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.ConteinerRightInicial img{
+    width: 100%;
+    height: 100%;
+    
+}
+.tirarConteinerRight{
+    display: none;
+}
+@media screen and (max-width: 700px) {
+    /* .conteinerRight{
+        border: 1px solid red;
+        display: none;
+    } */
+    .ConteinerRightInicial{
+        display: none;
+        height: 100%;
+    }
+    .conteinerRight{
+        width: 100%;
+
+    }
+    
+}

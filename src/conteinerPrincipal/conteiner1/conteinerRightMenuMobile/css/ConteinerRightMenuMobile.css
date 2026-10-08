@@ -1,0 +1,67 @@
+.ConteinerRightMenuMobile{
+    width: 25%;
+    height: 100%;
+    background-color: var(--white);
+    border-left: 1px solid #d2d2d2;
+    display: none;
+
+}
+.ConteinerRightMenuTopMobile{
+    width: 100%;
+    height: 12%;
+    background-color: var(--white);
+    border-bottom: 1px solid #d2d2d2;
+    display: flex;
+    justify-content: space-between;
+
+}
+.ConteinerRightMenuMobileBox1{
+    width: 70%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 3px;
+    padding: 4%;
+}
+.ConteinerRightMenuMobileBox1 li{
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+}
+
+.ConteinerRightMenuMobileBox1 li b{
+    font-weight: 500;
+}
+.ConteinerRightMenuMobileBox2{
+    width: 20%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.ConteinerRightMenuMobileBox2 svg{
+    width: 30px;
+    height: 30px;
+
+}
+.ConteinerRightMenuMobileBox2 p{
+    cursor: pointer;
+    transition: .2s ease;
+}
+.ConteinerRightMenuMobileBox2 p:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.ConteinerRightMenuMobileScroll{
+    width: 100%;
+    height: 88%;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    padding: 2%;
+
+}

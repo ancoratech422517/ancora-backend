@@ -1,0 +1,188 @@
+.ConteinerRightLive{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    z-index: 99999999999999;
+
+    
+}
+.ConteudoLive{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    z-index: 99999999999999999999999999999999999999;
+}
+.ConteinerRightLiveMenuTop{
+    width: 100%;
+    height: 12%;
+    border-bottom: 1px solid var(--gray-500);
+    padding-left: 3%;
+    border-bottom-style: dotted;
+}
+.ConteinerRightLiveMenuTopBox{
+    width: 100%;
+    height: 50%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 20px;
+    
+}
+.ConteinerRightLiveMenuTopBox h3{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--white);
+    font-size: 2rem;
+}
+.ConteinerRightLiveMenuTopBox h3 svg{
+    color: var(--teal-600);
+    width: 40px;
+    height: 40px;
+}
+.ConteinerRightLiveMenuTopBox b{
+    color: var(--teal-600);
+    font-size: 1.3em;
+}
+.ConteinerRightLiveMenuTopBox  li{
+    color: var(--gray-500);
+    font-size: 1.3em;
+}
+.ContLive{
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 5px;
+}
+.ConteinerRightLiveWindowAdminScreen{
+    width: 100%;
+    height: 40%;
+    border: 2px solid #d2d2d2;
+
+}
+.ConteinerRightLiveWindowScrollAlunosScreen{
+    width: 100%;
+    height: 48%;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+
+}
+.widgwtSairSalaLive{
+    width: 200px;
+    height: 6vh;
+    background-color: maroon;
+    color: var(--white);
+    border-radius: 40px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 2%;
+    margin-right: 2%;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.widgwtSairSalaLive:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.janela svg{
+    color: var(--teal-600);
+    width: 60px;
+    height: 60px;
+}
+.janela h2{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--teal-600);
+    font-size: 3.5rem;
+}
+.janela p{
+    font-size: 1.3em;
+    color: var(--white);
+    gap: 10px;
+}
+.janela button{
+    width: 25%;
+    height: 10vh;
+    border-radius: 40px;
+    background-color: var(--white);
+    cursor: pointer;
+    transition: .2s ease;
+    border: none;
+    font-size: 1.2em;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: .2s ease;
+}
+.janela button svg{
+    width: 30px;
+    height: 30px;
+    color: #1f1f1f;
+}
+.janela button:hover{
+    transition: .2s ease;
+    background-color: var(--teal-600);
+    color: var(--white);
+    box-shadow: 0px 20px 80px var(--teal-600);
+}
+.janela button:hover svg{
+    color: var(--white);
+}
+.janela button:active{
+    transform: scale(0.9);
+}
+@media screen and (max-width:880px) {
+    .ConteinerRightLiveMenuTopBox h3{
+        font-size: 1.2rem;
+    }
+    .ConteinerRightLiveMenuTopBox h3 svg{
+        width: 20px;
+        height: 20px;
+    }
+    .widgwtSairSalaLive{
+        width: 100px;
+        height: 4vh;
+        font-size: 14px;
+        border: 1px solid rgba(255, 0, 0, 0.308);
+    }
+    .ConteinerRightLiveMenuTopBox b{
+        font-size: 1.2em;
+    }
+    .ConteinerRightLiveMenuTopBox li{
+        font-size: 1.2em;
+    }
+    .janela h2{
+        font-size: 1.5rem;
+        flex-direction: column;
+    }
+    .janela svg{
+        width: 30px ;
+        height: 30px;
+    }
+    .janela button{
+        width: 50%;
+        height: 7vh;
+        font-size: 15px;
+    }
+    .janela button svg{
+        width: 20px;
+        height: 20px;
+    }
+}

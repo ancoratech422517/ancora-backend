@@ -1,0 +1,126 @@
+.Conteiner3WindowRightScrollPedidos{
+    width: 100%;
+    height: 86%;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    padding-left: 3%;
+    padding-right: 3%;
+}
+.Conteiner3WindowRightScrollPedidosDados{
+    width: 100%;
+    height: 18vh;
+    border: 1px solid #d2d2d2;
+    margin: 2% auto;
+    border-radius: 20px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1% 2% 1% 2%;
+}
+.Conteiner3WindowRightScrollPedidosDadosBox1{
+    width: 75px;
+    height: 75px;
+    border-radius: 20px;
+}
+.Conteiner3WindowRightScrollPedidosDadosBox1 img{
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+}
+.Conteiner3WindowRightScrollPedidosDadosBox2{
+    width: 70%;
+    height: 75px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 10px;
+}
+.Conteiner3WindowRightScrollPedidosDadosBox2 h4{
+    display: flex;
+    gap: 20px;
+}
+.Conteiner3WindowRightScrollPedidosDadosBox2 h4 b{
+    color: var(--teal-500);
+}
+.Conteiner3WindowRightScrollPedidosDadosBox2 h4 li{
+    color: var(--gray-400);
+    font-size: 12px;
+}
+.nameUserProduectPedido{
+    color: var(--gray-400);
+}
+.Conteiner3WindowRightScrollPedidosDadosBox3{
+    width: 30%;
+    height: 75px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-around;
+    gap: 10px;
+}
+.Conteiner3WindowRightScrollPedidosDadosBox3 button{
+    padding: 4% 6% 4% 6%;
+    border-radius: 40px;
+    border: none;
+    cursor: pointer;
+    transition: .2s ease;
+
+}
+.Conteiner3WindowRightScrollPedidosDadosBox3 button:nth-child(1){
+    background-color: rgba(255, 0, 0, 0.194);
+    border: 1px solid red;
+
+}
+.Conteiner3WindowRightScrollPedidosDadosBox3 button:nth-child(1):hover{
+
+    transition: .2s ease;
+    background-color: red;
+    color: var(--white);
+    border: none;
+
+}
+.Conteiner3WindowRightScrollPedidosDadosBox3 button:nth-child(1):active{
+    transform: scale(0.9);
+}
+.Conteiner3WindowRightScrollPedidosDadosBox3 button:nth-child(2){
+    background-color: var(--teal-100);
+    border: 1px solid var(--teal-500);
+}
+.Conteiner3WindowRightScrollPedidosDadosBox3 button:nth-child(2):hover{
+    transition: .2s ease;
+    background-color: var(--teal-500);
+    color: var(--white);
+    border: none;
+}
+.Conteiner3WindowRightScrollPedidosDadosBox3 button:nth-child(2):active{
+    transform: scale(0.9);
+}
+@media screen and (max-width: 880px) {
+    .Conteiner3WindowRightScrollPedidos{
+        height: 90%;
+        padding: 0px;
+    }
+    .Conteiner3WindowRightScrollPedidosDados{
+        width: 100%;
+        position: relative;
+        border: none;
+    }
+    .Conteiner3WindowRightScrollPedidosDadosBox2{
+        margin-left: 2%;
+    }
+    .Conteiner3WindowRightScrollPedidosDadosBox3{
+        display: flex;
+        flex-direction: column;
+    }
+}
+.Conteiner3WindowRightScrollPedidosDadosBox3 button:nth-child(3){
+    background-color: var(--teal-600);
+    color: var(--white);
+}
+.Conteiner3WindowRightScrollPedidosDadosBox3 button:nth-child(3):active{
+    transform: scale(0.90);
+    transition: .2s ease;
+}

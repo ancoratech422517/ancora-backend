@@ -1,0 +1,503 @@
+.Conteiner5WindowConteinerTrafego{
+    width: 100%;
+    gap: 20px;
+
+}
+.Conteiner5WindowConteinerTrafegoEstaus{
+    height: 30vh;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.Conteiner5WindowConteinerTrafegoEstaus svg{
+    width: 45px;
+    height: 45px;
+}
+.Conteiner5WindowConteinerTrafegoBoxScroll{
+    width: 100%;
+    height: 60vh;
+    border-radius: 20px;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+    margin-top: 4%;
+}
+.Conteiner5windowConteinerTrafegoBoxScrollMenuTop{
+    width: 100%;
+    height: 20%;
+    border-bottom: 1px solid #d2d2d2;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+}
+.Conteiner5windowConteinerTrafegoBoxScrollMenuTop li{
+    width: 25%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.Conteiner5WindowConteinerTrafegoBoxScrollConteiner{
+    width: 100%;
+    height: 80%;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    border-radius: 0px 0px 20px 20px;
+}
+.Conteiner5WindowConteinerTrafegoBoxScrollConteinerDados{
+    width: 100%;
+    height: 20%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.Conteiner5WindowConteinerTrafegoBoxScrollConteinerDados li{
+    width: 25%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #d2d2d2;
+}
+.Conteiner5WindowConteinerTrafegoEstausBtn{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 3%;
+    margin-right: 5%;
+    width: 150px;
+    height: 6vh;
+    border-radius: 50px;
+    background-color: var(--teal-600);
+    color: var(--white);
+    font-weight: 600;
+    border: none;
+    transition: .2s ease;
+    cursor: pointer;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+}
+.Conteiner5WindowConteinerTrafegoEstausBtn:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.Conteiner5WindowConteinerTrafegoEstausBtn b{
+    font-weight: 500;
+}
+.Conteiner5WindowConteinerTrafegoEstausBtn svg{
+    width: 20px;
+    height: 20px;
+    color: var(--white);
+}
+.ConteinerBoxProdutosEscolhaTrafego{
+    position: absolute;
+    top: 0;
+    width: 40%;
+    height: 90vh;
+    margin-left: 25%;
+    border-radius: 30px;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+    z-index: 9999999999999;
+    margin-top: 2%;
+}
+.ConteinerBoxProdutosEscolhaTrafegoMenu{
+    width: 100%;
+    height: 12%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+}
+.ConteinerBoxProdutosEscolhaTrafegoMenu input{
+    width: 50%;
+    height: 7vh;
+    padding-left: 4%;
+    border-radius: 40px;
+    border: 1px solid #d2d2d2;
+    background-color: #f1f1f1;
+    outline-color: var(--teal-600);
+
+}
+.ConteinerBoxProdutosEscolhaTrafegoMenu button{
+    width: 100px;
+    height: 7vh;
+    border-radius: 40px;
+    border: none;
+    background-color: var(--teal-600);
+    color: var(--white);
+    transition: .2s ease;
+    cursor: pointer;
+}
+.ConteinerBoxProdutosEscolhaTrafegoMenu button:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.ConteinerBoxProdutosEscolhaTrafegoMenu button:nth-child(3){
+    background-color: maroon;
+    
+}
+.ConteinerBoxProdutosEscolhaTrafegoScroll{
+    width: 100%;
+    height: 85%;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    padding: 1%;
+}
+.ConteinerBoxProdutosEscolhaTrafegoScrollDados{
+    width: 90%;
+    height: 11vh;
+    /* border: 1px solid red; */
+    border-radius: 50px;
+    margin: 4% auto;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 5px;
+    padding-left: 0%;
+}
+.ConteinerBoxProdutosEscolhaTrafegoScrollDadosIcone{
+    width: 150px;
+    height: 70px;
+    border: 2px solid var(--teal-600);
+    border-radius: 50px;
+}
+.ConteinerBoxProdutosEscolhaTrafegoScrollDadosIcone img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50px;
+}
+.ConteinerBoxProdutosEscolhaTrafegoScrollDadosCont{
+    width: 40%;
+    height: 70px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 3px;
+}
+.ConteinerBoxProdutosEscolhaTrafegoScrollDadosCont b{
+    font-size: 1.2em;
+}
+.ConteinerBoxProdutosEscolhaTrafegoScrollDados button{
+    width: 170px;
+    height: 7vh;
+    border-radius: 50px;
+    background-color: var(--teal-600);
+    color: var(--white);
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: .2s ease;
+    cursor: pointer;
+}
+.ConteinerBoxProdutosEscolhaTrafegoScrollDados button:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.ConteinerEscolhaTipoTrafego{
+    width: 30%;
+    height: 80%;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+    border-radius: 20px;
+    position: absolute;
+    top: 0;
+    margin-left: 35%;
+    margin-top: 5%;
+    border-bottom: 4px solid var(--teal-600);
+    border-top: 4px solid var(--teal-600);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    padding-top: 3%;
+    gap: 10px;
+    overflow: hidden;
+
+}
+.ConteinerEscolhaTipoTrafegoIcone{
+    width: 90px;
+    height: 100px;
+}
+.ConteinerEscolhaTipoTrafegoIcone img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ConteinerEscolhaTipoTrafegoConteiner1{
+    margin-top: 5%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 10px;
+    width: 80%;
+}
+.ConteinerEscolhaTipoTrafegoConteiner1 select{
+    height: 7vh;
+    border-radius: 50px;
+    border: 1px solid #d2d2d2;
+    background-color: #f1f1f1;
+    padding-left: 5%;
+    font-size: 1.1em;
+    outline-color: var(--teal-600);
+}
+
+.ConteinerEscolhaTipoTrafegoConteiner1 button{
+    width: 100%;
+    height: 7vh;
+    border: none;
+    background-color: var(--teal-600);
+    color: var(--white);
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: .2s ease;
+    margin-top: 2%;
+}
+.ConteinerEscolhaTipoTrafegoConteiner1 button:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.Conteiner_dados_produtos_trafego{
+    width: 80%;
+    height: 10vh;
+    display: flex;
+    text-align: center;
+    gap: 10px;
+    margin-top: 4%;
+}
+.Conteiner_dados_produtos_trafegoIcone{
+    width: 100px;
+    height: 70px;
+    border-radius: 20px;
+}
+.Conteiner_dados_produtos_trafegoIcone img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+    border: 2px solid var(--teal-600);
+}
+.Conteiner_dados_produtos_trafegoCont{
+    width: 70%;
+    height: 70px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+}
+.Conteiner_dados_produtos_trafegoCont b{
+    font-size: 1.1em;
+}
+.Conteiner_dados_produtos_trafegoCont h2{
+    color: var(--teal-600);
+}
+/* INICIO DA FORMATAÇÃO DO CONTEINER DA CARTEIRA DDIGITAL */
+.ConteinerEscolhaTipoTrafegoCnteinerCarteira{
+    width: 80%;
+    height: 30vh;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 10px;
+}
+.ConteinerEscolhaTipoTrafegoCnteinerCarteiraBox{
+    width: 100%;
+    height: 40%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+}
+.ConteinerEscolhaTipoTrafegoCnteinerCarteiraBoxIcone{
+    width: 70px;
+    height: 70px;
+    border-radius: 20px;
+}
+.ConteinerEscolhaTipoTrafegoCnteinerCarteiraBoxIcone img{
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+}
+.ConteinerEscolhaTipoTrafegoCnteinerCarteiraBox button{
+    width: 80%;
+    height: 9vh;
+    border-radius: 50px;
+    border: 1px solid #d2d2d2;
+    cursor: pointer;
+    transition: .2s ease;
+    font-weight: 600;
+    border: none;
+    font-size: 1.1em;
+
+}
+.ConteinerEscolhaTipoTrafegoCnteinerCarteiraBox button:active{
+    transform: scale(0.9);
+}
+.orange_carteira{
+    background-color: rgb(255, 128, 1);
+    color: var(--white);
+}
+.teal_carteira {
+    background-color: var(--teal-600);
+    color: var(--white);
+}
+/* INICIO DA FOTMATAÇÃO DO TIPO DE PAGAMENTO DO MULTICAIXA EXPRESS */
+.ConteinerEscolhaTipoTrafegoConteinerTipoPagamentoExpress{
+    width: 80%;
+    height: 30%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 5px;
+}
+.ConteinerEscolhaTipoTrafegoConteinerTipoPagamentoExpress input{
+    height: 7vh;
+    width: 100%;
+    padding-left: 6%;
+    background-color: #f1f1f1;
+    border: 1px solid #d2d2d2;
+    border-radius: 50px;
+    font-size: 1.2em;
+    outline-color: var(--teal-600);
+    letter-spacing: 2px;
+}
+.ConteinerEscolhaTipoTrafegoConteinerTipoPagamentoExpress button{
+    width: 100%;
+    height: 7vh;
+    background-color: var(--teal-600);
+    color: var(--white);
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s ease;
+    border-radius: 40px;
+    margin-top: 2%;
+    border: none;
+}
+.ConteinerEscolhaTipoTrafegoConteinerTipoPagamentoExpress button:active{
+    transform: scale(0.9);
+    transition: .2s ease;
+
+
+}
+.cancelarTrafego{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 5%;
+    margin-right: 5%;
+    border-radius: 50px;
+    width: 90px;
+    height: 6vh;
+    background-color: maroon;
+    color: var(--white);
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s ease;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.cancelarTrafego:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.ConteinerRespostaBackend{
+    position: absolute;
+    width: 70%;
+    height: 8vh;
+    border-radius: 50px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: var(--teal-400);
+    top: 0;
+    margin-left: 2%;
+    margin-top: 10%;
+    color: var(--white);
+    font-weight: 600;
+    animation: animaTrafegoResposta 1.5s ease;
+
+}
+@keyframes animaTrafegoResposta {
+    0%{
+        opacity: 0;
+        margin-top: -40%;
+    }
+    100%{
+        opacity: 1;
+        margin-top: 10%;
+    }
+}
+.ConteinerRespostaBackend svg{
+    color: var(--white);
+}
+.ConteineroadingTrafego{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+}
+@media screen and (max-width: 880px) {
+    .Conteiner5WindowConteinerTrafegoBoxScrollConteinerDados li{
+        font-size: 13px;
+    }
+    .Conteiner5windowConteinerTrafegoBoxScrollMenuTop li{
+        font-size: 13px;
+    }
+    .ConteinerBoxProdutosEscolhaTrafegoMenu input{
+        width: 35%;
+    }
+    .ConteinerBoxProdutosEscolhaTrafegoScroll{
+        padding: 0px;
+    }
+    .ConteinerBoxProdutosEscolhaTrafegoScrollDados{
+        width: 98%;
+    }
+    .ConteinerBoxProdutosEscolhaTrafegoScrollDadosCont b{
+        font-size: 15px;
+    }
+    .ConteinerBoxProdutosEscolhaTrafegoScrollDadosCont h3{
+        font-size: 16px;
+    }
+    .ConteinerEscolhaTipoTrafego{
+    
+        width: 100%;
+        height: 100%;
+        margin-top: 0;
+        margin-left: 0;
+        border-radius: 0;
+        border-bottom: 0;
+        border-top: 0;
+        
+    }
+}

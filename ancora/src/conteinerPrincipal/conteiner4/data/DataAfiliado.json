@@ -1,0 +1,25 @@
+[
+    {
+        "label":"janeiro",
+        "value": 5
+    }
+    ,
+    {
+        "label":"fevereiro",
+        "value": 13
+    }
+    ,
+    {
+        "label":"março",
+        "value": 7
+    }
+    ,
+    {
+        "label":"maio",
+        "value":9
+    },
+    {
+        "label":"Total",
+        "value":34
+    }
+]

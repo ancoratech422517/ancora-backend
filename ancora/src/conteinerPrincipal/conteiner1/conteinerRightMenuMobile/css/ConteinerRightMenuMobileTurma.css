@@ -1,0 +1,859 @@
+.ConteinerRightMenuMobileTurma{
+    width: 100%;
+    height: 88%;
+}
+.ConteinerRightMenuMobileTurmaBox1{
+    width: 100%;
+    height: 20%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+.ConteinerRightMenuMobileTurmaBox1Caxa{
+    width: 43%;
+    height: 80%;
+    background-color: var(--gray-100);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #d2d2d2;
+}
+.ConteinerRightMenuMobileTurmaBox1CaxaDados{
+    width: 100%;
+    height: 50%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+    padding-left: 10%;
+}
+.ConteinerRightMenuMobileTurmaBox1CaxaDados li{
+    font-size: 15px;
+}
+.ConteinerRightMenuMobileTurmaBox1CaxaDados svg{
+    color: var(--teal-600);
+    width: 25px;
+    height: 25px;
+}
+.ConteinerRightMenuMobileTurmaBox1CaxaDados strong{
+    font-size: 1.7rem;
+    color: #1f1f1f;
+}
+.ConteinerRightMenuMobileTurmaBox2{
+    width: 100%;
+    height: 18%;
+    padding: 5%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.ConteinerRightMenuMobileTurmaBox2Div{
+    width: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+}
+.ConteinerRightMenuMobileTurmaBox2Div b{
+    font-weight: 500;
+}
+.ConteinerRightMenuMobileTurmaBox2DivLoading{
+    width: 100%;
+    height: 10px;
+    background-color: var(--gray-100);
+    border-radius: 10px;
+}
+.ConteinerRightMenuMobileTurmaBox2DivLoadingLiquido{
+    width: 55%;
+    height: 100%;
+    border-radius: 10px;
+    background-color: var(--teal-600);
+}
+.ConteinerRightMenuMobileTurmaBox2 .ConteinerRightMenuMobileTurmaBox2Div:nth-child(3) li{
+    color: var(--gray-500);
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenu{
+    width: 100%;
+    height: 8%;
+    display: flex;
+    border: 1px solid #d2d2d2;
+    padding: 2%;
+    padding-bottom: 0%;
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuText{
+    width: 33.3%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    color: var(--gray-400);
+    cursor: pointer;
+    transition: .2s ease;
+}
+.borda_menu{
+    border-bottom: 2px solid var(--teal-600);
+    color: var(--teal-600);
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuText:hover{
+    color: var(--teal-600);
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteiners{
+    width: 100%;
+    height: 54%;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersAlunos{
+    width: 100%;
+    height: 100%;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosMenuTop{
+    width: 100%;
+    height: 10%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    padding-left: 5%;
+    padding-top: 5%;
+    padding-bottom: 2%;
+    color: var(--gray-400);
+    font-weight: 400;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosScroll{
+    width: 100%;
+    height: 90%;
+    padding: 4%;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosScrollDados{
+    width: 100%;
+    height: 25%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+    margin-top: 2%;
+    border-radius: 10px;
+    transition: .2s ease;
+    cursor: pointer;
+    padding-left: 3%;
+    border: 1px solid transparent;
+
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosScrollDados:hover{
+    transition: .2s ease;
+    background-color: var(--gray-100);
+    border: 1px solid #d2d2d2;
+
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosScrollDadosIcone{
+    width: 50px;
+    height: 50px;
+    background-color: var(--gray-100);
+    border-radius: 50%;
+    border: 1px solid #d2d2d2;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosScrollDadosIcone img{
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--teal-600);
+    object-fit: cover;
+    border-radius: 50%;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosScrollDadosCont{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosScrollDadosCont b{
+    font-weight: 500;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosScrollDadosCont li{
+    color: var(--teal-600);
+    font-weight: 500;
+
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximas{
+    width: 100%;
+    height: 54%;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    padding: 5%;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximasDados{
+    width: 100%;
+    height: 50%;
+    background-color: var(--gray-100);
+    border-radius: 10px;
+    border: 1px solid var(--teal-600);
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    padding-left: 5%;
+    gap: 10px;
+    margin-top: 4%;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximasDadosDiv{
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximasDados button{
+    width: 95%;
+    height: 6vh;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--teal-600);
+    color: var(--white);
+    cursor: pointer;
+    transition: .2s ease;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximasDados button:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximasDados li{
+    font-size: 14px;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximasDados li:nth-child(3){
+    color: var(--gray-500);
+    font-size: 13px;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximasDados li:nth-child(2){
+
+    font-weight: 600;
+
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximasDados b{
+    padding: 1%;
+    background: linear-gradient(39deg , var(--teal-600) 40% , var(--white) 70%);
+    border-radius: 5px;
+    font-size: 15px;
+    width: 40%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados2{
+    width: 100%;
+    height: 47%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 10px;
+    background-color: var(--gray-100);
+    border: 1px solid #d2d2d2;
+    border-radius: 10px;
+    padding-left: 5%;
+    margin-top: 4%;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados2Cont{
+    display: flex;
+    gap: 10px;
+    font-size: 14px;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados2 em{
+    font-size: 14px;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados2 button{
+    width: 40%;
+    height: 4vh;
+    background-color: var(--white);
+    border-radius: 5px;
+    border: 1px solid #d2d2d2;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3{
+    width: 100%;
+    height: 54%;
+    padding: 4%;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3MenuTop{
+    width: 100%;
+    height: 10%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3MenuTop svg{
+    color: var(--teal-600);
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3MenuTop li{
+    font-weight: 550;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3Scroll{
+    width: 100%;
+    height: 90%;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    padding-top: 4%;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3ScrollDados{
+    width: 100%;
+    height: 30%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    padding-left: 3%;
+    gap: 10px;
+    margin-top: 1%;
+    cursor: pointer;
+    transition: .2s ease;
+    border-radius: 7px;
+    border: 1px solid transparent;
+
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3ScrollDados:hover{
+    transition: .2s ease;
+    background-color: var(--gray-100);
+    border: 1px solid var(--teal-600);
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3ScrollDados:active{
+    transform: scale(0.9);
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3ScrollDadosMedia{
+    width: 80px;
+    height: 55px;
+    border-radius: 5px;
+
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3ScrollDadosMedia video{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 2px solid var(--teal-600);
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3ScrollDadosCont{
+    width: 60%;
+    height: 55px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 3px;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3ScrollDados li:nth-child(1){
+    font-weight: 500;
+    font-size: 14px;
+}
+.ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3ScrollDados li:nth-child(2){
+    color: var(--gray-500);
+    font-size: 13px;
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurma{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-right: 5%;
+    margin-bottom: 5%;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: var(--teal-600);
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: .2s ease;
+    box-shadow: inset 0px 0px 5px 1px #11111188;
+
+
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurma:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurma svg{
+    color: var(--white);
+    width: 20px;
+    height: 20px;
+}
+
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaConteiner{
+    width: 70%;
+    height: 50%;
+    border: 1px solid #d2d2d2;
+    border-bottom: 4px solid var(--teal-600);
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-right: 5%;
+    margin-bottom: 17%;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuTurmaConteinerImageTurma{
+    width: 100%;
+    height: 50%;
+    border-radius: 10px 10px 0px 0px;
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuTurmaConteinerImageTurma img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px 10px 0px 0px;
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuTurmaConteinerBtnTurma{
+    width: 100%;
+    height: 50%;
+    box-shadow: inset 0px 0px 5px 1px #11111122;
+    border-radius: 0px 0px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 2%;
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuTurmaConteinerBtnTurma button{
+    border: 1px solid #d2d2d2;
+    width: 85%;
+    height: 6vh;
+    border-radius: 10px;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    transition: .2s ease;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuTurmaConteinerBtnTurma button:hover{
+    transition: .2s ease;
+    background-color: var(--teal-600);
+    color: var(--white);
+    border: none;
+    
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuTurmaConteinerBtnTurma button:hover svg{
+    color: var(--white);
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuTurmaConteinerBtnTurma button:active{
+    transform: scale(0.9);
+}
+.ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAluno{
+    width: 80%;
+    height: 60%;
+    border: 1px solid #d2d2d2;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+    border-bottom: 4px solid var(--teal-600);
+    position: absolute;
+    bottom: 0;
+    margin-right: 5%;
+    right: 0;
+    margin-bottom: 17%;
+    border-radius: 10px;
+}
+.ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoMenuTop{
+    width: 100%;
+    height: 15%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-bottom: 1px solid #d2d2d2;
+}
+.ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoMenuTop input{
+    width: 70%;
+    height: 5vh;
+    border: 1px solid #d2d2d2;
+    background-color: #f1f1f1;
+    padding-left: 4%;
+    outline: none;
+    border-radius: 7px;
+    outline-color: var(--teal-600);
+    font-size: 12px;
+}
+.ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoMenuTop button{
+    width: 40px;
+    height: 40px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: none;
+    background-color: transparent;
+    outline: none;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoMenuTop button svg{
+    width: 25px;
+    height: 25px;
+}
+.ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoScroll{
+    width: 100%;
+    height: 85%;
+    border-radius: 0px 0px 10px 10px;
+    padding: 2%;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+.ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoScrollDados{
+    width: 100%;
+    height: 20%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    padding: 1%;
+    border-radius: 10px;
+    gap: 10px;
+    transition: .2s ease;
+}
+.ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoScrollDados:hover{
+    transition: .2s ease;
+    background-color: var(--gray-100);
+
+}
+.ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoScrollDadosIcone{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+
+}
+.ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoScrollDadosIcone img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid var(--teal-600);
+}
+.ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoScrollDadosCont{
+    width: 70%;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 3px;
+    
+}
+.ConteinerRightMenuMobileTurmaBox2MenuadminTurmaConteinerAddAlunoScrollDadosContBoxBtn{
+    width: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+}
+.ConteinerRightMenuMobileTurmaBox2MenuadminTurmaConteinerAddAlunoScrollDadosContBoxBtn button{
+    width: 47%;
+    height: 4vh;
+    border: none;
+    background-color: var(--teal-600);
+    color: var(--white);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: .2s ease;
+
+}
+.ConteinerRightMenuMobileTurmaBox2MenuadminTurmaConteinerAddAlunoScrollDadosContBoxBtn button:nth-child(2){
+    background-color: var(--white);
+    color: #1f1f1f;
+    border: 1px solid #d2d2d2;
+}
+.ConteinerRightMenuMobileTurmaBox2MenuadminTurmaConteinerAddAlunoScrollDadosContBoxBtn button:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoScrollMenssage{
+    position: absolute;
+    width: 70%;
+    height: 5vh;
+    border: 1px solid red;
+    margin-left: 15%;
+    margin-top: 2%;
+    border-radius: 7px;
+    background-color: var(--teal-500);
+    border: 1px solid var(--teal-600);
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    z-index: 999999999999999999;
+    transition: .30s ease;
+    animation: AnimaMenssage .2s ease;
+}
+@keyframes AnimaMenssage {
+    0%{
+        opacity: 0;
+        margin-top: -10%;
+    }
+    100%{
+        opacity: 1;
+        margin-top: 2%;
+    }
+}
+.ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoScrollMenssage b{
+    color: var(--white);
+    font-size: 12px;
+    padding: 2%;
+}
+.ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoScrollMenssage svg{
+    color: var(--white);
+}
+.ConteinerFoto{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    border-radius: 10px;
+}
+.ConteinerFoto img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+.ConteinerFotoClose{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 2%;
+    margin-right: 2%;
+    width: 90px;
+    height: 5vh;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--teal-600);
+    border-radius: 7px;
+    color: var(--white);
+    cursor: pointer;
+    transition: .2s ease;
+}
+.ConteinerFotoClose:active{
+    transform: scale(0.9);
+    transition: .2s ease;
+
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAgendarLive{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-right: 5%;
+    margin-bottom: 17%;
+    width: 85%;
+    height: 35%;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+    border-bottom: 4px solid var(--teal-600);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 2%;
+
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAgendarLive input{
+    width: 95%;
+    height: 6vh;
+    background-color: #f1f1f1;
+    border: 1px solid #d2d2d2;
+    border-radius: 7px;
+    padding-left: 4%;
+    outline-color: var(--teal-600);
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAgendarLive button{
+    width: 95%;
+    height: 6vh;
+    background-color: var(--teal-600);
+    color: var(--white);
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAgendarLive button:active{
+    transform: scale(0.9);
+    transition: .2s ease;
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAgendarLive b svg{
+    width: 40px;
+    height: 40px;
+    color: var(--teal-600);
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAgendarLiveInpu{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    width: 95%;
+    gap: 5px;
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAgendarLiveInpu button{
+    width: 100%;
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAgendarLiveRespostaMenssage{
+    position: absolute;
+    top: 0;
+    margin-top: 3%;
+    width: 70%;
+    height: 4.4vh;
+    margin-left: 5%;
+    background-color: var(--teal-500);
+    color: var(--white);
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--teal-600);
+    border-radius: 7px;
+    z-index: 9999999999;
+    animation: AnimaMenssage .5s ease;
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAgendarLiveRespostaMenssage b{
+    font-size: 14px;
+    font-weight: 500;
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAddVideo{
+    width: 80%;
+    height: 40%;
+    background-color: var(--white);
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-right: 5%;
+    margin-bottom: 17%;
+    border-bottom: 4px solid var(--teal-600);
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 2%;
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAddVideo svg{
+    color: var(--teal-600);
+    width: 40px;
+    height: 40px;
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAddVideo input{
+    width: 90%;
+    height: 6vh;
+    border: 1px solid #d2d2d2;
+    background-color: #f1f1f1;
+    border-radius: 7px;
+    padding-left: 4%;
+    outline-color: var(--teal-600);
+
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAddVideo label{
+    width: 90%;
+    height: 6vh;
+    border: 1px solid #d2d2d2;
+    border-style: dotted;
+    background-color: #f1f1f1;
+    border-radius: 7px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAddVideo label:hover{
+    transition: .2s ease;
+    background-color: var(--teal-600);
+    color: var(--white);
+    border: none;
+
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAddVideo label:active{
+    transform: scale(0.9);
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAddVideo button{
+    background-color: var(--teal-600);
+    color: var(--white);
+    width: 90%;
+    height: 6vh;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAddVideo button:active{
+    transform: scale(0.9);
+}
+.ConteinerLoadingVideoAula{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background-color: #11111181;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+.ConteinerLoadingVideoAula b{
+    width: 50px;
+    height: 50px;
+    background-color: var(--teal-500);
+    color: var(--white);
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--teal-600);
+    border-radius: 50%;
+}
+.ConteinerLoadingVideoAula li{
+    color: var(--white);
+    font-size: 18px;
+    padding-left: 5%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 5px;
+}
+.ConteinerLoadingVideoAula li svg{
+    color: var(--white);
+    width: 20px;
+    height: 20px;
+}
+.ConteinerLoadingVideoAula div{
+    color: var(--gray-100);
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 5px;
+    padding: 3%;
+    font-size: 14px;
+}
+.svgVideoA li{
+
+    font-size: 17px;
+
+}

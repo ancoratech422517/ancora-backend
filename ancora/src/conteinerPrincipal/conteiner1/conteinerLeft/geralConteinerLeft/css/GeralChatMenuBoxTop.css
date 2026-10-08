@@ -1,0 +1,81 @@
+.GeralChatMenuBoxTop{
+    width: 100%;
+    height: 48%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 10px;
+    padding: 0%;
+
+
+}
+.GeralChatMenuTopIcone{
+    width: 100px;
+    height: 35px;
+    border-radius: 7px;
+    font-size: 1.5em;
+    font-weight: bold;
+    transition: .2s ease;
+    cursor: pointer;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-around;
+
+
+}
+.GeralChatMenuTopIcone button{
+    border: none;
+    cursor: pointer;
+}
+.GeralChatMenuTopIcone .ativo{
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background-color: red;
+    color: var(--white);
+    font-weight: bold;
+    top: 0;
+    right: 0;
+    border-radius: 50px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    
+}
+.GeralChatMrnuTopIconeBtnNoti{
+    width: 40px;
+    height: 40px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.ancora{
+    color: var(--teal-600);
+}
+.GeralChatMenuTopTextP{
+    color: var(--gray-500);
+    font-size: 10px;
+}
+.GeralChatMenuTopText h2{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+}
+.GeralChatMenuTopTextLogo{
+
+    width: 80px;
+    height: 60px;
+}
+.GeralChatMenuTopTextLogo img{
+    object-fit: cover;
+}
+.GeralChatMenuTopIcone svg{
+    width: 27px;
+    height: 27px;
+}

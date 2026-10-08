@@ -1,0 +1,372 @@
+.Conteiner5WindowConteinerLeft{
+    width: 32%;
+    height: 100%;
+
+
+}
+.Conteiner5WindowConteinerLeftScrollDados{
+    width: 100%;
+    height: 100%;
+    padding: 2%;
+    padding-top: 4%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    gap: 20px;
+    border-right: 1px solid #d2d2d2;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+.Conteiner5WindowConteinerLeftMenuATop{
+    width: 95%;
+    height: 15vh;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 5px;
+}
+.Conteiner5WindowConteinerLeftMenuTop li{
+    font-size: 13px;
+}
+.Conteiner5WindowConteinerLeftCenterCont{
+    width: 95%;
+    height: 50vh;
+    border-radius: 15px;
+    box-shadow: var(--shadow-sm);
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-shrink: 0;
+
+}
+.Conteiner5WindowConteinerLeftCenterCont li{
+    font-size: 13px;
+
+}
+.Conteiner5WindowConteinerLeftCenterContImageUser{
+    width: 100px;
+    height: 100px;
+    border: 5px solid var(--teal-600);
+    border-radius: 50%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+
+}
+.Conteiner5WindowConteinerLeftCenterContImageUser label{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: .2s ease;
+    border-radius: 50%;
+}
+
+.labelEditar{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #0a0a0a35;
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    opacity: 0;
+    transition: .2s ease;
+}
+.labelEditar:hover{
+    transition: .2s ease;
+    opacity: 1;
+}
+.labelEditar svg{
+    width: 28px;
+    height: 28px;
+    color: var(--white);
+}
+.labelEditar:active{
+    transform: scale(0.9);
+}
+.Conteiner5WindowConteinerLeftNameEmpresa{
+    width: 80%;
+    height: 5vh;
+    border: 1px solid #d2d2d2;
+    background-color: #f1f1f1;
+    border-radius: 30px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 14px;
+}
+.Conteiner5WindowConteinerLeftNameEmpresa span{
+    color: orange;
+}
+.Conteiner5WindowConteinerLeftCenterCont button{
+    width: 82%;
+    height: 6vh;
+    border-radius: 15px;
+    background-color: var(--teal-600);
+    color: var(--white);
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: .2s ease;
+}
+.Conteiner5WindowConteinerLeftCenterCont button:active{
+    transform: scale(0.9);
+    transition: .2s ease;
+}
+.Conteiner5WindowConteinerLeftInformacapContacto{
+    width: 95%;
+    height: 25vh;
+    flex-shrink: 0;
+}
+.Conteiner5WindowConteinerLeftInformacapContacto{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 5px;
+}
+.Conteiner5WindowConteinerLeftInformacapContactoBoxBottom{
+    width: 100%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+    border-radius: 20px;
+}
+.Conteiner5WindowConteinerLeftInformacapContactoBoxBottom .Conteiner5WindowConteinerLeftInformacapContactoBoxBottomCaxa:nth-child(1){
+    border-bottom: 1px solid #d2d2d2;
+    border-radius: 20px 20px 0px 0px;
+}
+.Conteiner5WindowConteinerLeftInformacapContactoBoxBottomCaxa{
+    width: 100%;
+    height: 50%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+}
+.Conteiner5WindowConteinerLeftInformacapContactoBoxBottomCaxa span{
+    width: 20%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.Conteiner5WindowConteinerLeftInformacapContactoBoxBottomCaxa div{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 3px;
+}
+.Conteiner5WindowConteinerLeftInformacapContactoBoxBottomCaxa div b{
+    font-size: 12px;
+}
+.Conteiner5WindowConteinerLeftEndereco{
+    width: 95%;
+    height: 20vh;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 10px;
+
+}
+.Conteiner5WindowConteinerLeftEnderecoContBottom{
+    width: 100%;
+    height: 15vh;
+    border-radius: 20px;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    text-align: left;
+    align-items: center;
+}
+.Conteiner5WindowConteinerLeftEnderecoContBottom span{
+    width: 20%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.Conteiner5WindowConteinerLeftEnderecoContBottom div{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 3px;
+}
+.Conteiner5WindowConteinerLeftEnderecoContBottom li{
+    font-size: 14px;
+}
+.Conteiner5WidowConteinerLeftEditarPerfil{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999999999999999;
+    background-color: var(--gray-50);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid #d2d2d2;
+    display: none;
+    
+
+}
+.Conteiner5WindowConteinerLeftEditarPerfilMenuTop{
+    width: 100%;
+    height: 15%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 5px;
+    padding: 4%;
+}
+.Conteiner5WindowConteinerLeftEditarPerfilConeinerDadosUsuario{
+    width: 100%;
+    height: 85%;
+    border-top: 1px solid #d2d2d2;
+    gap: 10px;
+    padding: 4%;
+}
+.Conteiner5WindowConteinerLeftEditarPerfilConeinerDadosUsuarioBox{
+    width: 100%;
+    height: 12%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5%;
+    background-color: var(--white);
+    border-radius: 40px;
+    margin-top: 2%;
+    box-shadow: var(--shadow-sm);
+    border-bottom: 2px solid var(--teal-600);
+    border-top: 2px solid var(--teal-600);
+}
+.Conteiner5WindowConteinerLeftEditarPerfilConeinerDadosUsuarioBox b{
+    width: 35px;
+    height: 35px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.Conteiner5WindowConteinerLeftEditarPerfilConeinerDadosUsuarioBox b:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.Conteiner5WindowConteinerLeftEditarPerfilConeinerDadosUsuarioBox b svg{
+    width: 30px;
+    height: 30px;
+}
+.Conteiner5WindowConteinerLeftEditarPerfilConeinerDadosUsuarioDadosActuais{
+    width: 100%;
+    height: 50%;
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+    margin-top: 5%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--white);
+}
+.IconeConteinerActual{
+    width: 150px;
+    height: 200px;
+}
+.IconeConteinerActual img{
+    width: 100%;
+    height: 100%;
+}
+.Conteiner_escolha_editar_perfil{
+    position: absolute;
+    width: 100%;
+    height: 60%;
+    top: 0;
+    z-index: 999999999;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+    border-bottom: 4px solid var(--teal-600);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    display: none;
+}
+.Conteiner_escolha_editar_perfil label{
+    width: 150px;
+    height: 150px;
+    background-color: #f1f1f1;
+    border: 8px solid #d2d2d2;
+    border-radius: 50%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    border-style: dotted;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.Conteiner_escolha_editar_perfil label:active{
+    transform: scale(0.9);
+    
+}
+.Conteiner_escolha_editar_perfil label:hover{
+    background-color: #d8d8d8;
+}
+.Conteiner_escolha_editar_perfil button{
+    width: 50%;
+    height: 7vh;
+    border: none;
+    border-radius: 40px;
+    background-color: var(--teal-600);
+    color: var(--white);
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s ease;
+
+}
+.Conteiner_escolha_editar_perfil button:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.contImagemActualizacao{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+
+}
+.contImagemActualizacao img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+@media screen and (max-width: 880px) {
+    .Conteiner5WindowConteinerLeft{
+        width: 100%;
+    }
+}

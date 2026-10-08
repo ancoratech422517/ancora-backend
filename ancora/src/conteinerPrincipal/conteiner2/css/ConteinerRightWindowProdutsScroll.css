@@ -1,0 +1,656 @@
+.ConteinerRightWindowProdutsScroll{
+    width: 100%;
+    height: 90%;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    /* padding: 2%; */
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+
+}
+.ConteinerRightWindowScrollHomeFundoLoja{
+    width: 100%;
+    height: 100%;
+
+}
+.ConteinerRightWindowScrollHomeFundoLoja img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.conteiner_moda{
+    width: 100%;
+    height: 40vh;
+    gap: 10px;
+
+}
+.categoria-section{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-height: 50vh;
+
+}
+.categoria-section h3{
+    margin-left: 2%;
+}
+.categoria-titulo{
+    color: #1f1f1f;
+}
+.categoria-produtos-container{
+    display: flex;
+    overflow-y: scroll;
+    display: flex;
+    flex-wrap: wrap;
+    scrollbar-width: none;
+    width: 100%;
+    gap: 38px;
+    min-height: 100%;
+    padding: 2%;
+}
+.categoria-produtos-containerTodos{
+    overflow-y: scroll;
+    scrollbar-width: none;
+    overflow: hidden;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 38px;
+    padding: 2%;
+
+}
+.ConteinerRightWindowProdutsScrollHome{
+    width: 100%;
+    height: 90vh;
+}
+.ConteinerRightWindowScrollHomeConteudo{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    display: flex;
+}
+.ConteinerRightWindowScrollHomeConteudoBoxLeft{
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 10px;
+    padding: 4%;
+}
+.ConteinerRightWindowScrollHomeConteudoBoxLeft button{
+    width: 200px;
+    height: 5vh;
+    border-radius: 40px;
+    background-color: #E4C590;
+    color: #1f1f1f;
+    border: none;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 600;
+}
+.ConteinerRightWindowScrollHomeConteudoBoxLeft button svg{
+    color: #1f1f1f;
+}
+.ConteinerRightWindowScrollHomeConteudoBoxLeft h1{
+    font-size: 6rem;
+    color: var(--teal-600);
+}
+.ConteinerRightWindowScrollHomeConteudoBoxLeft h1 li{
+    color: var(--white);
+    font-size: 6rem;
+}
+.ConteinerRightWindowScrollHomeConteudoBoxLeft li{
+    color: #e6e6e6;
+    font-size: 1.5rem;
+}
+.ConteinerRightWindowScrollHomeConteudoBoxLeftBtns{
+    width: 80%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 20px;
+
+    margin-top: 3%;
+
+}
+.ConteinerRightWindowScrollHomeConteudoBoxLeftBtns button{
+    height: 8vh;
+    border-radius: 40px;
+    width: 45%;
+    font-size: 1.1em;
+    font-weight:bold;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.ConteinerRightWindowScrollHomeConteudoBoxLeftBtns button:nth-child(2){
+    background-color: transparent;
+    color: var(--white);
+    border: 2px solid var(--white);
+}
+.ConteinerRightWindowScrollHomeConteudoBoxRight{
+    width: 50%;
+    height: 100%;
+}
+.ConteinerRightWindowScrollHomeConteudoBoxRight video{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.ConteinerRightWindowScrolHeroBottom{
+    width: 100%;
+    height: 25vh;
+    background-color: #F1F5F9;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 20px;
+    padding-left: 5%;
+}
+.ConteinerRightWindowScrolHeroBottomBox{
+    width: 20%;
+    height: 100%;
+    display: flex;
+}
+.ConteinerRightWindowScrolHeroBottomIcone{
+    width: 20%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+
+}
+.ConteinerRightWindowScrolHeroBottomIcone svg{
+    width: 30px;
+    height: 30px;
+}
+.ConteinerRightWindowScrolHeroBottomCont{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+}
+.ConteinerRightWindowScrollCategoria{
+    width: 100%;
+    height: 25vh;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 5px;
+    padding-left: 2%;
+}
+.ConteinerRightWindowScrollCategoria h1{
+    font-size: 2.5rem;
+}
+.ConteinerTodasCategoriasDesponiveis{
+    width: 100%;
+    height: 60vh;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-left: 2%;
+    overflow: hidden;
+    overflow-x: scroll;
+    flex-shrink: 0;
+    scrollbar-width: none;
+}
+
+.categoria-destaque-card{
+    width: 23%;
+    display: flex;
+}
+.categoria-destaque-card .Conteiner2RightWindowProdutsCard{
+    width: 100%;
+}
+.categoria-destaque-tag{
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1;
+    margin-top: 5%;
+    margin-right: 5%;
+    background-color: var(--teal-600);
+    color: var(--white);
+    font-weight: 600;
+    border-radius: 400px;
+    padding: 3%;
+}
+.categoria-section{
+    margin-top: 4%;
+}
+.todos-produtos-section {
+
+    margin-top: 60px;
+    padding-top: 40px;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+.categoria-count {
+    font-size: 14px;
+    color: #666;
+    font-weight: 400;
+    margin-left: 8px;
+}
+.ConteinerRightWindowCategoriasText{
+    width: 100%;
+    height: 25vh;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 10px;
+    padding-left: 2%;
+}
+.ConteinerRightWindowCategoriasText b{
+    color: var(--teal-600);
+    display: flex;
+    text-align: center;
+    align-items: center;
+    gap: 5px;
+    font-size: 1.2em;
+    letter-spacing: 1px;
+}
+.ConteinerRightWindowCategoriasText b svg{
+    color: var(--teal-600);
+    width: 25px;
+    height: 25px;
+}
+.ConteinerRightWindowCategoriasText h1{
+    font-size: 3rem;
+}
+.ConteinerRightWindowCategoriasText li{
+    color: var(--gray-500);
+    font-size: 1.1em;
+}
+.carregando_produto{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.carregando_produto b{
+    margin-top: -10%;
+    font-size: 1.3em;
+
+}
+/* INICIO DA FORMATAÇÃO DO CONTEINER DOS COMENTARIO */
+.ConteinerRightWindowProdutosScrollComentario{
+    width: 100%;
+    height: 30vh;
+    margin-top: 2%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background-color: var(--gray-100);
+}
+.ConteinerRightWindowProdutosScrollComentario h1{
+    font-size: 2rem;
+    color: #1f1f1f;
+}
+.ConteinerRightWindowProdutosScrollComentario h1 b{
+    color: var(--teal-600);
+}
+.ConteinerRightWindowProdutosScrollComentario li{
+    color: var(--gray-500);
+    font-size: 1.1em;
+}
+.ConteinerRightWindowProdutosScrollComentarioConteiner{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+    align-items: center;
+    justify-content: space-around;
+    gap: 30px;
+    padding: 2%;
+    background-color: var(--gray-100);
+}
+.ConteinerRightWindowProdutosScrollComentarioConteinerBox{
+    width: 30%;
+    height: 250px;
+    border-radius: 20px;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    padding: 2%;
+}
+.ConteinerRightWindowProdutosScrollComentarioConteinerBoxIconeDados{
+    width: 100%;
+    height: 30%;
+    display: flex;
+    gap: 5px;
+}
+.ConteinerRightWindowProdutosScrollComentarioConteinerBoxIconeDadosIcone{
+    width: 15%;
+    height: 100%;
+
+}
+.ConteinerRightWindowProdutosScrollComentarioConteinerBoxIconeDadosIconeFoto{
+    width: 60px;
+    height: 60px;
+    border: 1px solid red;
+    border-radius: 50%;
+
+}
+.ConteinerRightWindowProdutosScrollComentarioConteinerBoxIconeDadosIconeFoto img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid var(--teal-600);
+}
+.ConteinerRightWindowProdutosScrollComentarioConteinerBoxIconeDadosCont{
+    width: 70%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+}
+.ConteinerRightWindowProdutosScrollComentarioConteinerBoxIconeDadosCont b{
+    font-size: 1.3em;
+    color: var(--teal-600);
+}
+.ConteinerRightWindowProdutosScrollComentarioConteinerBoxIconeDadosContDados{
+    width: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    gap: 20px;
+}
+.ConteinerRightWindowProdutosScrollComentarioConteinerBoxIconeDadosContDados b{
+    color: orange;
+}
+.ConteinerRightWindowProdutosScrollComentarioConteinerBoxIconeDadosContDados li{
+    color: var(--gray-500);
+    font-size: 1.1em;
+
+}
+.ConteinerRightWindowProdutosScrollComentarioConteinerBoxComentarioUser{
+    width: 100%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    align-items: center;
+    font-size: 1.1em;
+    color: #1f1f1f;
+    font-weight: 500;
+    padding: 2%;
+    gap: 10px;
+    font-size: 14px;
+
+}
+
+.ConteinerRightWindowProdutosScrollComentarioConteinerBoxComentarioUser .divUser{
+    display: flex;
+    text-align: left;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 12px;
+
+}
+.ConteinerRightWindowProdutosScrollComentarioConteinerBoxComentarioUser .divUser b{
+    color: #1f1f1f;
+}
+.divBntsUtil {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.divBntsUtil button{
+    width: 70px;
+    height: 3vh;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: .2s ease;
+    border: none;
+}
+.divBntsUtil button:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.divBntsUtil button:nth-child(1){
+    background-color: var(--teal-600);
+    color: var(--white);
+    font-weight: 600;
+}
+.divBntsUtil button:nth-child(2){
+    border: 1px solid #d2d2d2;
+}
+/* INICIO DA FORMATAÇÃO DO CONTEINER DO TRAFEGO PAGO DO CLIENTE */
+.ConteinerProdutosTrafegoPagoCliente{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+
+
+}
+.ConteinerProdutosTrafegoPagoClienteBox{
+    width: 95%;
+    height: 98%;
+    background-color: var(--teal-600);
+    border-radius: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 2%;
+}
+.ConteinerProdutosTrafegoPagoClienteBoxTop{
+    width: 100%;
+    height: 30%;
+    border-radius: 30px 30px 0px 0px;
+    display: flex;
+    justify-content: space-between;
+}
+.ConteinerProdutosTrafegoPagoClienteBoxTopBox1{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 10px;
+}
+.DivBtnTrafego{
+    width: 250px;
+    height: 6vh;
+    border-radius: 40px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: #d2d2d22a;
+    backdrop-filter: blur(10px);
+    color: var(--white);
+}
+.DivBtnTrafego svg{
+    color: var(--white);
+}
+.ConteinerProdutosTrafegoPagoClienteBoxTopBox1 h1{
+    font-size: 3rem;
+    color: var(--white);
+}
+.ConteinerProdutosTrafegoPagoClienteBoxTopBox1 li{
+    color: var(--white);
+    font-size: 1.4em;
+}
+.ConteinerProdutosTrafegoPagoClienteBoxTopBox2{
+    width: 100%;
+    height: 70%;
+    padding: 2%;
+    display: flex;
+    overflow: hidden;
+    overflow-x: scroll;
+    scrollbar-width: none;
+    gap: 40px;
+
+}
+.ConteinerProdutosTrafegoPagoClienteBoxTopBox2Card{
+    width: 32%;
+    height: 100%;
+    border: 1px solid red;
+    border-radius: 20px;
+    flex-shrink: 0;
+}
+@media screen and (max-width: 880px) {
+    .ConteinerRightWindowProdutsScroll .Conteiner2RightWindowProdutsCard{
+        width: 100%;
+        padding: 0;
+    }
+    .categoria-section{
+        min-height: 30vh;
+
+    
+    }
+    .categoria-section h3{
+        margin-left: 2%;
+    }
+    
+    .categoria-produtos-container{
+        padding-top: 3%;
+        padding-left: 2%;
+    }
+    .ConteinerRightWindowProdutsScrollHome{
+        height: 180svh;
+    }
+    .ConteinerRightWindowScrollHomeConteudo{
+        flex-direction: column;
+    }
+
+    .ConteinerRightWindowScrollHomeConteudoBoxLeft{
+        width: 100%;
+        gap: 20px;
+    }
+    .ConteinerRightWindowScrollHomeConteudoBoxLeft h1{
+        font-size: 1.5rem;
+       
+    }
+    .ConteinerRightWindowScrollHomeConteudoBoxLeft h1 li{
+        font-size: 2rem;
+    }
+    .ConteinerRightWindowScrollHomeConteudoBoxRight{
+        width: 100%;
+    }
+    .ConteinerRightWindowScrollHomeConteudoBoxLeftBtns{
+        width: 100%;
+    }
+    .ConteinerRightWindowScrollHomeConteudoBoxLeftBtns button{
+        font-size: 12px;
+    }
+    .ConteinerRightWindowScrollHomeConteudoBoxLeft li{
+        font-size: 1em;
+    }
+    .ConteinerRightWindowScrollHomeConteudoBoxLeft button{
+        height: 6vh;
+        
+    }
+    .ConteinerRightWindowScrolHeroBottom{
+        padding-left: 0%;
+        gap: 1px;
+        height: 17vh;
+    }
+    .ConteinerRightWindowScrolHeroBottomBox{
+        width: 33%;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        
+    }
+    .ConteinerRightWindowScrolHeroBottomCont{
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+        justify-content: center;
+        align-items: center;
+        gap: 2px;
+        width: 100%;
+    }
+    .ConteinerRightWindowScrolHeroBottomCont b{
+        font-size: 10px;
+    }
+    .ConteinerRightWindowScrolHeroBottomCont li{
+        font-size: 9px;
+    }
+    .ConteinerTodasCategoriasDesponiveis{
+        overflow: hidden;
+        overflow-x: scroll;
+        scrollbar-width: none;
+        gap: 100px;
+        display: flex;
+        flex-wrap: nowrap;
+     
+
+    }
+    .ConteinerTodasCategoriasDesponiveis .Conteiner2RightWindowProdutsCard{
+        min-width: 170px;
+        flex-shrink: 0;
+    }
+    .ConteinerRightWindowCategoriasText h1{
+        font-size: 18px;
+    }
+    .ConteinerRightWindowCategoriasText li{
+        font-size: 14px;
+    }
+    .categoria-section{
+        margin-top: 10%;
+    }
+    .ConteinerTodasCategoriasDesponiveis{
+        height: 40vh;
+    }
+    .ConteinerRightWindowScrollCategoria h1{
+        font-size: 1.3em;
+    }
+    .ConteinerRightWindowProdutosScrollComentario{
+        padding: 3%;
+        
+    }
+    .ConteinerRightWindowProdutosScrollComentario h1{
+        font-size: 16px;
+    }
+    .ConteinerRightWindowProdutosScrollComentario li{
+        font-size: 10px;
+    }
+    .ConteinerRightWindowProdutosScrollComentarioConteiner {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .ConteinerRightWindowProdutosScrollComentarioConteinerBox{
+        width: 100%;
+        height: 200px;
+    }
+    .ConteinerRightWindowProdutosScrollComentarioConteinerBoxComentarioUser{
+        font-size: 11px;
+    }
+    .divUser b{
+        font-size: 10px;
+    }
+    .divBntsUtil button{
+        height: 6vh;
+    }
+
+}

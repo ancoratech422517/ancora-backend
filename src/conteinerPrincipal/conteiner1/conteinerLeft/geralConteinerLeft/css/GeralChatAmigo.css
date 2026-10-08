@@ -1,0 +1,92 @@
+.GeralChatAmigo{
+    width: 100%;
+    height: 100%;
+}
+.GeralChatAmigoMenu{
+    width: 100%;
+    height: 17%;
+    display: flex;
+    flex-direction: column;
+    
+  
+}
+.GeralChatAmigoMenuBox:nth-child(1){
+    width: 100%;
+    height: 40%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 4%;
+}
+.GeralChatAmigoMenuBoxCaxa1 button{
+    width: 35px;
+    height: 35px;
+    border: none;
+    transition: .2s ease;
+    cursor: pointer;
+    border-radius: 10px;
+}
+.GeralChatAmigoMenuBoxCaxa1 button svg{
+    width: 27px;
+    height: 27px;
+}
+.GeralChatAmigoMenuBoxCaxa2{
+    width: 60%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+
+}
+.GeralChatAmigoMenuBox:nth-child(2){
+    width: 100%;
+    height: 60%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.GeralChatAmigoMenuBox:nth-child(2) input{
+    width: 90%;
+    height: 6vh;
+    border: none;
+    border-radius: 20px;
+    background-color: var(--gray-50);
+    border: 1px solid #d2d2d2;
+    padding-left: 4%;
+    outline-width: 1px solid;
+    outline: none;
+}
+.GeralChatAmigoConteinerScroll{
+    width: 100%;
+    height: 83%;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+@media screen and (max-width: 700px) {
+
+    .GeralChatAmigoMenu{
+        height: 22%;
+    }
+    .GeralChatAmigoMenuBox:nth-child(1){
+        height: 60%;
+    }
+    .GeralChatAmigoMenuBox:nth-child(2){
+        height: 25%;
+    }
+    .GeralChatAmigoMenuBox:nth-child(2) input{
+        height: 7.4vh;
+    }
+    .GeralChatAmigoConteinerScroll{
+        height: 78%;
+    }
+
+
+    
+}

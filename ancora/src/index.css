@@ -1,0 +1,125 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style: none;
+  position: relative;
+  scrollbar-width: none;
+
+}
+html{
+  height: 100%;
+}
+body{
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+:root {
+  /* Colors */
+  --teal-50:  #f0fdfa;
+  --teal-100: #ccfbf1;
+  --teal-200: #99f6e4;
+  --teal-400: #2dd4bf;
+  --teal-500: #14b8a6;
+  --teal-600: #0d9488;
+  --teal-700: #0f766e;
+  --teal-900: #134e4a;
+
+  --gray-50:  #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-700: #374151;
+  --gray-900: #111827;
+
+  --white: #ffffff;
+  --black: #0a0a0a;
+
+  /* Semantic */
+  --primary:      var(--teal-500);
+  --primary-dark: var(--teal-600);
+  --primary-light: var(--teal-100);
+  --accent:       var(--gray-900);
+  --surface:      var(--white);
+  --surface-2:    var(--gray-50);
+  --surface-3:    var(--gray-100);
+  --border:       var(--gray-200);
+  --text-primary: var(--gray-900);
+  --text-secondary: var(--gray-500);
+  --text-muted:   var(--gray-400);
+
+  /* Layout */
+  --sidebar-w: 72px;
+  --conv-w:    320px;
+  --store-panel-w: 280px;
+
+  /* Misc */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.04);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,.12), 0 4px 12px rgba(0,0,0,.06);
+  --shadow-teal: 0 8px 24px rgba(20,184,166,.28);
+  --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+body{
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface-2);
+}
+svg{
+  width: 20px;
+  height: 20px;
+  color: var(--gray-400);
+
+}
+.active {
+  background-color: var(--teal-500);
+  color: var(--white);
+  box-shadow: var(--shadow-teal);
+}
+.active svg{
+  color: var(--white);
+}
+.active:hover{
+  background: var(--teal-500);
+}
+p{
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+h1,h2,h3,h4 { 
+  
+  font-family: 'Syne', sans-serif; 
+  font-weight: 700; 
+  line-height: 1.2;
+
+}
+button {
+  background-color: transparent;
+}
+.dadosActive{
+    border-left: 2px solid var(--teal-500);
+    background-color: var(--teal-50);
+}
+#root{
+  height: 100%;
+
+}
+.pontoDosPonto{
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: var(--teal-600);
+  border: 2px solid var(--white);
+  bottom: 0;
+  right: 0;
+}

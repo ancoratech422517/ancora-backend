@@ -1,0 +1,574 @@
+.GeralChatEstadoUser{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    padding: 2%;
+    gap: 5px;
+    background-color: var(--white);
+    z-index: 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999;
+}
+.GeralChatEstadoUserFotoUser{
+    width: 100px;
+    height: 100px;
+    background-color: #f1f1f1;
+    border-radius: 50%;
+}
+.GeralChatEstadoUserFotoUser img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    /* border: 3px solid var(--teal-600); */
+}
+.GeralChatEstadoUser h3{
+    width: 40%;
+    height: 4vh;
+}
+ .GeralChatEstadoUser i{
+    width: 10px;
+    height: 10px;
+    background-color: var(--teal-600); 
+    position: absolute;
+    bottom: 52%;
+    right: 2%;
+    border-radius: 50%;
+
+}
+.GeralChatEstadoUserSect1{
+    width: 100%;
+    height: 10vh;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+}
+.GeralChatEstadoUserSect1Caxa{
+    width: 23%;
+    height: 90%;
+    background-color: #f1f1f1;
+    border: 1px solid #d2d2d2;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: .2s ease;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.GeralChatEstadoUserSect1Caxa:hover{
+    border: 1px solid var(--teal-600);
+}
+.GeralChatEstadoUserSect1Caxa svg{
+    width: 28px;
+    height: 28px;
+    transition: .2s ease;
+}
+.GeralChatEstadoUserSect1Caxa:hover svg{
+    color: var(--teal-600);
+    transition: .2s ease;
+    transform: scale(1.1);
+}
+.GeralChatEstadoUserSect1Caxa:active{
+    transform: scale(0.9);
+}
+.GeralChatEstadoUserSetc2{
+    width: 100%;
+    height: 68%;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 11px;
+    
+}
+.GeralChatEstadoUserSetc2Dados{
+    width: 31.5%;
+    height: 31.5%;
+    transition: .2s ease;
+    cursor: pointer;
+}
+.GeralChatEstadoUserSetc2Dados:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.GeralChatEstadoUserSetc2DadosMenuTop{
+    width: 100%;
+    height: 20%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.GeralChatEstadoUserSetc2DadosMenuTop svg{
+    color: var(--teal-600);
+}
+.GeralChatEstadoUserSetc2DadosConteinerFile{
+    width: 100%;
+    height: 80%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    background-color: rgba(2, 223, 223, 0.144);
+    color: black;
+    font-size: 14px;
+
+}
+.GeralChatEstadoUserSetc2DadosConteinerFile em{
+    padding: 2%;
+}
+.GeralChatEstadoUserSetc2DadosConteinerFile img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.GeralChatEstadoUserSetc2DadosConteinerFile video{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.GeralChatEstadoUser h2{
+    margin-top: 2%;
+}
+/* inicio da formatação do conteier de adicionar dados no estado */
+.GeralChatEstadoUserAdd{
+    width: 80%;
+    height: 60%;
+    background-color: var(--white);
+    border: 2px solid var(--teal-600);
+    border-radius: 10px;
+    position: absolute;
+    top: 20%;
+    right: 10%;
+}
+/* .inicio da formatação do conteiner de adicionar estado de texto */
+.GeralChatEstadoUserAddTexto{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--gray-100);
+    border-radius: 10px;
+
+}
+.GeralChatEstadoUserAddTexto textarea {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    font-size: 1.5rem;
+    color: #1f1f1f;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    padding: 5%;
+    overflow-x:visible;
+    max-width: 500px; /* define a largura máxima do texto */
+    word-wrap: break-word;
+    resize: none;
+}
+.GeralChatEstadoUserAddTextoGet{
+    width: 100%;
+    height: 85%;
+    border-radius: 10px 10px 0px 0px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    align-items: center;
+    justify-content: center;
+    padding: 2%;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+  
+
+}
+.GeralChatEstadoUserAddTextoGetIDTexto{
+
+    background-color: black;
+    color: var(--white);
+    font-size: 1.5em;
+    border-radius: 12px;
+
+    
+}
+.GeralChatEstadoUserAddTextoInput{
+    width: 100%;
+    height: 15%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-top: 1px solid #d2d2d2;
+}
+.GeralChatEstadoUserAddTextoInput input{
+    width: 60%;
+    height: 6vh;
+    border: 1px solid #d2d2d2;
+    background-color: var(--white);
+    border-radius: 10px;
+    outline-color: var(--teal-600);
+    padding-left: 4%;
+}
+.GeralChatEstadoUserAddTextoInput button{
+    width: 30%;
+    height: 6vh;
+    background-color: var(--teal-600);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.GeralChatEstadoUserAddTextoInput button:hover{
+    transition: .2s ease;
+}
+.GeralChatEstadoUserAddTextoInput button:active{
+    transform: scale(0.9);
+}
+.GeralChatEstadoUserAddResposta{
+    width: 50%;
+    height: 5vh;
+    background-color: var(--teal-600);
+    border: 1px solid var(--teal-200);
+    color: var(--white);
+    border-radius: 7px;
+    position: absolute;
+    top: 2%;
+    right: 40%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999999999999999999999999999;
+    box-shadow: inset 0px 0px 5px 1px #11111122;
+    animation: animaRespostaEstado .5s ease;
+}
+.MostrarLoadingEstadoView{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    z-index: 9999999;
+}
+.GeralChatEstadoUserAddCancelar{
+    position: absolute;
+    top: 2%;
+    right: 5%;
+    background-color: var(--teal-600);
+    color: var(--white);
+    width: 100px;
+    height: 5vh;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: .2s ease;
+    z-index: 9999999999999999999999;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+.GeralChatEstadoUserAddCancelar:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+    
+}
+@keyframes animaRespostaEstado {
+    0%{
+        margin-top: -10%;
+    }
+    100%{
+        margin-top: 0%;
+    }
+}
+.GeralChatEstadoUserAddMusica{
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    background-color: #f1f1f1;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.GeralChatEstadoUserAddMusica label{
+    width: 80%;
+    height: 6vh;
+    background-color: var(--teal-600);
+    color: var(--white);
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: .2s ease;
+    font-weight: 600;
+}
+.GeralChatEstadoUserAddMusica label:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.GeralChatEstadoUserAddMusica input{
+    width: 80%;
+    height: 6vh;
+    background-color: var(--white);
+    padding-left: 2%;
+    border: 1px solid #d2d2d2;
+    border-radius: 5px;
+    outline-color: var(--teal-600);
+
+}
+.GeralChatEstadoUserAddMusica button{
+    width: 80%;
+    height: 6vh;
+    background-color: var(--teal-600);
+    color: var(--white);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: .2s ease;
+    border: none;
+}
+.GeralChatEstadoUserAddMusica button:active{
+    transform: scale(0.9);
+    transition: .2s ease;
+}
+.GeralChatEstadoUserAddMusica p svg{
+    width: 40px;
+    height: 40px;
+}
+.conteiner_descricao_musica{
+    width: 80%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.conteiner_descricao_musica p{
+    width: fit-content;
+    height: fit-content;
+    background-color: #1f1f1f;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    border-radius: 15px;
+    font-weight: 600;
+    padding: 2%;
+    line-height: 22px;
+    letter-spacing: 2px;
+}
+.GeralChatEstadoUserSetc2DadosConteinerFile audio{
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    border: 1px solid red;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+}
+
+
+/* INICIO DA FORMATAÇÃO DO CONTEINER DE ADICIONAR IMAGEM */
+.GeralChatEstadoUserAddImagem{
+    width: 100%;
+    height: 100%;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.GeralChatEstadoUserAddImagem p svg{
+    width: 50px;
+    height: 50px;
+}
+.GeralChatEstadoUserAddImagem label {
+    width: 80%;
+    height: 6vh;
+    background-color: var(--teal-600);
+    color: var(--white);
+    font-weight: 600;
+    border-radius: 10px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.GeralChatEstadoUserAddImagem label:active{
+    transform: scale(0.9);
+}
+.GeralChatEstadoUserAddImagem input{
+    width: 80%;
+    height: 6vh;
+    background-color: var(--white);
+    border: 1px solid #d2d2d2;
+    padding-left: 2%;
+    border-radius: 10px;
+    outline-color: var(--teal-600);
+
+}
+.GeralChatEstadoUserAddImagem button{
+    width: 80%;
+    height: 6vh;
+    background-color: var(--teal-600);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: .2s ease;
+    font-weight: 600;
+}
+.GeralChatEstadoUserAddImagem button:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.GeralChatEstadoUserAddImagemTexto{
+    width: 80%;
+    /* display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center; */
+}
+.GeralChatEstadoUserAddImagemTexto span{
+            /* Cor do texto e do fundo */
+            background-color: black;
+            color: white;
+            
+            /* Espaçamento interno opcional para dar respiro, igual à seleção */
+            padding: 2%;
+            
+            /* A mágica acontece aqui: */
+            -webkit-box-decoration-break: clone;
+            /* box-decoration-break: clone; */
+            
+            /* Estilos adicionais de fonte (opcional) */
+            border-radius: 10px;
+            /* font-size: 24px; */
+            line-height: 22px; /* Ajuda a separar as linhas visualmente */
+            
+}
+.GeralChatEstadoUserAddVideo{
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    background-color: #f1f1f1;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+
+}
+
+.GeralChatEstadoUserAddVideo li svg{
+    width: 60px;
+    height: 60px;
+}
+.GeralChatEstadoUserAddVideo label{
+    width: 80%;
+    height: 6vh;
+    background-color: var(--teal-600);
+    color: var(--white);
+    border-radius: 10px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    
+}
+.GeralChatEstadoUserAddVideo input{
+    width: 80%;
+    height: 6vh;
+    border: none;
+    outline-color: var(--teal-600);
+    padding-left: 2%;
+    border-radius: 10px;
+    border: 1px solid #d2d2d2;
+}
+.GeralChatEstadoUserAddVideo button{
+    width: 80%;
+    height: 6vh;
+    background-color: var(--teal-600);
+    color: var(--white);
+    cursor: pointer;
+    transition: .2s ease;
+    border: none;
+    border-radius: 10px;
+}
+.GeralChatEstadoUserAddVideo button:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.GeralChatEstadoUserAddVideospan{
+    width: 80%;
+}
+.GeralChatEstadoUserAddVideospan span{
+    background-color: #1f1f1f;
+    -webkit-box-decoration-break: clone;
+    color: var(--white);
+    border-radius: 10px;
+    padding: 2%;
+    line-height: 22px;
+}
+.GeralChatEstadoUserVoltar{
+    width: 60px;
+    height: 60px;
+    /* border: 1px solid red; */
+    border-radius: 50%;
+    position: absolute;
+    top: 2%;
+    left: 5%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    
+}
+.GeralChatEstadoUserVoltar svg{
+    width: 45px;
+    height: 45px;
+    cursor: pointer;
+    transition: .2s ease;
+    
+}
+.GeralChatEstadoUserVoltar svg:active{
+    transform: scale(0.8);
+    transition: .2s ease;
+}
+@media screen and (max-width: 700px) {
+
+    .GeralChatEstadoUser{
+        height: 100%;
+        gap: 15px;
+    }
+    .GeralChatEstadoUserSetc2Dados{
+        width: 32.5%;
+    }
+    .GeralChatEstadoUserSetc2{
+        gap: 4px;
+    }
+}

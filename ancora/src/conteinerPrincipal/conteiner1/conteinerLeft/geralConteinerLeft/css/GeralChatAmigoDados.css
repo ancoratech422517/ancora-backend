@@ -1,0 +1,150 @@
+.GeralChatAmigoDados{
+    width: 100%;
+    height: 15%;
+    border-radius: 10px;
+    margin: 0% auto;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 15px;
+    padding: 2%;
+    padding-left: 5%;
+    cursor: default;
+    transition: .2s ease;
+    
+}
+.GeralChatAmigoDados:hover{
+    transition: .2s ease;
+    background-color: var(--gray-50);
+}
+.GeralChatAmigoDadosIcone{
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+}
+.GeralChatAmigoDadosIconeBox{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+.GeralChatAmigoDadosIconeBox img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--teal-600);
+    
+}
+.GeralChatDadosText{
+    width: 70%;
+    height: 70px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 4px;
+}
+.GeralChatDadosText b{
+    font-weight: 500;
+    font-size: 17px;
+}
+.GeralChatDadosTextBtns{
+    display: flex;
+    text-align: left;
+    gap: 10px;
+}
+.GeralChatDadosTextBtns button{
+    width: 45%;
+    height: 4.5vh;
+    border: 1px solid #d2d2d2;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: .2s ease;
+}
+.GeralChatDadosTextBtns button:active{
+    transform: scale(0.8);
+}
+.GeralChatDadosTextBtns button:nth-child(2){
+    background-color: var(--teal-600);
+    color: var(--white);
+    border: none;
+}
+.GeralChatDadosText li{
+    color: var(--gray-500);
+    font-size: 12px;
+
+}
+.GeralChatAmigobtn{
+    width: 35%;
+    height: 70px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+
+}
+.GeralChatAmigobtn button{
+    width: 180px;
+    height: 5.5vh;
+    border: none;
+    background-color: var(--teal-600);
+    color: var(--white);
+    font-size: 16px;
+    cursor: pointer;
+    transition: .2s ease;
+    border-radius: 10px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.GeralChatAmigobtn button:hover{
+    transition: .2s ease;
+
+}
+.GeralChatAmigobtn button:active{
+    transform: scale(0.9);
+}
+.GeralChatAmigobtn button svg{
+    width: 20px;
+    height: 20px;
+    color: var(--white);
+}
+.GeralChatAmigoDadosresposta{
+    width: 40%;
+    padding: 2%;
+    border-radius: 7px;
+    background-color: var(--teal-600);
+    color: var(--white);
+    cursor: default;
+    transition: .2s ease;
+    position: absolute;
+    top: 0;
+    left: 40%;
+    display: none;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.GeralChatAmigoDadosresposta svg{
+    width: 20px;
+    height: 20px;
+    color: var(--white);
+}
+@media screen and (max-width: 700px) {
+    .GeralChatAmigoDados{
+    height: 20%;
+}
+}

@@ -1,0 +1,32 @@
+.Contener3WindowRight{
+    width: 100%;
+    height: 100%;
+
+}
+.Conteiner3WindowRightMenuTop{
+    width: 100%;
+    height: 10%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 20px;
+    padding-left: 3%;
+    background-color: var(--white);
+    padding-top: 3%;
+    z-index: 999999999;
+}
+.Conteiner3WindowRightMenuTop button{
+    width: 200px;
+    height: 8vh;
+    border-radius: 40px;
+    background-color: var(--teal-600);
+    color: var(--white);
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s ease;
+    border: none;
+}
+.Conteiner3WindowRightMenuTop button:active{
+    transform: scale(0.95);
+    transition: .2s ease;
+}
