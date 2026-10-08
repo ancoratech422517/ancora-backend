@@ -6,10 +6,10 @@ import ConteinerRightMenuBottom from "./ConteinerRightMenuBottom";
 import { useUserStore } from "../../../useUseSotore";
 import ConteinerRightLive from "./ConteinerRightLive.jsx";
 import IMGPERFIL from "../../../assets/IMGPERFIL.png";
-import CHAT from "../../../aaicone/chat.png";
-import Notificacao from "../../../aaicone/notificacao.png";
-import Loja from "../../../aaicone/loja.png";
-import CursoVideo from "../../../aaicone/cursoVideo.png";
+import CHAT from "../../../assets/chat.png"
+import Notificacao from "../../../assets/notificacao.png";
+import Loja from "../../../assets/loja.png";
+import CursoVideo from "../../../assets/cursoVideo.png";
 
 export default function ConteinerRight({ ativarConteiner }) {
     const { ChatAtivo , MostrarChat , estado_conteiner_live , Dados_Live_Ancora} = useUserStore();
