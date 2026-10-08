@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "../css/GeralChatEstadoViewDateVideo.css"
-import TesteVideo from "../../../../../assets/video2.mp4"
 import SetaEsquerda from "../../../../components/conteinerSvg/setaEsquerda";
 import { useUserStore } from "../../../../../useUseSotore";
 export default function GeralChatEstadoViewDateVideo (){

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "../css/GeralChatEstadoViewDateImagem.css"
-import IMGTESTE from "../../../../../assets/img2.jpg"
 import SetaEsquerda from "../../../../components/conteinerSvg/setaEsquerda";
 import { useUserStore } from "../../../../../useUseSotore";
 export default function GeralChatEstadoViewDateImagem (){

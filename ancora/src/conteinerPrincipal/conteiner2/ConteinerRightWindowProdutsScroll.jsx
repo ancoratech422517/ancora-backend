@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import "./css/ConteinerRightWindowProdutsScroll.css"
 import Conteiner2RightWindowProdutsCard from "./Conteiner2RightWindowProdutsCard";
 import Loja from "../../assets/loja.jfif"
-import Mascote from "../../assets/mascote2.webm"
 import { useUserStore } from "../../useUseSotore";
 import Loading3 from "../components/conteinerComponentesJsx/loading3";
 import Conteiner2RightWindowProdutoCardComentarioUsuario from "./Conteiner2RightWindowProdutoCardComentarioUsuario";
