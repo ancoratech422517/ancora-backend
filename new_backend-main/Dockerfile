@@ -5,7 +5,8 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # 3. Copia o arquivo de dependências primeiro (otimiza o cache do Docker)
-COPY backend/requirements.txt .
+COPY new_backend-main
+/requirements.txt .
 
 # 4. Instala as dependências
 RUN pip install --no-cache-dir -r requirements.txt
