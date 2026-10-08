@@ -4,7 +4,6 @@ import ConteinerRightMenuTop from "./conteinerRightMenuTop";
 import ConteinerRightWindowMenssage from "./conteinerRightWindowMenssage";
 import ConteinerRightMenuBottom from "./ConteinerRightMenuBottom";
 import { useUserStore } from "../../../useUseSotore";
-import Logo from "../../../assets/img1.jpg";
 import ConteinerRightLive from "./ConteinerRightLive.jsx";
 import IMGPERFIL from "../../../assets/IMGPERFIL.png";
 import CHAT from "../../../aaicone/chat.png";

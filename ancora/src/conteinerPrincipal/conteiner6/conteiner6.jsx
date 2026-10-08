@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "./css/Conteiner6.css"
-import FundoLogin from "../../assets/fundoLogin4.png"
 import Conteiner6WindowBoxLogin from "./.Conteiner6WindowBoxLogin";
 import Conteiner6WindowBoxRegistro from "./Conteiner6WindowBoxRegistro";
 import Video from "../../assets/fundo-chat.jpg"

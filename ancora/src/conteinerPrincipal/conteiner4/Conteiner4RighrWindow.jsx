@@ -6,7 +6,6 @@ import Conteiner4RighrWindowMenuTop from "./Conteiner4RightWindowMenuTop";
 import Conteiner4CoteinerCliente from "./Conteiner4ConteinerCliente";
 import Conteiner4ConteinerAfifliado from "./Conteiner4ConteinerAfiliado";
 import Conteiner4ConteinerLucro from "./Conteiner4ConteinerLucro";
-import Logo2 from "../../assets/logo2.png"
 import Capa from "../../assets/fundoLogin.jpg"
 import Erro from "../components/conteinerSvg/erro";
 import { Registrar_produto } from "./js/registrar_produto";
