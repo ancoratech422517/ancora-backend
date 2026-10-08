@@ -1,3 +1,5 @@
+gevent
+gevent-websocket
 gunicorn
 uvicorn
 flask
