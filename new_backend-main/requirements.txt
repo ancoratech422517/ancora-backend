@@ -14,4 +14,4 @@ flask-migrate
 cryptography
 PyJWT
 livekit-api
-
+packaging
