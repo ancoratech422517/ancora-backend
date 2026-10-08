@@ -133,7 +133,7 @@ CORS(app, resources={r"/*": {
         "http://192.168.11.1",
         "http://192.168.11.1:5173",
         "http://10.140.176.115:5173",
-        "https://ancora-ecommerc-tawny.vercel.app/"
+        "https://ancora-ecommerc-tawny.vercel.app"
 
     ],
     "supports_credentials": True,
@@ -146,7 +146,7 @@ CORS(app, resources={r"/*": {
 def after_request(response):
     origin = response.headers.get('Access-Control-Allow-Origin')
     if not origin:
-        response.headers.add('Access-Control-Allow-Origin', 'https://ancora-ecommerc-tawny.vercel.app/')
+        response.headers.add('Access-Control-Allow-Origin', 'https://ancora-ecommerc-tawny.vercel.app')
         #response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
