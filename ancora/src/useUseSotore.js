@@ -2,8 +2,8 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { io } from 'socket.io-client'
 import { fetchComAuth } from './utils/api'
-let url2 = "https://backend-1-g6ty.onrender.com"
-let url = "http://127.0.0.1:5000"
+let url = "https://ancora-backend-09zc.onrender.com"
+let url2 = "http://127.0.0.1:5000"
 export const useUserStore = create(
   
   persist( 
