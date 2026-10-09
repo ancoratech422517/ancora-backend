@@ -37,11 +37,11 @@ def GETDATEUSERADD():
         ).count()
 
         dados_turma = Turma_Aula.query.filter(
-            Turma_Aula.id_aluno_Turma == id_usuario
+            Turma_Aula.id_aluno_Turma == str(id_usuario)
         ).all()
 
         TotalTurmaUsuario = Turma_Aula.query.filter(
-            Turma_Aula.id_aluno_Turma == id_usuario
+            Turma_Aula.id_aluno_Turma == str(id_usuario)
         ).count()
 
         if dados_usuario:
