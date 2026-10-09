@@ -12,7 +12,7 @@ def ConvidarUsuarioTurma():
         nome_Turma = dados.get("nome_Turma")
 
         dados_turma_actual = Turma_Aula.query.filter(
-            Turma_Aula.id == id_turma
+            Turma_Aula.id == int(id_turma)
         ).first()
 
 
