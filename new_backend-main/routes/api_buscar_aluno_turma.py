@@ -8,12 +8,12 @@ def buscar_aluno_turma(nome_Turma , id_admin_Turma):
     try:
         buscar_os_alunos = Turma_Aula.query.filter(
             Turma_Aula.nome_Turma == nome_Turma,
-            Turma_Aula.id_admin_Turma == int(id_admin_Turma)
+            Turma_Aula.id_admin_Turma == str(id_admin_Turma)
         ).all()
         
         total_de_alunos =  Turma_Aula.query.filter(
             Turma_Aula.nome_Turma == nome_Turma,
-            Turma_Aula.id_admin_Turma == int(id_admin_Turma)
+            Turma_Aula.id_admin_Turma == str(id_admin_Turma)
         ).count()
 
         if not buscar_os_alunos:
