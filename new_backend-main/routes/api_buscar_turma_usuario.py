@@ -14,7 +14,7 @@ def buscar_turma_usuario(userId):
             imagem_turma = Turma_Aula.query.filter(
                 Turma_Aula.tipo_usuario_Turma == "admin",
                 Turma_Aula.nome_Turma == turma.nome_Turma,
-                Turma_Aula.id_admin_Turma == str(turma.id_admin_Turma)
+                Turma_Aula.id_admin_Turma == turma.id_admin_Turma
             ).first()
 
             imagem_atual = imagem_turma.imagem_perfil_Turma
