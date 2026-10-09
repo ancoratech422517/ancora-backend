@@ -1,3 +1,4 @@
+from datetime import datetime
 from models.database import Amigo, Menssagens, Usuario
 from routes.websoket_conectUser import usuarios_online
 
@@ -58,16 +59,19 @@ class Meus_amigos:
           "HoraMenssagem": HoraMenssagem,
       })
 
-    # --- ORDENAÇÃO PELO MAIS RECENTE ---
-    # Coloca no topo quem tem a HoraMenssagem mais recente (decrescente).
-    # Usamos uma data mínima (datetime.min) para quem nunca enviou mensagem ir para o final.
-    from datetime import datetime
+    # --- ORDENAÇÃO PELO MAIS RECENTE (SEGURA) ---
+    def parse_data(item):
+      val = item["HoraMenssagem"]
+      if val is None:
+        return datetime.min
+      # Se por acaso vier como string, converte para datetime de forma segura
+      if isinstance(val, str):
+        try:
+          return datetime.fromisoformat(val.replace("Z", "+00:00"))
+        except ValueError:
+          return datetime.min
+      return val
 
-    lista_amigo.sort(
-        key=lambda x: x["HoraMenssagem"]
-        if x["HoraMenssagem"] is not None
-        else datetime.min,
-        reverse=True,
-    )
+    lista_amigo.sort(key=parse_data, reverse=True)
 
     return lista_amigo
