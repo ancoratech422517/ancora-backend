@@ -161,7 +161,7 @@ class Cliente_vendedor(db.Model):
 class Turma_Aula (db.Model):
     __tablename__ = "Turma_Aula"
     id = db.Column(db.Integer , primary_key = True)
-    id_admin_Turma = db.Column(db.Integer  , default = "none")
+    id_admin_Turma = db.Column(db.Text  , default = "none")
     nome_Turma = db.Column(db.Text  , default = "None")
     tipo_usuario_Turma = db.Column(db.Text  , default = "None")
     id_aluno_Turma = db.Column(db.Text  , default = "None")
