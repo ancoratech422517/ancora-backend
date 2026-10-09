@@ -20,6 +20,7 @@ def ConvidarUsuarioTurma():
             Amizade.id_turma_convite == str(id_turma),
             Amizade.destinatario_id == int(id_convidado)
         ).first()
+        
 
         if turma_convite_existente:
             print("vc ja fez um convite para este usuario")
