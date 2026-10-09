@@ -45,7 +45,7 @@ export default function Conteiner4RightWindow () {
                             <Erro />
                         </div>
                         <div className="novo_produto_inputs_logo">
-                            <img src={Logo2} alt="" />
+                            
                         </div>
                         
                         <input id="nome" type="text" placeholder="Nome do produto" />
