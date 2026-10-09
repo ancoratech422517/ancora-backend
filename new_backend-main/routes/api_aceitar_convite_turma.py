@@ -22,7 +22,7 @@ def aceitar_convite_turma():
             return jsonify({"resposta": "erro", "erro": "Tipo de notificacao invalido."}), 400
 
         turma = Turma_Aula.query.filter(
-            Turma_Aula.id == id_turma_convite
+            Turma_Aula.id == int(id_turma_convite)
         ).first()
         if not turma:
             return jsonify({"resposta": "erro", "erro": "Turma nao encontrada."}), 404
@@ -32,7 +32,7 @@ def aceitar_convite_turma():
         destinatario_id = id_admin if tipo_notificacao == "solicitacao" else id_usuario
         notificacao = Amizade.query.filter(
             Amizade.id == id_notificacao,
-            Amizade.destinatario_id == destinatario_id,
+            Amizade.destinatario_id ==int( destinatario_id),
             Amizade.id_turma_convite == str(id_turma_convite),
             Amizade.tipo_notificacao == tipo_notificacao
         ).first()
