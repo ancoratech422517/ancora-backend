@@ -18,7 +18,7 @@ def ConvidarUsuarioTurma():
 
         turma_convite_existente = Amizade.query.filter(
             Amizade.id_turma_convite == str(id_turma),
-            Amizade.destinatario_id == str(id_convidado)
+            Amizade.destinatario_id == int(id_convidado)
         ).first()
 
         if turma_convite_existente:
