@@ -13,9 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 5. Copia o restante do código do projeto para dentro do container
 COPY . .
 
-# 6. Expõe a porta que o container vai usar (a Northflank vai ler isso)
+# 6. Expõe a porta que o container vai usar
 EXPOSE 5000
 
-# 7. Comando para rodar a aplicação (ajuste para o seu arquivo principal)
-# Se usar WebSockets/Socket.IO com Eventlet/Gevent, o Gunicorn gerencia isso bem:
-CMD ["gunicorn", "-k", "geventwebsocket.gunicorn.workers.GeventWebSocketWorker", "-w", "1", "app:app"]
+# 7. Comando otimizado para Gunicorn com logs ativados no console
+CMD ["gunicorn", "-k", "geventwebsocket.gunicorn.workers.GeventWebSocketWorker", "-w", "1", "--access-logfile", "-", "--error-logfile", "-", "--log-level", "info", "app:app"]
