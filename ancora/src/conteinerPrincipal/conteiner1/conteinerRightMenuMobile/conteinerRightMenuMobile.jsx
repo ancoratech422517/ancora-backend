@@ -159,11 +159,9 @@ export default function ConteinerRightMenuMobile () {
     
     if (Number(id_admin_turma) === Number(dadosUsuario?.id)){
         mostrar = true
-        alert("mostrar")
     }
     else{
         mostrar = false
-        alert("não mostrar")
     }
     
     const condicaoBotaoAdminVies = ()=>{
