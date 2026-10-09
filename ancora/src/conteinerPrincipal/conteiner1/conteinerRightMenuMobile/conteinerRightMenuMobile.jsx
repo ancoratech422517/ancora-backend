@@ -157,7 +157,7 @@ export default function ConteinerRightMenuMobile () {
         id_admin_turma = item.id_admin_turma
     })
     
-    if (Number(id_admin_turma) === Number(dadosUsuario?.id){
+    if (Number(id_admin_turma) === Number(dadosUsuario?.id)){
         mostrar = true
         alert("mostrar")
     }
