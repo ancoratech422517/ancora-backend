@@ -18,3 +18,4 @@ EXPOSE 5000
 
 # 7. Comando otimizado para Gunicorn com logs ativados no console
 CMD ["gunicorn", "-k", "geventwebsocket.gunicorn.workers.GeventWebSocketWorker", "-w", "1", "--access-logfile", "-", "--error-logfile", "-", "--log-level", "info", "app:app"]
+
