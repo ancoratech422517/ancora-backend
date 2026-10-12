@@ -292,7 +292,7 @@ export default function ConteinerRightWindowProdutsScroll ({ pesquisaProduto = "
                             Todos os Produtos
                             <span className="categoria-count">({TodosProdutos.length})</span>
                         </h3>
-                        <div className=" categoria-produtos-containerTodos">
+                        <div className="categoria-produtos-containerTodos">
                             {TodosProdutos.map((item, index) => (
                                 <Conteiner2RightWindowProdutsCard
                                     key={item.id || `todos-${index}`}

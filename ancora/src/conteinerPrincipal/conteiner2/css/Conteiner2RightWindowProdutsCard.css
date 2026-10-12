@@ -154,13 +154,22 @@
 @media screen and (max-width: 700px) {
     .Conteiner2RightWindowProdutsCard{
         width: 80%;
-        height: 50vh;
+        height: 80vh;
         background-color: transparent;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background-color: var(--white);
+        
+        
+        
     
     }
     .dadosCard{
-        padding-top: 5%;
+        padding-top: 3%;
         gap: 3px;
+        height: 17%;
+    
         
     }
     .dadosCard h4{
@@ -178,4 +187,17 @@
     .dadosCard b{
         font-size: 12px;
     }
+    .ImageCard{
+        height: 70%;
+    }
+    .categoria-produtos-containerTodos{
+        padding: 0%;
+    }
+    .menu_reacao_produto{
+        height: 13%;
+    }
+    .categoria-produtos-container{
+        padding: 0%;
+    }
+
 }

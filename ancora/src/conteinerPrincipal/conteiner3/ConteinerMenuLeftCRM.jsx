@@ -13,8 +13,15 @@ export default function ConteinerMenuLeftCRM () {
                         <li>CRM Adminisrativo</li>
                     </div>
                 </div>
+                <div className="ConteinerMenuLeftCRMPerfilUsuario">
+                    <div className="ConteinerMenuLeftCRMPerfilUsuarioFotoUser"></div>
+                    <div className="ConteinerMenuLeftCRMPerfilUsuarioConteudoUser">
+                        <h3>Cláudio Avelino</h3>
+                        <li>administrando a minha carreira</li>
+                    </div>
+                </div>
                 <div className="ConteinerMenuLeftCRM_Menu_Center">
-                    <div className="ConteinerMenuLeftCRM_Menu_Center_Menu_Center_TXT">
+                    <div className="ConteinerMenuLeftCRM_Menu_Center_Menu_Center_TXT ativarElemento">
                         <svg xmlns="http://www.w3.org/2000" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-layout-dashboard ico" >
                             <rect width = "7" height="9" x = "3" y = "3" rx = "1"></rect>
                             <rect width = "7" height="5" x = "14" y = "3" rx = "1"></rect>

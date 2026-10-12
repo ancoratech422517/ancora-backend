@@ -39,15 +39,25 @@ export default function ConteinerRightDadosWindowMenssageMim ({texto , hora , no
         : "??";
     return (
         <div className="ConteinerRightDadosWindowMenssageMim" onDoubleClick={(e) => Selecionar_menssagem(e , id , nossa_sala, id_remitente, setIdMenssagem)} onClick={TirarSelecao}>
-              
-             <div className="textoUserMim">
-                <li id={id}>{texto}</li>
-                <span className="horaMim"> {hora} </span>
-             </div>
-             <div className="IconeUserMim" style={{background:fundo}}>
-                {condicaoEstadoFotoPerfil()}
-             </div>
-             
+
+            <div className="ConteinerRightDadosWindowMenssageMimControls">
+                    
+                    <div className="Conteiner_displayFlex">
+
+                        <div className="textoUserMim">
+                            {/* <div className="responder_menssagem_usuario">
+                                <h3>Cláudio Avelino</h3>
+                                <li>ola pessoal como vai</li>
+                            </div> */}
+                            <li id={id}>{texto}</li>
+                            <span className="horaMim"> {hora} </span>
+                        </div>
+                        <div className="IconeUserMim" style={{background:fundo}}>
+                            {condicaoEstadoFotoPerfil()}
+                        </div>
+                    </div>
+            </div>
+
             
         </div>
         

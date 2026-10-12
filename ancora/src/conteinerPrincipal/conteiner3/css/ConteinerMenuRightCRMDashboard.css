@@ -1,0 +1,156 @@
+.ConteinerMenuRightCRMDashboard{
+    width: 100%;
+    height: 90%;
+    background-color: #f1f1f1;
+    border-radius: 20px 0px 0px 0px;
+    border-left: 1px solid #d2d2d2;
+    border-top: 1px solid #d2d2d2;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    padding: 2%;
+}
+.ConteinerMenuRightCRMDashboardBoxTop{
+    display: flex;
+    justify-content: space-between;
+}
+.ConteinerMenuRightCRMDashboardBoxTopCaxa{
+    width: 19%;
+    height: 20vh;
+    background-color: var(--white);
+    border-radius: 20px;
+    border: 1px solid #d2d2d2;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    gap: 10px;
+    padding: 2%;
+}
+.ConteinerMenuRightCRMDashboardBoxTopCaxa div{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+}
+.ConteinerMenuRightCRMDashboardBoxTopCaxa li{
+    color: var(--gray-500);
+}
+.ConteinerMenuRightCRMDashboardBoxTopCaxa div p{
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: #f1f1f1;
+
+}
+.ConteinerMenuRightCRMDashboardBoxTopCaxa p svg{
+    color: var(--teal-600);
+}
+.ConteinerMenuRightCRMDashboardBoxTopCaxa ul{
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+
+}
+.ConteinerMenuRightCRMDashboardBoxTopCaxa ul svg{
+    color: green;
+}
+.ConteinerMenuRightCRMDashboardBoxTopCaxa ul span{
+    color: green;
+}
+.ConteinerMenuRightCRMDashboardBoxCenter{
+    width: 100%;
+    height: 40vh;
+    margin-top: 1.5%;
+    display: flex;
+    justify-content: space-between;
+}
+.ConteinerMenuRightCRMDashboardBoxCenterBox1{
+    width: 65%;
+    height: 100%;
+    border-radius: 20px;
+    background-color: var(--white);
+    border: 1px solid #d2d2d2;
+}
+.ConteinerMenuRightCRMDashboardBoxCenterBox2{
+    width: 34%;
+    height: 100%;
+    background-color: var(--white);
+    border-radius: 20px;
+    border: 1px solid #d2d2d2;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    padding: 2%;
+    gap: 20px;
+}
+.ConteinerMenuRightCRMDashboardBoxCenterBox2Box1{
+    width: 100%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 2px;
+}
+.ConteinerMenuRightCRMDashboardBoxCenterBox2Box1 svg{
+    width: 25px;
+    height: 25px;
+    color: var(--teal-600);
+}
+.ConteinerMenuRightCRMDashboardBoxCenterBox2Box2{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.ConteinerMenuRightCRMDashboardBoxCenterBox2Box2Conteudo{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+}
+.ConteinerMenuRightCRMDashboardBoxCenterBox2Box2Progresso{
+    width: 100%;
+    height: 9px;
+    border-radius: 10px;
+    background-color: #f1f1f1;
+}
+.ConteinerMenuRightCRMDashboardBoxCenterBox2Box2ProgressoDados1{
+    width: 85%;
+    height: 100%;
+    border-radius: 10px;
+    background-color: var(--teal-600);
+}
+.ConteinerMenuRightCRMDashboardBoxBottom{
+    width: 100%;
+    height: 40vh;
+    margin-top: 1.5%;
+    display: flex;
+    justify-content: space-between;
+}
+.ConteinerMenuRightCRMDashboardBoxBottomBoxLeft{
+    width: 65%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.ConteinerMenuRightCRMDashboardBoxBottomBoxLeftBox1{
+    width: 49%;
+    height: 100%;
+    background-color: var(--white);
+    border: 1px solid #d2d2d2;
+    border-radius: 20px;
+}
+.ConteinerMenuRightCRMDashboardBoxBottomBoxLeftBox2{
+    width: 49%;
+    height: 100%;
+    background-color: var(--white);
+    border: 1px solid #d2d2d2;
+    border-radius: 20px;
+}
+.ConteinerMenuRightCRMDashboardBoxBottomRight{
+    width: 34%;
+    height: 100%;
+    background-color: var(--white);
+    border: 1px solid #d2d2d2;
+    border-radius: 20px;
+}

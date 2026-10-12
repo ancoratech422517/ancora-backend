@@ -4,8 +4,8 @@
     justify-content: flex-end;
          /* ← ícone fica embaixo quando o balão for alto */
     gap: 2px;
-    margin-top: 0%;
-    padding: 1%;
+    margin-top: 1%;
+    /* padding: 1%; */
 }
 
 .ativar_selecao_menssagem {
@@ -47,7 +47,7 @@
     /* 1. ADICIONADO: Necessário para prender a pontinha ao balão */
     position: relative; 
     
-    background-color: var(--teal-500);
+    background-color: var(--teal-600);
     
     /* 2. PADRONIZADO: Canto superior direito reto (0px) para encaixar a ponta. Resto em 10px. */
     border-radius: 10px 0px 10px 10px; 
@@ -59,6 +59,7 @@
     max-width: 450px; 
     min-width: 100px;
     padding-right: 10%;
+    padding-left: 2%;
 
     
     color: var(--white);
@@ -67,9 +68,11 @@
     text-align: left;
     justify-content: center;
     font-size: 14px;
-    box-shadow: var(--shadow-teal);
+    /* box-shadow: var(--shadow-teal); */
     cursor: default;
-    box-shadow: 1px 1.5px 3px 2px #11111122;
+    /* box-shadow: 1px 1.5px 3px 2px #11111122; */
+    border-bottom: 1px solid #d2d2d2;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 /* 4. ADICIONADO: A pontinha apontando para a DIREITA */
@@ -82,7 +85,7 @@
     height: 0;
     border-top: 0px solid transparent;
     border-bottom: 10px solid transparent;
-    border-left: 10px solid var(--teal-500); /* O triângulo usa a exata mesma cor do balão */
+    border-left: 10px solid var(--teal-100); /* O triângulo usa a exata mesma cor do balão */
 }
 
 /* --- O RESTO CONTINUA IGUAL --- */
@@ -96,7 +99,40 @@
     font-size: 12px;
 
 }
+.responder_menssagem_usuario{
+    padding: 2%;
+    background-color:rgba(0, 128, 128, 0.402);
+    border-radius: 10px;
+    /* border: 1px solid #d2d2d2; */
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 3px;
+    border-radius: 7px;
+    margin-bottom: 2%;
+    border-left: 4px solid teal;
+    /* background-color: #f9f9f9; */
 
+}
+.responder_menssagem_usuario h3{
+    padding-left: 2%;
+    color:teal;
+}
+.responder_menssagem_usuario li{
+    display: flex;
+    text-align: left;
+    align-items: center;
+    width: 100%;
+    color: #2b2b2b;
+}
+.Conteiner_displayFlex{
+    display: flex;
+}
+.textoUserMim li{
+    padding-left: 2%;
+    line-height: 22px;
+    font-size: 17px;
+}
 @media screen and (max-width: 700px) {
     .textoUserMim {
         max-width: 280px;
