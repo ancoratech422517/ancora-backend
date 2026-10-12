@@ -39,7 +39,7 @@
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--teal-600);
+    /* border: 2px solid maroon; */
 }
 
 /* --- ALTERAÇÕES NO SEU BALÃO COMEÇAM AQUI --- */
@@ -85,7 +85,7 @@
     height: 0;
     border-top: 0px solid transparent;
     border-bottom: 10px solid transparent;
-    border-left: 10px solid var(--teal-100); /* O triângulo usa a exata mesma cor do balão */
+    border-left: 10px solid var(--teal-600); /* O triângulo usa a exata mesma cor do balão */
 }
 
 /* --- O RESTO CONTINUA IGUAL --- */

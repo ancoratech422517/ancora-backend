@@ -79,7 +79,6 @@ export default function ConteinerRight({ ativarConteiner }) {
                 <ConteinerRightMenuTop ativarConteiner={ativarConteiner} />
                 <ConteinerRightWindowMenssage />
                 <ConteinerRightMenuBottom />
-
             </div>
         </div>
     );

@@ -514,6 +514,7 @@
     border: 1px solid red;
     border-radius: 20px;
     flex-shrink: 0;
+
 }
 @media screen and (max-width: 880px) {
     .ConteinerRightWindowProdutsScroll .Conteiner2RightWindowProdutsCard{
@@ -522,6 +523,7 @@
     }
     .categoria-section{
         min-height: 30vh;
+        padding: 2%;
 
     
     }
@@ -652,6 +654,9 @@
     }
     .divBntsUtil button{
         height: 6vh;
+    }
+    .todos-produtos-section{
+        padding: 2%;
     }
 
 }

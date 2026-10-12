@@ -105,6 +105,9 @@ export default function Conteiner2RightWindowProdutsCard({ dados }) {
                 <li>{dados.tipo_produto || "Geral"}</li>
                 
                 <b>{dados.nome_produto}</b>
+                <li className="dadosCardLiDescricao">
+                    {dados.descricao_produto} 
+                </li>
                 
                 <div className="boxCardButtom">
                     <div className="dadosBoxCard1">
