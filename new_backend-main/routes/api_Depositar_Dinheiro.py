@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from models.database import Carteira_Digital_Depositar, db , Amizade
 from flask_cors import cross_origin
+from service.pushy_service import enviar_notificacao_pushy
 
 Depositar_Dinheiro = Blueprint("Depositar_Dinheiro", __name__)
 
@@ -47,6 +48,16 @@ def DepositarDinheiro():
         db.session.add(nova__notificacao)
         
         db.session.commit()
+
+        enviar_notificacao_pushy(
+            id_usuario,
+            "Depósito registrado",
+            f"Foi registrado um depósito de {valor_sacar_conta}.",
+            {
+                "type": "notification",
+                "notification_type": "deposito"
+            }
+        )
 
         return jsonify({
             "status": "sucesso",

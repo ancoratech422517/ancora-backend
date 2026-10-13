@@ -3,7 +3,7 @@
   "appName": "ancora",
   "webDir": "dist",
   "server":{
-    "url":"https://ancora-ecommerce.vercel.app",
+    "url":"https://ancora-ecommerc-tawny.vercel.app",
     "cleartext":true
   },
   "android": {

@@ -1,5 +1,6 @@
 from flask import Blueprint , request , jsonify
 from models.database import Amizade , Turma_Aula , db
+from service.pushy_service import enviar_notificacao_pushy
 
 Convidae_Usuario_Turma = Blueprint("Convidar_Usuario_Turma" , __name__)
 @Convidae_Usuario_Turma.route("/convidar_usuario_turma" , methods = ["POST"])
@@ -45,6 +46,18 @@ def ConvidarUsuarioTurma():
         novo_pedido = Amizade(**dados)
         db.session.add(novo_pedido)
         db.session.commit()
+
+        enviar_notificacao_pushy(
+            id_convidado,
+            "Novo convite para turma",
+            f"Você foi convidado para a turma {nome_Turma}.",
+            {
+                "type": "notification",
+                "notification_type": "convite_turma",
+                "sender_id": id_usuario,
+                "id_turma": id_turma
+            }
+        )
 
         print(f"teste dos dados recebidos: {dados}")
         return jsonify({"resposta":"convite enviado"})

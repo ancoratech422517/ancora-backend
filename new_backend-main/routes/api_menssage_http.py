@@ -4,6 +4,7 @@ import uuid
 import cloudinary.uploader
 from datetime import datetime
 from models.database import Menssagens, db
+from service.pushy_service import enviar_notificacao_pushy
 
 messages_http_bp = Blueprint('messages_http', __name__, url_prefix='/api')
 
@@ -77,6 +78,24 @@ def send_message_with_file():
         armazenar_menssagem = Menssagens(**dados)
         db.session.add(armazenar_menssagem)
         db.session.commit()
+
+        texto_notificacao = menssagem or (
+            f"{nome_remitente or 'Seu contato'} enviou um arquivo."
+            if file_url else "Você recebeu uma nova mensagem."
+        )
+        if len(texto_notificacao) > 160:
+            texto_notificacao = f"{texto_notificacao[:157]}..."
+        enviar_notificacao_pushy(
+            id_destinatario,
+            nome_remitente or "Nova mensagem",
+            texto_notificacao,
+            {
+                "type": "new_message",
+                "sender_id": id_remitente,
+                "room": nossa_sala,
+                "message_type": dados["tipo"]
+            }
+        )
 
         return jsonify({
             "success": True,

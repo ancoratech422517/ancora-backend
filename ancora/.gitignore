@@ -3,6 +3,25 @@ dist/
 build/
 .env
 android/
+!android/
+android/*
+!android/app/
+android/app/*
+!android/app/src/
+android/app/src/*
+!android/app/src/main/
+android/app/src/main/*
+!android/app/src/main/AndroidManifest.xml
+!android/app/src/main/java/
+android/app/src/main/java/*
+!android/app/src/main/java/com/
+android/app/src/main/java/com/*
+!android/app/src/main/java/com/ancora/
+android/app/src/main/java/com/ancora/*
+!android/app/src/main/java/com/ancora/ecommerce/
+android/app/src/main/java/com/ancora/ecommerce/*
+!android/app/src/main/java/com/ancora/ecommerce/MainActivity.java
+!android/app/src/main/java/com/ancora/ecommerce/PushReceiver.java
 
 # Playwright
 /test-results/

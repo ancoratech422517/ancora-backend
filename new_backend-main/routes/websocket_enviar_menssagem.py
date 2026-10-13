@@ -2,6 +2,7 @@ from flask_socketio import join_room, leave_room, emit
 from routes.websocket import socketio
 from datetime import datetime 
 from models.database import Menssagens , db , Amigo
+from service.pushy_service import enviar_notificacao_pushy
 
 @socketio.on("enviar_menssagem_na_sala")
 def enviar_menssagem_na_sala(data):
@@ -35,6 +36,20 @@ def enviar_menssagem_na_sala(data):
         db.session.add(armazenar_menssagem)
         db.session.commit() # Commit aqui garante que a msg já conta no próximo passo
         print("menssagem armazenada com sucesso")
+
+        texto_notificacao = str(menssagem or "Você recebeu uma nova mensagem.")
+        if len(texto_notificacao) > 160:
+            texto_notificacao = f"{texto_notificacao[:157]}..."
+        enviar_notificacao_pushy(
+            id_amigo,
+            nome_remitente or "Nova mensagem",
+            texto_notificacao,
+            {
+                "type": "new_message",
+                "sender_id": id_remitente,
+                "room": nossa_sala
+            }
+        )
         
 
         # --- LÓGICA DE NOTIFICAÇÃO (BOLINHA) ---

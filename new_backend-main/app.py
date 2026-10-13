@@ -81,6 +81,7 @@ from routes.api_sistema_adoro_ancora import sistema_adoro_Ancora
 from routes.api_send_dados_trafego import Send_trafego_dados
 from routes.api_Depositar_Dinheiro import Depositar_Dinheiro
 from routes.api_menssage_http import messages_http_bp
+from routes.api_salvar_push_token import PushTokenAPI
 #--------------------------------------------------------------
 from routes.api_validar_registro_turma import api_validar_registro_turma
 from routes.api_buscar_turma_usuario import turma_usuario
@@ -235,6 +236,7 @@ app.register_blueprint(sistema_adoro_Ancora)
 app.register_blueprint(Send_trafego_dados)
 app.register_blueprint(Depositar_Dinheiro)
 app.register_blueprint(messages_http_bp)
+app.register_blueprint(PushTokenAPI)
 app.register_blueprint(api_validar_registro_turma)
 app.register_blueprint(turma_usuario)
 app.register_blueprint(Buscar_Aluno_Turma)

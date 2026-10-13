@@ -18,6 +18,7 @@ class Usuario(db.Model):
     provincia = db.Column(db.Text, nullable=False, default="none")
     capital = db.Column(db.Text, nullable=False, default="none")
     bairro = db.Column(db.Text, nullable=False, default="none")
+    id_app_usuario_pushy = db.Column(db.Text, nullable=True)
 
     # Criptografia assimétrica
     chave_publica = db.Column(db.Text, nullable=True) 
@@ -67,6 +68,11 @@ class Menssagens(db.Model):
     tipo = db.Column(db.String(50))
     data_envio = db.Column(db.Text, default="")
     menssagem = db.Column(db.Text, nullable=False)
+    file_url = db.Column(db.Text, nullable=True)
+    public_id = db.Column(db.Text, nullable=True)
+    file_name = db.Column(db.Text, nullable=True)
+    mime_type = db.Column(db.Text, nullable=True)
+    file_size = db.Column(db.Integer, nullable=True)
 
     dados_remitente = db.relationship("Usuario", foreign_keys=[id_remitente])
     dados_destinatario = db.relationship("Usuario", foreign_keys=[id_destinatario])
@@ -211,4 +217,3 @@ class Adicionar_dados_estado(db.Model):
     foto_usuario_estado = db.Column(db.Text , default = "none")
     
     
-

@@ -1,6 +1,7 @@
 from flask import Flask , Blueprint
 from routes.websocket import socketio
 from models.database import Amizade , Turma_Aula , db
+from service.pushy_service import enviar_notificacao_pushy
 
 
 @socketio.on("Solicitar_entrada_grupo")
@@ -71,6 +72,18 @@ def solicitar_entrada_turma (dados):
         db.session.add(nova_notificacao)
         db.session.commit()
 
+        enviar_notificacao_pushy(
+            id_admin_turma,
+            "Nova solicitação para entrar na turma",
+            f"{nome_usuario_solicitante} quer entrar na turma {nome_turma}",
+            {
+                "type": "notification",
+                "notification_type": "solicitacao",
+                "sender_id": id_usuario_solicitante,
+                "id_turma": id_turma
+            }
+        )
+
         socketio.emit("Resposta_Solicitacao_entrada_turma" , 
                       {
                           "nome_usuario_solicitante":nome_usuario_solicitante , 
@@ -83,5 +96,4 @@ def solicitar_entrada_turma (dados):
         
     except Exception as erro:
         print(f"erro ao fazer a solicitação de entrada na turma:{erro}")
-
 

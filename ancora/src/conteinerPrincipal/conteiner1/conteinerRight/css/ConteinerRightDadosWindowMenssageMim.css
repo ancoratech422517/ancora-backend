@@ -47,7 +47,7 @@
     /* 1. ADICIONADO: Necessário para prender a pontinha ao balão */
     position: relative; 
     
-    background-color: var(--teal-600);
+    background-color: var(--teal-500);
     
     /* 2. PADRONIZADO: Canto superior direito reto (0px) para encaixar a ponta. Resto em 10px. */
     border-radius: 10px 0px 10px 10px; 
@@ -55,11 +55,14 @@
     height: fit-content;
     
     /* 3. PADRONIZADO: Mesmo padding e max-width do outro balão */
-    padding: 10px 12px; 
-    max-width: 450px; 
-    min-width: 100px;
-    padding-right: 10%;
-    padding-left: 2%;
+    
+    max-width: 550px; 
+    /* min-width: 150px; */
+    width: max-content;
+    padding-left: 3px;
+    padding-top: 2px;
+
+
 
     
     color: var(--white);
@@ -71,8 +74,7 @@
     /* box-shadow: var(--shadow-teal); */
     cursor: default;
     /* box-shadow: 1px 1.5px 3px 2px #11111122; */
-    border-bottom: 1px solid #d2d2d2;
-    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    border-bottom: 1px solid #909090;
 }
 
 /* 4. ADICIONADO: A pontinha apontando para a DIREITA */
@@ -85,18 +87,19 @@
     height: 0;
     border-top: 0px solid transparent;
     border-bottom: 10px solid transparent;
-    border-left: 10px solid var(--teal-600); /* O triângulo usa a exata mesma cor do balão */
+    border-left: 10px solid var(--teal-500); /* O triângulo usa a exata mesma cor do balão */
 }
 
 /* --- O RESTO CONTINUA IGUAL --- */
 .horaMim {
-    position: absolute;
-    bottom: 0;
-    right: 0;
+
     margin-right: 3%;
     margin-bottom: 1%;
-    color: #1f1f1f;
-    font-size: 12px;
+    color: #5f5e5e;
+    font-size: 10px;
+    display: flex;
+    justify-content: flex-end;
+    
 
 }
 .responder_menssagem_usuario{
@@ -131,15 +134,12 @@
 .textoUserMim li{
     padding-left: 2%;
     line-height: 22px;
-    font-size: 17px;
+    font-size: 15px;
+    min-width: 100px;
 }
 @media screen and (max-width: 700px) {
     .textoUserMim {
-        max-width: 280px;
-        min-width: 80px;
-        padding-right: 20%;
- 
-  
+        max-width: 95%;
     }
 }
 

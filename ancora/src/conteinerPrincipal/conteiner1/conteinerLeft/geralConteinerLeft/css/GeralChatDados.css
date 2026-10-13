@@ -76,6 +76,10 @@
     color: var(--gray-500);
     font-size: 15px;
     overflow: hidden;
+    white-space: nowrap;        /* 1. Impede que o texto quebre para a linha de baixo */
+    overflow: hidden;           /* 2. Esconde tudo o que passar do tamanho da caixa */
+    text-overflow: ellipsis;    /* 3. Coloca os três pontinhos (...) onde o texto foi cortado */
+    width: 250px;
 }
 .GeralChatDadosObject{
     width: 20%;

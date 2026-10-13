@@ -38,22 +38,21 @@
     
     max-width: 450px;
     height: fit-content;
-    padding: 10px 12px;
+    padding: 8px 10px;
     background-color: var(--white);
     
     /* 2. ALTERADO: Deixamos o canto superior esquerdo reto (0px) para encaixar a ponta */
-    border-radius: 0px 10px 10px 10px; 
+    border-radius: 0px 7px 7px 10px; 
     
     display: flex;
     flex-direction: column;
     text-align: left;
     justify-content: center;
-    box-shadow: var(--shadow-md);
     font-size: 14px;
     /* border: 1px solid #a3a3a3; */
     width: max-content;
     padding-right: 7%;
-    box-shadow: 1px 0.6px 2.5px 1.5px #11111122;
+    border-bottom: 1px solid #d2d2d2;
 }
 
 /* 3. ADICIONADO: A ponta cinza (que simula a borda) */

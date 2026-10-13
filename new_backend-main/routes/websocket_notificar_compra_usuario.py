@@ -1,6 +1,7 @@
 from routes.websocket import socketio
 from flask_socketio import emit
 from models.database import Amizade, db
+from service.pushy_service import enviar_notificacao_pushy
 from datetime import datetime
 
 @socketio.on("notificar_compra_usuario")
@@ -45,6 +46,27 @@ def notificar_compra_usuario(data):
         db.session.add(registro_cliente_compra)
         db.session.add(registro_vendedor_compra)
         db.session.commit()
+
+        enviar_notificacao_pushy(
+            id_cliente,
+            "Compra confirmada",
+            f"Sua compra de {nome_produto} foi confirmada.",
+            {
+                "type": "notification",
+                "notification_type": "compra_produto_cliente",
+                "product_name": nome_produto
+            }
+        )
+        enviar_notificacao_pushy(
+            id_vendedor,
+            "Nova venda",
+            f"Você vendeu {nome_produto}.",
+            {
+                "type": "notification",
+                "notification_type": "compra_produto_vendedor",
+                "product_name": nome_produto
+            }
+        )
 
         notificacao_usurios_compra_cliente["id"] = registro_cliente_compra.id
         notificacao_usurios_compra_vendedor["id"] = registro_vendedor_compra.id

@@ -28,6 +28,8 @@
     "livekit-client": "^2.19.2",
     "meshline": "^3.3.1",
     "ogl": "^1.0.11",
+    "pushy-cordova": "^1.0.61",
+    "pushy-sdk-web": "^1.0.24",
     "react": "^19.2.4",
     "react-chartjs-2": "^5.3.1",
     "react-dom": "^19.2.4",

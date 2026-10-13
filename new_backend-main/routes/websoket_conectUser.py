@@ -2,6 +2,7 @@ from flask import request
 from flask_socketio import join_room, emit, disconnect
 from routes.websocket import socketio
 from models.database import Amizade, db, Amigo
+from service.pushy_service import enviar_notificacao_pushy
 import jwt
 import os
 
@@ -144,6 +145,17 @@ def enviar_pedido_de_amizade(data):
     )
     db.session.add(novo_pedido)
     db.session.commit()
+
+    enviar_notificacao_pushy(
+        id_destinatario,
+        "Novo pedido de amizade",
+        f"{nome_remitente} quer ser seu amigo",
+        {
+            "type": "notification",
+            "notification_type": "pedido_amizade",
+            "sender_id": id_remitente
+        }
+    )
 
     emit("receber_notificacao", {
         "id": novo_pedido.id,

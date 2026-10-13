@@ -25,7 +25,8 @@ export default function Conteiner6WindowBoxLogin ({ ativarConteiner, setConta}) 
         }
     }
     
-    const handleLogin = async () => {
+    const handleLogin = async (event) => {
+        event.preventDefault()
         if (carregando) return
         setCarregando(true)
         await Login(ativarConteiner, setDados , setEstadoLoading , setErro)
@@ -63,7 +64,7 @@ export default function Conteiner6WindowBoxLogin ({ ativarConteiner, setConta}) 
                     </div>
 
                     {/* <!-- FORM LOGIN --> */}
-                    <form className="form active" id="login-form">
+                    <form className="form active" id="login-form" onSubmit={handleLogin}>
 
                         <div className="input-group">
                             <label for="login-email">Telefone</label>
@@ -93,7 +94,7 @@ export default function Conteiner6WindowBoxLogin ({ ativarConteiner, setConta}) 
                             <a href="#" className="link">Esqueceu a senha?</a>
                         </div>
 
-                        <button type="submit" className="btn-submit" onClick={handleLogin} disabled={carregando}>Entrar na conta</button>
+                        <button type="submit" className="btn-submit" disabled={carregando}>Entrar na conta</button>
                     </form>
 
                     {/* <!-- FORM REGISTRO --> */}

@@ -1,4 +1,6 @@
 import { useUserStore } from "../../../useUseSotore"
+import { salvarTokenPushy, solicitarTokenPushy } from "../../../utils/pushy_my.js"
+
 export async function Login(ativarConteiner, setDados , setEstadoLoading , setErro) { 
     setEstadoLoading("True")
     setErro("False")
@@ -8,12 +10,19 @@ export async function Login(ativarConteiner, setDados , setEstadoLoading , setEr
     
     if (!telefone || !senha) {
         console.log("preencha o campo da foto")
+        setEstadoLoading("False")
         return
     }
     
     const dados = { telefone, senha }
 
     try {
+        // Pushy needs registration to start from the login button's user gesture.
+        const pushTokenPromise = solicitarTokenPushy().catch((erroPushy) => {
+            console.warn("Notificações Pushy não foram ativadas:", erroPushy)
+            return null
+        })
+
         const logar = await fetch(`${URL_BACKEND_ANCORA}/Login`, {
             method: "POST",
             headers: {
@@ -36,7 +45,13 @@ export async function Login(ativarConteiner, setDados , setEstadoLoading , setEr
         // O cookie já foi setado pelo backend. JS não vê o token.
         console.log("Login OK. Cookie setado pelo servidor")
         setEstadoLoading("False")
-        
+
+        pushTokenPromise
+            .then((pushToken) => pushToken && salvarTokenPushy(pushToken))
+            .catch((erroPushy) => {
+                console.error("Não foi possível salvar o token Pushy:", erroPushy)
+            })
+
         if (setDados) {
             setDados(get_response_logar) // vem só: id, nome, telefone
         }

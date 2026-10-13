@@ -1,5 +1,6 @@
 from flask import Blueprint , request , jsonify
 from models.database import Sistema_Trafego_Pago , Registrar_produto , db , Amizade
+from service.pushy_service import enviar_notificacao_pushy
 
 Send_trafego_dados = Blueprint("send_trafego_dados" , __name__)
 
@@ -81,6 +82,16 @@ def SendTrafegoDados ():
         db.session.add(novo_trafego)
         db.session.add(novo_dados)
         db.session.commit()
+        enviar_notificacao_pushy(
+            id_usuario,
+            "Campanha registrada",
+            f"Sua campanha para {nome_produto} foi registrada.",
+            {
+                "type": "notification",
+                "notification_type": "ancora_ecommerce_trafego",
+                "product_name": nome_produto
+            }
+        )
         db.session.close()
         return jsonify({"status":"trafego realizado com sucesso!"})
     except Exception as erro:
