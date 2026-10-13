@@ -139,7 +139,7 @@
 }
 @media screen and (max-width: 700px) {
     .textoUserMim {
-        max-width: 95%;
+        max-width: 550px;
     }
 }
 
