@@ -752,10 +752,9 @@ export default function ConteinerRightWindowMenssage() {
     }
 
     // ====================== IMAGENS ======================
-    if (mimeType?.startsWith("image/") || resourceType === "image" || 
-        (typeof displaySrc === "string" && (displaySrc.includes("cloudinary") || displaySrc.includes("giphy.com")))) {
-      
-      return (
+    if (mimeType?.startsWith("image/")) {
+        
+          return (
         <div 
           onClick={() => setModalImage({ src: displaySrc, name: fileName || "Imagem" })}
           style={{
@@ -826,7 +825,9 @@ export default function ConteinerRightWindowMenssage() {
 
     // ====================== PDF ======================
     if (mimeType === "application/pdf" || fileName?.toLowerCase().endsWith(".pdf")) {
+     
       return (
+
         <div 
           onClick={() => {
             const link = document.createElement("a");

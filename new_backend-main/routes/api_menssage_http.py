@@ -74,6 +74,7 @@ def send_message_with_file():
             "mime_type": mime_type,
             "file_size": file_size
         }
+        
 
         armazenar_menssagem = Menssagens(**dados)
         db.session.add(armazenar_menssagem)
