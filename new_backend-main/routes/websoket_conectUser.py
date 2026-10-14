@@ -71,7 +71,7 @@ def handle_autenticar():
     
     if not usuario_id:
         emit("erro_auth", {"msg": "Token inválido ou expirado"}, room=request.sid)
-        return
+        return {"ok": False, "erro": "Token inválido ou expirado"}
     
     usuario_id_str = str(usuario_id)
     usuarios_online[usuario_id_str] = request.sid
@@ -85,6 +85,7 @@ def handle_autenticar():
     }, broadcast=True)
     
     emit("autenticado", {"status": "ok", "usuario_id": usuario_id_str}, room=request.sid)
+    return {"ok": True, "usuario_id": usuario_id_str}
 
 @socketio.on('disconnect')
 def handle_disconnect():

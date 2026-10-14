@@ -13,6 +13,8 @@ export const useUserStore = create(
       socket: null,
       socketConnecting: false,
       socketConnectionPromise: null,
+      socketAuthenticatedUserId: null,
+      socketAuthPendingUserId: null,
       notificacoes: [],
       amigos: [],
       chats: [],
@@ -63,6 +65,7 @@ export const useUserStore = create(
       mostrarConteinerUsuarioConvite:false,
       estadoConteinerAdicionarVideo:false,
       EstadoChamadaGrupo:false,
+      DadosChamadaGrupo:null,
       Negritar:false,
       FotoPerfilUsuario:false,
       DadosPerfilUsuario:[],
@@ -95,26 +98,73 @@ export const useUserStore = create(
       },
 
       tocarSomChamada: () => {
+        const audioAnterior = get().audioChamada
+        if (audioAnterior) {
+          audioAnterior.pause()
+          audioAnterior.currentTime = 0
+        }
+
         const audio = new Audio('/sounds/chamada.mp3')
         audio.volume = 0.6
         audio.loop = true
-        audio.play().catch(err => console.log("Erro som chamada:", err))
         set({audioChamada:audio})
+        audio.play().catch(err => {
+          console.log("Erro som chamada:", err)
+          if (get().audioChamada === audio) set({audioChamada:null})
+        })
       },
 
       pararSomChamada: () =>{
         const {audioChamada} = get()
+        set({audioChamada:null})
         if (audioChamada){
           audioChamada.pause()
           audioChamada.currentTime = 0
-          set({audioChamada:null})
         }
 
       },
 
       // --- SETTERS ---
-      setDados: (dados) => set({ dadosUsuario: dados }),
+      setDados: (dados) => set((state) => ({
+        dadosUsuario: dados,
+        socketAuthenticatedUserId: String(state.dadosUsuario?.id ?? "") === String(dados?.id ?? "")
+          ? state.socketAuthenticatedUserId
+          : null,
+        socketAuthPendingUserId: null,
+      })),
       setSocket: (socket) => set({ socket }),
+      autenticarSocket: () => {
+        const { socket, dadosUsuario, socketAuthenticatedUserId, socketAuthPendingUserId } = get()
+        const userId = dadosUsuario?.id
+        if (!socket?.connected || !userId) return
+
+        const userIdKey = String(userId)
+        if (socketAuthenticatedUserId === userIdKey || socketAuthPendingUserId === userIdKey) return
+
+        set({ socketAuthPendingUserId: userIdKey })
+        const timeoutId = setTimeout(() => {
+          if (get().socketAuthPendingUserId === userIdKey) {
+            set({ socketAuthPendingUserId: null })
+            console.error("Tempo esgotado ao autenticar o socket do usuário.")
+          }
+        }, 8000)
+
+        socket.emit("autenticar", (resultado) => {
+          clearTimeout(timeoutId)
+          if (get().socket !== socket || get().socketAuthPendingUserId !== userIdKey) return
+
+          if (!resultado?.ok) {
+            set({ socketAuthPendingUserId: null })
+            console.error("Falha na autenticação do socket:", resultado?.erro)
+            return
+          }
+
+          set({
+            socketAuthenticatedUserId: userIdKey,
+            socketAuthPendingUserId: null,
+          })
+        })
+      },
       setNotificacoes: (lista) => set({ notificacoes: lista }),
       setAmigos: (amigo) => set({ amigos: amigo }),
       setChat: (chat) => set({ chats: chat }),
@@ -168,6 +218,7 @@ export const useUserStore = create(
       setMostrarConteinerUsuarioConvite:(mostrar_conteiner_usuario_convite) => set({mostrarConteinerUsuarioConvite:mostrar_conteiner_usuario_convite}),
       setEstadoConteinerAdicionarVideo:(estado_conteiner_adicionar_video) => set({estadoConteinerAdicionarVideo:estado_conteiner_adicionar_video}),
       setEstadoChamadaGrupo:(estado_chamada_grupo) => set({EstadoChamadaGrupo:estado_chamada_grupo}),
+      setDadosChamadaGrupo:(dados) => set({DadosChamadaGrupo:dados}),
       setNegritar: (estado_negritar) => set({Negritar:estado_negritar}),
       setFotoPerfilUsuario: (estado_foto_perfil_usuario) => set({FotoPerfilUsuario:estado_foto_perfil_usuario}),
       setDadosPerfilUsuario: (estado_dados_perfil_usuario) => set({setDadosPerfilUsuario:estado_dados_perfil_usuario}),
@@ -321,11 +372,15 @@ export const useUserStore = create(
             novoSocket.on("connect", () => {
               console.log("✅ Socket conectado. ID:", novoSocket.id)
               set({ socket: novoSocket })
+              get().autenticarSocket()
             })
 
             novoSocket.on("disconnect", (reason) => {
               console.log("Socket desconectado:", reason)
-              set({ socket: null })
+              set({
+                socketAuthenticatedUserId: null,
+                socketAuthPendingUserId: null,
+              })
             })
 
             // novoSocket.on("Resposta_Solicitacao_entrada_turma" , (dados)=>{
@@ -341,14 +396,16 @@ export const useUserStore = create(
 
             novoSocket.on("turma_ligar_aluno", (data) => {
               console.log("🔔 Nova chamada de grupo recebida:", data)
+              get().setDadosChamadaGrupo(data)
               get().tocarSomChamada()
-             get().setEstadoChamadaGrupo(true)
-          
-              alert("Nova chamada de grupo recebida! Sala: " + data.sala_Turma)
+              get().setEstadoChamadaGrupo(true)
             })
             novoSocket.on("connect_error", async (err) => {
               console.log("❌ Erro socket:", err.message)
-              set({ socket: null })
+              set({
+                socketAuthenticatedUserId: null,
+                socketAuthPendingUserId: null,
+              })
 
               try {
                 console.log("🔄 Verificando sessão após falha do socket...")

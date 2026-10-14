@@ -18,6 +18,7 @@ function App() {
   const { 
     dadosUsuario, 
     conectarSocket, 
+    autenticarSocket,
     socket, setDados, 
     setNotificacoes , 
     urlBancoDeDados , 
@@ -129,11 +130,16 @@ function App() {
 
   // --- LÓGICA DO WEBSOCKET ---
   useEffect(() => {
-    if (dadosUsuario?.id && !socket) {
+    if (!dadosUsuario?.id) return
+
+    if (!socket?.connected) {
       console.log("Conectando WebSocket para o ID:", dadosUsuario.id)
       conectarSocket()
+      return
     }
-  }, [dadosUsuario?.id, socket, conectarSocket])
+
+    autenticarSocket()
+  }, [dadosUsuario?.id, socket, conectarSocket, autenticarSocket])
 
   // --- CHECAGEM DE SESSÃO COM REFRESH TOKEN ---
   useEffect(() => {

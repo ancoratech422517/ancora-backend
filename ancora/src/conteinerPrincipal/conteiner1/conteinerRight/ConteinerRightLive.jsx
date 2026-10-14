@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import "./css/ConteinerRightLive.css";
 import LightRays from './js/menuMobileAgendarLiveBackgroung.jsx';
 import { Conteiner_Chamada_Grupo } from "./ConteinerRightLive.js";
@@ -8,23 +8,26 @@ import {
   LiveKitRoom,
   VideoConference,
   RoomAudioRenderer,
-  ControlBar,
 } from "@livekit/components-react";
+import { Room } from "livekit-client";
 
 import { useUserStore } from "../../../useUseSotore";
 
-export default function ConteinerRightLive({ roomName , nome_Turma }) {
+export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turma }) {
   
-  const { urlBancoDeDados, dadosUsuario , set_estado_conteiner_live , setEstadoChamadaGrupo } = useUserStore();
+  const { urlBancoDeDados, dadosUsuario, set_estado_conteiner_live } = useUserStore();
 
   const [token, setToken] = useState(null);
   const [serverUrl, setServerUrl] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const [room] = useState(() => new Room());
+  const intentionalLeave = useRef(false);
 
 
-  const joinLive = async () => {
+  const joinLive = useEffectEvent(async () => {
     if (!roomName || !dadosUsuario?.nome) {
       setError("Faltam informações da sala ou do usuário");
       return;
@@ -34,36 +37,68 @@ export default function ConteinerRightLive({ roomName , nome_Turma }) {
     setError(null);
 
     try {
+      const isTeacher = dadosUsuario.role === "teacher"
+        || (id_admin_turma != null && String(id_admin_turma) === String(dadosUsuario.id));
       const response = await fetch(`${urlBancoDeDados}/api/livekit/token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           roomName: roomName,
           participantName: dadosUsuario.nome,
-          isTeacher: dadosUsuario.role === "teacher" || false
+          isTeacher
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) throw new Error(data.error || "Erro ao gerar token");
+      if (intentionalLeave.current) return;
 
+      intentionalLeave.current = false;
       setToken(data.token);
       setServerUrl(data.serverUrl);
       setIsConnected(true);
+
+      void Conteiner_Chamada_Grupo(roomName).then((resultadoChamada) => {
+        if (!resultadoChamada?.ok) {
+          console.error("A live iniciou, mas a chamada da turma não foi confirmada:", resultadoChamada?.erro);
+        } else if (!resultadoChamada.ignorada) {
+          console.info(`Chamada enviada para ${resultadoChamada.alunos_notificados} aluno(s) online.`);
+        }
+      });
     } catch (err) {
       console.error(err);
       setError(err.message || "Erro ao conectar");
     } finally {
       setLoading(false);
     }
+  });
+
+  useEffect(() => {
+    if (roomName) void joinLive();
+  }, [roomName, retryCount]);
+
+  const leaveRoom = async () => {
+    intentionalLeave.current = true;
+    try {
+      await room.disconnect(true);
+    } catch (err) {
+      console.error("Erro ao desconectar da live:", err);
+    } finally {
+      setToken(null);
+      setServerUrl(null);
+      setIsConnected(false);
+      setError(null);
+      set_estado_conteiner_live(false);
+    }
   };
 
-  const leaveRoom = () => {
+  const handleDisconnected = () => {
+    if (intentionalLeave.current) return;
     setToken(null);
     setServerUrl(null);
     setIsConnected(false);
-    setError(null);
+    setError("A conexão com a live foi interrompida. Tente conectar novamente.");
   };
 
   
@@ -102,7 +137,7 @@ export default function ConteinerRightLive({ roomName , nome_Turma }) {
           </svg>
             <li> {nome_Turma} </li>
         </div>
-        <div className="widgwtSairSalaLive" onClick={ ()=>{leaveRoom , set_estado_conteiner_live(false)}}>
+        <div className="widgwtSairSalaLive" onClick={() => void leaveRoom()}>
           Sair da sala
         </div>
       </div>
@@ -131,22 +166,23 @@ export default function ConteinerRightLive({ roomName , nome_Turma }) {
             {nome_Turma}
           </p>
           {error && <p style={{ color: "red" }}>{error}</p>}
-          <button onClick={(e) => {joinLive() , Conteiner_Chamada_Grupo(roomName)}} disabled={loading} className="btn-enter-live">
+          <button onClick={() => setRetryCount((count) => count + 1)} disabled={loading} className="btn-enter-live">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-camera-video-fill" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2z"/>
               </svg>
-                {loading ? "Conectando..." : "Entrar na Live"}
+                {loading ? "Conectando..." : error ? "Tentar novamente" : "Conectar à Live"}
 
           </button>
         </div>
       ) : (
         <LiveKitRoom
+          room={room}
           token={token}
           serverUrl={serverUrl}
           connect={true}
           video={true}
           audio={true}
-          onDisconnected={leaveRoom}
+          onDisconnected={handleDisconnected}
           style={{ height: "calc(100vh - 85px)" }}
           data-lk-theme="default"
         >

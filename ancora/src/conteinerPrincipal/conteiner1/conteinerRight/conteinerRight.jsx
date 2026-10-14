@@ -31,6 +31,18 @@ export default function ConteinerRight({ ativarConteiner }) {
         };
     }, []);
 
+    if (estado_conteiner_live) {
+        return (
+            <div className="conteinerRight conteinerRightLiveHost">
+                <ConteinerRightLive
+                    roomName={Dados_Live_Ancora?.sala_Turma}
+                    nome_Turma={Dados_Live_Ancora?.nome_Turma}
+                    id_admin_turma={Dados_Live_Ancora?.id_admin_turma}
+                />
+            </div>
+        );
+    }
+
     if (!ChatAtivo) {
         return (
             <div className="ConteinerRightInicial">

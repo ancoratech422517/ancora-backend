@@ -180,7 +180,8 @@ export default function ConteinerRightMenuMobile () {
     const dados_live_ancora = {
         "sala_Turma":sala_Turma,
         "nome_usuario":dadosUsuario?.nome,
-        "nome_Turma":nome_Turma
+        "nome_Turma":nome_Turma,
+        "id_admin_turma":id_admin_turma
     }
     const [estadoLiveTurmaCont , setEstadoLiveTurmaCont] = useState("pendente")
     const condicaoEstadoLiveTurmaCont = (dados)=>{
@@ -199,7 +200,7 @@ export default function ConteinerRightMenuMobile () {
                             </div>
                             <li>{dados.tema_agenda_live}</li>
                             <li>{dados.data_formatada}</li>
-                            <button onClick={()=>{set_estado_conteiner_live(true),set_Dados_Live_Ancora(dados_live_ancora)}}>Entrar na Live</button>
+                            <button onClick={()=>{set_Dados_Live_Ancora(dados_live_ancora),set_estado_conteiner_live(true)}}>Entrar na Live</button>
                         </div>
                 )
             case "pendente":
