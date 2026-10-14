@@ -155,7 +155,7 @@ def after_request(response):
     return response
 
 # ===================== CLOUDINARY =====================
-g
+
 # ===================== TALISMAN =====================
 Talisman(app,
     content_security_policy={
