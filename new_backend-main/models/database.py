@@ -121,7 +121,6 @@ class Tabel_Reacao_Produto(db.Model):
     
     estado_visualizacao = db.Column(db.String(10), nullable=False, default="0")
     estado_adoro = db.Column(db.String(10), nullable=False, default="0")
-
     dados_usuario = db.relationship("Usuario", foreign_keys=[id_usuario])
 
 class Sistema_Trafego_Pago(db.Model):

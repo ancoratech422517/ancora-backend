@@ -49,7 +49,7 @@ export default function ConteinerRightDadosWindowMenssageMim ({texto , hora , no
                                 <h3>Cláudio Avelino</h3>
                                 <li>ola pessoal como vai</li>
                             </div> */}
-
+                                
                             <li id={id}>{texto}</li>
                             <span className="horaMim"> {hora} </span>
                         </div>
