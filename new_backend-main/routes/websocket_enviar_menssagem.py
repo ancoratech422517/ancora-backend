@@ -1,6 +1,7 @@
 from flask_socketio import join_room, leave_room, emit
 from routes.websocket import socketio
 from datetime import datetime 
+import json
 from models.database import Menssagens , db , Amigo
 from service.pushy_service import enviar_notificacao_pushy
 
@@ -16,6 +17,30 @@ def enviar_menssagem_na_sala(data):
     id_amigo = data.get("id_amigo")
     nome_amigo = data.get("nome_amigo")
 
+    dados_arquivo = {}
+    try:
+        conteudo = json.loads(menssagem) if isinstance(menssagem, str) else {}
+        if isinstance(conteudo, dict) and conteudo.get("isFile"):
+            if not conteudo.get("fileUrl") or not conteudo.get("publicId"):
+                print("arquivo recebido sem fileUrl/publicId; mensagem não será persistida")
+                return {"success": False, "error": "Metadados do arquivo incompletos"}
+
+            try:
+                tamanho_arquivo = int(conteudo.get("fileSize") or 0)
+            except (TypeError, ValueError):
+                tamanho_arquivo = 0
+
+            dados_arquivo = {
+                "tipo": "arquivo",
+                "file_url": conteudo.get("fileUrl"),
+                "public_id": conteudo.get("publicId"),
+                "file_name": conteudo.get("fileName"),
+                "mime_type": conteudo.get("mimeType"),
+                "file_size": tamanho_arquivo
+            }
+    except (TypeError, ValueError):
+        pass
+
     dados = {
         "nossa_sala": nossa_sala,
         "menssagem": menssagem,
@@ -25,18 +50,25 @@ def enviar_menssagem_na_sala(data):
         "nome_destinatario": nome_amigo,
         "data_envio": horario_formatado,
         "lida": False, 
-        "tipo": "texto"
+        "tipo": dados_arquivo.get("tipo", "texto"),
+        **dados_arquivo
     }
     verificar_amizade = Amigo.query.all()
 
 
     try:
-        # 1. Salva no banco de dados
         armazenar_menssagem = Menssagens(**dados)
         db.session.add(armazenar_menssagem)
-        db.session.commit() # Commit aqui garante que a msg já conta no próximo passo
-        print("menssagem armazenada com sucesso")
+        db.session.commit()
+    except Exception as err:
+        db.session.rollback()
+        print(f"erro ao armazenar a menssagem: {err}")
+        return {"success": False, "error": "Mensagem não foi armazenada no banco de dados"}
 
+    dados["id"] = armazenar_menssagem.id
+    print("menssagem armazenada com sucesso")
+
+    try:
         texto_notificacao = str(menssagem or "Você recebeu uma nova mensagem.")
         if len(texto_notificacao) > 160:
             texto_notificacao = f"{texto_notificacao[:157]}..."
@@ -71,10 +103,9 @@ def enviar_menssagem_na_sala(data):
             "nova_menssagem":menssagem,
             "horario_formatado":horario_formatado
         }, room = str(id_amigo))
-
     except Exception as err:
-        db.session.rollback()
-        print(f"erro ao armazenar a menssagem: {err}")
+        print(f"mensagem persistida, mas falhou uma notificação secundária: {err}")
 
     # 4. Envia a mensagem para a sala de chat aberta
     emit("receber_menssagem", dados, room = str(nossa_sala))
+    return {"success": True, "mensagem_id": armazenar_menssagem.id}

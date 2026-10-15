@@ -9,7 +9,8 @@ export function Enviar_menssagem(
     menssagem , 
     dadosUsuario , 
     setQuantidadeMensagemNaoLida , 
-    setAtivar
+    setAtivar,
+    onResult
 )
 {
     if (!socket || !nossa_sala) return;
@@ -22,7 +23,7 @@ export function Enviar_menssagem(
         "nome_remitente":dadosUsuario.nome
     }
 
-    socket.emit("enviar_menssagem_na_sala" , dados)
+    socket.emit("enviar_menssagem_na_sala" , dados, (result) => onResult?.(result))
     socket.emit("nova_quantidade_de_menssagem" , dados)
     let negritar = useUserStore.getState().Negritar
     try{

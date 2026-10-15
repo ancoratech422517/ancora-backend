@@ -9,6 +9,7 @@ sqlalchemy
 psycopg2-binary
 python-dotenv
 cloudinary
+requests
 flask-talisman
 flask-migrate
 cryptography

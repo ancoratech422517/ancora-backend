@@ -1,4 +1,5 @@
 from flask_socketio import emit
+import json
 from models.database import Menssagens , db , Registrar_produto
 from routes.websocket import socketio
 
@@ -12,17 +13,48 @@ def buscar_menssagens(data):
     dadosUsers = {}
     try:  
         for menssagem in buscar_menssagem_na_sala:
+            conteudo_menssagem = menssagem.menssagem
+            if menssagem.file_url:
+                try:
+                    payload_arquivo = json.loads(conteudo_menssagem)
+                    if not isinstance(payload_arquivo, dict):
+                        payload_arquivo = {}
+                except (TypeError, ValueError):
+                    payload_arquivo = {}
+
+                resource_type = "raw"
+                if (menssagem.mime_type or "").startswith("image/"):
+                    resource_type = "image"
+                elif (menssagem.mime_type or "").startswith("video/"):
+                    resource_type = "video"
+
+                payload_arquivo.update({
+                    "isFile": True,
+                    "fileUrl": menssagem.file_url,
+                    "publicId": menssagem.public_id,
+                    "fileName": menssagem.file_name,
+                    "mimeType": menssagem.mime_type,
+                    "fileSize": menssagem.file_size or 0,
+                    "resourceType": resource_type
+                })
+                conteudo_menssagem = json.dumps(payload_arquivo, ensure_ascii=False)
+
             lista_menssagem.append({
             "id":menssagem.id,
             "nossa_sala": menssagem.nossa_sala,
-            "menssagem": menssagem.menssagem,
+            "menssagem": conteudo_menssagem,
             "id_remitente": menssagem.id_remitente,
             "nome_remitente": menssagem.nome_remitente,
             "id_destinatario":menssagem.id_destinatario,
             "nome_destinatario":menssagem.nome_destinatario,
             "data_envio":menssagem.data_envio,
             "lida":menssagem.lida , 
-            "tipo":"texto"
+            "tipo":menssagem.tipo or "texto",
+            "file_url":menssagem.file_url,
+            "public_id":menssagem.public_id,
+            "file_name":menssagem.file_name,
+            "mime_type":menssagem.mime_type,
+            "file_size":menssagem.file_size
             })
             dadosUsers["id_destinatario"] = menssagem.id_destinatario
             dadosUsers["id_remitente"] = menssagem.id_remitente

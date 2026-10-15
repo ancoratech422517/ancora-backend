@@ -685,6 +685,66 @@ export default function ConteinerRightWindowMenssage() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
   };
 
+  const getDownloadUrl = (src, fileName, resourceType) => {
+    if (!src) return src;
+
+    try {
+      const url = new URL(src, window.location.href);
+      if (!url.hostname.endsWith("cloudinary.com") || !url.pathname.includes("/upload/")) {
+        return src;
+      }
+
+      if (resourceType === "raw" || url.pathname.includes("/raw/upload/")) {
+        return src;
+      }
+
+      const safeFileName = (fileName || "arquivo").replace(/[\\/]/g, "_");
+      return src.replace("/upload/", `/upload/fl_attachment:${encodeURIComponent(safeFileName)}/`);
+    } catch {
+      return src;
+    }
+  };
+
+  const downloadMedia = async (src, fileName, resourceType, fileUrl, publicId) => {
+    const isRawFile = resourceType === "raw" || /\/raw\/upload\//.test(fileUrl || src || "");
+    const sourceFileUrl = fileUrl || (isRawFile ? src : "");
+    let downloadUrl = getDownloadUrl(src, fileName, resourceType);
+    let temporaryUrl = null;
+
+    if (isRawFile && sourceFileUrl) {
+      const params = new URLSearchParams({
+        file_url: sourceFileUrl,
+        public_id: publicId || "",
+        filename: fileName || "arquivo"
+      });
+
+      try {
+        const response = await fetch(`${urlBancoDeDados}/api/download-file?${params.toString()}`);
+        if (!response.ok) {
+          const error = await response.json().catch(() => ({}));
+          throw new Error(error.error || `Falha no download (${response.status})`);
+        }
+        temporaryUrl = URL.createObjectURL(await response.blob());
+        downloadUrl = temporaryUrl;
+      } catch (error) {
+        console.error("Erro ao baixar anexo:", error);
+        window.alert(error.message || "Não foi possível baixar o arquivo.");
+        return;
+      }
+    }
+
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = fileName || "arquivo";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    if (temporaryUrl) {
+      window.setTimeout(() => URL.revokeObjectURL(temporaryUrl), 60_000);
+    }
+  };
+
   const renderMediaMessage = (parsed, souEu, blobUrlFromMsg = null) => {
     const { 
       mimeType, 
@@ -821,13 +881,7 @@ export default function ConteinerRightWindowMenssage() {
     if (mimeType === "application/pdf" || fileName?.toLowerCase().endsWith(".pdf")) {
       return (
         <div 
-          onClick={() => {
-            const link = document.createElement("a");
-            link.href = displaySrc;
-            link.download = fileName || "documento.pdf";
-            link.target = "_blank";
-            link.click();
-          }}
+          onClick={() => downloadMedia(displaySrc, fileName || "documento.pdf", resourceType, fileUrl, publicId)}
           style={{
             padding: "20px 24px",
             background: bgColor,
@@ -860,13 +914,7 @@ export default function ConteinerRightWindowMenssage() {
     // ====================== FICHEIRO GENÉRICO ======================
     return (
       <div 
-        onClick={() => {
-          const link = document.createElement("a");
-          link.href = displaySrc;
-          link.download = fileName || "arquivo";
-          link.target = "_blank";
-          link.click();
-        }}
+        onClick={() => downloadMedia(displaySrc, fileName || "arquivo", resourceType, fileUrl, publicId)}
         style={{
           padding: "20px 24px",
           background: bgColor,
@@ -899,13 +947,23 @@ export default function ConteinerRightWindowMenssage() {
     const texto = msg?.menssagem;
     if (typeof texto !== 'string') return texto;
 
+    let parsed = {};
     if (texto.startsWith('{') && texto.endsWith('}')) {
       try {
-        const parsed = JSON.parse(texto);
-        if (parsed.isFile) {
-          return renderMediaMessage(parsed, souEu, msg?.blobUrl);
-        }
+        parsed = JSON.parse(texto) || {};
       } catch (e) {}
+    }
+
+    if (parsed.isFile || msg?.file_url) {
+      return renderMediaMessage({
+        ...parsed,
+        isFile: true,
+        fileUrl: parsed.fileUrl || msg?.file_url,
+        publicId: parsed.publicId || msg?.public_id,
+        fileName: parsed.fileName || msg?.file_name,
+        mimeType: parsed.mimeType || msg?.mime_type,
+        fileSize: parsed.fileSize ?? msg?.file_size
+      }, souEu, msg?.blobUrl);
     }
 
     if (texto.includes("giphy.com")) {

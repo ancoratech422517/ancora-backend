@@ -7,6 +7,7 @@ from gevent import monkey
 monkey.patch_all()
 from flask import Flask
 from flask_cors import CORS
+from sqlalchemy import inspect, text
 from models.database import db
 from flask_talisman import Talisman
 from flask_migrate import Migrate
@@ -134,6 +135,7 @@ CORS(app, resources={r"/*": {
         "http://192.168.11.1",
         "http://192.168.11.1:5173",
         "http://10.140.176.115:5173",
+        "https://ancora-oficial-ao.netlify.app",
         "https://ancora-ecommerc-tawny.vercel.app"
 
     ],
@@ -147,8 +149,8 @@ CORS(app, resources={r"/*": {
 def after_request(response):
     origin = response.headers.get('Access-Control-Allow-Origin')
     if not origin:
-        response.headers.add('Access-Control-Allow-Origin', 'https://ancora-ecommerc-tawny.vercel.app')
-        #response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
+        #response.headers.add('Access-Control-Allow-Origin', 'https://ancora-ecommerc-tawny.vercel.app')
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
     response.headers.add('Access-Control-Allow-Credentials', 'true')
@@ -194,7 +196,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'chave-secreta-desenvolvimento')
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'files')
-app.config['MAX_CONTENT_LENGTH'] = 2048 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 1024 ** 3
 
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -207,9 +209,31 @@ def setup_database():
     with app.app_context():
         try:
             db.create_all()
+
+            colunas_anexo = {
+                "file_url": "TEXT",
+                "public_id": "TEXT",
+                "file_name": "TEXT",
+                "mime_type": "TEXT",
+                "file_size": "INTEGER"
+            }
+            inspector = inspect(db.engine)
+            if "menssagens" in inspector.get_table_names():
+                existentes = {
+                    coluna["name"] for coluna in inspector.get_columns("menssagens")
+                }
+                with db.engine.begin() as connection:
+                    for nome, tipo in colunas_anexo.items():
+                        if nome not in existentes:
+                            connection.execute(text(
+                                f"ALTER TABLE menssagens ADD COLUMN {nome} {tipo}"
+                            ))
+                            print(f"✅ Coluna menssagens.{nome} adicionada")
+
             print("✅ Banco de dados inicializado com sucesso!")
         except Exception as e:
             print(f"❌ Erro ao inicializar banco: {e}")
+            raise
 
 # Executa a inicialização do banco fora do __main__ para funcionar no deploy
 setup_database()

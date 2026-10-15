@@ -58,11 +58,106 @@ export default function ConteinerRightMenuBottom() {
         }
     };
 
-    const handleFileSelect = (e) => {
+    const uploadFileInChunks = async (file) => {
+        const signatureResponse = await fetch(`${urlBancoDeDados}/api/create-upload-signature`, {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ filename: file.name, file_size: file.size })
+        });
+        const signatureData = await signatureResponse.json().catch(() => ({}));
+        if (!signatureResponse.ok || !signatureData.success) {
+            throw new Error(signatureData.error || "Não foi possível iniciar o upload.");
+        }
+
+        const chunkSize = signatureData.chunk_size;
+        let uploadedBytesTotal = 0;
+        let uploadResult = null;
+
+        for (let start = 0; start < file.size; start += chunkSize) {
+            const end = Math.min(start + chunkSize, file.size);
+            const chunk = file.slice(start, end);
+            const formData = new FormData();
+            formData.append("file", chunk, file.name);
+            formData.append("api_key", signatureData.api_key);
+            formData.append("timestamp", String(signatureData.timestamp));
+            formData.append("signature", signatureData.signature);
+            formData.append("folder", signatureData.folder);
+            formData.append("public_id", signatureData.public_id);
+
+            uploadResult = await new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhrRef.current = xhr;
+                xhr.open(
+                    "POST",
+                    `https://api.cloudinary.com/v1_1/${signatureData.cloud_name}/${signatureData.resource_type}/upload`,
+                    true
+                );
+                xhr.setRequestHeader("X-Unique-Upload-Id", signatureData.upload_id);
+                xhr.setRequestHeader("Content-Range", `bytes ${start}-${end - 1}/${file.size}`);
+
+                xhr.upload.onprogress = (event) => {
+                    if (!event.lengthComputable) return;
+                    const chunkLoaded = Math.min(chunk.size, Math.round((event.loaded / event.total) * chunk.size));
+                    const loaded = Math.min(file.size, uploadedBytesTotal + chunkLoaded);
+                    setUploadedBytes(loaded);
+                    setUploadProgress(Math.floor((loaded / file.size) * 100));
+
+                    const elapsed = (Date.now() - uploadStartTimeRef.current) / 1000;
+                    if (elapsed > 0.8 && loaded > 0) {
+                        const speedBytesPerSecond = loaded / elapsed;
+                        setUploadSpeed((speedBytesPerSecond / (1024 * 1024)).toFixed(1));
+                        setTimeRemaining(Math.max(0, Math.ceil((file.size - loaded) / speedBytesPerSecond)));
+                    }
+                };
+
+                xhr.onload = () => {
+                    let result;
+                    try {
+                        result = JSON.parse(xhr.responseText);
+                    } catch {
+                        result = {};
+                    }
+                    if (xhr.status < 200 || xhr.status >= 300 || result.error) {
+                        reject(new Error(result.error?.message || `Cloudinary recusou um bloco (${xhr.status}).`));
+                        return;
+                    }
+                    resolve(result);
+                };
+                xhr.onerror = () => reject(new Error("Erro de rede durante o envio de um bloco."));
+                xhr.onabort = () => reject(new DOMException("Upload cancelado.", "AbortError"));
+                xhr.send(formData);
+            });
+            uploadedBytesTotal = end;
+        }
+
+        if (!uploadResult?.done) {
+            throw new Error("Cloudinary não confirmou o último bloco do arquivo.");
+        }
+
+        const finalizeResponse = await fetch(`${urlBancoDeDados}/api/finalize-chunked-upload`, {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                upload_ticket: signatureData.upload_ticket,
+                public_id: uploadResult.public_id,
+                filename: file.name,
+                mime_type: file.type || "application/octet-stream"
+            })
+        });
+        const finalData = await finalizeResponse.json().catch(() => ({}));
+        if (!finalizeResponse.ok || !finalData.success) {
+            throw new Error(finalData.error || "O backend não confirmou o arquivo no Cloudinary.");
+        }
+        return finalData;
+    };
+
+    async function handleFileSelect(e) {
         const file = e.target.files[0];
         if (!file) return;
 
-        if (file.size > 2048 * 1024 * 1024) {
+        if (file.size > 1024 ** 3) {
             alert("O arquivo é muito grande.\nLimite máximo: 1GB");
             return;
         }
@@ -73,109 +168,60 @@ export default function ConteinerRightMenuBottom() {
         setUploadSpeed(0);
         setTimeRemaining(0);
         setFileInfo({ name: file.name, totalSize: file.size });
-
         uploadStartTimeRef.current = Date.now();
 
-        const formData = new FormData();
-        formData.append("file", file);
+        try {
+            const result = await uploadFileInChunks(file);
+            const payload = JSON.stringify({
+                isFile: true,
+                mimeType: result.mime_type || file.type || "application/octet-stream",
+                fileName: result.filename || file.name,
+                fileSize: result.size,
+                fileUrl: result.file_url,
+                publicId: result.public_id,
+                folder: result.folder,
+                format: result.format,
+                resourceType: result.resource_type
+            });
+            const tempId = "temp-file-" + Date.now();
+            const optimisticMsg = {
+                id: tempId,
+                menssagem: payload,
+                blobUrl: URL.createObjectURL(file),
+                id_remitente: dadosUsuario?.id,
+                id_destinatario: ChatAtivo?.id_amigo,
+                data_envio: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
+                nossa_sala: ChatAtivo?.nossa_sala,
+                lida: false,
+                nome_remitente: dadosUsuario?.nome || "Você"
+            };
 
-        const xhr = new XMLHttpRequest();
-        xhrRef.current = xhr;
-
-        xhr.open("POST", `${urlBancoDeDados}/api/upload-file`, true);
-
-        xhr.upload.onprogress = (event) => {
-            if (event.lengthComputable) {
-                const percent = Math.round((event.loaded / event.total) * 100);
-                
-                setUploadProgress(percent);
-                setUploadedBytes(event.loaded);
-
-                const elapsed = (Date.now() - uploadStartTimeRef.current) / 1000;
-
-                if (elapsed > 0.8) {
-                    const speedBytesPerSecond = event.loaded / elapsed;
-                    const speedMBps = (speedBytesPerSecond / (1024 * 1024)).toFixed(1);
-                    setUploadSpeed(speedMBps);
-
-                    const remainingBytes = event.total - event.loaded;
-                    const remainingSeconds = remainingBytes / speedBytesPerSecond;
-                    setTimeRemaining(Math.max(0, Math.ceil(remainingSeconds)));
+            if (setMenssagem) setMenssagem(optimisticMsg);
+            Enviar_menssagem(
+                null,
+                socket,
+                ChatAtivo?.nossa_sala,
+                ChatAtivo?.id_amigo,
+                ChatAtivo?.nome_amigo,
+                payload,
+                dadosUsuario,
+                setQuantidadeMensagemNaoLida,
+                null,
+                (sendResult) => {
+                    if (sendResult?.success) return;
+                    useUserStore.getState().elimiar_menssagem_array(tempId, ChatAtivo?.nossa_sala);
+                    URL.revokeObjectURL(optimisticMsg.blobUrl);
+                    alert(sendResult?.error || "O backend não confirmou o armazenamento do arquivo.");
                 }
+            );
+        } catch (error) {
+            if (error.name !== "AbortError") {
+                alert(error.message || "Falha no upload do arquivo.");
             }
-        };
-
-        xhr.onload = () => {
-            if (xhr.status === 200) {
-                let result;
-                try {
-                    result = JSON.parse(xhr.responseText);
-                } catch (_) {
-                    result = { success: false };
-                }
-
-                if (result.success) {
-                    // ===================== LÓGICA CORRIGIDA =====================
-                    const payloadObj = {
-                        isFile: true,
-                        mimeType: file.type || "application/octet-stream",
-                        fileName: result.filename,           // Nome original (igual ao backend)
-                        fileSize: file.size,
-                        fileUrl: result.file_url,            // ← URL real do Cloudinary
-                        publicId: result.public_id,          // ← Importante para futuro
-                        folder: result.folder,
-                        format: result.format,
-                        resourceType: result.resource_type
-                    };
-
-                    const payload = JSON.stringify(payloadObj);
-                    const tempId = "temp-file-" + Date.now();
-
-                    const optimisticMsg = {
-                        id: tempId,
-                        menssagem: payload,
-                        blobUrl: URL.createObjectURL(file),
-                        id_remitente: dadosUsuario?.id,
-                        id_destinatario: ChatAtivo?.id_amigo,
-                        data_envio: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
-                        nossa_sala: ChatAtivo?.nossa_sala,
-                        lida: false,
-                        nome_remitente: dadosUsuario?.nome || "Você"
-                    };
-
-                    if (setMenssagem) setMenssagem(optimisticMsg);
-
-                    Enviar_menssagem(
-                        null,
-                        socket,
-                        ChatAtivo?.nossa_sala,
-                        ChatAtivo?.id_amigo,
-                        ChatAtivo?.nome_amigo,
-                        payload,
-                        dadosUsuario,
-                        setQuantidadeMensagemNaoLida
-                    );
-                } else {
-                    alert("Erro no servidor: " + (result.error || "Desconhecido"));
-                }
-            } else {
-                alert("Falha no upload: " + xhr.status);
-            }
+        } finally {
             cleanup();
-        };
-
-        xhr.onerror = () => {
-            alert("Erro de conexão durante o envio.");
-            cleanup();
-        };
-
-        xhr.onabort = () => {
-            console.log("✅ Upload cancelado pelo utilizador");
-            cleanup();
-        };
-
-        xhr.send(formData);
-    };
+        }
+    }
 
     const cleanup = () => {
         setIsUploading(false);
