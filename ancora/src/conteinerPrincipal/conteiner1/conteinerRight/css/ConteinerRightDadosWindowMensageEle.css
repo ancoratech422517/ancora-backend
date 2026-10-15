@@ -83,7 +83,7 @@
 }
 
 /* --- O RESTO CONTINUA IGUAL --- */
-.textoUserEle span {
+.textoUserEle > span {
     position: absolute;
     right: 0;
     bottom: 0;

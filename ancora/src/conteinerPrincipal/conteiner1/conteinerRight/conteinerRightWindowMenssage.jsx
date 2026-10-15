@@ -64,32 +64,32 @@ const StatusVisualizacao = ({ lida, statusAmigo, isAudio = false }) => {
 };
 
 // --- PLAYER DE ÁUDIO --- (mantido exatamente igual)
+// --- PLAYER DE ÁUDIO — ONDAS DUPLAS ---
 const PlayerAudioCustomizado = ({ src, isMyMessage = false, currentlyPlayingSrc, onPlayStart, onPlayStop, containerBgOverride = null }) => {
-  const [progresso, setProgresso] = useState(0);
+  const [progresso, setProgresso] = useState(0); // 0–1
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [waveHeights, setWaveHeights] = useState([32, 48, 25, 62, 38, 55, 29, 68, 44, 37, 59, 33, 51, 27, 65, 41, 56, 34]);
   const [isDragging, setIsDragging] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
 
   const audioRef = useRef(null);
-  const intervalRef = useRef(null);
-  const waveformRef = useRef(null);
+  const trackRef = useRef(null);
 
   const isPlaying = currentlyPlayingSrc === src;
-  const isLightBackground = !isMyMessage;
 
-  const containerBg = containerBgOverride || (isLightBackground ? "#ffffff" : "#0d9488");
-  const accentColor = isMyMessage ? '#00ff9d' : '#00b3ff';
-  const accentDark = isMyMessage ? '#00cc7a' : '#0099dd';
-  const accentGlow = isMyMessage ? 'rgba(0, 255, 157, 0.75)' : 'rgba(0, 179, 255, 0.75)';
+  // Cores (adaptadas ao teu chat)-
+  const c = isMyMessage ? "rgb(5, 241, 139)" : "#38bdf8";
+  const d = isMyMessage ? "rgba(0, 255, 157, 0.28)" : "rgba(56, 189, 248, 0.28)";
+  const c2 = isMyMessage ? "#2c2c2d65" : "#2d2d2d64";
+  const d2 = isMyMessage ? "rgba(1, 0, 2, 0.28)" : "rgba(1, 0, 2, 0.28)";
+  const textColor = isMyMessage ? "rgba(255,255,255,0.95)" : "#1d1b26";
 
-  const containerBorder = isLightBackground ? '1px solid rgba(0,0,0,0.07)' : '1px solid rgba(255,255,255,0.22)';
-  const textColor = isLightBackground ? '#1a1a1a' : '#ffffff';
-  const inactiveWaveColor = isLightBackground ? 'rgba(0,0,0,0.38)' : 'rgba(255,255,255,0.55)';
+  // Paths das ondas duplas (mesmo do teu HTML)
+  const wavePath = (amp) =>
+    `M0 15Q12.5 ${15 - amp} 25 15` +
+    Array.from({ length: 9 }, (_, k) => `T${50 + 25 * k} 15`).join("");
 
-  const buttonBg = '#ffffff';
-  const baseWaveform = [32, 48, 25, 62, 38, 55, 29, 68, 44, 37, 59, 33, 51, 27, 65, 41, 56, 34];
+  const pathMain = wavePath(15);
+  const pathSec = wavePath(-9);
 
   const formatTime = (time) => {
     if (!time || isNaN(time)) return "0:00";
@@ -114,59 +114,47 @@ const PlayerAudioCustomizado = ({ src, isMyMessage = false, currentlyPlayingSrc,
     const current = audioRef.current.currentTime;
     const dur = audioRef.current.duration || 0;
     setCurrentTime(current);
-    setProgresso(isFinite(dur) && dur > 0? (current / dur) * 100 : 0);
+    setProgresso(isFinite(dur) && dur > 0 ? current / dur : 0);
   };
 
   const handleLoadedMetadata = () => {
     if (audioRef.current) {
       const dur = audioRef.current.duration;
-      setDuration(isFinite(dur)? dur : 0);
+      setDuration(isFinite(dur) ? dur : 0);
     }
   };
 
-  const calculateSeekPosition = (clientX) => {
-    if (!waveformRef.current || !audioRef.current?.duration) return;
-    const rect = waveformRef.current.getBoundingClientRect();
-    const clickX = Math.max(0, Math.min(clientX - rect.left, rect.width));
-    const percent = clickX / rect.width;
-    audioRef.current.currentTime = percent * audioRef.current.duration;
+  const seekFromClientX = (clientX) => {
+    if (!trackRef.current || !audioRef.current?.duration) return;
+    const rect = trackRef.current.getBoundingClientRect();
+    const p = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    audioRef.current.currentTime = p * audioRef.current.duration;
+    setProgresso(p);
+    setCurrentTime(audioRef.current.currentTime);
   };
 
-  const handleSeekClick = (e) => calculateSeekPosition(e.clientX);
+  const handleSeekClick = (e) => seekFromClientX(e.clientX);
+
   const handleDragStart = (e) => {
     setIsDragging(true);
-    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-    if (clientX) calculateSeekPosition(clientX);
+    const clientX = e.clientX || e.touches?.[0]?.clientX;
+    if (clientX != null) seekFromClientX(clientX);
   };
+
   const handleDragMove = (e) => {
     if (!isDragging) return;
-    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-    if (clientX) calculateSeekPosition(clientX);
+    const clientX = e.clientX || e.touches?.[0]?.clientX;
+    if (clientX != null) seekFromClientX(clientX);
   };
+
   const handleDragEnd = () => setIsDragging(false);
 
   useEffect(() => {
-    if (isPlaying) {
-      intervalRef.current = setInterval(() => {
-        const novasAlturas = baseWaveform.map(h => h * (0.75 + Math.random() * 0.85));
-        setWaveHeights(novasAlturas);
-      }, 65);
-    } else {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      setWaveHeights(baseWaveform.map(h => h * 0.52));
-    }
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [isPlaying]);
-
-  useEffect(() => {
-    if (isDragging) {
-      document.addEventListener("mousemove", handleDragMove);
-      document.addEventListener("mouseup", handleDragEnd);
-      document.addEventListener("touchmove", handleDragMove);
-      document.addEventListener("touchend", handleDragEnd);
-    }
+    if (!isDragging) return;
+    document.addEventListener("mousemove", handleDragMove);
+    document.addEventListener("mouseup", handleDragEnd);
+    document.addEventListener("touchmove", handleDragMove, { passive: true });
+    document.addEventListener("touchend", handleDragEnd);
     return () => {
       document.removeEventListener("mousemove", handleDragMove);
       document.removeEventListener("mouseup", handleDragEnd);
@@ -175,73 +163,215 @@ const PlayerAudioCustomizado = ({ src, isMyMessage = false, currentlyPlayingSrc,
     };
   }, [isDragging]);
 
+  const displayTime =
+    isPlaying || currentTime > 0
+      ? formatTime(currentTime)
+      : formatTime(duration || 0);
+
   return (
-    <div style={{
-      display: 'flex', alignItems: 'center', gap: '14px', padding: '5px 7px',
-      
-      borderRadius: '9999px', background: containerBg, minWidth: '200px',
-      border: containerBorder, boxShadow: isPlaying 
-        ? `0 10px 28px ${accentGlow}, 0 4px 12px rgba(0,0,0,0.12)` 
-        : isLightBackground ? '0 6px 18px rgba(0,0,0,0.09)' : '0 8px 22px rgba(13,148,136,0.3)',
-      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', position: 'relative', overflow: 'hidden',
-    }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        minWidth: "270px",
+        color: c,
+        position: "relative",
+        marginRight:"3%",
+        paddingRight:"4%"
+      }}
     >
-    <audio 
-      ref={audioRef} 
-      src={src} 
-      preload="metadata"
-      onTimeUpdate={atualizarProgresso} 
-      onLoadedMetadata={handleLoadedMetadata}
-      onEnded={() => { onPlayStop(); setProgresso(100); setCurrentTime(duration || 0); }} 
-    />
-      <button onClick={alternarPlay} style={{
-        background: buttonBg, border: isPlaying ? `3px solid ${accentColor}` : 'none',
-        borderRadius: '50%', width: '48px', height: '48px', cursor: 'pointer',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        boxShadow: isPlaying ? `0 0 0 6px ${accentGlow}, 0 4px 14px rgba(0,0,0,0.15)` : isHovered ? '0 8px 20px rgba(0,0,0,0.18)' : '0 6px 16px rgba(0,0,0,0.12)',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', flexShrink: 0,
-        transform: isPlaying ? 'scale(1.03)' : isHovered ? 'scale(1.08)' : 'scale(1)', outline: 'none'
-      }}>
+      <audio
+        ref={audioRef}
+        src={src}
+        preload="metadata"
+        onTimeUpdate={atualizarProgresso}
+        onLoadedMetadata={handleLoadedMetadata}
+        onEnded={() => {
+          onPlayStop();
+          setProgresso(0);
+          setCurrentTime(0);
+        }}
+      />
+
+      {/* Botão play/pause */}
+      <button
+        type="button"
+        onClick={alternarPlay}
+        aria-label={isPlaying ? "Pausar" : "Reproduzir"}
+        style={{
+          all: "unset",
+          cursor: "pointer",
+          width: 38,
+          height: 38,
+          borderRadius: "50%",
+          display: "grid",
+          placeItems: "center",
+          flexShrink: 0,
+          border: `2px solid ${c}`,
+          color: c,
+          boxSizing: "border-box",
+        }}
+      >
         {isPlaying ? (
-          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill={accentColor}>
-            <rect x="6" y="4" width="4" height="16" rx="1.1" />
-            <rect x="14" y="4" width="4" height="16" rx="1.1" />
-          </svg>
+          <span
+            style={{
+              display: "block",
+              width: 12,
+              height: 14,
+              background: `linear-gradient(90deg, ${c} 36%, transparent 36% 64%, ${c} 64%)`,
+            }}
+          />
         ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill={accentColor} style={{ marginLeft: '3px' }}>
-            <path d="M8 5.14v14.72a.5.5 0 0 0 .75.43l11.2-7.36a.5.5 0 0 0 0-.86L8.75 4.71a.5.5 0 0 0-.75.43z" />
-          </svg>
+          <span
+            style={{
+              display: "block",
+              width: 0,
+              height: 0,
+              marginLeft: 3,
+              borderStyle: "solid",
+              borderWidth: "7px 0 7px 11px",
+              borderColor: `transparent transparent transparent ${c}`,
+            }}
+          />
         )}
       </button>
 
-      <div ref={waveformRef} onClick={handleSeekClick} onMouseDown={handleDragStart} onTouchStart={handleDragStart}
-        style={{ flex: 1, height: '36px', display: 'flex', alignItems: 'center', gap: '2.8px', padding: '0 8px', cursor: 'pointer', userSelect: 'none', position: 'relative' }}>
-        <div style={{ position: 'absolute', bottom: '6px', left: '8px', right: '8px', height: '2.5px', background: inactiveWaveColor, borderRadius: '9999px', overflow: 'hidden' }}>
-          <div style={{ width: `${progresso}%`, height: '100%', background: `linear-gradient(90deg, ${accentColor}, ${accentDark})`, transition: 'width 0.15s linear', boxShadow: isPlaying ? `0 0 8px ${accentGlow}` : 'none' }} />
-        </div>
+      {/* Track — ondas duplas SVG */}
+      <div
+        ref={trackRef}
+        onClick={handleSeekClick}
+        onMouseDown={handleDragStart}
+        onTouchStart={handleDragStart}
+        style={{
+          flex: 1,
+          height: 50,
+          cursor: "pointer",
+          position: "relative",
+          userSelect: "none",
+          touchAction: "none",
+        }}
+      >
+        {/* Onda base (inativa) */}
+        <svg
+          viewBox="0 0 200 30"
+          preserveAspectRatio="none"
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            overflow: "hidden",
+          }}
+        >
+          <path
+            d={pathMain}
+            fill="none"
+            stroke={d}
+            strokeWidth={3}
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+            style={
+              isPlaying
+                ? { animation: "audioDwWave 1s linear infinite" }
+                : undefined
+            }
+          />
+          <path
+            d={pathSec}
+            fill="none"
+            stroke={d2}
+            strokeWidth={1.6}
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+            style={
+              isPlaying
+                ? {
+                    animation: "audioDwWave 1.7s linear infinite reverse",
+                  }
+                : undefined
+            }
+          />
+        </svg>
 
-        {waveHeights.map((altura, index) => {
-          const isPlayed = index / waveHeights.length < progresso / 100;
-          return (
-            <div key={index} style={{
-              width: '3.65px', height: `${altura}%`,
-              background: isPlayed ? `linear-gradient(180deg, ${accentColor}, ${accentDark})` : inactiveWaveColor,
-              borderRadius: '9999px', transition: isPlaying ? 'height 0.065s cubic-bezier(0.4, 0, 0.2, 1)' : 'height 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              boxShadow: isPlayed && isPlaying ? `0 0 7px ${accentGlow}` : 'none', position: 'relative', zIndex: 2
-            }} />
-          );
-        })}
+        {/* Onda ativa (progresso com clip) */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            clipPath: `inset(0 ${((1 - progresso) * 100).toFixed(3)}% 0 0)`,
+            pointerEvents: "none",
+          }}
+        >
+          <svg
+            viewBox="0 0 200 30"
+            preserveAspectRatio="none"
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              overflow: "hidden",
+            }}
+          >
+            <path
+              d={pathMain}
+              fill="none"
+              stroke={c}
+              strokeWidth={3}
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
+              style={
+                isPlaying
+                  ? { animation: "audioDwWave 1s linear infinite" }
+                  : undefined
+              }
+            />
+            <path
+              d={pathSec}
+              fill="none"
+              stroke={c2}
+              strokeWidth={1.6}
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
+              style={
+                isPlaying
+                  ? {
+                      animation: "audioDwWave 1.7s linear infinite reverse",
+                    }
+                  : undefined
+              }
+            />
+          </svg>
+        </div>
       </div>
 
-    <span style={{ fontSize: '12.2px', color: textColor, fontWeight: '700', letterSpacing: '-0.4px', fontFamily: 'SF Mono, monospace', whiteSpace: 'nowrap', minWidth: '68px', textAlign: 'right', opacity: isLightBackground? 0.92 : 0.96 }}>
-      {formatTime(currentTime)}<span style={{ opacity: 0.6, fontSize: '11px', margin: '0 2px' }}>/</span>{isFinite(duration) && duration > 0? formatTime(duration) : '0:00'}
-    </span>
+      {/* Tempo */}
+      <span
+        style={{
+          font: "600 12px ui-monospace, Menlo, monospace",
+          minWidth: 34,
+          textAlign: "right",
+          color: textColor,
+          flexShrink: 0,
+        }}
+      >
+        {displayTime}
+      </span>
+
+      <style>
+        {`
+          @keyframes audioDwWave {
+            to { transform: translateX(-50px); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .pl path { animation: none !important; }
+          }
+        `}
+      </style>
     </div>
   );
 };
-
 // ====================== PLAYER DE VÍDEO - ATUALIZADO ======================
 const PlayerVideoCustomizado = ({
   videoUrl,
