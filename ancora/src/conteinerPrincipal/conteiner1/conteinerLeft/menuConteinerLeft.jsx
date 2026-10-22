@@ -19,7 +19,9 @@ export default function MenuConteinerLeft({ ativarConteiner, setDadosUsuario }) 
         setClienteVendedor , 
         ClienteVendedor,
         setTurmaUsuario,
-        setUsuarioAncora
+        setUsuarioAncora , 
+        DADOSESTADOAMIGO , 
+        set_DADOSESTADOAMIGO
      } = useUserStore();
     const [jaBuscou, setJaBuscou] = useState(false);
     const amigo = useUserStore((state) => state.amigos);
@@ -48,6 +50,17 @@ export default function MenuConteinerLeft({ ativarConteiner, setDadosUsuario }) 
         })
     } , setUsuarioAncora)
         // 3. Busca inicial ao carregar (Amigos)
+    //BUSCAR OS DADOS DO ESTADO SO SEU AMIGO
+    const buscar_dados_estado_amigo = useCallback(()=>{
+        fetch(`${urlBancoDeDados}/estado_meu_amigo/${dadosUsuario.id}`)
+        .then(res => res.json())
+        .then(dados =>{
+            if(Array.isArray(dados)){
+                set_DADOSESTADOAMIGO(dados)
+            }
+        } )
+    } , set_DADOSESTADOAMIGO)
+    //FIM DA BUSCA DO ESTADO DO SEU AMIGO
     useEffect(() => {
         if (dadosUsuario?.id && !jaBuscou) {
             fetch(`${urlBancoDeDados}/api/get/meus_amigos/${dadosUsuario.id}`)
@@ -138,6 +151,7 @@ export default function MenuConteinerLeft({ ativarConteiner, setDadosUsuario }) 
             buscar_turma_usuario()
         }
     } , [dadosUsuario?.id , buscar_turma_usuario])
+    
 
     socket?.on("Resposta_Solicitacao_entrada_turma" , (dados)=>{
         buscar_notificacao()
@@ -156,6 +170,10 @@ export default function MenuConteinerLeft({ ativarConteiner, setDadosUsuario }) 
             // Não marcamos jaBuscou aqui ainda para garantir que a lista de amigos também carregue
         }
     }, [dadosUsuario?.id, jaBuscou, buscar_notificacao]);
+
+    useEffect(()=>{
+        buscar_dados_estado_amigo()
+    } , buscar_dados_estado_amigo)
 
     useEffect(()=>{
         if(dadosUsuario?.id){

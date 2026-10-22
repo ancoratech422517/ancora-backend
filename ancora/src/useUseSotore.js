@@ -82,6 +82,9 @@ export const useUserStore = create(
       DADOSTOTALAMIGO:[],
       DADOSTOTALPRODUTO:[],
       DADOSTOTALTURMAUSUARIO:[],
+      DADOSESTADOAMIGO:[],
+      DADOSTIPOVIEWSLAYUTELEFT:false,
+      CONFIRMARSAIDA: false,
       // --- SOM ---
       tocarSomEnvio: () => {
         const audio = new Audio('/sounds/envio.mp3')
@@ -235,6 +238,9 @@ export const useUserStore = create(
       setDADOSTOTALAMIGO: (set_dados_turma_total_amigo) => set({DADOSTOTALAMIGO:set_dados_turma_total_amigo}),
       setDADOSTOTALPRODUTO: (set_dados_total_produto) => set({DADOSTOTALPRODUTO:set_dados_total_produto}),
       setDADOSTOTALTURMAUSUARIO: (set_dados_total_turma_usuario) => set({DADOSTOTALTURMAUSUARIO:set_dados_total_turma_usuario}),
+      set_DADOSESTADOAMIGO: (set_dados_estado_amigo) => set({DADOSESTADOAMIGO: set_dados_estado_amigo}),
+      set_DADOSTIPOVIEWSLAYUTELEFT: (set_dados_tipo_views_layout_left) => set({DADOSTIPOVIEWSLAYUTELEFT:set_dados_tipo_views_layout_left}),
+      set_CONFIRMARSAIDA: (set_confirmar_saida) => set({CONFIRMARSAIDA:set_confirmar_saida}),
       // --- OUTRAS AÇÕES ---
       limparDados: () => set({
         dadosUsuario: null,

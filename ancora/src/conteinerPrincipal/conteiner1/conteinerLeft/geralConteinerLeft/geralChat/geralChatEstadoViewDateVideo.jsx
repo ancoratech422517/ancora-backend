@@ -3,10 +3,18 @@ import "../css/GeralChatEstadoViewDateVideo.css"
 import SetaEsquerda from "../../../../components/conteinerSvg/setaEsquerda";
 import { useUserStore } from "../../../../../useUseSotore";
 export default function GeralChatEstadoViewDateVideo (){
-    const {setMostrarConteinerEstadoUserViews , DadosGeralEstadoUser , setTipoConteudoViewEstado} = useUserStore()
+    const {
+            setMostrarConteinerEstadoUserViews , 
+            DadosGeralEstadoUser , 
+            setTipoConteudoViewEstado , 
+            set_DADOSTIPOVIEWSLAYUTELEFT , 
+            CONFIRMARSAIDA , 
+            set_CONFIRMARSAIDA
+         } = useUserStore()
+
     return(
         <div className="GeralChatEstadoViewDateVideo">
-            <video src={TesteVideo} autoPlay loop></video>
+            <video src={DadosGeralEstadoUser.dados_estado} autoPlay loop></video>
             <div className="GeralChatEstadoViewDateVideoConnteudo">
                 <div className="GeralChatEstadoViewDateVideoConnteudoBox">
                     <div className="GeralChatEstadoViewDateVideoConnteudoBox1">
@@ -41,7 +49,7 @@ export default function GeralChatEstadoViewDateVideo (){
                     </div>
                 </div>
             </div>
-            <div className="GeralChatEstadoViewDateVideoVoltar" onClick={()=>{setMostrarConteinerEstadoUserViews(false) , setTipoConteudoViewEstado("")}}>
+            <div className="GeralChatEstadoViewDateVideoVoltar" onClick={()=>{setMostrarConteinerEstadoUserViews(false) , setTipoConteudoViewEstado("") , CONFIRMARSAIDA === true ? set_DADOSTIPOVIEWSLAYUTELEFT(true):set_DADOSTIPOVIEWSLAYUTELEFT(false)}}>
                 <SetaEsquerda />
             </div>
         </div>

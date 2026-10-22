@@ -55,6 +55,7 @@ export default function ConteinerRightDadosWindowMenssageMim ({texto , hora , no
                         </div>
                         <div className="IconeUserMim" style={{background:fundo}}>
                             {condicaoEstadoFotoPerfil()}
+
                         </div>
                     </div>
             </div>

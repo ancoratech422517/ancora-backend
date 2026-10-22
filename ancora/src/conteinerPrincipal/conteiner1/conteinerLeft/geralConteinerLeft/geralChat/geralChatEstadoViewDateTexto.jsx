@@ -3,7 +3,7 @@ import "../css/GeralChatEstadoViewDateTexto.css"
 import SetaEsquerda from "../../../../components/conteinerSvg/setaEsquerda";
 import { useUserStore } from "../../../../../useUseSotore";
 export default function GeralChatEstadoViewDateTexto () {
-    const {setMostrarConteinerEstadoUserViews , DadosGeralEstadoUser} = useUserStore()
+    const {setMostrarConteinerEstadoUserViews , DadosGeralEstadoUser , set_DADOSTIPOVIEWSLAYUTELEFT , CONFIRMARSAIDA , set_CONFIRMARSAIDA} = useUserStore()
     return (
         <div className="GeralChatEstadoViewDateTexto">
             <div className="GeralChatEstadoViewDateTextoTXT">
@@ -38,7 +38,7 @@ export default function GeralChatEstadoViewDateTexto () {
                     </div>
                 </div>
             </div>
-            <div className="GeralChatEstadoViewDateTextoVoltar" onClick={()=>{setMostrarConteinerEstadoUserViews(false)}}>
+            <div className="GeralChatEstadoViewDateTextoVoltar" onClick={()=>{setMostrarConteinerEstadoUserViews(false) , CONFIRMARSAIDA === true ? set_DADOSTIPOVIEWSLAYUTELEFT(true):set_DADOSTIPOVIEWSLAYUTELEFT(false) , set_CONFIRMARSAIDA(false)}}>
                 <SetaEsquerda />
             </div>
         </div>

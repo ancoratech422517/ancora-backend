@@ -12,6 +12,7 @@ export default function ConteinerChatEstadoViewDATE () {
         switch(TipoConteudoViewEstado){
             case "musica":
                 return (
+                    
                     <GeraChatEstadoViewDATEAudio /> 
                 )
                 case "imagem":

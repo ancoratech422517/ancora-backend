@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import "../css/GeralChatEstadoViewDATEAudio.css"
 import { useUserStore } from "../../../../../useUseSotore";
 export default function GeraChatEstadoViewDATEAudio (){
-    const {setMostrarConteinerEstadoUserViews, DadosEstadoElementoClicado , DadosGeralEstadoUser , dadosUsuario} = useUserStore()
+    const {setMostrarConteinerEstadoUserViews, DadosEstadoElementoClicado , DadosGeralEstadoUser , dadosUsuario , set_DADOSTIPOVIEWSLAYUTELEFT , CONFIRMARSAIDA} = useUserStore()
     const audioRef = useRef(null)
     const [estaTocando, setEstaTocando] = useState(false)
 
@@ -12,7 +12,7 @@ export default function GeraChatEstadoViewDATEAudio (){
 
         if (audio.paused) {
             try {
-                audioRef.current.playbackRate = 1.5;
+                audioRef.current.playbackRate = 1.0;
                 await audio.play()
             } catch (erro) {
                 console.error("Erro ao reproduzir a música do estado:", erro)
@@ -29,7 +29,7 @@ export default function GeraChatEstadoViewDATEAudio (){
                     <div className={estaTocando ? "pl on" : "pl"}>
                         <audio
                             ref={audioRef}
-                            src={DadosEstadoElementoClicado || undefined}
+                            src={DadosGeralEstadoUser.dados_estado || undefined}
                             preload="metadata"
                             onPlay={() => setEstaTocando(true)}
                             onPause={() => setEstaTocando(false)}
@@ -72,7 +72,7 @@ export default function GeraChatEstadoViewDATEAudio (){
                     </li>
                 </div>
             </div>
-            <div className="GeralChatEstadoViewDateAudioBoxBUTOON" onClick={()=>{setMostrarConteinerEstadoUserViews(false)}}>
+            <div className="GeralChatEstadoViewDateAudioBoxBUTOON" onClick={()=>{setMostrarConteinerEstadoUserViews(false) ,  CONFIRMARSAIDA === true ? set_DADOSTIPOVIEWSLAYUTELEFT(true):set_DADOSTIPOVIEWSLAYUTELEFT(false)}}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
                 <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
                 </svg>

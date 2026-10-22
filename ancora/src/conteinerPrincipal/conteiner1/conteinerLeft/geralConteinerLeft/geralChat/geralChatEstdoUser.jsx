@@ -26,7 +26,9 @@ export default function GeralChatEstadoUser ({setViewChat}) {
         setDadosEstadoElementoClicado,
         setDadosGeralEstadoUser , 
         setTipoConteudoViewEstado,
-        dadosUsuario
+        dadosUsuario , 
+        DADOSTIPOVIEWSLAYUTELEFT , 
+        set_DADOSTIPOVIEWSLAYUTELEFT
     } = useUserStore()
     // const [AllDateStatusUser , setAllDateStatusUser] = useState()
 
@@ -38,6 +40,15 @@ export default function GeralChatEstadoUser ({setViewChat}) {
                 )
         }
     }
+
+    const verificar_saida = ()=>{
+        if (DADOSTIPOVIEWSLAYUTELEFT === true){
+              setViewChat(false)
+              set_DADOSTIPOVIEWSLAYUTELEFT(false)
+         }
+    }
+
+
 
     const condicao_estado_resposta = ()=>{
         switch(EstadoResposta){
@@ -280,6 +291,7 @@ export default function GeralChatEstadoUser ({setViewChat}) {
             {/* CONTEINER DE ADICIONAR NOVOS DADOS NO ESTADO */}
             {condicao_estado_view_add()}
             {condicao_mostrar_conteiner_estado_views()}
+            {verificar_saida()}
             <div className="GeralChatEstadoUserVoltar" onClick={()=>{setViewChat(false)}}>
                 <SetaEsquerda />
             </div>

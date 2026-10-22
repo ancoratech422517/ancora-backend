@@ -101,7 +101,8 @@ from routes.api_adicionar_estado_musica import EstadoMusicaUsuario
 from routes.api_adicionar_estado_imgem import EstadoImagem
 from routes.api_enviar_video_estado import EstadoVideo
 from routes.api_buscar_dados_perfil_usuario_add import GetDateUserAdd
-
+from routes.api_estado_meu_amigo import EstadoMeuAmigo
+#----------------------------------------------------------------------------------------------
 import routes.websoket_conectUser
 import routes.websocket_aceitar_pedido_amizade
 import routes.websocket_recusar_pedido_amizade
@@ -278,6 +279,7 @@ app.register_blueprint(EstadoMusicaUsuario)
 app.register_blueprint(EstadoImagem)
 app.register_blueprint(EstadoVideo)
 app.register_blueprint(GetDateUserAdd)
+app.register_blueprint(EstadoMeuAmigo)
 
 if __name__ == '__main__':
     print("=" * 70)

@@ -16,7 +16,7 @@
 .GeralChatMenuButtomPerfilFixoUserEstado{
     width: 65px;
     height: 65px;
-    border: 3px solid var(--gray-400);
+    border: 5px solid #363636;
     border-radius: 50%;
     background-color:#f1f1f1;
     transition: .2s ease;
@@ -25,6 +25,7 @@
     text-align: center;
     align-items: center;
     justify-content: center;
+    border-style: inset;
 }
 .GeralChatMenuButtomPerfilFixoUserEstado:hover{
     transition: .2s ease;
@@ -58,12 +59,21 @@
 .GeralChatMenuButtomPerfilEstadoScrollIconeAmigo{
     width: 65px;
     height: 65px;
-    border: 1px solid #d2d2d2;
+    border: 5px solid var(--teal-600);
     background-color: #f1f1f1;
     border-radius: 50%;
     flex-shrink: 0;
     cursor: pointer;
     transition: .2s ease;
+    padding: 2.5px;
+    border-style:inset;
+
+}
+.GeralChatMenuButtomPerfilEstadoScrollIconeAmigo img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
 }
 .GeralChatMenuButtomPerfilEstadoScrollIconeAmigo:active{
     transition: .2s ease;

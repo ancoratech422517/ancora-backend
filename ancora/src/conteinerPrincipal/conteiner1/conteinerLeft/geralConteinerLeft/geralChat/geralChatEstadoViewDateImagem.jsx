@@ -3,7 +3,7 @@ import "../css/GeralChatEstadoViewDateImagem.css"
 import SetaEsquerda from "../../../../components/conteinerSvg/setaEsquerda";
 import { useUserStore } from "../../../../../useUseSotore";
 export default function GeralChatEstadoViewDateImagem (){
-    const {setMostrarConteinerEstadoUserViews , DadosGeralEstadoUser} = useUserStore()
+    const {setMostrarConteinerEstadoUserViews , DadosGeralEstadoUser , set_DADOSTIPOVIEWSLAYUTELEFT , CONFIRMARSAIDA} = useUserStore()
     return (
         <div className="GeralChatEstadoViewDateImagem">
             <img src={DadosGeralEstadoUser.dados_estado} alt="" />
@@ -43,7 +43,7 @@ export default function GeralChatEstadoViewDateImagem (){
                     </div>
                 </div>
             </div>
-            <div className="GeralChatEstadoViewDateImagemVoltar" onClick={()=>{setMostrarConteinerEstadoUserViews(false)}}>
+            <div className="GeralChatEstadoViewDateImagemVoltar" onClick={()=>{setMostrarConteinerEstadoUserViews(false) , CONFIRMARSAIDA === true ? set_DADOSTIPOVIEWSLAYUTELEFT(true):set_DADOSTIPOVIEWSLAYUTELEFT(false)}}>
                 <SetaEsquerda />
             </div>           
         </div>

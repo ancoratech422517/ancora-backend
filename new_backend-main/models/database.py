@@ -216,3 +216,4 @@ class Adicionar_dados_estado(db.Model):
     foto_usuario_estado = db.Column(db.Text , default = "none")
     
     
+    
