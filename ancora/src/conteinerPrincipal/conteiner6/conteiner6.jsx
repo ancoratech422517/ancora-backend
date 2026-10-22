@@ -3,6 +3,7 @@ import "./css/Conteiner6.css"
 import Conteiner6WindowBoxLogin from "./.Conteiner6WindowBoxLogin";
 import Conteiner6WindowBoxRegistro from "./Conteiner6WindowBoxRegistro";
 import Video from "../../assets/fundo-chat.jpg"
+import FotoLogin from "../../assets/foto-login.jpg"
 export default function Conteiner6 ({ativarConteiner}) {
     const [conta , setConta] = useState("Login")
     const autentificaçã = () =>{
@@ -20,7 +21,7 @@ export default function Conteiner6 ({ativarConteiner}) {
             <div className="Conteiner6Window">
                 <div className="Conteiner6WindowBox">
                     {/* <img src={FundoLogin} alt="" /> */}
-                    <img src={Video} autoPlay loop muted playsInline></img>
+                    <img src={FotoLogin} autoPlay loop muted playsInline></img>
                 </div>
                 <div className="Conteiner6WindowBox">
                     {autentificaçã()}
