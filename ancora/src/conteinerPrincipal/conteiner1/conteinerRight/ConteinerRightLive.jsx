@@ -37,8 +37,10 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
     setError(null);
 
     try {
-      const isTeacher = dadosUsuario.role === "teacher"
-        || (id_admin_turma != null && String(id_admin_turma) === String(dadosUsuario.id));
+      const role = String(dadosUsuario?.role ?? "").toLowerCase();
+      const isTeacher = ["teacher", "professor", "admin", "administrador"].includes(role)
+        || (id_admin_turma != null && String(id_admin_turma) === String(dadosUsuario?.id));
+
       const response = await fetch(`${urlBancoDeDados}/api/livekit/token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

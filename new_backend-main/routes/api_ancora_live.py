@@ -31,6 +31,10 @@ def get_livekit_token():
             }), 400
 
         # Criação do token
+        publish_sources = ["MICROPHONE", "CAMERA"]
+        if is_teacher:
+            publish_sources.extend(["SCREEN_SHARE", "SCREEN_SHARE_AUDIO"])
+
         token = api.AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET) \
             .with_identity(participant_name) \
             .with_name(participant_name) \
@@ -40,8 +44,7 @@ def get_livekit_token():
                 can_publish=True,
                 can_subscribe=True,
                 can_publish_data=True,
-                # Partilha de ecrã apenas para professores
-                can_publish_sources=["SCREEN_SHARE"] if is_teacher else []
+                can_publish_sources=publish_sources,
             ))
 
         return jsonify({
