@@ -4,6 +4,7 @@ import { io } from 'socket.io-client'
 import { fetchComAuth } from './utils/api'
 let url = "https://ancora-backend-09zc.onrender.com"
 let url2 = "http://127.0.0.1:5000"
+// teste
 export const useUserStore = create(
   
   
