@@ -7,7 +7,7 @@ import "@livekit/components-styles";
 import {
   LiveKitRoom,
   VideoConference,
-  RoomAudioRenderer,
+  StartAudio,
 } from "@livekit/components-react";
 import { Room } from "livekit-client";
 
@@ -206,9 +206,8 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
           style={{ height: "calc(100vh - 85px)" }}
           data-lk-theme="default"
         >
-          {/* Estrutura mínima recomendada */}
+          <StartAudio label="Ativar áudio da turma" />
           <VideoConference />
-          <RoomAudioRenderer />
         </LiveKitRoom>
       )}
       </div>
