@@ -8,6 +8,7 @@ from urllib.request import Request, urlopen
 from models.database import Usuario, db
 
 logger = logging.getLogger(__name__)
+PUSHY_NOTIFICATION_ICON = "https://ancora-ecommerc-tawny.vercel.app/logo2.png"
 
 
 def enviar_notificacao_pushy(usuario_id, titulo, mensagem, dados=None):
@@ -38,7 +39,8 @@ def enviar_notificacao_pushy(usuario_id, titulo, mensagem, dados=None):
         },
         "notification": {
             "title": titulo,
-            "body": mensagem
+            "body": mensagem,
+            "icon": PUSHY_NOTIFICATION_ICON
         },
         "time_to_live": 86400
     }
