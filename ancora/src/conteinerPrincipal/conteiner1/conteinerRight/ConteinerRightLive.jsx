@@ -28,7 +28,7 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
 
 
   const joinLive = useEffectEvent(async () => {
-    if (!roomName || !dadosUsuario?.nome) {
+    if (!roomName || !dadosUsuario?.nome || dadosUsuario?.id == null) {
       setError("Faltam informações da sala ou do usuário");
       return;
     }
@@ -47,6 +47,7 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
         body: JSON.stringify({
           roomName: roomName,
           participantName: dadosUsuario.nome,
+          participantId: dadosUsuario.id,
           isTeacher
         }),
       });
@@ -103,7 +104,22 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
     setError("A conexão com a live foi interrompida. Tente conectar novamente.");
   };
 
-  
+  const handleLiveKitError = (err) => {
+    console.error("Erro ao conectar ou publicar mídia na live:", err);
+    setToken(null);
+    setServerUrl(null);
+    setIsConnected(false);
+    setError(`Não foi possível iniciar áudio/vídeo: ${err.message || "verifique a conexão e as permissões do dispositivo."}`);
+  };
+
+  const handleMediaDeviceFailure = (failure, kind) => {
+    console.error(`Falha no dispositivo de mídia (${kind || "desconhecido"}):`, failure);
+    const device = kind === "audioinput" ? "microfone" : kind === "videoinput" ? "câmera" : "dispositivo de áudio/vídeo";
+    setToken(null);
+    setServerUrl(null);
+    setIsConnected(false);
+    setError(`Não foi possível acessar o ${device}. Verifique as permissões do navegador e tente novamente.`);
+  };
 
   return (
     <div className="ConteinerRightLive">
@@ -185,6 +201,8 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
           video={true}
           audio={true}
           onDisconnected={handleDisconnected}
+          onError={handleLiveKitError}
+          onMediaDeviceFailure={handleMediaDeviceFailure}
           style={{ height: "calc(100vh - 85px)" }}
           data-lk-theme="default"
         >

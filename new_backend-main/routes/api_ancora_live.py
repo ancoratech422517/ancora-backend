@@ -19,24 +19,25 @@ def get_livekit_token():
 
         room_name = data.get('roomName')
         participant_name = data.get('participantName')
+        participant_id = data.get('participantId')
         is_teacher = data.get('isTeacher', False)
 
         # Validações
-        if not LIVEKIT_API_KEY or not LIVEKIT_API_SECRET:
+        if not LIVEKIT_API_KEY or not LIVEKIT_API_SECRET or not LIVEKIT_SERVER_URL:
             return jsonify({"error": "Configuração do LiveKit incompleta no servidor"}), 500
 
-        if not room_name or not participant_name:
+        if not room_name or not participant_name or participant_id is None or not str(participant_id).strip():
             return jsonify({
-                "error": "roomName e participantName são obrigatórios"
+                "error": "roomName, participantName e participantId são obrigatórios"
             }), 400
 
         # Criação do token
-        publish_sources = ["MICROPHONE", "CAMERA"]
+        publish_sources = ["microphone", "camera"]
         if is_teacher:
-            publish_sources.extend(["SCREEN_SHARE", "SCREEN_SHARE_AUDIO"])
+            publish_sources.extend(["screen_share", "screen_share_audio"])
 
         token = api.AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET) \
-            .with_identity(participant_name) \
+            .with_identity(f"user-{str(participant_id).strip()}") \
             .with_name(participant_name) \
             .with_grants(api.VideoGrants(
                 room_join=True,

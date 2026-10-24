@@ -78,16 +78,14 @@ svg{
 
 }
 .active {
-  background-color: var(--teal-500);
+  background-color:teal;
   color: var(--white);
   box-shadow: var(--shadow-teal);
 }
 .active svg{
   color: var(--white);
 }
-.active:hover{
-  background: var(--teal-500);
-}
+
 p{
   display: flex;
   text-align: center;

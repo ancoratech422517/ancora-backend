@@ -1,10 +1,11 @@
 import { useMemo } from "react";
 import "./css/ConteinerRightWindowProdutsScroll.css"
 import Conteiner2RightWindowProdutsCard from "./Conteiner2RightWindowProdutsCard";
-import Loja from "../../assets/loja.jfif"
+import Loja from "../../assets/Loja.jpg"
 import { useUserStore } from "../../useUseSotore";
 import Loading3 from "../components/conteinerComponentesJsx/loading3";
 import Conteiner2RightWindowProdutoCardComentarioUsuario from "./Conteiner2RightWindowProdutoCardComentarioUsuario";
+import Mascote from "../../assets/mascote.png"
 export default function ConteinerRightWindowProdutsScroll ({ pesquisaProduto = "" }) {
     const { TodosProdutos: produtosBase, urlBancoDeDados} = useUserStore()
     const termoPesquisa = pesquisaProduto
@@ -118,6 +119,7 @@ export default function ConteinerRightWindowProdutsScroll ({ pesquisaProduto = "
         };
     }, [TodosProdutos]);
 
+    
     return (
         <div className="ConteinerRightWindowProdutsScroll">
             {/* INICIO DA FORMATAÇÃO DA HERO INICIAL */}
@@ -144,9 +146,9 @@ export default function ConteinerRightWindowProdutsScroll ({ pesquisaProduto = "
                             <button>Become a Vendedor</button>
                         </div>
                     </div>
-                    {/* <div className="ConteinerRightWindowScrollHomeConteudoBoxRight">
-                        <video src={Mascote} autoPlay loop muted playsInline></video>
-                    </div> */}
+                    <div className="ConteinerRightWindowScrollHomeConteudoBoxRight">
+                        <img src={Mascote} alt="" />
+                    </div>
                 </div>
             </div>
 

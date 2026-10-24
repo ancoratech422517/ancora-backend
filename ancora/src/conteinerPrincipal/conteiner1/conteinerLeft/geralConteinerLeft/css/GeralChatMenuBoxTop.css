@@ -11,8 +11,8 @@
 
 }
 .GeralChatMenuTopIcone{
-    width: 100px;
-    height: 35px;
+    width: 120px;
+    height: 50px;
     border-radius: 7px;
     font-size: 1.5em;
     font-weight: bold;
@@ -33,7 +33,6 @@
     position: absolute;
     width: 18px;
     height: 18px;
-    background-color: red;
     color: var(--white);
     font-weight: bold;
     top: 0;
@@ -47,12 +46,17 @@
     
 }
 .GeralChatMrnuTopIconeBtnNoti{
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     display: flex;
     text-align: center;
     align-items: center;
     justify-content: center;
+    background-color: var(--teal-600);
+    border-radius: 50%;
+    border-right: 2px solid rgb(11, 86, 86);
+    border-bottom: 2px solid rgb(9, 62, 62);
+
 }
 .ancora{
     color: var(--teal-600);
@@ -75,7 +79,26 @@
 .GeralChatMenuTopTextLogo img{
     object-fit: cover;
 }
+
 .GeralChatMenuTopIcone svg{
-    width: 27px;
-    height: 27px;
+    width: 30px;
+    height: 30px;
+    color: var(--white);
+}
+.GeralChatMenuTopIcone b{
+    width: 50px;
+    height: 50px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--teal-600);
+    border-radius: 50%;
+    border-right: 2px solid rgb(11, 86, 86);
+    border-bottom: 2px solid rgb(9, 62, 62);
+}
+.GeralChatMenuTopIcone b svg{
+    width: 40px;
+    height: 40px;
+    color: var(--white);
 }

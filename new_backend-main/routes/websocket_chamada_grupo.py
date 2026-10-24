@@ -27,24 +27,28 @@ def chamada_grupo(data):
             return {"ok": True, "ignorada": True, "alunos_notificados": 0}
 
         alunos_notificados = 0
-        alunos_online = 0
+        destinatarios_notificados = set()
         for aluno in nossa_sala:
-            id_aluno = str(aluno.id_aluno_Turma)
-            if str(idRemitente) == id_aluno:
+            id_aluno = str(aluno.id_aluno_Turma or "").strip()
+            if (
+                not id_aluno
+                or id_aluno == str(idRemitente)
+                or id_aluno in destinatarios_notificados
+                or not usuarios_online.get(id_aluno)
+            ):
                 continue
 
             dados_sala = {
-                "nome_turma":aluno.nome_Turma,
-                "imagem_perfil_Turma":aluno.imagem_perfil_Turma,
-                "sala_Turma":aluno.sala_Turma
+                "nome_turma": aluno.nome_Turma,
+                "imagem_perfil_Turma": aluno.imagem_perfil_Turma,
+                "sala_Turma": aluno.sala_Turma
             }
             socketio.emit("turma_ligar_aluno", dados_sala, room=id_aluno)
+            destinatarios_notificados.add(id_aluno)
             alunos_notificados += 1
-            if usuarios_online.get(id_aluno):
-                alunos_online += 1
         return {
             "ok": True,
-            "alunos_online": alunos_online,
+            "alunos_online": alunos_notificados,
             "alunos_notificados": alunos_notificados
         }
     except Exception as erro:

@@ -13,15 +13,16 @@ export default function BoxTopMenuConteinerLeft({ativarConteiner , setDadosUsuar
         <div className="boxTopMenuConteinerLeft">
            <div className="boxTopMenuConteinerLeftBTN">
              <Button2 ativarConteiner={ativarConteiner}/>
-             <li>conversa</li>
+             {/* <li>Chat</li> */}
+
            </div>
            <div className="boxTopMenuConteinerLeftBTN">
              <Button3 ativarConteiner={ativarConteiner}/>
-             <li>Loja</li>
+             {/* <li>Loja</li> */}
            </div>
            <div className="boxTopMenuConteinerLeftBTN">
              <Button7 ativarConteiner={ativarConteiner}/>
-             <li>Painel</li>
+             {/* <li>Painel</li> */}
            </div>
            {/* <div className="boxTopMenuConteinerLeftBTN">
              <Button4 ativarConteiner={ativarConteiner}/>
@@ -33,7 +34,7 @@ export default function BoxTopMenuConteinerLeft({ativarConteiner , setDadosUsuar
            </div> */}
            <div className="boxTopMenuConteinerLeftBTN">
              <Button5 ativarConteiner={ativarConteiner} setDadosUsuario={setDadosUsuario} />
-             <li>Perfil</li>
+             {/* <li>Perfil</li> */}
            </div>
         </div>
     )

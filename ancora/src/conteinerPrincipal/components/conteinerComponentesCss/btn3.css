@@ -1,7 +1,7 @@
 .btn3{
-    width: 45px;
-    height: 45px;
-    border-radius: 15px;
+    width: 60px;
+    height: 60px;
+    border-radius: 20px;
     border: none;
     display: flex;
     text-align: center;
@@ -12,10 +12,11 @@
     transition: .2s ease;
     cursor: pointer;
 
+
 }
 .btn3 svg{
-    width: 18px;
-    height: 18px;
+    width: 25px;
+    height: 25px;
 }
 .btn3:hover:not(.active){
     transition: .2s ease;
@@ -27,7 +28,7 @@
 
 }
 .btn3:active{
-    background-color: var(--teal-400);
+    background-color: teal;
 }
 .btn3:active svg{
     color: var(--white);

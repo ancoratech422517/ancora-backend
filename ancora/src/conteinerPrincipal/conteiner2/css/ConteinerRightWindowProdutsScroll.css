@@ -112,6 +112,7 @@
 .ConteinerRightWindowScrollHomeConteudoBoxLeft li{
     color: #e6e6e6;
     font-size: 1.5rem;
+    color: #0e0e0e;
 }
 .ConteinerRightWindowScrollHomeConteudoBoxLeftBtns{
     width: 80%;
@@ -133,18 +134,17 @@
     transition: .2s ease;
 }
 .ConteinerRightWindowScrollHomeConteudoBoxLeftBtns button:nth-child(2){
-    background-color: transparent;
-    color: var(--white);
-    border: 2px solid var(--white);
+    color: #454545;
+    background-color: var(--white);
 }
 .ConteinerRightWindowScrollHomeConteudoBoxRight{
     width: 50%;
     height: 100%;
 }
-.ConteinerRightWindowScrollHomeConteudoBoxRight video{
+.ConteinerRightWindowScrollHomeConteudoBoxRight img{
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
 }
 .ConteinerRightWindowScrolHeroBottom{
     width: 100%;
