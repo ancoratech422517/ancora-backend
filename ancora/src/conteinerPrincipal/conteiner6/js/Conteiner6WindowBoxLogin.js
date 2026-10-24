@@ -44,13 +44,18 @@ export async function Login(ativarConteiner, setDados , setEstadoLoading , setEr
         // REMOVIDO: localStorage.setItem("token_sessao", get_response_logar.token)
         // O cookie já foi setado pelo backend. JS não vê o token.
         console.log("Login OK. Cookie setado pelo servidor")
-        setEstadoLoading("False")
 
-        pushTokenPromise
-            .then((pushToken) => pushToken && salvarTokenPushy(pushToken))
-            .catch((erroPushy) => {
-                console.error("Não foi possível salvar o token Pushy:", erroPushy)
-            })
+        try {
+            const pushToken = await pushTokenPromise
+            if (pushToken) {
+                await salvarTokenPushy(pushToken)
+                console.info("Token Pushy sincronizado com o backend.")
+            }
+        } catch (erroPushy) {
+            console.error("Não foi possível sincronizar o token Pushy:", erroPushy)
+        }
+
+        setEstadoLoading("False")
 
         if (setDados) {
             setDados(get_response_logar) // vem só: id, nome, telefone

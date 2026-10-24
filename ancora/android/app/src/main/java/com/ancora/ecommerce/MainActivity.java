@@ -43,17 +43,26 @@ public class MainActivity extends BridgeActivity {
             Manifest.permission.CAMERA
         };
 
-        boolean needRequest = false;
+        java.util.List<String> permissionsToRequest = new java.util.ArrayList<>();
         for (String permission : permissions) {
             if (ContextCompat.checkSelfPermission(this, permission)
                     != PackageManager.PERMISSION_GRANTED) {
-                needRequest = true;
-                break;
+                permissionsToRequest.add(permission);
             }
         }
 
-        if (needRequest) {
-            ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS);
+        }
+
+        if (!permissionsToRequest.isEmpty()) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    permissionsToRequest.toArray(new String[0]),
+                    PERMISSION_REQUEST_CODE
+            );
         }
     }
 
