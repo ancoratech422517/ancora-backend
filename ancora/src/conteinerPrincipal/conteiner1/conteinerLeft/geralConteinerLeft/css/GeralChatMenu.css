@@ -1,5 +1,6 @@
 .GeralChatMenu{
     width: 100%;
     height: 15%;
-
+    flex: 0 0 15%;
+    box-sizing: border-box;
 }
