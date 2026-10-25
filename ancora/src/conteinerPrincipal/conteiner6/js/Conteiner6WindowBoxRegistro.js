@@ -76,8 +76,6 @@ export async function Registro(setEstadoLoading) {
     const telefone = document.getElementById("register-phone").value;
     const senha = document.getElementById("register-password").value;
     const confirmar_senha = document.getElementById("register-confirm").value;
-    const data_nascimento = document.getElementById("register-birth").value;
-    const email = document.getElementById("register-email").value;
     const foto = document.getElementById("avatar-input");
 
     
@@ -93,8 +91,8 @@ export async function Registro(setEstadoLoading) {
     form__data.append("telefone", telefone_limpo);
     form__data.append("senha", senha);
     form__data.append("confirmar_senha", confirmar_senha);
-    form__data.append("data_nascimento", data_nascimento);
-    form__data.append("email", email);
+    form__data.append("data_nascimento", "inativo temporiamente");
+    form__data.append("email", "inativo temporiamente");
 
     // ==================== LOCALIZAÇÃO ====================
     console.log("🔄 Iniciando obtenção de localização...");
