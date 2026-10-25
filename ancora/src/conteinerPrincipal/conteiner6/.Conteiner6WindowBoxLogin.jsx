@@ -125,17 +125,6 @@ export default function Conteiner6WindowBoxLogin ({ ativarConteiner, setConta}) 
                             </div>
                         </div>
 
-                        <div className="input-group">
-                            <label for="register-email">E-mail</label>
-                            <div className="input-wrapper">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 0 01-4.5 1.207"/>
-                                </svg>
-                                <input type="email" id="register-email" className="form-input" placeholder="seu@email.com" required />
-                            </div>
-                        </div>
-
-                        <div className="input-row">
                             <div className="input-group">
                                 <label for="register-phone">Telefone</label>
                                 <div className="input-wrapper">
@@ -145,7 +134,7 @@ export default function Conteiner6WindowBoxLogin ({ ativarConteiner, setConta}) 
                                     <input type="tel" id="register-phone" className="form-input" placeholder="999-999-999" required/>
                                 </div>
                             </div>
-                        </div>
+                        
 
                         <div className="input-row">
                             <div className="input-group">
