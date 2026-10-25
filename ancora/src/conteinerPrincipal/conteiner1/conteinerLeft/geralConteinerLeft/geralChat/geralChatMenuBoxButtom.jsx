@@ -34,7 +34,7 @@ export default function GeralChatMenuButtom ({setViewChat}){
                     })}
             </div> */}
             <li className="GeralChatMenuButtomText ativar_opcao">Todos</li>
-            <li className="GeralChatMenuButtomText">Nao lidas</li>
+            <li className="GeralChatMenuButtomText">N/lidas</li>
             <li className="GeralChatMenuButtomText">Privado</li>
             <li className="GeralChatMenuButtomText">Bloqueado</li>
 
