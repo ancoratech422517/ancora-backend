@@ -95,7 +95,8 @@ def send_message_with_file():
                 "sender_id": id_remitente,
                 "room": nossa_sala,
                 "message_type": dados["tipo"]
-            }
+            },
+            sala_ativa=nossa_sala
         )
 
         return jsonify({

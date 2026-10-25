@@ -11,18 +11,28 @@ logger = logging.getLogger(__name__)
 PUSHY_NOTIFICATION_ICON = "https://ancora-ecommerc-tawny.vercel.app/logo2.png"
 
 
-def enviar_notificacao_pushy(usuario_id, titulo, mensagem, dados=None):
-    from routes.websoket_conectUser import usuarios_online
+def enviar_notificacao_pushy(
+    usuario_id,
+    titulo,
+    mensagem,
+    dados=None,
+    sala_ativa=None,
+    enviar_para_online=False
+):
+    from routes.websoket_conectUser import usuarios_online, usuario_esta_na_sala
 
     if str(usuario_id) in usuarios_online:
-        return False
+        if sala_ativa and usuario_esta_na_sala(usuario_id, sala_ativa):
+            return False
+        if not sala_ativa and not enviar_para_online:
+            return False
 
     usuario = db.session.get(Usuario, usuario_id)
     if not usuario:
         logger.warning("Pushy: utilizador destinatário não encontrado.")
         return False
     if not usuario.id_app_usuario_pushy:
-        logger.warning("Pushy: destinatário offline sem token de dispositivo registado.")
+        logger.warning("Pushy: destinatário sem token de dispositivo registado.")
         return False
 
     api_key = (os.getenv("PUSHY_API_KEY") or "").strip()

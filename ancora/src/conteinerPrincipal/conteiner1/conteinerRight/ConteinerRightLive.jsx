@@ -15,7 +15,7 @@ import { useUserStore } from "../../../useUseSotore";
 
 export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turma }) {
   
-  const { urlBancoDeDados, dadosUsuario, set_estado_conteiner_live } = useUserStore();
+  const { urlBancoDeDados, dadosUsuario, socket, set_estado_conteiner_live } = useUserStore();
 
   const [token, setToken] = useState(null);
   const [serverUrl, setServerUrl] = useState(null);
@@ -66,7 +66,10 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
         if (!resultadoChamada?.ok) {
           console.error("A live iniciou, mas a chamada da turma não foi confirmada:", resultadoChamada?.erro);
         } else if (!resultadoChamada.ignorada) {
-          console.info(`Chamada enviada para ${resultadoChamada.alunos_notificados} aluno(s) online.`);
+          console.info(
+            `Chamada enviada para ${resultadoChamada.alunos_notificados} aluno(s); `
+            + `${resultadoChamada.alunos_online} conectado(s) em tempo real.`
+          );
         }
       });
     } catch (err) {
@@ -83,6 +86,9 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
 
   const leaveRoom = async () => {
     intentionalLeave.current = true;
+    if (socket?.connected && roomName) {
+      socket.emit("sair_live_turma", { sala: roomName });
+    }
     try {
       await room.disconnect(true);
     } catch (err) {
@@ -98,6 +104,9 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
 
   const handleDisconnected = () => {
     if (intentionalLeave.current) return;
+    if (socket?.connected && roomName) {
+      socket.emit("sair_live_turma", { sala: roomName });
+    }
     setToken(null);
     setServerUrl(null);
     setIsConnected(false);
@@ -200,6 +209,15 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
           connect={true}
           video={true}
           audio={true}
+          onConnected={() => {
+            if (socket?.connected) {
+              socket.emit("entrar_live_turma", { sala: roomName }, (resultado) => {
+                if (!resultado?.ok) {
+                  console.error("Não foi possível registar a entrada na sala da live:", resultado?.erro);
+                }
+              });
+            }
+          }}
           onDisconnected={handleDisconnected}
           onError={handleLiveKitError}
           onMediaDeviceFailure={handleMediaDeviceFailure}

@@ -9,6 +9,15 @@ import os
 # Dicionário global: { usuario_id: socket_sid }
 usuarios_online = {}
 
+
+def usuario_esta_na_sala(usuario_id, sala):
+    sid = usuarios_online.get(str(usuario_id))
+    return bool(
+        sid
+        and str(sala) in socketio.server.rooms(sid, namespace="/")
+    )
+
+
 def get_user_id_from_cookie():
     token = request.cookies.get('token_sessao')
     if not token:
@@ -155,7 +164,8 @@ def enviar_pedido_de_amizade(data):
             "type": "notification",
             "notification_type": "pedido_amizade",
             "sender_id": id_remitente
-        }
+        },
+        enviar_para_online=True
     )
 
     emit("receber_notificacao", {

@@ -80,7 +80,8 @@ def enviar_menssagem_na_sala(data):
                 "type": "new_message",
                 "sender_id": id_remitente,
                 "room": nossa_sala
-            }
+            },
+            sala_ativa=nossa_sala
         )
         
 
