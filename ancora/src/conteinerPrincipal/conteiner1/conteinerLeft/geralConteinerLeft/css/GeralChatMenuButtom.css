@@ -3,82 +3,48 @@
 
     gap: 10px;
     width: 100%;
-    height: 50%;
+    height: 30%;
     display: flex;
-    text-align: left;
+    text-align: center;
     align-items: center;
-    padding: 2%;
+    justify-content: space-around;
     padding-right: 0%;
-
+    padding: 2%;
+    border-radius: 20px;
 
 }
-
-.GeralChatMenuButtomPerfilFixoUserEstado{
-    width: 65px;
-    height: 65px;
-    border: 5px solid #363636;
-    border-radius: 50%;
-    background-color:#f1f1f1;
-    transition: .2s ease;
-    cursor: pointer;
+.GeralChatMenuButtomText{
+    padding: 2%;
+    padding-left: 5%;
+    padding-right: 5%;
+    border-radius: 20px;
+    background-color: #f1f1f1;
+    border: 1px solid #d2d2d2;
     display: flex;
     text-align: center;
     align-items: center;
     justify-content: center;
-    border-style: inset;
-}
-.GeralChatMenuButtomPerfilFixoUserEstado:hover{
-    transition: .2s ease;
-    border: 3px solid var(--teal-600);
-}
-.GeralChatMenuButtomPerfilFixoUserEstado:hover svg{
-    color: var(--teal-600);
-    transition: .2s ease;
-}
-.GeralChatMenuButtomPerfilFixoUserEstado svg{
-    width: 45px;
-    height: 45px;
-    transition: .2s ease;
-}
-.GeralChatMenuButtomPerfilFixoUserEstado:active{
-    transition: .2s ease;
-    transform: scale(0.9);
-}
-.GeralChatMenuButtomPerfilEstadoScroll{
-    width: 80%;
-    height: 100%;
-    overflow: hidden;
-    overflow-x: scroll;
-    scrollbar-width: none;
-    display: flex;
-    text-align: left;
-    align-items: center;
-    gap: 10px;
-
-}
-.GeralChatMenuButtomPerfilEstadoScrollIconeAmigo{
-    width: 65px;
-    height: 65px;
-    border: 5px solid var(--teal-600);
-    background-color: #f1f1f1;
-    border-radius: 50%;
-    flex-shrink: 0;
+    font-size: 12px;
+    color: #4b4b4b;
     cursor: pointer;
     transition: .2s ease;
-    padding: 2.5px;
-    border-style:inset;
+    font-weight: 600;
+
 
 }
-.GeralChatMenuButtomPerfilEstadoScrollIconeAmigo img{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-.GeralChatMenuButtomPerfilEstadoScrollIconeAmigo:active{
+.GeralChatMenuButtomText:not(.ativar_opcao):hover{
     transition: .2s ease;
+    background-color: #d7d7d791;
+}
+.GeralChatMenuButtomText:not(.ativar_opcao):active{
     transform: scale(0.9);
 }
+.ativar_opcao{
+    background-color: teal;
+    color: var(--white);
+    border: none;
+}
+
 @media screen and (max-width: 700px) {
     .GeralChatMenuButtom input{
         height: 7.5vh;

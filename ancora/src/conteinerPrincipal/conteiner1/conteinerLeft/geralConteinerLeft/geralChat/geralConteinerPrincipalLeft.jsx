@@ -7,7 +7,7 @@ import "../css/GeralChatTurma.css";
 import GeralChatEstadoUser from "./geralChatEstdoUser";
 import { useUserStore } from "../../../../../useUseSotore";
 import { DadosActive } from "../js/geralChatDadosAction";
-
+import GeralConteinerPrincipalLeftConteinerEstado from "./GeralConteinerPrincipalLeftConteinerEstado";
 export default function GeralConteinerPrincialLeft () {
     const [viwChat, setViewChat] = useState("chat");
     const {
@@ -26,8 +26,11 @@ export default function GeralConteinerPrincialLeft () {
         set_Dados_Agenda_Turma,
         set_Dados_Biblioteca_Video_Turma,
         Dados_Biblioteca_Video_Turma,
-        setEstadoMenuMobila
+        setEstadoMenuMobila , 
+        CONDICACAOMOSTRARESTADOETRURMAVIEWS , 
+        set_CONDICACAOMOSTRARESTADOETRURMAVIEWS
     } = useUserStore();
+
     const getUrlVideo = (url) => {
       if (!url) return "";
         // Verifica se a URL já começa com http ou https
@@ -107,7 +110,8 @@ export default function GeralConteinerPrincialLeft () {
             setMenssagemLida,
             setProdutoUsuarioChat, 
             setMostrarChat,
-            urlBancoDeDados
+            urlBancoDeDados , 
+            
         );
     };
 
@@ -167,7 +171,14 @@ export default function GeralConteinerPrincialLeft () {
             default: return <GeralChat setViewChat={setViewChat} />;
         }
     };
-
+    const condicao_conteiner_estado_e_turma = ()=>{
+        switch(CONDICACAOMOSTRARESTADOETRURMAVIEWS){
+            case true:
+                return(
+                    <GeralConteinerPrincipalLeftConteinerEstado setViewChat={setViewChat} />
+                )
+        }
+    }
     return (
         <div className="GeralConteinerPrincipalLeft">
             {ViewAba()}
@@ -176,7 +187,13 @@ export default function GeralConteinerPrincialLeft () {
                     <path d="M2.97 1.35A1 1 0 0 1 3.73 1h8.54a1 1 0 0 1 .76.35l2.609 3.044A1.5 1.5 0 0 1 16 5.37v.255a2.375 2.375 0 0 1-4.25 1.458A2.37 2.37 0 0 1 9.875 8 2.37 2.37 0 0 1 8 7.083 2.37 2.37 0 0 1 6.125 8a2.37 2.37 0 0 1-1.875-.917A2.375 2.375 0 0 1 0 5.625V5.37a1.5 1.5 0 0 1 .361-.976zm1.78 4.275a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 1 0 2.75 0V5.37a.5.5 0 0 0-.12-.325L12.27 2H3.73L1.12 5.045A.5.5 0 0 0 1 5.37v.255a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0M1.5 8.5A.5.5 0 0 1 2 9v6h1v-5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v5h6V9a.5.5 0 0 1 1 0v6h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1V9a.5.5 0 0 1 .5-.5M4 15h3v-5H4zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1zm3 0h-2v3h2z"/>
                 </svg>
             </div>
+            <div className="widgetEstado" onClick={()=>{set_CONDICACAOMOSTRARESTADOETRURMAVIEWS(true)}}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-radar" viewBox="0 0 16 16">
+                <path d="M6.634 1.135A7 7 0 0 1 15 8a.5.5 0 0 1-1 0 6 6 0 1 0-6.5 5.98v-1.005A5 5 0 1 1 13 8a.5.5 0 0 1-1 0 4 4 0 1 0-4.5 3.969v-1.011A2.999 2.999 0 1 1 11 8a.5.5 0 0 1-1 0 2 2 0 1 0-2.5 1.936v-1.07a1 1 0 1 1 1 0V15.5a.5.5 0 0 1-1 0v-.518a7 7 0 0 1-.866-13.847"/>
+                </svg>
+            </div>
             {condição_conteiner_curso()}
+            {condicao_conteiner_estado_e_turma()}
         </div>
     );
 }

@@ -22,6 +22,11 @@ android/app/src/main/java/com/ancora/*
 android/app/src/main/java/com/ancora/ecommerce/*
 !android/app/src/main/java/com/ancora/ecommerce/MainActivity.java
 !android/app/src/main/java/com/ancora/ecommerce/PushReceiver.java
+!android/app/src/main/res/
+android/app/src/main/res/*
+!android/app/src/main/res/drawable-nodpi/
+android/app/src/main/res/drawable-nodpi/*
+!android/app/src/main/res/drawable-nodpi/ic_stat_ancora.png
 
 # Playwright
 /test-results/

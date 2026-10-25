@@ -57,7 +57,7 @@ public class PushReceiver extends BroadcastReceiver {
         );
 
         NotificationCompat.Builder notification = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(context.getApplicationInfo().icon)
+                .setSmallIcon(R.drawable.ic_stat_ancora)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setAutoCancel(true)

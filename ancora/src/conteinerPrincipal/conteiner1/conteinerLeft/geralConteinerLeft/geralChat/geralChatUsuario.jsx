@@ -4,7 +4,7 @@ import "../css/GeralChatUsuario.css";
 import GeralChatDados from "./geralChatDados";
 import fundoVazioChat from "../../../../../assets/fundo_vazio_chat2.jpg";
 
-export default function GeralChatUsuario() {
+export default function GeralChatUsuario({setViewChat}) {
   // Pega a lista de amigos da Store
   const amigos = useUserStore((state) => state.amigos);
 

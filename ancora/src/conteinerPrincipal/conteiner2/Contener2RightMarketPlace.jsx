@@ -4,7 +4,7 @@ import Conteiner2MenuTopMarketPlace from "./Conteiner2MenuTopMarketPlace";
 import ConteinerRightWindowProdutsScroll from "./ConteinerRightWindowProdutsScroll";
 import Conteiner2RightWindowProdutsSombra from "./Conteiner2RightWindowProdutsMarketPlaceSompbra";
 import Conteiner2SearchProduto from "./Conteiner2SearchProduto";
-import Colecao from "../../assets/colecao.jpg"
+import Colecao from "../../assets/Loja2.jpg"
 import { useUserStore } from "../../useUseSotore";
 export default function Conteiner2RightMarketPlace () {
     const [pesquisaProduto, setPesquisaProduto] = useState("")

@@ -3,3 +3,29 @@
     height: 100%;
 
 }
+.widgetEstado{
+    width: 50px;
+    height: 50px;
+    background-color: teal;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 10%;
+    right: 5%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    border-right: 2px solid rgb(11, 86, 86);
+    border-bottom: 3px solid rgb(9, 62, 62);
+    cursor: pointer;
+    transition: .2s ease;
+}
+.widgetEstado:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.widgetEstado svg{
+    color: #fff;
+    width: 30px;
+    height: 30px;
+}

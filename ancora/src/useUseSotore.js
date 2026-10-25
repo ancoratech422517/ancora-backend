@@ -87,6 +87,7 @@ export const useUserStore = create(
       DADOSESTADOAMIGO:[],
       DADOSTIPOVIEWSLAYUTELEFT:false,
       CONFIRMARSAIDA: false,
+      CONDICACAOMOSTRARESTADOETRURMAVIEWS : false,
       // --- SOM ---
       tocarSomEnvio: () => {
         const audio = new Audio('/sounds/envio.mp3')
@@ -243,6 +244,7 @@ export const useUserStore = create(
       set_DADOSESTADOAMIGO: (set_dados_estado_amigo) => set({DADOSESTADOAMIGO: set_dados_estado_amigo}),
       set_DADOSTIPOVIEWSLAYUTELEFT: (set_dados_tipo_views_layout_left) => set({DADOSTIPOVIEWSLAYUTELEFT:set_dados_tipo_views_layout_left}),
       set_CONFIRMARSAIDA: (set_confirmar_saida) => set({CONFIRMARSAIDA:set_confirmar_saida}),
+      set_CONDICACAOMOSTRARESTADOETRURMAVIEWS: (set_condicacaomostrarestadoetrurmaviews) => set({CONDICACAOMOSTRARESTADOETRURMAVIEWS:set_condicacaomostrarestadoetrurmaviews}),
       // --- OUTRAS AÇÕES ---
       limparDados: () => set({
         dadosUsuario: null,

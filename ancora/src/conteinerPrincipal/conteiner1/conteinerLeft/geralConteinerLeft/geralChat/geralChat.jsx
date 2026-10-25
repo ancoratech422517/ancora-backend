@@ -6,7 +6,7 @@ export default function GeralChat ({setViewChat}){
     return (
         <div className="GeralChat">
             <GeralChatMenu  setViewChat={setViewChat}/>
-            <GeralChatUsuario />
+            <GeralChatUsuario setViewChat = {setViewChat} />
         </div>
     )
 }

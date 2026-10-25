@@ -42,7 +42,7 @@ export default function GeralChatMenuBoxTop ({ setViewChat }) {
                 </div>
                 <h2>
                     <li><b className="ancora">An</b>cora</li>
-                    <p className="GeralChatMenuTopTextP">Ecommerce-Plataforma Digital</p>
+                    <p className="GeralChatMenuTopTextP">Claudio Avelino-Dev Tech</p>
                 </h2>
             </div>
             <div className="GeralChatMenuTopIcone">

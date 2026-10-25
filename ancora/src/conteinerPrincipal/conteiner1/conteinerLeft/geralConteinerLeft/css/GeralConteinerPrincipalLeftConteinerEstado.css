@@ -1,0 +1,128 @@
+.GeralConteinerPrincipalLeftConteinerEstado{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    background-color: #f1f1f1;
+
+}
+.GeralConteinerPrincipalLeftConteinerEstado_menu{
+    width: 100%;
+    height: 10%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2%;
+}
+.GeralConteinerPrincipalLeftConteinerEstado_menu li{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    transition: .2s ease;
+    cursor: pointer;
+}
+.GeralConteinerPrincipalLeftConteinerEstado_menu li svg{
+    width: 40px;
+    height: 40px;
+}
+.GeralConteinerPrincipalLeftConteinerEstado_menu li:active{
+    transition: .2s ease;
+    transform: scale(0.9);
+}
+.GeralConteinerPrincipalLeftConteinerEstado_menu div{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.GeralConteinerPrincipalLeftConteinerEstado_menu div svg{
+    width: 30px;
+    height: 30px;
+    color: teal;
+}
+.GeralConteinerPrincipalLeftConteinerEstado nav{
+    width: 100%;
+    height: 10%;
+}
+.GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDate{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    padding: 2%;
+    gap: 5px;
+}
+.GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateUserFixo{
+    width: 70px;
+    height: 70px;
+    background-color: #f1f1f1;
+    border: 7px solid #9b9b9b;
+    border-radius: 50%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    border-style:double;
+    transition: .2s ease;
+    cursor: pointer;
+}
+.GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateUserFixo:hover{
+    border-color: teal;
+    transition: .2s ease;
+}
+.GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateUserFixo:hover svg{
+    color: teal;
+    transition: .2s ease;
+}
+.GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateUserFixo:active{
+    transform: scale(0.9);
+}
+
+.GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateUserFixo svg{
+    width: 40px;
+    height: 40px;
+    transition: .2s ease;
+}
+.GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateConteinerScroll{
+    width: 82%;
+    height: 70px;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 5px;
+    overflow: hidden;
+    overflow-x: scroll;
+    scrollbar-width: none;
+}
+.GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateConteinerScrollDate{
+    width: 70px;
+    height: 70px;
+    background-color: #f1f1f1;
+    border: 1px solid #d2d2d2;
+    border-radius: 50%;
+    flex-shrink: 0;
+    padding: 1%;
+    border: 7px solid #9b9b9b;
+    border-style: double;
+    transition: .2s ease;
+    cursor: pointer;
+}
+.GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateConteinerScrollDate:hover{
+    transition: .2s ease;
+    border-color: teal;
+}
+.GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateConteinerScrollDate:active{
+    transform: scale(0.9);
+}
+.GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateConteinerScrollDate img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
