@@ -130,11 +130,11 @@ app = Flask(__name__)
 # ===================== CORS =====================
 CORS(app, resources={r"/*": {
     "origins": [
-        "http://127.0.0.1:5173",
-        "http://localhost:5173",
+        "http://127.0.0.1:5174",
+        "http://localhost:5174",
         "http://192.168.11.1",
-        "http://192.168.11.1:5173",
-        "http://10.140.176.115:5173",
+        "http://192.168.11.1:5174",
+        "http://10.140.176.115:5174",
         "https://ancora-oficial-ao.netlify.app",
         "https://ancora-ecommerc-tawny.vercel.app"
 
@@ -149,8 +149,8 @@ CORS(app, resources={r"/*": {
 def after_request(response):
     origin = response.headers.get('Access-Control-Allow-Origin')
     if not origin:
-        response.headers.add('Access-Control-Allow-Origin', 'https://ancora-ecommerc-tawny.vercel.app')
-        #response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
+        #response.headers.add('Access-Control-Allow-Origin', 'https://ancora-ecommerc-tawny.vercel.app')
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5174')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
     response.headers.add('Access-Control-Allow-Credentials', 'true')

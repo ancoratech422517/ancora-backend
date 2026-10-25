@@ -3,6 +3,7 @@ import "../css/GeralConteinerPrincipalLeftConteinerEstado.css"
 import SetaEsquerda from "../../../../components/conteinerSvg/setaEsquerda";
 import { useUserStore } from "../../../../../useUseSotore";
 import { GeralChatMenuButtomBuscarDadosEstado } from "../js/geralChatMenuBoxButtom";
+import Imagem_fundo_vazio from "../../../../../assets/fundo_vazio_estado4.png"
 export default function GeralConteinerPrincipalLeftConteinerEstado ({setViewChat}) {
     const {
             set_CONDICACAOMOSTRARESTADOETRURMAVIEWS , 
@@ -45,6 +46,9 @@ export default function GeralConteinerPrincipalLeftConteinerEstado ({setViewChat
                     </div>
                 </div>
             </nav>
+           <div className="GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateVazio">
+                <img src={Imagem_fundo_vazio} alt="" />
+            </div>      
         </div>
     )
 }
