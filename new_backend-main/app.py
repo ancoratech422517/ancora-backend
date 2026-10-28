@@ -144,13 +144,15 @@ CORS(app, resources={r"/*": {
     "allow_headers": ["Content-Type", "Authorization"]
 }})
 
-# ===================== AFTER REQUEST =====================
+
 @app.after_request
 def after_request(response):
     origin = response.headers.get('Access-Control-Allow-Origin')
     if not origin:
+  
         response.headers.add('Access-Control-Allow-Origin', 'https://ancora-ecommerc-tawny.vercel.app')
         #response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5174')
+
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
     response.headers.add('Access-Control-Allow-Credentials', 'true')
