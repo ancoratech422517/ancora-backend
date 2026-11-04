@@ -24,10 +24,10 @@ export default function BoxTopMenuConteinerLeft({ativarConteiner , setDadosUsuar
              <Button7 ativarConteiner={ativarConteiner}/>
              {/* <li>Painel</li> */}
            </div>
-           <div className="boxTopMenuConteinerLeftBTN">
+           {/* <div className="boxTopMenuConteinerLeftBTN">
              <Button4 ativarConteiner={ativarConteiner}/>
             
-           </div>
+           </div> */}
            {/* <div className="boxTopMenuConteinerLeftBTN">
              <Button9 ativarConteiner={ativarConteiner}/>
              <li>feeds</li>
