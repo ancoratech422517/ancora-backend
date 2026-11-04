@@ -36,7 +36,7 @@ export function DadosActive (event , nome_amigo , id_amigo, nossa_sala , foto_am
     socket.emit("Entrar_na_sala" , dados_amigo)
     try{
         let classeSala = document.querySelector(`.${nossa_sala}`)
-        classeSala.style.color = "#6b7280"
+        classeSala.style.color = "#282828"
         classeSala.style.fontWeight = "500"
     }
     catch(erro){

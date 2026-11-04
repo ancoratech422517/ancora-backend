@@ -540,13 +540,13 @@ export const useUserStore = create(
                       classeSala.style.fontWeight = "600"
                     }
                     else{
-                      classeSala.style.color = "#6b7280"
+                      classeSala.style.color = "#282828"
                       classeSala.style.fontWeight = "500"
                     }
                   }
                   catch(erro){
                   
-                    classeSala.style.color = "#6b7280"
+                    classeSala.style.color = "#282828"
                     classeSala.style.fontWeight = "500"
                   }
                   let id_escrevendo = document.getElementById(nossa_sala)

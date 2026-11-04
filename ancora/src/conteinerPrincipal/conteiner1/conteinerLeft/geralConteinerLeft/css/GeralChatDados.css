@@ -67,13 +67,13 @@
 }
 .GeralChatDadosTexto b{
 
-    font-size: 19px;
+    font-size: 16px;
     font-weight: 500;
 
 }
 .GeralChatDadosTexto li{
-    color: var(--gray-500);
-    font-size: 15px;
+  
+    font-size: 13px;
     overflow: hidden;
     white-space: nowrap;        /* 1. Impede que o texto quebre para a linha de baixo */
     overflow: hidden;           /* 2. Esconde tudo o que passar do tamanho da caixa */
@@ -210,6 +210,7 @@
     transform: scale(1.3);
     border: none;
 }
+
 @media screen and (max-width: 700px) {
     .GeralChatDados{
         height: 15vh;
