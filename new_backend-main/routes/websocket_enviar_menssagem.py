@@ -14,6 +14,7 @@ def enviar_menssagem_na_sala(data):
     menssagem = data.get("menssagem")
     id_remitente = data.get("id_remitente")
     nome_remitente = data.get("nome_remitente")
+    foto_remitente = data.get("foto_usuario") or data.get("foto_remitente")
     id_amigo = data.get("id_amigo")
     nome_amigo = data.get("nome_amigo")
 
@@ -79,7 +80,9 @@ def enviar_menssagem_na_sala(data):
             {
                 "type": "new_message",
                 "sender_id": id_remitente,
-                "room": nossa_sala
+                "room": nossa_sala,
+                "foto_usuario": foto_remitente,
+                "foto_remitente": foto_remitente,
             },
             sala_ativa=nossa_sala
         )

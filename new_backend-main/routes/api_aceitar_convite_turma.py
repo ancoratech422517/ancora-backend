@@ -52,6 +52,7 @@ def aceitar_convite_turma():
                 nome_Turma=turma.nome_Turma
             ))
 
+
         db.session.delete(notificacao)
         db.session.commit()
         return jsonify({"resposta": "sucesso"}), 200

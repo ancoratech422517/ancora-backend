@@ -101,6 +101,10 @@ from routes.api_adicionar_estado_imgem import EstadoImagem
 from routes.api_enviar_video_estado import EstadoVideo
 from routes.api_buscar_dados_perfil_usuario_add import GetDateUserAdd
 from routes.api_estado_meu_amigo import EstadoMeuAmigo
+from routes.api_mensagem_privado_autentificacao import api_mensagem_privado_autentificacao
+from routes.api_trancar_conversa import TrancarConversa
+from routes.api_bloquear_amigo import Bloquear_Usuario
+from routes.api_exluir_amigo import Excluir_amigo
 #----------------------------------------------------------------------------------------------
 import routes.websoket_conectUser
 import routes.websocket_aceitar_pedido_amizade
@@ -284,6 +288,10 @@ app.register_blueprint(EstadoImagem)
 app.register_blueprint(EstadoVideo)
 app.register_blueprint(GetDateUserAdd)
 app.register_blueprint(EstadoMeuAmigo)
+app.register_blueprint(api_mensagem_privado_autentificacao)
+app.register_blueprint(TrancarConversa)
+app.register_blueprint(Bloquear_Usuario)
+app.register_blueprint(Excluir_amigo)
 
 if __name__ == '__main__':
     print("=" * 70)

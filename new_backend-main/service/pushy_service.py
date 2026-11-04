@@ -2,13 +2,98 @@ import json
 import logging
 import os
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
 
 from models.database import Usuario, db
 
 logger = logging.getLogger(__name__)
 PUSHY_NOTIFICATION_ICON = "https://ancora-ecommerc-tawny.vercel.app/logo2.png"
+FRONTEND_PUBLIC_URL = os.getenv("FRONTEND_URL") or "https://ancora-ecommerc-tawny.vercel.app"
+
+
+def _imagem_url_valida(url):
+    if not url or not isinstance(url, str):
+        return False
+
+    valor = url.strip()
+    if not valor or valor.lower() in {"none", "null", "undefined"}:
+        return False
+
+    try:
+        parsed = urlparse(valor)
+        if valor.startswith("data:"):
+            return True
+        return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+    except Exception:
+        return False
+
+
+def _normalizar_url_imagem(url):
+    if not url or not isinstance(url, str):
+        return ""
+
+    valor = url.strip()
+    if not valor or valor.lower() in {"none", "null", "undefined"}:
+        return ""
+
+    if valor.startswith(("http://", "https://", "data:")):
+        return valor if _imagem_url_valida(valor) else ""
+
+    if valor.startswith("/"):
+        valor_publico = f"{FRONTEND_PUBLIC_URL.rstrip('/')}{valor}"
+        return valor_publico if _imagem_url_valida(valor_publico) else ""
+
+    valor_publico = f"{FRONTEND_PUBLIC_URL.rstrip('/')}/{valor.lstrip('/')}"
+    return valor_publico if _imagem_url_valida(valor_publico) else ""
+
+
+def _resolver_icone_pushy(dados=None):
+    if not isinstance(dados, dict):
+        print("[PUSHY] URL da imagem do usuário não encontrada: payload de push inválido.")
+        logger.warning("Pushy: payload de push inválido para ícone. Usando logo padrão.")
+        return PUSHY_NOTIFICATION_ICON
+
+    candidatos = [
+        dados.get("icon"),
+        dados.get("image"),
+        dados.get("icon_url"),
+        dados.get("foto_usuario"),
+        dados.get("foto_remitente"),
+        dados.get("foto_usuario_solicitante"),
+    ]
+
+    for valor in candidatos:
+        url = _normalizar_url_imagem(valor)
+        if url:
+            return url
+
+    sender_id = (
+        dados.get("sender_id")
+        or dados.get("id_remitente")
+        or dados.get("id_usuario_solicitante")
+    )
+
+    if sender_id:
+        remetente = db.session.get(Usuario, sender_id)
+        if remetente:
+            print(f"[PUSHY] Verificando foto do remetente no banco. sender_id={sender_id}, foto_usuario={remetente.foto_usuario!r}")
+            if remetente.foto_usuario:
+                url = _normalizar_url_imagem(remetente.foto_usuario)
+                if url:
+                    return url
+
+    print(
+        "[PUSHY] URL da imagem do usuário não encontrada. "
+        f"sender_id={sender_id}, dados={dados}"
+    )
+    logger.warning(
+        "Pushy: URL da imagem do usuário não encontrada. "
+        "Usando logo padrão da plataforma. sender_id=%s dados=%s",
+        sender_id,
+        dados,
+    )
+    return PUSHY_NOTIFICATION_ICON
 
 
 def enviar_notificacao_pushy(
@@ -40,6 +125,8 @@ def enviar_notificacao_pushy(
         logger.error("Pushy não configurado: defina PUSHY_API_KEY no ambiente do backend.")
         return False
 
+    icon_url = _resolver_icone_pushy(dados)
+
     conteudo = {
         "to": usuario.id_app_usuario_pushy,
         "data": {
@@ -50,7 +137,7 @@ def enviar_notificacao_pushy(
         "notification": {
             "title": titulo,
             "body": mensagem,
-            "icon": PUSHY_NOTIFICATION_ICON
+            "icon": icon_url
         },
         "time_to_live": 86400
     }

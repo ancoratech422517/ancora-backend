@@ -12,12 +12,23 @@ class Meus_amigos:
     lista_amigo = []
 
     for amigo in meus_amigos:
+      estado_privado_usuario = False
+      estado_bloqueado_usuario = False
+      
+      if amigo.condicao_estado_Trancar1 == f"Trancar_id_usuario_{usuario_id}" or amigo.condicao_estado_Trancar2 == f"Trancar_id_usuario_{usuario_id}":
+          estado_privado_usuario = True
+      
+      if amigo.condicao_estado_Bloqueado1 == f"bloquear_usuario_{usuario_id}" or amigo.condicao_estado_Bloqueado2 == f"bloquear_usuario_{usuario_id}":
+         estado_bloqueado_usuario = True
+        
+
       # 1. Busca mensagens não lidas
       quantidade_menssagem_nao_lida = Menssagens.query.filter_by(
           id_remitente=amigo.id_amigo,
           nossa_sala=amigo.nossa_sala,
           lida=False,
       ).count()
+      
 
       lastMensssage = ""
       HoraMenssagem = None  # Inicializa como None por segurança
@@ -57,6 +68,10 @@ class Meus_amigos:
           "status": status,
           "ultima_menssagem": lastMensssage,
           "HoraMenssagem": HoraMenssagem,
+          "estado_privado_usuario":estado_privado_usuario,
+          "estado_bloqueado_usuario":estado_bloqueado_usuario,
+          "estado_excluido_usuario":False , 
+          "telefone_amigo":amigo.dados_amigo.telefone
       })
 
     # --- ORDENAÇÃO PELO MAIS RECENTE (SEGURA) ---

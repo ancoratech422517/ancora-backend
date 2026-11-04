@@ -11,6 +11,5 @@ socketio = SocketIO(
         "http://192.168.11.1:5173",
         "http://10.140.176.115:5173",
         "https://ancora-ecommerc-tawny.vercel.app"
-
     ]
 )

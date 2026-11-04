@@ -23,6 +23,7 @@ class AuthService:
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
         }, os.getenv('SECRET_KEY'), algorithm="HS256")
        
+       
         usuario_dados = {
             "id":usuario.id,
             "nome":usuario.nome,

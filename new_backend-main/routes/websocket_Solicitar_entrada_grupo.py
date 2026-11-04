@@ -80,7 +80,9 @@ def solicitar_entrada_turma (dados):
                 "type": "notification",
                 "notification_type": "solicitacao",
                 "sender_id": id_usuario_solicitante,
-                "id_turma": id_turma
+                "id_turma": id_turma,
+                "foto_usuario": foto_usuario_solicitante,
+                "foto_remitente": foto_usuario_solicitante,
             }
         )
 

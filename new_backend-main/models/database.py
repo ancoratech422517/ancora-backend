@@ -1,6 +1,8 @@
 from datetime import datetime
 from email.policy import default
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import cast
+from sqlalchemy.orm import foreign
 
 db = SQLAlchemy()
 
@@ -52,9 +54,15 @@ class Amigo(db.Model):
     id_amigo = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
     nossa_sala = db.Column(db.String(100))
     foto_amigo = db.Column(db.Text, nullable=False, default="none")
+    condicao_estado_Trancar1 = db.Column(db.Text, default="normal")
+    condicao_estado_Trancar2 = db.Column(db.Text, default="normal")
+
+    condicao_estado_Bloqueado1 = db.Column(db.Text , default = "none")
+    condicao_estado_Bloqueado2 = db.Column(db.Text , default = "none")
     
     dados_amigo = db.relationship("Usuario", foreign_keys=[id_amigo])
     dados_usuario = db.relationship("Usuario", foreign_keys=[id_usuario])
+
 
 class Menssagens(db.Model):
     __tablename__ = "menssagens"
@@ -166,10 +174,10 @@ class Cliente_vendedor(db.Model):
 class Turma_Aula (db.Model):
     __tablename__ = "Turma_Aula"
     id = db.Column(db.Integer , primary_key = True)
-    id_admin_Turma = db.Column(db.Text  , default = "none")
+    id_admin_Turma = db.Column(db.Integer , db.ForeignKey("usuarios.id"), nullable=False)
     nome_Turma = db.Column(db.Text  , default = "None")
     tipo_usuario_Turma = db.Column(db.Text  , default = "None")
-    id_aluno_Turma = db.Column(db.Text  , default = "None")
+    id_aluno_Turma = db.Column(db.Text  , default = 0)
     sala_Turma = db.Column(db.Text ,  )
     imagem_perfil_Turma = db.Column(db.Text  , default = "None")
     data_criacao_Turma = db.Column(db.DateTime, default=datetime.utcnow, server_default=db.func.current_timestamp())
@@ -182,6 +190,12 @@ class Turma_Aula (db.Model):
     avaliacao_video_Turma = db.Column(db.Text  , default = "0")
     descricao_video_Turma = db.Column(db.Text  , default = "None")
     
+    dados_usuario = db.relationship(
+        "Usuario",
+        primaryjoin=lambda: foreign(Turma_Aula.id_aluno_Turma) == cast(Usuario.id, db.Text),
+        foreign_keys=lambda: [Turma_Aula.id_aluno_Turma],
+    )
+
 
 class Agendar_Live_Turma(db.Model):
     __tablename__ = "Agendar_Live_Turma"
@@ -192,6 +206,7 @@ class Agendar_Live_Turma(db.Model):
     id_aluno_turma_agenda_live = db.Column(db.Text  , default = "none")
     status_agenda_live = db.Column(db.Text ,  default = "pendente")
     tema_agenda_live = db.Column(db.Text , default = "none")
+
 
 class Adicionar_Nova_Aula(db.Model):
     __tablename__ = "adicionar_nova_aula"
@@ -214,6 +229,4 @@ class Adicionar_dados_estado(db.Model):
     tipo_estado = db.Column(db.Text , default = "none")
     nome_usuario_estado = db.Column(db.Text , default = "none")
     foto_usuario_estado = db.Column(db.Text , default = "none")
-    
-    
     
