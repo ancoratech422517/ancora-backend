@@ -3,7 +3,7 @@ import "../css/GeralChatAmigoDados.css";
 import { solicitarAmizade } from "../../../../../service/socket_service"; // Importe a função que vamos criar abaixo
 import { useState } from "react";
 import { GeralChatAmigoDadosPerfil } from "../js/geralChatAmigoDados";
-
+import Perfil from "../../../../../assets/img_fundo_vazio/perfil.png"
 export default function GeralChatAmigoDados({ dados }) {
     // 1. Pegamos o socket e os NOSSOS dados do Zustand
     const { socket, dadosUsuario ,urlBancoDeDados ,setFotoPerfilUsuario} = useUserStore();
@@ -24,7 +24,9 @@ export default function GeralChatAmigoDados({ dados }) {
         switch(estadoFotoPerfil){
             case "none":
                 return (
-                    <strong>{dados.nome ? dados.nome[0].toUpperCase() : "?"}</strong>
+                    <div className="GeralChatAmigoDadosIconeBox exitBorder">
+                        <img src={Perfil} alt="" />
+                    </div>
                 )
             case "ativo":
                 const URLIMAGE = `${getUrlVideo(dados.foto_usuario)}`
@@ -54,7 +56,7 @@ export default function GeralChatAmigoDados({ dados }) {
 
     return (
         <div className="GeralChatAmigoDados">
-            <div className="GeralChatAmigoDadosIcone" style={{ background: meuGradiente }}>
+            <div className="GeralChatAmigoDadosIcone">
                 {condicao_estado_foto_perfil()}
             </div>
             <div className="GeralChatDadosText">

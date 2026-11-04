@@ -3,6 +3,7 @@ import "./css/ConteinerRightDadosWindowMenssageMim.css"
 import { Selecionar_menssagem } from "./js/conteinerRightDadosMenssage";
 import { useUserStore } from "../../../useUseSotore";
 import { TirarSelecao } from "./js/TirarSelecao";
+import Perfil from "../../../assets/img_fundo_vazio/perfil.png"
 export default function ConteinerRightDadosWindowMenssageMim ({texto , hora , nome , fundo , id , nossa_sala , id_remitente , foto_usuario}) {
     const {socket , urlBancoDeDados} = useUserStore()
     const {setIdMenssagem} = useUserStore()
@@ -23,7 +24,9 @@ export default function ConteinerRightDadosWindowMenssageMim ({texto , hora , no
         switch(estadoFotoPerfil){
             case "none":
                 return (
-                    <li> { iniciais } </li>
+                    <div className="IconeUserMimIcone IconePerfilElePadrao">
+                        <img src={Perfil} alt="" />
+                    </div>
                 )
             case "ativo":
                 const URLIMAGE = `${getUrlVideo(foto_usuario)}`
@@ -41,23 +44,25 @@ export default function ConteinerRightDadosWindowMenssageMim ({texto , hora , no
         <div className="ConteinerRightDadosWindowMenssageMim" onDoubleClick={(e) => Selecionar_menssagem(e , id , nossa_sala, id_remitente, setIdMenssagem)} onClick={TirarSelecao}>
 
             <div className="ConteinerRightDadosWindowMenssageMimControls">
-                    
-                    <div className="Conteiner_displayFlex">
+                    <div className="conteiner_block_mensage_chat">
+                        <div className="Conteiner_displayFlex">
 
-                        <div className="textoUserMim">
-                            {/* <div className="responder_menssagem_usuario">
-                                <h3>Cláudio Avelino</h3>
-                                <li>ola pessoal como vai</li>
-                            </div> */}
+                            <div className="textoUserMim">
+                                {/* <div className="responder_menssagem_usuario">
+                                    <h3>Cláudio Avelino</h3>
+                                    <li>ola pessoal como vai</li>
+                                </div> */}
+                                    
+                                <li id={id}>{texto}</li>
                                 
-                            <li id={id}>{texto}</li>
-                            <span className="horaMim"> {hora} </span>
+                            </div>
+                            <div className="IconeUserMim">
+                                {condicaoEstadoFotoPerfil()}
+                            </div>
                         </div>
-                        <div className="IconeUserMim" style={{background:fundo}}>
-                            {condicaoEstadoFotoPerfil()}
-
-                        </div>
+                        <span className="horaMim"> {hora} </span>
                     </div>
+
             </div>
 
             

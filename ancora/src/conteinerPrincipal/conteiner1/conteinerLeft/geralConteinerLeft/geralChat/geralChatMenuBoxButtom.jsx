@@ -2,6 +2,7 @@ import { useState } from "react";
 import "../css/GeralChatMenuButtom.css"
 import { GeralChatMenuButtomBuscarDadosEstado } from "../js/geralChatMenuBoxButtom";
 import { useUserStore } from "../../../../../useUseSotore";
+import { GeralChatMenuButtomText } from "../js/GeralChatMenuButtomText";
 export default function GeralChatMenuButtom ({setViewChat}){
     const {
             DADOSESTADOAMIGO , 
@@ -10,6 +11,7 @@ export default function GeralChatMenuButtom ({setViewChat}){
             setDadosGeralEstadoUser , 
             set_DADOSTIPOVIEWSLAYUTELEFT , 
             set_CONFIRMARSAIDA ,
+            setDADOSTIPOCHAT
            
         } = useUserStore()
 
@@ -33,10 +35,10 @@ export default function GeralChatMenuButtom ({setViewChat}){
                     )
                     })}
             </div> */}
-            <li className="GeralChatMenuButtomText ativar_opcao">Todos</li>
-            <li className="GeralChatMenuButtomText">N/lidas</li>
-            <li className="GeralChatMenuButtomText">Privado</li>
-            <li className="GeralChatMenuButtomText">Bloqueado</li>
+            <li className="GeralChatMenuButtomText ativar_opcao" onClick={(e)=>{GeralChatMenuButtomText(e) , setDADOSTIPOCHAT("normal")}} >Todos</li>
+            <li className="GeralChatMenuButtomText" onClick={(e)=>{GeralChatMenuButtomText(e) , setDADOSTIPOCHAT("naoLido")}}>N/lidas</li>
+            <li className="GeralChatMenuButtomText" onClick={(e)=>{GeralChatMenuButtomText(e) , setDADOSTIPOCHAT("privado")}}>Privado</li>
+            <li className="GeralChatMenuButtomText" onClick={(e)=>{GeralChatMenuButtomText(e) , setDADOSTIPOCHAT("bloqueado")}}>Bloqueado</li>
 
         </div>
     )

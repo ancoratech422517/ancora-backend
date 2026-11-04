@@ -41,7 +41,7 @@ export default function MenuConteinerLeft({ ativarConteiner, setDadosUsuario }) 
     }, [dadosUsuario?.id, setNotificacoes]);
     ///usuarios/lista
     const buscar_usuarios = useCallback(()=>{
-        fetch(`${urlBancoDeDados}/usuarios/lista`)
+        fetch(`${urlBancoDeDados}/usuarios/lista/${dadosUsuario.id}`)
         .then(res=> res.json())
         .then(dados=>{
             if(Array.isArray(dados)){

@@ -15,6 +15,9 @@ import { AgendaMinima } from "../../../global";
 import { AtualizarContadores } from "../../../global";
 import { MenuMobileAdicionarVideoAula } from "../conteinerRight/js/menuMobileAdicionarVideoAula";
 import Loading4 from "../../components/conteinerComponentesJsx/loadind4";
+import Perfil from "../../../assets/img_fundo_vazio/perfil.png"
+import Live from "../../../assets/img_fundo_vazio/img_live.png"
+import Video from "../../../assets/img_fundo_vazio/img_video.png"
 export default function ConteinerRightMenuMobile () {
     
     const {
@@ -185,8 +188,8 @@ export default function ConteinerRightMenuMobile () {
     }
     const [estadoLiveTurmaCont , setEstadoLiveTurmaCont] = useState("pendente")
     const condicaoEstadoLiveTurmaCont = (dados)=>{
-        
-        switch(dados.status_agenda_live){
+        alert(dados)
+        switch(dados?.status_agenda_live || "vazio"){
             case "ativo":
                 return(
                         <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersProximasDados">
@@ -217,6 +220,11 @@ export default function ConteinerRightMenuMobile () {
                             
                         </div>  
                     
+                )
+            case "vazio":
+                alert("dentro")
+                return(
+                    <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersProximasDadosVazio"></div>
                 )
         }
     }
@@ -292,18 +300,38 @@ export default function ConteinerRightMenuMobile () {
                    
                     {condicaoEstadoMenssageResposta()}
                     {UsuarioAncora.map((usuario , index)=>{
-                        const URLIMAGE = getUrlVideo(usuario.foto_usuario)                    
+                        let CONDICAO_FOTO_PADRAO_INSERT = ""
+                        const URLIMAGE = getUrlVideo(usuario.foto_usuario)
+                        const PERFIL = Perfil
+                        if (URLIMAGE === `${urlBancoDeDados}/none`){
+                            CONDICAO_FOTO_PADRAO_INSERT = PERFIL
+                        }
+                        else{
+                            CONDICAO_FOTO_PADRAO_INSERT = URLIMAGE
+                        }
+                        const condicao_foto_padrao = ()=>{
+                            switch(URLIMAGE){
+                                case `${urlBancoDeDados}/none`:
+                                    return(
+                                        <img src={Perfil} alt="" />
+                                    )
+                                default:
+                                    return(
+                                        <img src={URLIMAGE} alt="" />
+                                    )
+                            }
+                        }                   
                         return(
                             <div className="ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoScrollDados">
-                                <div className="ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoScrollDadosIcone">
-                                    <img src={URLIMAGE} alt="" />
+                                <div className="ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoScrollDadosIcone cutBorda">
+                                    {condicao_foto_padrao()}
                                 </div>
                                 <div className="ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoScrollDadosCont">
                                     <li>{usuario.nome}</li>
                                     <b style={{display:"none"}}>{usuario.telefone}</b>
                                     <div className="ConteinerRightMenuMobileTurmaBox2MenuadminTurmaConteinerAddAlunoScrollDadosContBoxBtn">
                                         <button onClick={()=>{MenuMobileConvidarUsuarioTurma(dadosUsuario?.id,DadosTurmaAtual?.id,usuario?.id , socket , setEstadoMenssageResposta , set_texto_menssagem_resposta , DadosTurmaAtual?.nome_Turma)}}>convidar</button>
-                                        <button onClick={()=>{setMostrarFotoConvidado(true) , setFotoConvidadoTemporario(URLIMAGE)}}>ver foto</button> 
+                                        <button onClick={()=>{setMostrarFotoConvidado(true) , setFotoConvidadoTemporario(CONDICAO_FOTO_PADRAO_INSERT)}}>ver foto</button> 
                                     </div>
                                 </div>
                             </div>
@@ -376,14 +404,31 @@ export default function ConteinerRightMenuMobile () {
                                     <li>Online agora ({totalAlunoOnline}) </li>
                                 </div>
                                 <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosScroll">
+                                    
                                     {AlunTurma.map((dados , index)=>{
+                                       
                                         const URLIMAGE = getUrlVideo(dados.foto_aluno)
+                                        let classeCondicao = ""
+                                        const condicao_imagem_perfil_padrao_user = ()=>{
+                                            switch(URLIMAGE){
+                                                case `${urlBancoDeDados}/none`:
+                                                    return(
+                                                        <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosScrollDadosIcone tirarBordaUserOnline">
+                                                            <img src={Perfil} alt="" />
+                                                        </div>
+                                                    )
+                                                default:
+                                                    <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosScrollDadosIcone">
+                                                        <img src={URLIMAGE} alt="" />
+                                                    </div>
+                                            }
+                                        }
+                                        
+
                                         
                                         return(
                                             <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosScrollDados">
-                                                <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosScrollDadosIcone">
-                                                    <img src={URLIMAGE} alt="" />
-                                                </div>
+                                                {condicao_imagem_perfil_padrao_user()}
                                                 <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosScrollDadosCont">
                                                     <b>{dados.nome_aluno}</b>
                                                     <li style={{color: dados.status === "Online" ? "#008080":"gray"}}>{dados.status}</li>
@@ -400,12 +445,20 @@ export default function ConteinerRightMenuMobile () {
             case "proximas":
                 return (
                     <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersProximas">
-                        {Dados_Agenda_Turma.map((dados)=>{
-                            return(
-                                condicaoEstadoLiveTurmaCont(dados)
-                            )
-                        })}
+                        {Dados_Agenda_Turma.length < 0 ? (
+                            Dados_Agenda_Turma.map((dados)=>{
+                                return(
+                                    condicaoEstadoLiveTurmaCont(dados)
+                                )
+                            })
+                        ):(
+                            <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersProximasFundoVazio">
+                                <img src={Live} alt="" />
+                            </div>
+                        )}
+                        
                     </div>
+
                     
                 )
             case "biblioteca":
@@ -419,7 +472,8 @@ export default function ConteinerRightMenuMobile () {
                             <li>Videos Da Turma</li>
                         </div>
                         <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3Scroll">
-                            {Dados_Biblioteca_Video_Turma.map((dados)=>{
+                            {Dados_Biblioteca_Video_Turma.length < 0 ? (
+                                Dados_Biblioteca_Video_Turma.map((dados)=>{
                                 
                                 return(
                                     <div onClick={()=>{set_EstadoConteinerVideoTurmaExibir(true) , set_Dados_Video_Atual_Click(dados.url_video)}} className="ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3ScrollDados">
@@ -432,7 +486,13 @@ export default function ConteinerRightMenuMobile () {
                                         </div>
                                     </div>
                                 )    
-                            })}
+                            })
+                            ):(
+                                <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3ScrollFundoVazio">
+                                    <img src={Video} alt="" />
+                                </div>
+                            )}
+                          
                             
                         </div>
                     </div>

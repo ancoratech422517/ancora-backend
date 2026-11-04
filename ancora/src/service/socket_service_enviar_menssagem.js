@@ -20,7 +20,8 @@ export function Enviar_menssagem(
         "nome_amigo":nome_amigo,
         "menssagem":menssagem,
         "id_remitente":dadosUsuario.id,
-        "nome_remitente":dadosUsuario.nome
+        "nome_remitente":dadosUsuario.nome,
+        "foto_usuario": dadosUsuario.foto_usuario
     }
 
     socket.emit("enviar_menssagem_na_sala" , dados, (result) => onResult?.(result))

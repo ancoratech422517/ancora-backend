@@ -25,7 +25,6 @@
 .GeralChatDadosIconeValue{
     width: 60px;
     height: 60px;
-    background-color: teal;
     border-radius: 50%;
     color: #fff;
     display: flex;
@@ -115,6 +114,101 @@
     border-bottom: 3px solid rgb(165, 1, 1);
     border-right: 2px solid  rgb(165, 1, 1);
     font-weight: 600;
+}
+.MenuMobileSvg{
+
+    transition: .2s ease;
+    cursor: pointer;
+   
+}
+.GeralChatDados:hover .MenuMobileSvg{
+    transition: .2s ease;
+    opacity: 1;
+}
+.MenuMobileSvg:active{
+    transform: scale(.9);
+}
+.conteiner_menu_configuracao_condicao_usuario{
+    width: 150px;
+    height: 250px;
+    position: absolute;
+    top: 0;
+    right: 30%;
+    border-radius: 20px;
+    background-color: var(--white);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--gray-300);
+    opacity: 1;
+    animation: animaMenuMobile .3s ease-in-out;
+    background-color: #f9f9f9;
+    
+   
+
+}
+@keyframes animaMenuMobile {
+    0%{
+        transform: scale(0.2);
+        transition: .2s ease;
+        opacity: 0;
+   
+    }
+    100%{
+        transform: scale(1.0);
+        transition: .2s ease;
+        opacity: 1;
+      
+    }
+}
+.conteiner_menu_configuracao_condicao_usuario li{
+    width: 100%;
+    height: 16.666666667%;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    cursor: pointer;
+    gap: 10px;
+    padding-left: 15px;
+    transition: .2s ease;
+    color: #434343;
+    font-weight: 600;
+    
+}
+.conteiner_menu_configuracao_condicao_usuario li a{
+    color: #434343;    
+}
+.conteiner_menu_configuracao_condicao_usuario li:first-child{
+    border-radius: 20px 20px 0 0;
+}
+.conteiner_menu_configuracao_condicao_usuario li:last-child{
+    border-radius: 0 0 20px 20px;
+}
+.conteiner_menu_configuracao_condicao_usuario li:hover{
+    background-color: var(--surface-2);
+    transition: .2s ease;
+}
+.conteiner_menu_configuracao_condicao_usuario li svg{
+    width: 17px;
+    height: 17px;
+    color: #434343;
+
+}
+.PerfilPadrao{
+    border: none;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+
+}
+.PerfilPadrao img{
+    width: 100%;
+    height: 100%;
+
+    transform: scale(1.3);
+    border: none;
 }
 @media screen and (max-width: 700px) {
     .GeralChatDados{

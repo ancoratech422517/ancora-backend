@@ -306,6 +306,18 @@
     height: 20px;
     color: var(--white);
 }
+.fundo_vazio_lista_usuario{
+    width: 100%;
+    height: 100%;
+}
+.fundo_vazio_lista_usuario img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.aumentarScale{
+    transform: scale(1.2);
+}
 @keyframes animacaoSolicitacaoEnviada {
     from { opacity: 0; }
     to { opacity: 1; }

@@ -17,6 +17,7 @@
     justify-content: center;
     border-right: 2px solid rgb(11, 86, 86);
     border-bottom: 3px solid rgb(9, 62, 62);
+
 }
 .widgetTurma svg{
     width: 25px;
@@ -40,7 +41,20 @@
     margin-left: 5%;
     border-bottom: 5px solid teal;
     border-top: 5px solid teal;
+    animation: anima_lento .2s ease;
 
+
+}
+@keyframes anima_lento {
+    0%{
+        transform: scale(0.1);
+        opacity: 0;
+    }
+    100%{
+        transform: scale(1.0);
+ 
+        opacity: 1;
+    }
 }
 .widgetConteinerTurmaMenuTop{
     width: 100%;
@@ -61,7 +75,6 @@
     height: 100%;
     object-fit: cover;
     border-radius: 50%;
-    border: 2px solid var(--teal-600);
 }
 .widgetConteinerTurmaMenuTopConteudo{
     width: 70%;

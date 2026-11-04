@@ -7,6 +7,8 @@ import SetaEsquerda from "../../../../components/conteinerSvg/setaEsquerda";
 import { useUserStore } from "../../../../../useUseSotore";
 import IMG3 from "../../../../../assets/IMGPERFIL.png"
 import { GeralChatAmigoSolicitarEntradaGrupo } from "../js/geralChatAmigoSolicitarEntradaGrupo";
+import Img_grupo from "../../../../../assets/img_fundo_vazio/img_grupo.png"
+import Perfil from "../../../../../assets/img_fundo_vazio/perfil.png"
 export default function GeralChatAmigo ({setViewChat}) {
     const {
             socket , 
@@ -46,15 +48,27 @@ export default function GeralChatAmigo ({setViewChat}) {
             TotalProdutoUsuario["TotalProdutoUsuario"] = dados.TotalProdutoUsuario
         })
 
+        const condicao_foto_padrao = ()=>{
+            switch(dadosUsuario.foto_usuario){
+                case "none":
+                    return (
+                        <img src={Perfil} className="aumentarScale" alt="" />
+                    )
+                default:
+                    return(
+                        <img src={dados_usuario_perfil.foto_usuario} alt="" />
+                    )
+            }
+        }
 
     const condicao_FotoPerfilUsuario = () =>{
-
+        
         switch(FotoPerfilUsuario){
             case true:
                 return (
                     <div className="GeralChatAmigoConteinerPerfilUsuario">
                         <div className="GeralChatAmigoConteinerPerfilUsuarioImgUser">
-                            <img src={dados_usuario_perfil.foto_usuario} alt="" />
+                            {condicao_foto_padrao()}
                         </div>
                         
                             <h2> {dados_usuario_perfil.nome_usuario} </h2>
@@ -182,8 +196,11 @@ export default function GeralChatAmigo ({setViewChat}) {
                         <GeralChatAmigoDados key={usuario.id} dados = {usuario} />
                     ))
                 ) : (
-                    <p>Nenhum usuário encontrado.</p>
+                    <div className="fundo_vazio_lista_usuario">
+                        <img src={Img_grupo} alt="" />
+                    </div>
                 )}
+                
                 
             </div>
             {condicao_FotoPerfilUsuario()}

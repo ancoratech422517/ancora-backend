@@ -31,7 +31,7 @@ const StatusVisualizacao = ({ lida, statusAmigo, isAudio = false }) => {
   const foiLido = lida === true || String(lida).toLowerCase() === "true" || lida === 1;
   const amigoEstaOnline = statusAmigo === "online";
 
-  const corVerdeClaro = "rgb(5, 241, 139)";
+  const corVerdeClaro = "#00a6ff";
   const corCinza = isAudio ? "rgba(236, 236, 236, 0.7)" : "rgb(158, 158, 158)";
 
   if (foiLido) {
@@ -1260,7 +1260,7 @@ if (isAudio) {
       foto_amigo={ChatAtivo?.foto_amigo}
     />
   );
-}            const meuGradiente = gerarGradienteElegante(msg.id_destinatario);
+}           const meuGradiente = gerarGradienteElegante(msg.id_destinatario);
             const conteudoFinal = formatarConteudo(msg, souEu);
 
             return souEu ? (

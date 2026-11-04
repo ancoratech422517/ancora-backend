@@ -14,6 +14,7 @@ import { GeralCharUserAddTextoAoDigitarVideo } from "../js/GeralChatEstadoUserAd
 import { GeralChatEstadoUserAddImagemAoDigitarDate } from "../js/GeralChatEstadoUserAddTexto";
 import { GeralChatUserAddTextoAoDigitarVideoSendVideo } from "../js/GeralChatEstadoUserAddTexto";
 import SetaEsquerda from "../../../../components/conteinerSvg/setaEsquerda";
+import Perfil from "../../../../../assets/img_fundo_vazio/perfil.png"
 export default function GeralChatEstadoUser ({setViewChat}) {
     const {
         EstadoResposta , 
@@ -28,7 +29,8 @@ export default function GeralChatEstadoUser ({setViewChat}) {
         setTipoConteudoViewEstado,
         dadosUsuario , 
         DADOSTIPOVIEWSLAYUTELEFT , 
-        set_DADOSTIPOVIEWSLAYUTELEFT
+        set_DADOSTIPOVIEWSLAYUTELEFT , 
+        urlBancoDeDados
     } = useUserStore()
     // const [AllDateStatusUser , setAllDateStatusUser] = useState()
 
@@ -164,10 +166,12 @@ export default function GeralChatEstadoUser ({setViewChat}) {
 
         }
     }
+    const IMGPERFIL = dadosUsuario.foto_usuario == `${urlBancoDeDados}/none` ? dadosUsuario.foto_usuario:Perfil
+    const classe = dadosUsuario.foto_usuario == `${urlBancoDeDados}/none` ? "GeralChatEstadoUserFotoUser":"GeralChatEstadoUserFotoUser IconePerfilPadraoEstado"
     return (
         <div className="GeralChatEstadoUser">
-            <div className="GeralChatEstadoUserFotoUser">
-                <img src={dadosUsuario.foto_usuario} alt="" />
+            <div className={classe}>
+                <img src={IMGPERFIL} alt="" />
             </div>
             <h3>Meu estado <i></i> </h3>
             <div className="GeralChatEstadoUserSect1">

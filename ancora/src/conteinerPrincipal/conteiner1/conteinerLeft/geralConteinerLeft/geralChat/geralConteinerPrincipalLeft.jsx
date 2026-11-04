@@ -8,6 +8,7 @@ import GeralChatEstadoUser from "./geralChatEstdoUser";
 import { useUserStore } from "../../../../../useUseSotore";
 import { DadosActive } from "../js/geralChatDadosAction";
 import GeralConteinerPrincipalLeftConteinerEstado from "./GeralConteinerPrincipalLeftConteinerEstado";
+import Perfil from "../../../../../assets/img_fundo_vazio/perfil.png"
 export default function GeralConteinerPrincialLeft () {
     const [viwChat, setViewChat] = useState("chat");
     const {
@@ -28,7 +29,8 @@ export default function GeralConteinerPrincialLeft () {
         Dados_Biblioteca_Video_Turma,
         setEstadoMenuMobila , 
         CONDICACAOMOSTRARESTADOETRURMAVIEWS , 
-        set_CONDICACAOMOSTRARESTADOETRURMAVIEWS
+        set_CONDICACAOMOSTRARESTADOETRURMAVIEWS , 
+        set_Tipo_Chat_Turma
     } = useUserStore();
 
     const getUrlVideo = (url) => {
@@ -69,6 +71,7 @@ export default function GeralConteinerPrincialLeft () {
 
     // ALTERADO: Agora recebemos a 'turmaSelecionada' diretamente no clique
     const entrar_na_turma = (e, turmaSelecionada , setmostrarConteinerCurso) => {
+        set_Tipo_Chat_Turma(true)
         const socketAtual = useUserStore.getState().socket;
         
         if(!turmaSelecionada.id_admin_Turma){
@@ -89,6 +92,7 @@ export default function GeralConteinerPrincialLeft () {
             console.log("Conectando ao socket da turma...");
             return;
         }
+        
         setmostrarConteinerCurso(false)
             //sala_Turma
         console.log("✅ Entrando na sala de grupo:", turmaSelecionada.sala_Turma);
@@ -100,7 +104,7 @@ export default function GeralConteinerPrincialLeft () {
             turmaSelecionada.nome_Turma,          // nome
             turmaSelecionada.id_aluno_Turma,     // id do destino/turma
             turmaSelecionada.sala_Turma,         // a sala correta do Socket.io
-            turmaSelecionada.imagem_perfil_Turma, // foto
+            turmaSelecionada.foto_aluno_turma, // foto
             setChatAtivo, 
             socketAtual,
             dadosUsuario.id,
@@ -111,6 +115,8 @@ export default function GeralConteinerPrincialLeft () {
             setProdutoUsuarioChat, 
             setMostrarChat,
             urlBancoDeDados , 
+            
+            
             
         );
     };
@@ -140,12 +146,14 @@ export default function GeralConteinerPrincialLeft () {
     };
 
     const condição_conteiner_curso = () => {
+        const PerfilPadrao = URLIMAGE !== `${urlBancoDeDados}/none` ? URLIMAGE:Perfil
+        const classePerfilPadrao = URLIMAGE !== `${urlBancoDeDados}/none` ? "widgetConteinerTurmaMenuTopIcone":"widgetConteinerTurmaMenuTopIcone IconePerfilPadraoMenuTurma"
         if (mostrar_conteiner_cursos) {
             return (
                 <div className="widgetConteinerTurma">
                     <div className="widgetConteinerTurmaMenuTop">
-                        <div className="widgetConteinerTurmaMenuTopIcone">
-                            <img src={URLIMAGE} alt="" />
+                        <div className={classePerfilPadrao}>
+                            <img src={PerfilPadrao} alt="" />
                         </div>
                         <div className="widgetConteinerTurmaMenuTopConteudo">
                             <b>{dadosUsuario.nome}</b>

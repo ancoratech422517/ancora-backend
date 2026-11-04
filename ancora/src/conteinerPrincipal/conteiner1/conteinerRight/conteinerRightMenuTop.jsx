@@ -7,6 +7,7 @@ import MenuPonto from "../../components/conteinerSvg/menuPonto";
 import { useUserStore } from "../../../useUseSotore";
 import { Back_home } from "./js/conteinerRightMenuTopAction";
 import { MenuMobileRight } from "./js/menuMobile";
+import Perfil from "../../../assets/img_fundo_vazio/perfil.png"
 export default function ConteinerRightMenuTop({ativarConteiner}) {
     // 1. Pegamos ChatAtivo, socket, o array de amigos e o novo estado digitandoStatus
     const { 
@@ -47,14 +48,18 @@ export default function ConteinerRightMenuTop({ativarConteiner}) {
         switch(estadoFotoPerfil){
             case "none":
                 return (
-                    <b>{ChatAtivo.nome_amigo?.substring(0, 2).toUpperCase()}</b>
+                       <div className="ConteinerRightMenuTopBoxLeftCaxa2Icone IconePerfilPadraoMenuTop">
+                            <img src={Perfil} alt="" />
+                        </div>
                 )
             break
             case "ativo":
                 const URLIMAGE = `${getUrlVideo(ChatAtivo?.foto_amigo)}`
                 if (URLIMAGE === `${urlBancoDeDados}`){
                     return (
-                        <b>{ChatAtivo.nome_amigo?.substring(0, 2).toUpperCase()}</b>
+                        <div className="ConteinerRightMenuTopBoxLeftCaxa2Icone IconePerfilPadraoMenuTop">
+                            <img src={Perfil} alt="" />
+                        </div>
                     )
                 }
                 return (

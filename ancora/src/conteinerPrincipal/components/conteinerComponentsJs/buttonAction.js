@@ -5,6 +5,7 @@ export async function ClicarButtom(event , setAtivar , nome , setDadosUsuario) {
   
 
   // remove active de todos
+  
   botoes.forEach((btn) => {
     btn.classList.remove("active");
   });

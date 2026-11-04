@@ -90,6 +90,10 @@ export const useUserStore = create(
       DADOSTIPOVIEWSLAYUTELEFT:false,
       CONFIRMARSAIDA: false,
       CONDICACAOMOSTRARESTADOETRURMAVIEWS : false,
+      DADOSTIPOCHAT:"normal",
+      FUNDOVAZIOCHAT:"",
+      CONDICAOMOSTRARMENUMOBILEESTADOUSER: false,
+      Tipo_Chat_Turma : false , 
       // --- SOM ---
       tocarSomEnvio: () => {
         const audio = new Audio('/sounds/envio.mp3')
@@ -247,6 +251,10 @@ export const useUserStore = create(
       set_DADOSTIPOVIEWSLAYUTELEFT: (set_dados_tipo_views_layout_left) => set({DADOSTIPOVIEWSLAYUTELEFT:set_dados_tipo_views_layout_left}),
       set_CONFIRMARSAIDA: (set_confirmar_saida) => set({CONFIRMARSAIDA:set_confirmar_saida}),
       set_CONDICACAOMOSTRARESTADOETRURMAVIEWS: (set_condicacaomostrarestadoetrurmaviews) => set({CONDICACAOMOSTRARESTADOETRURMAVIEWS:set_condicacaomostrarestadoetrurmaviews}),
+      setDADOSTIPOCHAT: (set_dados_tipo_chat) => set({DADOSTIPOCHAT:set_dados_tipo_chat}),
+      setFUNDOVAZIOCHAT: (set_fundo_vazio_chat) => set({FUNDOVAZIOCHAT:set_fundo_vazio_chat}),
+      setCONDICAOMOSTRARMENUMOBILEESTADOUSER: (set_CONDICAOMOSTRARMENUMOBILEESTADOUSER) => set({CONDICAOMOSTRARMENUMOBILEESTADOUSER:set_CONDICAOMOSTRARMENUMOBILEESTADOUSER}),
+      set_Tipo_Chat_Turma: (set_tipo_chat_turma) => set({Tipo_Chat_Turma:set_tipo_chat_turma}),
       // --- OUTRAS AÇÕES ---
       limparDados: () => set({
         dadosUsuario: null,
@@ -322,6 +330,28 @@ export const useUserStore = create(
           }),
         }))
       },
+
+      setActualizarEstadoPrivado:(id_amigo , novo_status) =>
+        set((state)=>({
+          amigos: state.amigos.map((item)=>
+              item.id_amigo === id_amigo ? { ...item , estado_privado_usuario:novo_status}:item
+          )
+        }))
+      ,
+
+      setActualizarUsuarioBloqueado:(id_amigo , novo_status) =>
+        set((state) =>({
+          amigos: state.amigos.map((item)=>
+            item.id_amigo === id_amigo ? {...item , estado_bloqueado_usuario:novo_status}:item
+          )
+        })),
+
+      setActualizarUsuarioExluido:(id_amigo , novo_status) =>
+        set((state) =>({
+          amigos: state.amigos.map((item)=>
+            item.id_amigo === id_amigo ? {...item , estado_excluido_usuario: novo_status }:item
+          )
+        })),
 
       setUpdateProdutoAdoro: (id_produto, novoEstado) => {
         set((state) => ({

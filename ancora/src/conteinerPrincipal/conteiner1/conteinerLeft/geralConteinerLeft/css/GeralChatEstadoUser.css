@@ -559,6 +559,12 @@
     transform: scale(0.8);
     transition: .2s ease;
 }
+.IconePerfilPadraoEstado{
+    background-color: transparent;
+}
+.IconePerfilPadraoEstado img{
+    transform: scale(1.2);
+}
 @media screen and (max-width: 700px) {
 
     .GeralChatEstadoUser{

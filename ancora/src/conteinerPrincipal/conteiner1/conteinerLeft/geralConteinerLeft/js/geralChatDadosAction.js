@@ -14,7 +14,7 @@ export function DadosActive (event , nome_amigo , id_amigo, nossa_sala , foto_am
     dados.forEach((dados)=>{
         dados.classList.remove("dadosActive")
     })
-    event.currentTarget.classList.add("dadosActive");
+    // event.currentTarget.classList.add("dadosActive");
 
     const dados_amigo = {
         "nome_amigo":nome_amigo,
