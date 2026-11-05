@@ -21,7 +21,12 @@ const getInitials = (nome) => {
 
 // Função para pegar a cor principal do gradiente
 const getMainColorForId = (id) => {
-  const coresBase = [["#11cb7e", "#25fcee"], ["#9aceff", "#cffedb"], ["#00b09b", "#067b7f"], ["#00b3ff", "#49d4a3"]];
+  const coresBase = [
+    ["var(--chat-identity-1)", "var(--chat-identity-2)"],
+    ["var(--chat-identity-3)", "var(--chat-identity-4)"],
+    ["var(--chat-identity-5)", "var(--chat-identity-6)"],
+    ["var(--chat-identity-7)", "var(--chat-identity-8)"]
+  ];
   const index = Math.abs(Number(id) || 0) % coresBase.length;
   return coresBase[index][0];
 };
@@ -31,8 +36,8 @@ const StatusVisualizacao = ({ lida, statusAmigo, isAudio = false }) => {
   const foiLido = lida === true || String(lida).toLowerCase() === "true" || lida === 1;
   const amigoEstaOnline = statusAmigo === "online";
 
-  const corVerdeClaro = "#00a6ff";
-  const corCinza = isAudio ? "rgba(236, 236, 236, 0.7)" : "rgb(158, 158, 158)";
+  const corVerdeClaro = "var(--status-read)";
+  const corCinza = isAudio ? "var(--media-player-muted)" : "var(--text-muted)";
 
   if (foiLido) {
     return (
@@ -56,7 +61,7 @@ const StatusVisualizacao = ({ lida, statusAmigo, isAudio = false }) => {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5px' }}>
-      <svg style={{ color: "#767676", width: 18, height: 18 }} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-check" viewBox="0 0 16 16">
+      <svg style={{ color: "var(--text-muted)", width: 18, height: 18 }} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-check" viewBox="0 0 16 16">
         <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
       </svg>
     </div>
@@ -77,11 +82,11 @@ const PlayerAudioCustomizado = ({ src, isMyMessage = false, currentlyPlayingSrc,
   const isPlaying = currentlyPlayingSrc === src;
 
   // Cores (adaptadas ao teu chat)-
-  const c = isMyMessage ? "rgb(5, 241, 139)" : "#38bdf8";
-  const d = isMyMessage ? "rgba(0, 255, 157, 0.28)" : "rgba(56, 189, 248, 0.28)";
-  const c2 = isMyMessage ? "#2c2c2d65" : "#2d2d2d64";
-  const d2 = isMyMessage ? "rgba(1, 0, 2, 0.28)" : "rgba(1, 0, 2, 0.28)";
-  const textColor = isMyMessage ? "rgba(255,255,255,0.95)" : "#1d1b26";
+  const c = isMyMessage ? "var(--chat-audio-own-accent)" : "var(--chat-audio-other-accent)";
+  const d = isMyMessage ? "var(--chat-audio-own-wave)" : "var(--chat-audio-other-wave)";
+  const c2 = "var(--media-player-track)";
+  const d2 = "var(--media-player-overlay)";
+  const textColor = isMyMessage ? "var(--chat-message-own-text)" : "var(--chat-message-other-text)";
 
   // Paths das ondas duplas (mesmo do teu HTML)
   const wavePath = (amp) =>
@@ -475,14 +480,14 @@ const formatTime = (time) => {
         maxWidth: "380px",
         borderRadius: "22px",
         overflow: "hidden",
-        boxShadow: "0 20px 40px -10px rgba(0, 212, 255, 0.25)",
-        background: "#0f172a",
+        boxShadow: "var(--shadow-lg)",
+        background: "var(--media-player-bg)",
         position: "relative",
         transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
       }}
     >
       <div 
-        style={{ position: "relative", background: "#000" }}
+        style={{ position: "relative", background: "var(--surface-deep)" }}
         onClick={togglePlay}
       >
         <video
@@ -512,7 +517,7 @@ const formatTime = (time) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              background: "rgba(15, 23, 42, 0.45)",
+              background: "var(--media-player-overlay)",
               zIndex: 2,
             }}
           >
@@ -520,16 +525,16 @@ const formatTime = (time) => {
               style={{
                 width: "72px",
                 height: "72px",
-                background: "linear-gradient(90deg, #00d4ff, #22ffaa)",
+                background: "linear-gradient(90deg, var(--media-player-accent-cyan), var(--media-player-accent))",
                 borderRadius: "50%",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                boxShadow: "0 0 40px #22ffaa",
+                boxShadow: "0 0 40px var(--media-player-accent)",
                 animation: "pulsePlay 2s infinite",
               }}
             >
-              <svg width="34" height="34" viewBox="0 0 24 24" fill="#0f172a">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="var(--media-player-bg)">
                 <path d="M8 5.14v14.72c0 .85 1.03 1.27 1.64.84l11-7.36c.6-.4.6-1.28 0-1.68L9.64 4.3c-.61-.43-1.64-.01-1.64.84z" />
               </svg>
             </div>
@@ -542,14 +547,14 @@ const formatTime = (time) => {
               position: "absolute",
               bottom: "12px",
               right: "12px",
-              background: "rgba(15, 23, 42, 0.9)",
-              color: "#fff",
+              background: "var(--media-player-control)",
+              color: "var(--media-player-text)",
               fontSize: "13px",
               fontFamily: "SF Mono, monospace",
               padding: "3px 9px",
               borderRadius: "9999px",
               zIndex: 3,
-              boxShadow: "0 4px 15px rgba(0,0,0,0.3)",
+              boxShadow: "var(--shadow-md)",
             }}
           >
             {formatTime(totalDuration)}
@@ -562,9 +567,9 @@ const formatTime = (time) => {
             position: "absolute",
             top: "12px",
             right: "56px",
-            background: "rgba(15,23,42,0.85)",
+            background: "var(--media-player-control)",
             border: "none",
-            color: "#fff",
+            color: "var(--media-player-text)",
             width: "36px",
             height: "36px",
             borderRadius: "50%",
@@ -574,7 +579,7 @@ const formatTime = (time) => {
             fontSize: "18px",
             zIndex: 21,
             cursor: "pointer",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+            boxShadow: "var(--shadow-sm)",
           }}
           title="Ecrã inteiro"
         >
@@ -587,9 +592,9 @@ const formatTime = (time) => {
             position: "absolute",
             top: "12px",
             right: "12px",
-            background: "rgba(15,23,42,0.85)",
+            background: "var(--media-player-control)",
             border: "none",
-            color: "#fff",
+            color: "var(--media-player-text)",
             width: "36px",
             height: "36px",
             borderRadius: "50%",
@@ -599,7 +604,7 @@ const formatTime = (time) => {
             fontSize: "20px",
             zIndex: 20,
             cursor: "pointer",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+            boxShadow: "var(--shadow-sm)",
           }}
         >
           ⋮
@@ -610,19 +615,19 @@ const formatTime = (time) => {
         <div className="videoMenuContainer">
           <div style={{ marginBottom: "20px" }}>
             <div
-              style={{ height: "6px", background: "#334155", borderRadius: "9999px", position: "relative", cursor: "pointer" }}
+              style={{ height: "6px", background: "var(--media-player-track)", borderRadius: "9999px", position: "relative", cursor: "pointer" }}
               onClick={handleSeek}
             >
               <div
                 style={{
                   width: `${progress}%`,
                   height: "100%",
-                  background: "linear-gradient(90deg, #00d4ff, #22ffaa)",
+                  background: "linear-gradient(90deg, var(--media-player-accent-cyan), var(--media-player-accent))",
                   borderRadius: "9999px"
                 }}
               />
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "6px", fontSize: "13px", color: "#94a3b8" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "6px", fontSize: "13px", color: "var(--media-player-muted)" }}>
               <span>{formatTime(currentTime)}</span>
               <span>{formatTime(totalDuration)}</span>
             </div>
@@ -631,19 +636,19 @@ const formatTime = (time) => {
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             <button 
               onClick={togglePlay} 
-              style={{ background: "transparent", border: "none", color: "#fff", padding: "12px 14px", borderRadius: "10px", textAlign: "left", display: "flex", alignItems: "center", gap: "12px", width: "100%" }}
+              style={{ background: "transparent", border: "none", color: "var(--media-player-text)", padding: "12px 14px", borderRadius: "10px", textAlign: "left", display: "flex", alignItems: "center", gap: "12px", width: "100%" }}
             >
               {isPlaying ? "⏸️ Pausar" : "▶️ Reproduzir"}
             </button>
 
             <button 
               onClick={toggleMute} 
-              style={{ background: "transparent", border: "none", color: "#fff", padding: "12px 14px", borderRadius: "10px", textAlign: "left", display: "flex", alignItems: "center", gap: "12px", width: "100%" }}
+              style={{ background: "transparent", border: "none", color: "var(--media-player-text)", padding: "12px 14px", borderRadius: "10px", textAlign: "left", display: "flex", alignItems: "center", gap: "12px", width: "100%" }}
             >
               {isMuted ? "🔊 Ativar som" : "🔇 Silenciar"}
             </button>
 
-            <div style={{ padding: "10px 14px", color: "#e2e8f0" }}>
+            <div style={{ padding: "10px 14px", color: "var(--media-player-subtle)" }}>
               Velocidade
               <div style={{ display: "flex", gap: "6px", marginTop: "8px", flexWrap: "wrap" }}>
                 {[0.5, 1, 1.5, 2].map((speed) => (
@@ -654,8 +659,8 @@ const formatTime = (time) => {
                       flex: "1 1 auto",
                       padding: "8px 12px",
                       borderRadius: "8px",
-                      background: playbackSpeed === speed ? "#22ffaa" : "#334155",
-                      color: playbackSpeed === speed ? "#0f172a" : "#fff",
+                      background: playbackSpeed === speed ? "var(--media-player-accent)" : "var(--media-player-track)",
+                      color: playbackSpeed === speed ? "var(--surface-deep)" : "var(--media-player-text)",
                       border: "none",
                       fontWeight: "600",
                       fontSize: "13px"
@@ -669,7 +674,7 @@ const formatTime = (time) => {
 
             <button 
               onClick={toggleFullscreen} 
-              style={{ background: "transparent", border: "none", color: "#fff", padding: "12px 14px", borderRadius: "10px", textAlign: "left", display: "flex", alignItems: "center", gap: "12px", width: "100%" }}
+              style={{ background: "transparent", border: "none", color: "var(--media-player-text)", padding: "12px 14px", borderRadius: "10px", textAlign: "left", display: "flex", alignItems: "center", gap: "12px", width: "100%" }}
             >
               ⛶ Ecrã inteiro
             </button>
@@ -681,11 +686,11 @@ const formatTime = (time) => {
         style={{
           padding: "10px 16px",
           fontSize: "13.5px",
-          color: "#94a3b8",
+          color: "var(--media-player-muted)",
           display: "flex",
           alignItems: "center",
           gap: "8px",
-          background: "#0f172a",
+          background: "var(--media-player-bg)",
         }}
       >
         <span>🎥</span>
@@ -809,7 +814,12 @@ export default function ConteinerRightWindowMenssage() {
   }, [menssagens, amigoEstaDigitando]);
 
   const gerarGradienteElegante = (id) => {
-    const coresBase = [["#11cb7e", "#25fcee"], ["#9aceff", "#cffedb"], ["#00b09b", "#067b7f"], ["#00b3ff", "#49d4a3"]];
+    const coresBase = [
+      ["var(--chat-identity-1)", "var(--chat-identity-2)"],
+      ["var(--chat-identity-3)", "var(--chat-identity-4)"],
+      ["var(--chat-identity-5)", "var(--chat-identity-6)"],
+      ["var(--chat-identity-7)", "var(--chat-identity-8)"]
+    ];
     const parDeCores = coresBase[id % coresBase.length];
     return `linear-gradient(135deg, ${parDeCores[0]}, ${parDeCores[1]})`;
   };
@@ -906,9 +916,9 @@ export default function ConteinerRightWindowMenssage() {
       }
     }
 
-    const bgColor = souEu ? "#0d9488" : "#f1f5f9";
-    const textColor = souEu ? "#ffffff" : "#0f172a";
-    const accent = souEu ? "#00ff9d" : "#00b3ff";
+    const bgColor = souEu ? "var(--chat-message-own-bg)" : "var(--chat-message-other-bg)";
+    const textColor = souEu ? "var(--chat-message-own-text)" : "var(--chat-message-other-text)";
+    const accent = souEu ? "var(--primary)" : "var(--media-player-accent-cyan)";
 
     // ====================== CARD DE PRODUTO ======================
     if (mimeType === "product/card") {
@@ -924,8 +934,8 @@ export default function ConteinerRightWindowMenssage() {
           padding: "20px 24px",
           background: bgColor,
           borderRadius: "18px",
-          border: `2px dashed #f59e0b`,
-          boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
+          border: "2px dashed var(--status-danger)",
+          boxShadow: "var(--shadow-md)",
           maxWidth: "360px"
         }}>
           <div style={{display: "flex", alignItems: "center", gap: "14px"}}>
@@ -950,7 +960,7 @@ export default function ConteinerRightWindowMenssage() {
           style={{
             borderRadius: "18px",
             overflow: "hidden",
-            boxShadow: "0 8px 25px rgba(0,0,0,0.18)",
+            boxShadow: "var(--shadow-md)",
             background: bgColor,
             padding: "6px",
             maxWidth: "100%",
@@ -966,7 +976,7 @@ export default function ConteinerRightWindowMenssage() {
               display: "block",
               maxHeight: "480px",
               objectFit: "contain",
-              background: "#000"
+              background: "var(--surface-deep)"
             }}
           />
           {fileName && (
@@ -1030,7 +1040,7 @@ export default function ConteinerRightWindowMenssage() {
             gap: "18px",
             maxWidth: "340px",
             cursor: "pointer",
-            boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
+            boxShadow: "var(--shadow-md)",
             transition: "all 0.2s ease"
           }}
           onMouseOver={(e) => { e.currentTarget.style.transform = "translateY(-3px)"; }}
@@ -1062,7 +1072,7 @@ export default function ConteinerRightWindowMenssage() {
           gap: "18px",
           maxWidth: "360px",
           cursor: "pointer",
-          boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
+          boxShadow: "var(--shadow-md)",
           transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)"
         }}
         onMouseOver={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; }}
@@ -1127,25 +1137,25 @@ export default function ConteinerRightWindowMenssage() {
       >
         <div style={{
           maxWidth: '72%',
-          backgroundColor: souEu ? '#e3f2fd' : '#f1f3f5',
+          backgroundColor: "var(--chat-message-quote-bg)",
           borderRadius: '12px',
           padding: '10px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-          borderLeft: `4px solid ${souEu ? '#1a73e8' : '#007bff'}`
+          boxShadow: "var(--shadow-sm)",
+          borderLeft: "4px solid var(--chat-message-quote-accent)"
         }}>
           <div style={{
-            backgroundColor: souEu ? '#ffffff' : '#e9ecef',
+            backgroundColor: "var(--surface-3)",
             borderRadius: '8px',
             padding: '9px 12px',
             marginBottom: '10px',
             fontSize: '14px',
-            color: '#444',
-            borderLeft: `3px solid ${souEu ? '#1a73e8' : '#007bff'}`
+            color: "var(--chat-message-quote-text)",
+            borderLeft: "3px solid var(--chat-message-quote-accent)"
           }}>
             <div style={{ 
               fontSize: '12.8px', 
               fontWeight: '600', 
-              color: souEu ? '#1a73e8' : '#007bff',
+              color: "var(--chat-message-quote-accent)",
               marginBottom: '4px'
             }}>
               {souEu ? `Respondendo a ${nomeOriginal}` : `${nomeOriginal} respondeu`}
@@ -1168,7 +1178,7 @@ export default function ConteinerRightWindowMenssage() {
           <div style={{
             padding: '6px 10px',
             fontSize: '15.2px',
-            color: '#000',
+            color: "var(--text-primary)",
             lineHeight: '1.48'
           }}>
             {msg.menssagem || msg.conteudo}
@@ -1177,7 +1187,7 @@ export default function ConteinerRightWindowMenssage() {
           <div style={{ 
             textAlign: 'right', 
             fontSize: '11px', 
-            color: '#777', 
+            color: "var(--text-secondary)",
             marginTop: '6px',
             paddingRight: '6px',
           
@@ -1294,13 +1304,13 @@ if (isAudio) {
 
           {amigoEstaDigitando && (
             <div style={{ alignSelf: 'flex-start', margin: '10px 0' }}>
-              <ConteinerRightDadosWindowMenssageEle texto={<Loading2 />} nome={ChatAtivo?.nome_amigo} fundo="#e4e6eb" hora="" foto_amigo = {ChatAtivo?.foto_amigo} />
+              <ConteinerRightDadosWindowMenssageEle texto={<Loading2 />} nome={ChatAtivo?.nome_amigo} fundo="var(--chat-message-other-bg)" hora="" foto_amigo = {ChatAtivo?.foto_amigo} />
             </div>
           )}
 
           {amigoEstaGravandoAudio && (
             <div style={{ alignSelf: 'flex-start', margin: '10px 0' }}>
-              <ConteinerRightDadosWindowMenssageEle texto={<Loading2 />} nome={ChatAtivo?.nome_amigo} fundo="#e4e6eb" hora="" />
+              <ConteinerRightDadosWindowMenssageEle texto={<Loading2 />} nome={ChatAtivo?.nome_amigo} fundo="var(--chat-message-other-bg)" hora="" />
             </div>
           )}
         </>
@@ -1319,7 +1329,7 @@ if (isAudio) {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.92)",
+            backgroundColor: "var(--modal-backdrop)",
             zIndex: 99999,
             display: "flex",
             alignItems: "center",
@@ -1336,7 +1346,7 @@ if (isAudio) {
               position: "relative",
               borderRadius: "20px",
               overflow: "hidden",
-              boxShadow: "0 20px 50px rgba(0,0,0,0.6)"
+              boxShadow: "var(--shadow-lg)"
             }}
           >
             <img 
@@ -1355,12 +1365,12 @@ if (isAudio) {
               top: 0,
               left: 0,
               right: 0,
-              background: "linear-gradient(180deg, rgba(0, 0, 0, 0.47), transparent)",
+              background: "linear-gradient(180deg, var(--modal-header-overlay), transparent)",
               padding: "18px 24px",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              color: "#fff"
+              color: "var(--media-player-text)"
             }}>
               <span style={{ fontWeight: "700", fontSize: "15.5px" }}>{modalImage.name}</span>
               
@@ -1368,8 +1378,8 @@ if (isAudio) {
                 <button 
                   onClick={handleDownload}
                   style={{
-                    background: "teal",
-                    color: "#fff",
+                    background: "var(--primary-dark)",
+                    color: "var(--text-on-primary)",
                     border: "none",
                     padding: "8px 18px",
                     borderRadius: "9999px",
@@ -1386,8 +1396,8 @@ if (isAudio) {
                 <button 
                   onClick={closeModal}
                   style={{
-                    background: "rgba(255,255,255,0.2)",
-                    color: "#fff",
+                    background: "var(--surface-hover)",
+                    color: "var(--text-primary)",
                     border: "none",
                     padding: "8px 16px",
                     borderRadius: "9999px",

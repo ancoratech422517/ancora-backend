@@ -8,7 +8,7 @@
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    background-color: var(--white);
+    background-color: var(--surface);
 
 }
 .ConteinerRightWindowScrollHomeFundoLoja{
@@ -39,7 +39,7 @@
     margin-left: 2%;
 }
 .categoria-titulo{
-    color: #1f1f1f;
+    color: var(--text-primary);
 }
 .categoria-produtos-container{
     display: flex;
@@ -89,7 +89,7 @@
     height: 5vh;
     border-radius: 40px;
     background-color: #E4C590;
-    color: #1f1f1f;
+    color: var(--text-primary);
     border: none;
     display: flex;
     text-align: center;
@@ -99,14 +99,14 @@
     font-weight: 600;
 }
 .ConteinerRightWindowScrollHomeConteudoBoxLeft button svg{
-    color: #1f1f1f;
+    color: var(--text-primary);
 }
 .ConteinerRightWindowScrollHomeConteudoBoxLeft h1{
     font-size: 6rem;
     color: var(--teal-600);
 }
 .ConteinerRightWindowScrollHomeConteudoBoxLeft h1 li{
-    color: var(--white);
+    color: var(--text-on-primary);
     font-size: 6rem;
 }
 .ConteinerRightWindowScrollHomeConteudoBoxLeft li{
@@ -136,7 +136,7 @@
 }
 .ConteinerRightWindowScrollHomeConteudoBoxLeftBtns button:nth-child(2){
     color: #454545;
-    background-color: var(--white);
+    background-color: var(--surface);
 }
 .ConteinerRightWindowScrollHomeConteudoBoxRight{
     width: 50%;
@@ -150,7 +150,7 @@
 .ConteinerRightWindowScrolHeroBottom{
     width: 100%;
     height: 25vh;
-    background-color: #F1F5F9;
+    background-color: var(--surface-3);
     display: flex;
     text-align: left;
     align-items: center;
@@ -223,7 +223,7 @@
     margin-top: 5%;
     margin-right: 5%;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     font-weight: 600;
     border-radius: 400px;
     padding: 3%;
@@ -303,7 +303,7 @@
 }
 .ConteinerRightWindowProdutosScrollComentario h1{
     font-size: 2rem;
-    color: #1f1f1f;
+    color: var(--text-primary);
 }
 .ConteinerRightWindowProdutosScrollComentario h1 b{
     color: var(--teal-600);
@@ -327,7 +327,7 @@
     width: 30%;
     height: 250px;
     border-radius: 20px;
-    background-color: var(--white);
+    background-color: var(--surface);
     box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
@@ -347,7 +347,7 @@
 .ConteinerRightWindowProdutosScrollComentarioConteinerBoxIconeDadosIconeFoto{
     width: 60px;
     height: 60px;
-    border: 1px solid red;
+    border: 1px solid var(--status-danger);
     border-radius: 50%;
 
 }
@@ -392,7 +392,7 @@
     text-align: left;
     align-items: center;
     font-size: 1.1em;
-    color: #1f1f1f;
+    color: var(--text-primary);
     font-weight: 500;
     padding: 2%;
     gap: 10px;
@@ -410,7 +410,7 @@
 
 }
 .ConteinerRightWindowProdutosScrollComentarioConteinerBoxComentarioUser .divUser b{
-    color: #1f1f1f;
+    color: var(--text-primary);
 }
 .divBntsUtil {
     display: flex;
@@ -433,11 +433,11 @@
 }
 .divBntsUtil button:nth-child(1){
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     font-weight: 600;
 }
 .divBntsUtil button:nth-child(2){
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
 }
 /* INICIO DA FORMATAÇÃO DO CONTEINER DO TRAFEGO PAGO DO CLIENTE */
 .ConteinerProdutosTrafegoPagoCliente{
@@ -485,17 +485,17 @@
     gap: 10px;
     background-color: #d2d2d22a;
     backdrop-filter: blur(10px);
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .DivBtnTrafego svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .ConteinerProdutosTrafegoPagoClienteBoxTopBox1 h1{
     font-size: 3rem;
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .ConteinerProdutosTrafegoPagoClienteBoxTopBox1 li{
-    color: var(--white);
+    color: var(--text-on-primary);
     font-size: 1.4em;
 }
 .ConteinerProdutosTrafegoPagoClienteBoxTopBox2{
@@ -512,7 +512,7 @@
 .ConteinerProdutosTrafegoPagoClienteBoxTopBox2Card{
     width: 32%;
     height: 100%;
-    border: 1px solid red;
+    border: 1px solid var(--status-danger);
     border-radius: 20px;
     flex-shrink: 0;
 

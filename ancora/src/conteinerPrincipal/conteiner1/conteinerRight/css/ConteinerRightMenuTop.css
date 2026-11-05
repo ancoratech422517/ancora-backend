@@ -1,7 +1,7 @@
 .ConteinerRightMenuTop{
     width: 100%;
     height: 8%;
-    background-color: var(--white);
+    background-color: var(--surface);
     display: flex;
     text-align: center;
     align-items: center;
@@ -39,7 +39,7 @@
 }
 .ConteinerRightMenuTopBoxLeftCaxa1:hover{
     transition: .2s ease;
-    background-color: #f1f1f1;
+    background-color: var(--surface-hover);
 }
 .ConteinerRightMenuTopBoxLeftCaxa1:active{
     transform: scale(0.9);
@@ -47,9 +47,9 @@
 .ConteinerRightMenuTopBoxLeftCaxa2{
     width: 40px;
     height: 40px;
-    background-color: #f1f1f1;
+    background-color: var(--surface-3);
     border-radius: 50%;
-    color: var(--white);
+    color: var(--text-on-primary);
     display: flex;
     text-align: center;
     align-items: center;
@@ -112,13 +112,13 @@
 }
 .ConteinerRightMenuTopBoxRightCaxa:hover{
     transition: .2s ease;
-    background-color: #f1f1f1;
+    background-color: var(--surface-hover);
 }
 .ConteinerRightMenuTopBoxRightCaxa:active{
     transform: scale(0.9);
 }
 .IconePerfilPadraoMenuTop{
-    background-color: #fff;
+    background-color: var(--surface);
 }
 .IconePerfilPadraoMenuTop img{
 transform: scale(1.3);

@@ -44,8 +44,8 @@
 .Conteiner6WindwBoxRegistro input{
     width: 70%;
     height: 8vh;
-    border: 1px solid #d2d2d2;
-    background-color: #f1f1f1;
+    border: 1px solid var(--border);
+    background-color: var(--surface-3);
     padding-left: 2%;
     border-radius: 10px;
     outline: none;
@@ -54,8 +54,8 @@
 .Conteiner6WindwBoxRegistro label{
     width: 70%;
     height: 8vh;
-    border: 1px solid #d2d2d2;
-    background-color: #f1f1f1;
+    border: 1px solid var(--border);
+    background-color: var(--surface-3);
     padding-left: 2%;
     border-radius: 10px;
     outline: none;
@@ -71,8 +71,8 @@
     width: 70%;
     height: 8vh;
     border: none;
-    background-color: #1f1f1f;
-    color: var(--white);
+    background-color: var(--surface-deep);
+    color: var(--text-on-primary);
     border-radius: 10px;
     cursor: pointer;
     transition: .2s ease;
@@ -126,10 +126,10 @@
 .dados_response{
     width: 70%;
     height: 40%;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     border-radius: 0px 0px 20px 20px;
     margin: 0px auto;
-    background-color: #f1f1f1;
+    background-color: var(--surface-3);
     display: flex;
     text-align: center;
     align-items: center;
@@ -138,7 +138,7 @@
     
 }
 .dados_response svg{
-    color: red;
+    color: var(--status-danger);
 }
 @media screen and (max-width: 880px) {
     .Conteiner6WindwBoxRegistro input{

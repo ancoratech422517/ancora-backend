@@ -6,7 +6,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 1%;
-    background-color: var(--white);
+    background-color: var(--surface);
 }
 .Conteiner4ConteinerAfifliadoBox:nth-child(1){
     width: 50%;

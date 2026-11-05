@@ -69,7 +69,7 @@
     cursor: pointer;
     transition: .2s ease;
     background-color: maroon;
-    color: var(--white);
+    color: var(--text-on-primary);
     font-weight: 600;
     display: flex;
     text-align: center;
@@ -82,7 +82,7 @@
     gap: 10px;
 }
 .ConteinerScrollDados2ContBtn button svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .ConteinerScrollDados2ContBtn button:nth-child(2){
     background-color: var(--teal-600);

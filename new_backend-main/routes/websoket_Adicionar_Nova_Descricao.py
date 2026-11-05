@@ -1,5 +1,6 @@
 from routes.websocket import socketio
 from models.database import Adicionar_dados_estado , db , Amigo
+from service.estado_realtime_service import notificar_amigos_novo_estado
 
 @socketio.on("Adicionar_Nova_Descricao")
 def AdicionarNovaDescricao(dados):
@@ -21,6 +22,7 @@ def AdicionarNovaDescricao(dados):
             novo_dados = Adicionar_dados_estado(**dados_geral)
             db.session.add(novo_dados)
             db.session.commit()
+            notificar_amigos_novo_estado(novo_dados)
             print("dados armazenados no banco de dados com sucesso!")
     except Exception as erro:
         print(f"erro ao armazenar o novo estado:{erro}")    

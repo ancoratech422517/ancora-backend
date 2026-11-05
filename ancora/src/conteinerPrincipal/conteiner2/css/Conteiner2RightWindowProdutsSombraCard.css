@@ -1,7 +1,7 @@
 .Conteiner2RightWindowProdutsSombraCard{
     width: 60%;
     height: 55vh;
-    background-color: var(--white);
+    background-color: var(--surface);
     border-radius: 30px;
     display: flex;
 
@@ -53,7 +53,7 @@
     
 }
 .btnCloseCardText svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .btnCloseCardText:hover{
     transition: .2s ease;
@@ -61,7 +61,7 @@
 
 }
 .btnCloseCardText:hover svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .btnCloseCardText:active{
     transform: scale(0.9);
@@ -117,7 +117,7 @@
 }
 .btnCardText button:nth-child(1){
     background-color: var(--teal-500);
-    color: var(--white);
+    color: var(--text-on-primary);
     display: flex;
     text-align: center;
     align-items: center;
@@ -126,7 +126,7 @@
 
 }
 .btnCardText button:nth-child(2){
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     font-weight: bold;
     display: flex;
     text-align: center;
@@ -149,9 +149,9 @@
 .dados_vendedorIcone{
     width: 60px;
     height: 60px;
-    background-color: #f1f1f1;
+    background-color: var(--surface-3);
     border-radius: 50%;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
 }
 .dados_vendedorIconeIcone{
     width: 100%;

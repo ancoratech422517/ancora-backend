@@ -5,7 +5,7 @@
     text-align: center;
     align-items: center;
     justify-content: center;
-    background-color: #f1f1f1;
+    background-color: var(--surface-3);
     border: 1px solid var(--teal-600);
 }
 .Conteiner_Animacao_Musica button{
@@ -22,7 +22,7 @@
 
 }
 .Conteiner_Animacao_Musica button svg{
-    color: var(--white);
+    color: var(--text-on-primary);
     width: 30px;
     height: 30px;
     cursor: pointer;

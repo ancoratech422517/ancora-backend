@@ -25,7 +25,7 @@
     text-align: center;
     align-items: center;
     justify-content: center;
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .GeralChatAmigoDadosIconeBox{
     width: 100%;
@@ -61,7 +61,7 @@
 .GeralChatDadosTextBtns button{
     width: 45%;
     height: 4.5vh;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     border-radius: 6px;
     cursor: pointer;
     transition: .2s ease;
@@ -71,7 +71,7 @@
 }
 .GeralChatDadosTextBtns button:nth-child(2){
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     border: none;
 }
 .GeralChatDadosText li{
@@ -93,7 +93,7 @@
     height: 5.5vh;
     border: none;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     font-size: 16px;
     cursor: pointer;
     transition: .2s ease;
@@ -114,14 +114,14 @@
 .GeralChatAmigobtn button svg{
     width: 20px;
     height: 20px;
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .GeralChatAmigoDadosresposta{
     width: 40%;
     padding: 2%;
     border-radius: 7px;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     cursor: default;
     transition: .2s ease;
     position: absolute;
@@ -141,7 +141,7 @@
 .GeralChatAmigoDadosresposta svg{
     width: 20px;
     height: 20px;
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .exitBorder{
     border: none;

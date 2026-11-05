@@ -2,7 +2,7 @@
     width: 100%;
     height: 100%;
     background-color: var(--gray-50);
-    background-color: white;
+    background-color: var(--surface);
 }
 .Menssagem_modal_notificacao{
     position: absolute;
@@ -18,7 +18,7 @@
     align-items: center;
     justify-content: center;
     align-items: center;
-    color: var(--white);
+    color: var(--text-on-primary);
     font-weight: 600;
     border-top: 3px solid #000;
     animation: anima_notificacao_modal .2s ease;

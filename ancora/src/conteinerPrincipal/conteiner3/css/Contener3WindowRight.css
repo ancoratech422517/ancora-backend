@@ -11,7 +11,7 @@
     align-items: center;
     gap: 20px;
     padding-left: 3%;
-    background-color: var(--white);
+    background-color: var(--surface);
     padding-top: 3%;
     z-index: 999999999;
 }
@@ -20,7 +20,7 @@
     height: 8vh;
     border-radius: 40px;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     font-weight: 600;
     cursor: pointer;
     transition: .2s ease;

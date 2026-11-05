@@ -10,10 +10,10 @@
     border-radius: 40px;
     margin: 2% auto;
     margin-left: 2%;
-    box-shadow: 0px 0px 5px 1px #11111111;
+    box-shadow: var(--shadow-sm);
     z-index: 50;
-    background-color: var(--white);
-    border: 1px solid #d2d2d2;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
     min-height: 6vh;
 
     
@@ -74,6 +74,8 @@
     min-height: 10px;                 /* ← Garante que o campo nunca fique menor que isso */
     max-height: 50vh;                /* ← Mudei para 15vh para dar espaço para o texto crescer antes de rolar */
     border: none;
+    background-color: var(--surface);
+    color: var(--text-primary);
      /* Mantive apenas a cor branca (o var(--grey-50) estava duplicado) */            
     resize: none;
     line-height: 1.4;
@@ -108,7 +110,7 @@
     flex-shrink: 0;
 }
 .ConteinerRightMenuBottomCaxa3 svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .ConteinerRightMenuBottomCaxa1 button{
     width: 35px;
@@ -121,7 +123,7 @@
 }
 .ConteinerRightMenuBottomCaxa1 button:hover{
     transition: .2s ease;
-    background-color: #f1f1f1;
+    background-color: var(--surface-hover);
 }
 .ConteinerRightMenuBottomCaxa3 button{
     width: 40px;
@@ -155,7 +157,7 @@
     width: 25%;
     height: 90%;
     border-radius: 10px;
-    background-color: var(--white);
+    background-color: var(--surface);
     box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;

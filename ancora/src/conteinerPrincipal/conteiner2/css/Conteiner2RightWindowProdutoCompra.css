@@ -1,7 +1,7 @@
 .Conteiner2RightWindowProdutoCompra{
     width: 35%;
     height: 80%;
-    background-color: var(--white);
+    background-color: var(--surface);
     border-radius: 10px;
     border-bottom: 7px solid var(--teal-600);
 
@@ -36,7 +36,7 @@
     margin-top: 5%;
     margin-right: 5%;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     font-weight: 600;
     display: flex;
     text-align: center;
@@ -78,12 +78,12 @@
 }
 .Multicaixa{
     background-color: rgb(255, 127, 22);
-    color: var(--white);
+    color: var(--text-on-primary);
     font-weight: 600;
 }
 .ancoraPay{
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .conteiner2RightWindowProdutoCompraEscolhaProduto{
     width: 80%;
@@ -155,7 +155,7 @@
 .Conteiner2RightWindowProdutoCarteiraEscolhida input{
     width: 75%;
     height: 7vh;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     background-color: var(--gray-100);
     border-radius: 20px;
     outline-color: var(--teal-600);
@@ -182,7 +182,7 @@
     width: 75%;
     height: 7vh;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     border-radius: 20px;
     cursor: pointer;
     transition: .2s ease;
@@ -251,7 +251,7 @@
     justify-content: center;
     background-color: var(--teal-400);
     border-radius: 40px;
-    color: var(--white);
+    color: var(--text-on-primary);
     font-weight: 600;
     animation: anima_resposta_pagamento .2s ease;
 }
@@ -282,7 +282,7 @@
     transform: scale(0.95);
 }
 .btnCloseCardText svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 
 @media screen and (max-width: 880px) {

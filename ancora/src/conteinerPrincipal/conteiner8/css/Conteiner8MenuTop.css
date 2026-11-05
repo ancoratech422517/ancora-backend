@@ -1,14 +1,14 @@
 .Conteiner8MenuTop{
     width: 100%;
     height: 12%;
-    background-color: var(--white);
+    background-color: var(--surface);
     box-shadow: var(--shadow-sm);
     display: flex;
     text-align: center;
     align-items: center;
     justify-content: space-between;
     padding: 2%;
-    border-bottom: 1px solid #d2d2d2;
+    border-bottom: 1px solid var(--border);
 }
 .Conteiner8MenuTopBox1{
     width: 20%;
@@ -56,7 +56,7 @@
     border-radius: 30px;
     background-color: var(--gray-100);
     padding-left: 2%;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     
 }
 .Conteiner8MenuTopBox2 button{
@@ -65,7 +65,7 @@
     border-radius: 30px;
     border: none;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     cursor: pointer;
     transition: .2s ease;
 

@@ -40,7 +40,7 @@
 .GeralChatEstadoViewDateVideoConnteudoBox1FotoUsuario{
     width: 60px;
     height: 60px;
-    background-color: var(--white);
+    background-color: var(--surface);
     border-radius: 50%;
 }
 .GeralChatEstadoViewDateVideoConnteudoBox1FotoUsuario img{
@@ -62,14 +62,14 @@
     color: var(--teal-600);
 }
 .GeralChatEstadoViewDateVideoConnteudoBox1Conteudo li{
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .GeralChatEstadoViewDateVideoConnteudoBox2{
     display: flex;
     flex-direction: column;
     text-align: left;
     justify-content: center;
-    color: #f1f1f1;
+    color: var(--text-on-primary);
     line-height: 22px;
 }
 .GeralChatEstadoViewDateVideoConnteudoBox3{
@@ -81,7 +81,7 @@
 .GeralChatEstadoViewDateVideoConnteudoBox3IconeeReacao{
     width: 50px;
     height: 50px;
-    background-color: var(--white);
+    background-color: var(--surface);
     border-radius: 50%;
     display: flex;
     text-align: center;
@@ -98,12 +98,12 @@
     transform: scale(0.8);
 }
 .GeralChatEstadoViewDateVideoConnteudoBox3IconeeReacao:hover svg{
-    color: var(--white);
+    color: var(--text-on-primary);
     transition: .2s ease;
 }
 
 .GeralChatEstadoViewDateVideoConnteudoBox3IconeeReacao svg{
-    color: #000;
+    color: var(--text-primary);
     width: 30px;
     height: 30px;
     transition: .2s ease;
@@ -126,7 +126,7 @@
     transform: scale(0.8);
 }
 .GeralChatEstadoViewDateVideoVoltar svg{
-    color: var(--white);
+    color: var(--text-on-primary);
     width: 40px;
     height: 40px;
 }

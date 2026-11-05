@@ -10,7 +10,7 @@ import CHAT from "../../../assets/chat.png"
 import Notificacao from "../../../assets/notificacao.png";
 import Loja from "../../../assets/loja.png";
 import CursoVideo from "../../../assets/curso_video.png";
-
+import { AdicionarFundoPontoAOChat } from "./js/ConeinerRightConteudo-fundo-po-my-ponto.js";
 
 export default function ConteinerRight({ ativarConteiner }) {
     const { ChatAtivo , MostrarChat , estado_conteiner_live , Dados_Live_Ancora} = useUserStore();
@@ -88,9 +88,16 @@ export default function ConteinerRight({ ativarConteiner }) {
                 <video src={Video_Chat} autoPlay muted loop controls></video>
             </div> */}
             <div className="ConeinerRightConteudo">
-                <ConteinerRightMenuTop ativarConteiner={ativarConteiner} />
-                <ConteinerRightWindowMenssage />
-                <ConteinerRightMenuBottom />
+                <div className="ConeinerRightConteudo-fundo-po">
+                    
+                </div>
+
+                <div className="ConeinerRightConteudo-fundo-conteudo-chat">
+                    <ConteinerRightMenuTop ativarConteiner={ativarConteiner} />
+                    <ConteinerRightWindowMenssage />
+                    <ConteinerRightMenuBottom />
+                </div>
+                
             </div>
         </div>
     );

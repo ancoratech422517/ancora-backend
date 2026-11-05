@@ -1,5 +1,6 @@
 from flask import Blueprint , current_app , request , jsonify , url_for
 from models.database import Adicionar_dados_estado , db
+from service.estado_realtime_service import notificar_amigos_novo_estado
 import cloudinary.uploader
 import os
 from uuid import uuid4
@@ -59,6 +60,7 @@ def estado_video ():
         novo_estado  = Adicionar_dados_estado(**dados_geral)
         db.session.add(novo_estado)
         db.session.commit()
+        notificar_amigos_novo_estado(novo_estado)
 
         return jsonify({"resposta": "Boas , estado registrado com sucesso"})
 
@@ -69,4 +71,3 @@ def estado_video ():
         print(f"este é o tipo do erro:{erro}")
         return jsonify({"resposta":"erro ao registrar estado de vídeo"}), 500
     
-

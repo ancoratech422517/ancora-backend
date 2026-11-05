@@ -57,7 +57,7 @@
     border: none;
     border-radius: 20px;
     background-color: var(--gray-50);
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     padding-left: 4%;
     outline-width: 1px solid;
     outline: none;
@@ -74,7 +74,7 @@
     top: 0%;
     width: 100%;
     height: 100%;
-    background-color: var(--white);
+    background-color: var(--surface);
     display: flex;
     flex-direction: column;
     text-align: center;
@@ -89,7 +89,7 @@
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    background-color: var(--white);
+    background-color: var(--surface);
 }
 .GeralChatAmigoConteinerPerfilUsuarioImgUser img{
     width: 100%;
@@ -100,7 +100,7 @@
 .GeralChatAmigoConteinerPerfilUsuarioInformacao{
     width: 100%;
     height: 17vh;
-    border-top: 1px solid #f5f5f5;
+    border-top: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     padding-top: 2%;
@@ -129,7 +129,7 @@
     flex-direction: column;
     text-align: left;
     gap: 2px;
-    border-top: 1px solid #f5f5f5;
+    border-top: 1px solid var(--border);
     padding-top: 3%;
 }
 .tealTurmaPerfilUser{
@@ -180,16 +180,16 @@
 }
 .GeralChatAmigoConteinerPerfilUsuarioInformacaoTurmaConteinerScrollDadosInformacaoTurma button{
     padding: 3%;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     border-radius: 5px;
-    background-color: #f9f9f9f9;
+    background-color: var(--surface);
     cursor: pointer;
     transition: .2s ease;
 }
 .GeralChatAmigoConteinerPerfilUsuarioInformacaoTurmaConteinerScrollDadosInformacaoTurma button:hover{
     transition: .2s ease;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     border: none;
 }
 .GeralChatAmigoConteinerPerfilUsuarioInformacaoTurmaConteinerScrollDadosInformacaoTurma button:active{
@@ -211,7 +211,7 @@
     height: 30vh;
     padding-top: 3%;
     gap: 10px;
-    border-top: 1px solid #f5f5f5;
+    border-top: 1px solid var(--border);
 
 }
 .GeralChatAmigoConteinerPerfilUsuarioInformacaoProduto b{
@@ -233,7 +233,7 @@
 .GeralChatAmigoConteinerPerfilUsuarioInformacaoProdutoConteinerScrollDados{
     width: 48.6%;
     height: 100%;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     transition: .2s ease;
     cursor: pointer;
 }
@@ -278,14 +278,14 @@
 .GeralChatAmigoConteinerPerfilUsuarioVoltar svg{
     width: 40px;
     height: 40px;
-    color: black;
+    color: var(--text-primary);
 }
 .GeralChatAmigoSolicitacaoResposta{
     width: 40%;
     padding: 2%;
     border-radius: 7px;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     cursor: default;
     transition: .2s ease;
     position: absolute;
@@ -299,12 +299,12 @@
     animation: animacaoSolicitacaoEnviada .5s ease-in-out;
 }
 .GeralChatAmigoConteinerPerfilUsuarioInformacaoTurmaConteinerScrollDadosInformacaoTurma .GeralChatAmigoSolicitacaoResposta li{
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .GeralChatAmigoSolicitacaoResposta svg{
     width: 20px;
     height: 20px;
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .fundo_vazio_lista_usuario{
     width: 100%;

@@ -1,7 +1,7 @@
 .Conteiner8ConteinerButtonBoxLeftPublicacao{
     width: 100%;
     border-radius: 20px;
-    background-color: var(--white);
+    background-color: var(--surface);
     box-shadow: var(--shadow-sm);
     margin-top: 2%;
     padding: 2%;
@@ -28,7 +28,7 @@
     align-items: center;
     justify-content: center;
     background-color: blueviolet;
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .Conteiner8ConteinerButtonBoxLeftPublicacaoBox1Cont{
     width: 70%;
@@ -63,7 +63,7 @@
     border-radius: 15px;
     background-color: var(--gray-100);
     cursor: pointer;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     transition: .2s ease;
 }
 .Conteiner8ConteinerButtonBoxLeftPublicacaoBox3 button:hover{
@@ -76,7 +76,7 @@
 .Conteiner8ConteinerButtonBoxLeftPublicacaoBox4{
     width: 100%;
     display: flex;
-    border-top: 1px solid #d2d2d2;
+    border-top: 1px solid var(--border);
     position: absolute;
     bottom: 0;
     left: 0;

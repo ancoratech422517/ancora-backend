@@ -6,7 +6,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 1%;
-    background-color: var(--white);
+    background-color: var(--surface);
 }
 .Conteiner4ConteinerLucroBox:nth-child(1){
     width: 50%;
@@ -103,13 +103,13 @@
     border-left: 1px solid #5b5b5b;
 }
 .TextCaxaLucro{
-    color: #fff;
+    color: var(--text-on-primary);
 }
 .TextCaxaLucro .dados1{
     color: greenyellow;
 }
 .menos{
-    color: red;
+    color: var(--status-danger);
 }
 .Conteiner4ConteinerLucroBoxCaxaText{
     position: absolute;
@@ -132,7 +132,7 @@
     text-align: left;
     align-items: center;
     gap: 10px;
-    color: #fff;
+    color: var(--text-on-primary);
 }
 .Conteiner4ConteinerLucroBoxCaxaTextCaxa h1{
     font-size: 2rem;
@@ -153,14 +153,14 @@
 .Conteiner4ConteinerLucroBoxCaxaDados1{
     width: 49%;
     height: 23vh;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     text-align: center;
     align-items: center;
     justify-content: space-between;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     margin-top: 1%;
 
 }

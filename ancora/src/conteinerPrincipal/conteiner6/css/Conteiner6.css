@@ -9,7 +9,7 @@
 .Conteiner6Window{
     width: 100%;
     height: 100%;
-    background-color: var(--white);
+    background-color: var(--surface);
     /* box-shadow: var(--shadow-md); */
     display: flex;
 }

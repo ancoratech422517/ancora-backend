@@ -6,7 +6,7 @@
     align-items: center;
     border-radius: 10px;
     /* box-shadow: var(--shadow-sm); */
-    background-color: var(--white);
+    background-color: var(--surface);
     flex-shrink: 0;
 
 }
@@ -39,7 +39,7 @@
     align-items: center;
     justify-content: center;
     font-size: 1.3em;
-    color: var(--white);
+    color: var(--text-on-primary);
 
 
 }
@@ -83,7 +83,7 @@
     font-size: 13px;
 }
 .btnsConts button svg{
-    color: var(--white);
+    color: var(--text-on-primary);
     width: 20px;
     height: 20px;
 }
@@ -92,12 +92,12 @@
     transform: scale(0.95);
 }
 .btnsConts button:nth-child(1){
-    background-color: teal;
-    color: var(--white);
+    background-color: var(--primary-dark);
+    color: var(--text-on-primary);
 }
 .btnsConts button:nth-child(2){
     background-color: maroon;
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 
 .tirarBorda img{

@@ -6,13 +6,13 @@
     align-items: center;
     justify-content: space-between;
     padding: 2%;
-    background-color: var(--white);
+    background-color: var(--surface);
 }
 .Conteiner4ConteinerProdutoGrafico{
 
     width: 50%;
     height: 100%;
-    background-color: var(--white);
+    background-color: var(--surface);
     border-radius: 10px;
 
 
@@ -31,7 +31,7 @@
     flex-direction: column;
     border-radius: 10px;
     padding: 1%;
-    background-color: var(--white);
+    background-color: var(--surface);
 
 
 
@@ -52,7 +52,7 @@
 .Conteiner4ConteinerProdutoProduto .Conteiner2RightWindowProdutsCard{
     width: 45%;
     box-shadow: none;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
 
 }
 .Conteiner4ConteinerProdutoProdutoMenuTop{
@@ -106,7 +106,7 @@
 .novo_produto{
     width: 60%;
     height: 60%;
-    background-color: var(--white);
+    background-color: var(--surface);
     box-shadow: var(--shadow-sm);
     border-radius: 10px;
     display: flex;    pointer-events: auto;
@@ -148,7 +148,7 @@
     height: 6vh;
     padding-left: 2%;
     background-color: var(--gray-100);
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     border-radius: 10px;
     outline-color: var(--teal-600);
 }
@@ -156,7 +156,7 @@
     width: 80%;
     height: 5vh;
     background-color: var(--gray-100);
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     border-radius: 10px;
 
 }
@@ -164,7 +164,7 @@
     width: 80%;
     height: 6vh;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     border-radius: 10px;
     border: none;
     cursor: pointer;
@@ -184,14 +184,14 @@
     align-items: center;
     justify-content: center;
     font-size: 14px;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     cursor: pointer;
     transition: .2s ease;
 }
 .novo_produto_inputs label:hover{
     transition: .2s ease;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .novo_produto_inputs label:active{
     transform: scale(0.9);
@@ -289,7 +289,7 @@
         
     }
     .novo_produto_inputs input::placeholder{
-        color: var(--white);
+        color: var(--text-on-primary);
         font-weight: 500;
     }
     .novo_produto_inputs select{
@@ -297,7 +297,7 @@
         margin-top: 2%;
         background-color: transparent;
         backdrop-filter: blur(80px);
-        color: var(--white);
+        color: var(--text-on-primary);
         border: none;
         border-bottom: 2px solid var(--teal-600);
         border-radius: 0px;
@@ -308,7 +308,7 @@
         height: 50px;
         background-color: transparent;
         backdrop-filter: blur(80px);
-        color: var(--white);
+        color: var(--text-on-primary);
         border: 2px solid var(--teal-600);
         border-style: dashed;
     }
@@ -316,8 +316,8 @@
         margin-top: 1%;
         margin-bottom: 3%;
         height: 50px;
-        background-color: var(--white);
-        color: #000;
+        background-color: var(--surface);
+        color: var(--text-primary);
     }
     .Conteiner4ConteinerProdutoProduto{
         width: 100%;

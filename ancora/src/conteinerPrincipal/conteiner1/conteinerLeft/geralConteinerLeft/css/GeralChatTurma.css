@@ -5,7 +5,7 @@
     margin-bottom: 5%;
     width: 50px;
     height: 50px;
-    background-color: teal;
+    background-color: var(--primary-dark);
     border-radius: 50%;
     right: 0;
     transition: .2s ease;
@@ -15,14 +15,14 @@
     text-align: center;
     align-items: center;
     justify-content: center;
-    border-right: 2px solid rgb(11, 86, 86);
-    border-bottom: 3px solid rgb(9, 62, 62);
+    border-right: 2px solid var(--primary-dark);
+    border-bottom: 3px solid var(--primary-dark);
 
 }
 .widgetTurma svg{
     width: 25px;
     height: 25px;
-    color: #fff;
+    color: var(--text-on-primary);
     font-weight: bold;
 }
 .widgetTurma:active{
@@ -34,13 +34,13 @@
     bottom: 0;
     width: 85%;
     height: 60%;
-    background-color: #fff;
+    background-color: var(--surface);
     border-radius: 10px;
     box-shadow: var(--shadow-sm);
     margin-bottom: 18%;
     margin-left: 5%;
-    border-bottom: 5px solid teal;
-    border-top: 5px solid teal;
+    border-bottom: 5px solid var(--primary-dark);
+    border-top: 5px solid var(--primary-dark);
     animation: anima_lento .2s ease;
 
 

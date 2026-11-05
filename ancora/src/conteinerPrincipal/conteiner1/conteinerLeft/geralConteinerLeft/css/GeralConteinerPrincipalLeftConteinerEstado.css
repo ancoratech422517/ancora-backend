@@ -3,7 +3,7 @@
     height: 100%;
     position: absolute;
     top: 0;
-    background-color: #f1f1f1;
+    background-color: var(--surface);
 
 }
 .GeralConteinerPrincipalLeftConteinerEstado_menu{
@@ -43,7 +43,7 @@
 .GeralConteinerPrincipalLeftConteinerEstado_menu div svg{
     width: 30px;
     height: 30px;
-    color: teal;
+    color: var(--primary-dark);
 }
 .GeralConteinerPrincipalLeftConteinerEstado nav{
     width: 100%;
@@ -61,8 +61,8 @@
 .GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateUserFixo{
     width: 70px;
     height: 70px;
-    background-color: #f1f1f1;
-    border: 7px solid #9b9b9b;
+    background-color: var(--surface-3);
+    border: 7px solid var(--border);
     border-radius: 50%;
     display: flex;
     text-align: center;
@@ -73,11 +73,11 @@
     cursor: pointer;
 }
 .GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateUserFixo:hover{
-    border-color: teal;
+    border-color: var(--primary-dark);
     transition: .2s ease;
 }
 .GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateUserFixo:hover svg{
-    color: teal;
+    color: var(--primary-dark);
     transition: .2s ease;
 }
 .GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateUserFixo:active{
@@ -103,19 +103,19 @@
 .GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateConteinerScrollDate{
     width: 70px;
     height: 70px;
-    background-color: #f1f1f1;
-    border: 1px solid #d2d2d2;
+    background-color: var(--surface-3);
+    border: 1px solid var(--border);
     border-radius: 50%;
     flex-shrink: 0;
     padding: 1%;
-    border: 7px solid #9b9b9b;
+    border: 7px solid var(--border);
     border-style: double;
     transition: .2s ease;
     cursor: pointer;
 }
 .GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateConteinerScrollDate:hover{
     transition: .2s ease;
-    border-color: teal;
+    border-color: var(--primary-dark);
 }
 .GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateConteinerScrollDate:active{
     transform: scale(0.9);

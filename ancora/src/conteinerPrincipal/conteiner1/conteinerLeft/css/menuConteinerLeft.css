@@ -6,7 +6,7 @@
     text-align: center;
     align-items: center;
     justify-content: space-between;
-    background: var(--black);
+    background: var(--surface-deep);
     z-index: 1;
 
 }
@@ -16,7 +16,7 @@
         height: 10%;
         flex-direction: row;
         border-radius: 15% 20% 0px 0px;
-        border-top: 4px solid teal;
+        border-top: 4px solid var(--primary-dark);
 
     }
 }

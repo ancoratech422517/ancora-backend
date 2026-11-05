@@ -19,7 +19,7 @@
 
 }
 .btn4:hover svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .btn4:active{
     background-color: var(--teal-400);

@@ -20,8 +20,6 @@ export default function MenuConteinerLeft({ ativarConteiner, setDadosUsuario }) 
         ClienteVendedor,
         setTurmaUsuario,
         setUsuarioAncora , 
-        DADOSESTADOAMIGO , 
-        set_DADOSESTADOAMIGO
      } = useUserStore();
     const [jaBuscou, setJaBuscou] = useState(false);
     const amigo = useUserStore((state) => state.amigos);
@@ -56,10 +54,22 @@ export default function MenuConteinerLeft({ ativarConteiner, setDadosUsuario }) 
         .then(res => res.json())
         .then(dados =>{
             if(Array.isArray(dados)){
-                set_DADOSESTADOAMIGO(dados)
+                useUserStore.setState((state) => {
+                    const estadosPorId = new Map(
+                        dados.filter((estado) => estado?.id != null)
+                            .map((estado) => [String(estado.id), estado])
+                    );
+                    (Array.isArray(state.DADOSESTADOAMIGO) ? state.DADOSESTADOAMIGO : [])
+                        .forEach((estado) => {
+                            if (estado?.id != null && !estadosPorId.has(String(estado.id))) {
+                                estadosPorId.set(String(estado.id), estado);
+                            }
+                        });
+                    return { DADOSESTADOAMIGO: [...estadosPorId.values()] };
+                });
             }
         } )
-    } , set_DADOSESTADOAMIGO)
+    } , [dadosUsuario?.id, urlBancoDeDados])
     //FIM DA BUSCA DO ESTADO DO SEU AMIGO
     useEffect(() => {
         if (dadosUsuario?.id && !jaBuscou) {
@@ -173,7 +183,7 @@ export default function MenuConteinerLeft({ ativarConteiner, setDadosUsuario }) 
 
     useEffect(()=>{
         buscar_dados_estado_amigo()
-    } , buscar_dados_estado_amigo)
+    } , [buscar_dados_estado_amigo])
 
     useEffect(()=>{
         if(dadosUsuario?.id){

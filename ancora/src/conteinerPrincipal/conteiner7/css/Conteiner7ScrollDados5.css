@@ -1,7 +1,7 @@
 .Conteiner7ScrollDados5{
     width: 100%;
     height: 15vh;
-    /* border: 1px solid red; */
+    /* border: 1px solid var(--status-danger); */
     margin-top: 2%;
     padding: 2%;
     display: flex;
@@ -79,7 +79,7 @@
     gap: 10px;
 }
 .Conteiner7ScrollDadosContBox  button svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .Conteiner7ScrollDadosContBox button:active{
     transform: scale(0.9);
@@ -87,11 +87,11 @@
 }
 .Conteiner7ScrollDadosContBox  button:nth-child(1){
     background-color: maroon;
-    color: var(--white);
+    color: var(--text-on-primary);
     font-size: 600;
 }
 .Conteiner7ScrollDadosContBox  button:nth-child(2){
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     font-weight: 600;
 }

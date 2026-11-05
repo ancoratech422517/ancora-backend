@@ -36,7 +36,7 @@
     font-size: 1.2em;
 }
 .Conteiner7ScrollDados3Cont li{
-    color: #1f1f1f;
+    color: var(--text-primary);
 }
 .Conteiner7ScrollDados3Estado{
     display: flex;
@@ -44,7 +44,7 @@
     font-size: 15px;
 }
 .Conteiner7ScrollDados3Cont h3{
-    color: #1f1f1f;
+    color: var(--text-primary);
 }
 .Conteiner7ScrollDadosContBtns{
     display: flex;
@@ -69,19 +69,19 @@
     font-size: 11px;
 }
 .Conteiner7ScrollDadosContBtns button svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .Conteiner7ScrollDadosContBtns button:active{
     transform: scale(0.9);
 }
 .Conteiner7ScrollDadosContBtns button:nth-child(1){
     background-color: maroon;
-    color: var(--white);
+    color: var(--text-on-primary);
     font-weight: 600;
 }
 .Conteiner7ScrollDadosContBtns button:nth-child(2){
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     font-weight: 600;
 }
 

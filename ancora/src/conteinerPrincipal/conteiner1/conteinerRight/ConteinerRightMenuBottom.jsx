@@ -538,14 +538,14 @@ export default function ConteinerRightMenuBottom() {
     const renderBotaoDireito = () => {
         if (gravando) return (
             <button onClick={alternarGravacao} className="btn-audio-stop">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><rect x="7" y="7" width="10" height="10" rx="2" /></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text-on-primary)"><rect x="7" y="7" width="10" height="10" rx="2" /></svg>
             </button>
         );
         if (texto.trim() !== "" || editandoID) return (
             <button onClick={sendMenssage} className="btn-send"><Send /></button>
         );
         return (
-            <button onClick={alternarGravacao} className="btn-audio-start"><Audio color="white" /></button>
+            <button onClick={alternarGravacao} className="btn-audio-start"><Audio color="var(--text-on-primary)" /></button>
         );
     };
 
@@ -589,11 +589,11 @@ export default function ConteinerRightMenuBottom() {
                     top: "-138px",
                     left: "50%",
                     transform: "translateX(-50%)",
-                    backgroundColor: "#0f172a",
-                    color: "#fff",
+                    backgroundColor: "var(--media-player-bg)",
+                    color: "var(--media-player-text)",
                     padding: "22px 28px",
                     borderRadius: "24px",
-                    boxShadow: "0 25px 50px -12px rgb(15 23 42)",
+                    boxShadow: "var(--shadow-lg)",
                     width: "440px",
                     zIndex: 99999,
                     fontFamily: "system-ui, -apple-system, sans-serif"
@@ -620,8 +620,8 @@ export default function ConteinerRightMenuBottom() {
                             onClick={cancelUpload}
                             style={{
                                 background: "transparent",
-                                border: "2px solid #f87171",
-                                color: "#f87171",
+                                border: "2px solid var(--status-danger)",
+                                color: "var(--status-danger)",
                                 padding: "6px 18px",
                                 borderRadius: "9999px",
                                 fontSize: "13.5px",
@@ -629,8 +629,8 @@ export default function ConteinerRightMenuBottom() {
                                 cursor: "pointer",
                                 transition: "all 0.2s ease"
                             }}
-                            onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#f87171"; e.currentTarget.style.color = "#fff"; }}
-                            onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "#f87171"; }}
+                            onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "var(--status-danger)"; e.currentTarget.style.color = "var(--text-on-primary)"; }}
+                            onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "var(--status-danger)"; }}
                         >
                             Cancelar
                         </button>
@@ -638,19 +638,19 @@ export default function ConteinerRightMenuBottom() {
 
                     <div style={{
                         height: "11px",
-                        backgroundColor: "#1e2937",
+                        backgroundColor: "var(--media-player-track)",
                         borderRadius: "9999px",
                         overflow: "hidden",
                         marginBottom: "12px",
-                        boxShadow: "inset 0 1px 3px rgba(0,0,0,0.3)"
+                        boxShadow: "var(--shadow-inset)"
                     }}>
                         <div
                             style={{
                                 width: `${uploadProgress}%`,
                                 height: "100%",
-                                background: "linear-gradient(90deg, #00d4ff, #22ffaa)",
+                                background: "linear-gradient(90deg, var(--media-player-accent-cyan), var(--media-player-accent))",
                                 transition: "width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)",
-                                boxShadow: "0 0 15px #22ffaa",
+                                boxShadow: "0 0 15px var(--media-player-accent)",
                                 position: "relative"
                             }}
                         >
@@ -660,7 +660,7 @@ export default function ConteinerRightMenuBottom() {
                                 left: "-150%",
                                 width: "40%",
                                 height: "100%",
-                                background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)",
+                                background: "linear-gradient(90deg, transparent, var(--highlight-sheen), transparent)",
                                 animation: "shine 2s linear infinite",
                                 opacity: 0.4
                             }} />
@@ -717,15 +717,15 @@ export default function ConteinerRightMenuBottom() {
                         bottom: "100%",
                         left: "12px",           
                         zIndex: 10000,
-                        backgroundColor: "#ffffff",
+                        backgroundColor: "var(--surface)",
                         borderRadius: "16px",
-                        boxShadow: "0 10px 30px rgba(0, 0, 0, 0.18)",
+                        boxShadow: "var(--shadow-md)",
                         padding: "10px",
                         marginBottom: "12px",
                         width: "320px",
                         maxHeight: "420px",
                         overflow: "hidden",
-                        border: "1px solid #e5e5e5"
+                        border: "1px solid var(--border)"
                     }}
                 >
                     <EmojiPicker 
@@ -744,14 +744,14 @@ export default function ConteinerRightMenuBottom() {
                         bottom: "calc(100% + 12px)",
                         left: "12px",
                         zIndex: 10000,
-                        backgroundColor: "#ffffff",
+                        backgroundColor: "var(--surface)",
                         borderRadius: "16px",
-                        boxShadow: "0 12px 32px rgba(15, 23, 42, 0.18)",
+                        boxShadow: "var(--shadow-md)",
                         padding: "14px",
                         width: "380px",
                         maxWidth: "calc(100vw - 24px)",
                         maxHeight: "420px",
-                        border: "1px solid #e5e7eb",
+                        border: "1px solid var(--border)",
                         display: "flex",
                         flexDirection: "column",
                         animation: "slideUp 0.2s ease-out"
@@ -774,22 +774,22 @@ export default function ConteinerRightMenuBottom() {
                             width: "100%",
                             padding: "10px 14px",
                             borderRadius: "10px",
-                            border: "1px solid #e5e7eb",
+                            border: "1px solid var(--border)",
                             marginBottom: "12px",
                             fontSize: "14px",
                             outline: "none",
-                            background: "#f9fafb",
+                            background: "var(--surface-2)",
                             transition: "all 0.2s",
                             boxSizing: "border-box"
                         }}
                         onFocus={(e) => {
-                            e.currentTarget.style.borderColor = "#6366f1";
-                            e.currentTarget.style.background = "#fff";
-                            e.currentTarget.style.boxShadow = "0 0 0 3px rgba(99, 102, 241, 0.1)";
+                            e.currentTarget.style.borderColor = "var(--primary)";
+                            e.currentTarget.style.background = "var(--surface)";
+                            e.currentTarget.style.boxShadow = "var(--shadow-teal)";
                         }}
                         onBlur={(e) => {
-                            e.currentTarget.style.borderColor = "#e5e7eb";
-                            e.currentTarget.style.background = "#f9fafb";
+                            e.currentTarget.style.borderColor = "var(--border)";
+                            e.currentTarget.style.background = "var(--surface-2)";
                             e.currentTarget.style.boxShadow = "none";
                         }}
                     />
@@ -816,12 +816,12 @@ export default function ConteinerRightMenuBottom() {
                                     objectFit: "cover",
                                     borderRadius: "8px",
                                     cursor: "pointer",
-                                    background: "#f1f5f9",
+                                    background: "var(--surface-hover)",
                                     transition: "transform 0.15s ease, box-shadow 0.15s ease"
                                 }}
                                 onMouseOver={(e) => {
                                     e.currentTarget.style.transform = "scale(1.05)";
-                                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.15)";
+                                    e.currentTarget.style.boxShadow = "var(--shadow-md)";
                                 }}
                                 onMouseOut={(e) => {
                                     e.currentTarget.style.transform = "scale(1)";

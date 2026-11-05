@@ -6,7 +6,7 @@
     top: 0;
     margin-left: 5%;
     margin-top: 35%;
-    background-color: var(--white);
+    background-color: var(--surface);
     border-radius: 20px;
     border-bottom: 4px solid var(--teal-600);
     box-shadow: var(--shadow-sm);
@@ -101,5 +101,5 @@
     transform: scale(0.9);
 }
 .CloseDetalhes svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }

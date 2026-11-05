@@ -66,9 +66,9 @@
     cursor: pointer;
     transition: .2s ease;
     font-weight: 600;
-    background-color: var(--white);
+    background-color: var(--surface);
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     display: flex;
     text-align: center;
     align-items: center;
@@ -76,7 +76,7 @@
     gap: 10px;
 }
 .Conteiner7ScrollDadosBoxBtns button svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .Conteiner7ScrollDadosBoxBtns button:active{
     transform: scale(0.9);
@@ -85,7 +85,7 @@
 .Conteiner7ScrollDadosBoxBtns button:nth-child(1) {
     background-color: maroon;
     border: none;
-    color: var(--white);
+    color: var(--text-on-primary);
     font-weight: 600;
 }
 

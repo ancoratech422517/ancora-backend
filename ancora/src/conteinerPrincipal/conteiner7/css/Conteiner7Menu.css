@@ -27,7 +27,7 @@
 }
 .Conteiner7MenuTitleBox1 button:hover svg{
     transition: .2s ease;
-    color: #1f1f1f;
+    color: var(--text-primary);
 }
 .Conteiner7MenuTitleBox1 button svg{
     width: 27px;
@@ -66,7 +66,7 @@
 .Conteiner7MenuText li:hover{
     transition: .2s ease;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     
 }
 .Conteiner7Menu li:active{
@@ -74,7 +74,7 @@
 }
 .ativaNoti{
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 @media screen and (max-width: 700px) {
     .Conteiner7Menu{

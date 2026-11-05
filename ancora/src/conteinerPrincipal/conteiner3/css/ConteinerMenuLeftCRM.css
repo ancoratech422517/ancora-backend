@@ -1,8 +1,8 @@
 .ConteinerMenuLeftCRM{
     width: 17.5%;
     height: 100%;
-    background-color: var(--white);
-    /* border-right: 1px solid #d2d2d2; */
+    background-color: var(--surface);
+    /* border-right: 1px solid var(--border); */
 }
 .ConteinerMenuLeftCRM_Menu_Top{
     width: 100%;
@@ -95,7 +95,7 @@
 .ConteinerMenuLeftCRMPerfilUsuarioFotoUser{
     width: 60px;
     height: 60px;
-    border: 1px solid red;
+    border: 1px solid var(--status-danger);
     border-radius: 50%;
 }
 .ConteinerMenuLeftCRMPerfilUsuarioConteudoUser{
@@ -114,8 +114,8 @@
     background-color: var(--teal-600);
 }
 .ativarElemento li{
-       color: var(--white);
+       color: var(--text-on-primary);
 }
 .ativarElemento svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }

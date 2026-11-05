@@ -19,7 +19,7 @@
 
 }
 .btn5:hover svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .btn5:active{
     background-color: var(--teal-400);

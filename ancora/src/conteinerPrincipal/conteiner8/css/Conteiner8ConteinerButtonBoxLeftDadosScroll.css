@@ -30,7 +30,7 @@
     align-items: center;
     justify-content: center;
     background-color: palevioletred;
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .Conteiner8ConteinerButtonBoxLeftDadosScroll li{
     font-size: 12px;

@@ -33,7 +33,7 @@
     position: absolute;
     width: 22px;
     height: 22px;
-    color: var(--white);
+    color: var(--text-on-primary);
     font-weight: bold;
     top: 0;
     right: 0;
@@ -43,9 +43,9 @@
     align-items: center;
     justify-content: center;
     font-size: 12px;
-    background-color: red;
-    border-bottom: 3px solid rgb(165, 1, 1);
-    border-right: 2px solid  rgb(165, 1, 1);
+    background-color: var(--status-danger);
+    border-bottom: 3px solid var(--status-danger);
+    border-right: 2px solid  var(--status-danger);
     
 
 }
@@ -58,8 +58,8 @@
     justify-content: center;
     background-color: var(--teal-600);
     border-radius: 50%;
-    border-right: 2px solid rgb(11, 86, 86);
-    border-bottom: 2px solid rgb(9, 62, 62);
+    border-right: 2px solid var(--primary-dark);
+    border-bottom: 2px solid var(--primary-dark);
 
 }
 .ancora{
@@ -87,7 +87,7 @@
 .GeralChatMenuTopIcone svg{
     width: 28px;
     height: 28px;
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .GeralChatMenuTopIcone b{
     width: 45px;
@@ -98,11 +98,11 @@
     justify-content: center;
     background-color: var(--teal-600);
     border-radius: 50%;
-    border-right: 2px solid rgb(11, 86, 86);
-    border-bottom: 2px solid rgb(9, 62, 62);
+    border-right: 2px solid var(--primary-dark);
+    border-bottom: 2px solid var(--primary-dark);
 }
 .GeralChatMenuTopIcone b svg{
     width: 35px;
     height: 35px;
-    color: var(--white);
+    color: var(--text-on-primary);
 }

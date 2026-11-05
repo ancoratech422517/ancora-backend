@@ -1,5 +1,6 @@
 from flask import Blueprint , current_app , request , jsonify , url_for
 from models.database import Adicionar_dados_estado , db
+from service.estado_realtime_service import notificar_amigos_novo_estado
 import cloudinary.uploader
 import os
 from uuid import uuid4
@@ -56,6 +57,7 @@ def estado_imagem ():
         novo_estado = Adicionar_dados_estado(**dados_geral)
         db.session.add(novo_estado)
         db.session.commit()
+        notificar_amigos_novo_estado(novo_estado)
         return jsonify({"resposta":"Boas , novo estado registrado com sucesso!"})
     except Exception as erro:
         db.session.rollback()

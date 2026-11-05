@@ -12,15 +12,15 @@
 .grafico:nth-child(1){
     width: 59%;
     height: 98%;
-    border: 1px solid #d2d2d2;
-    background-color: var(--white);
+    border: 1px solid var(--border);
+    background-color: var(--surface);
     border-radius: 10px;
 }
 .grafico:nth-child(2){
     width: 40%;
     height: 98%;
-    border: 1px solid #d2d2d2;
-    background-color: var(--white);
+    border: 1px solid var(--border);
+    background-color: var(--surface);
     border-radius: 10px;
 }
 .object{

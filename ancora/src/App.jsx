@@ -41,7 +41,8 @@ function App() {
           <Conteiner_Animacao_Chamada_Grupo />
         )
     }
-    }
+
+  }
   
   const getUrlVideo = (url) => {
   if (!url) return "";
@@ -108,6 +109,30 @@ function App() {
   const [carregandoSessao, setCarregandoSessao] = useState(true)
   const buscouNotificacoes = useRef(false)
   const jaChegouSessao = useRef(false) // TRAVA NOVA
+
+  useEffect(() => {
+    if (!socket) return
+
+    const handleNovoEstadoAmigo = (novoEstado) => {
+      if (!novoEstado?.id || !novoEstado?.id_usuario) {
+        console.error("Estado recebido via socket inválido:", novoEstado)
+        return
+      }
+
+      useUserStore.setState((state) => {
+        const estados = Array.isArray(state.DADOSESTADOAMIGO)
+          ? state.DADOSESTADOAMIGO
+          : []
+        if (estados.some((estado) => String(estado?.id) === String(novoEstado.id))) {
+          return state
+        }
+        return { DADOSESTADOAMIGO: [...estados, novoEstado] }
+      })
+    }
+
+    socket.on("novo_estado_amigo", handleNovoEstadoAmigo)
+    return () => socket.off("novo_estado_amigo", handleNovoEstadoAmigo)
+  }, [socket])
 
   // --- BUSCA INICIAL DE NOTIFICAÇÕES ---
   useEffect(() => {

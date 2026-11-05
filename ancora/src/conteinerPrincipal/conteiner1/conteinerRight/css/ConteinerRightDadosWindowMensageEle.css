@@ -14,7 +14,7 @@
     text-align: center;
     align-items: center;
     justify-content: center;
-    color: var(--white);
+    color: var(--text-on-primary);
     font-weight: 600;
 }
 
@@ -38,7 +38,7 @@
     max-width: 450px;
     height: fit-content;
     padding: 8px 10px;
-    background-color: var(--white);
+    background-color: var(--chat-message-other-bg);
     
     /* 2. ALTERADO: Deixamos o canto superior esquerdo reto (0px) para encaixar a ponta */
     border-radius: 0px 7px 7px 10px; 
@@ -50,13 +50,13 @@
     font-size: 14px;
     /* border: 1px solid #a3a3a3; */
     width: max-content;
-    border-bottom: 1px solid #d2d2d2;
+    border-bottom: 1px solid var(--border);
 }
 .textoUserEle b{
     font-size: 12px;
-    border-bottom: 2px solid #d2d2d2;
+    border-bottom: 2px solid var(--border);
     border-radius: 3px;
-    color: teal;
+    color: var(--primary-dark);
 
 }
 
@@ -84,7 +84,7 @@
     height: 0;
     border-top: 0px solid transparent;
     border-bottom: 10px solid transparent;
-    border-right: 10px solid var(--white); /* Cor do fundo do balão */
+    border-right: 10px solid var(--chat-message-other-bg); /* Cor do fundo do balão */
 }
 
 /* --- O RESTO CONTINUA IGUAL --- */
@@ -103,5 +103,5 @@
     align-items: center;
     font-size: 11px;
     padding-left: 40px;
-    color: #1f1f1f;
+    color: var(--text-secondary);
 }

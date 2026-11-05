@@ -18,7 +18,7 @@
     border-radius: 10px;
     display: flex;
     flex-direction: column;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
 }
 .ConteinerRightMenuMobileTurmaBox1CaxaDados{
     width: 100%;
@@ -39,7 +39,7 @@
 }
 .ConteinerRightMenuMobileTurmaBox1CaxaDados strong{
     font-size: 1.7rem;
-    color: #1f1f1f;
+    color: var(--text-primary);
 }
 .ConteinerRightMenuMobileTurmaBox2{
     width: 100%;
@@ -78,7 +78,7 @@
     width: 100%;
     height: 8%;
     display: flex;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     padding: 2%;
     padding-bottom: 0%;
 }
@@ -148,7 +148,7 @@
 .ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosScrollDados:hover{
     transition: .2s ease;
     background-color: var(--gray-100);
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
 
 }
 .ConteinerRightMenuMobileTurmaBox2DivConteinersAlunosScrollDadosIcone{
@@ -213,7 +213,7 @@
     border: none;
     border-radius: 10px;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     cursor: pointer;
     transition: .2s ease;
 }
@@ -253,7 +253,7 @@
     justify-content: center;
     gap: 10px;
     background-color: var(--gray-100);
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     border-radius: 10px;
     padding-left: 5%;
     margin-top: 4%;
@@ -269,9 +269,9 @@
 .ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados2 button{
     width: 40%;
     height: 4vh;
-    background-color: var(--white);
+    background-color: var(--surface);
     border-radius: 5px;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
 }
 .ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3{
     width: 100%;
@@ -378,7 +378,7 @@
     transform: scale(0.9);
 }
 .ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurma svg{
-    color: var(--white);
+    color: var(--text-on-primary);
     width: 20px;
     height: 20px;
 }
@@ -386,14 +386,14 @@
 .ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaConteiner{
     width: 70%;
     height: 50%;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     border-bottom: 4px solid var(--teal-600);
     position: absolute;
     bottom: 0;
     right: 0;
     margin-right: 5%;
     margin-bottom: 17%;
-    background-color: #fff;
+    background-color: var(--surface);
     border-radius: 10px;
     box-shadow: var(--shadow-sm);
 }
@@ -421,11 +421,11 @@
     padding: 2%;
 }
 .ConteinerRightMenuMobileTurmaBox2DivMenuTurmaConteinerBtnTurma button{
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     width: 85%;
     height: 6vh;
     border-radius: 10px;
-    background-color: #f1f1f1;
+    background-color: var(--surface-3);
     cursor: pointer;
     transition: .2s ease;
     display: flex;
@@ -438,12 +438,12 @@
 .ConteinerRightMenuMobileTurmaBox2DivMenuTurmaConteinerBtnTurma button:hover{
     transition: .2s ease;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     border: none;
     
 }
 .ConteinerRightMenuMobileTurmaBox2DivMenuTurmaConteinerBtnTurma button:hover svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .ConteinerRightMenuMobileTurmaBox2DivMenuTurmaConteinerBtnTurma button:active{
     transform: scale(0.9);
@@ -451,8 +451,8 @@
 .ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAluno{
     width: 80%;
     height: 60%;
-    border: 1px solid #d2d2d2;
-    background-color: var(--white);
+    border: 1px solid var(--border);
+    background-color: var(--surface);
     box-shadow: var(--shadow-sm);
     border-bottom: 4px solid var(--teal-600);
     position: absolute;
@@ -470,13 +470,13 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    border-bottom: 1px solid #d2d2d2;
+    border-bottom: 1px solid var(--border);
 }
 .ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoMenuTop input{
     width: 70%;
     height: 5vh;
-    border: 1px solid #d2d2d2;
-    background-color: #f1f1f1;
+    border: 1px solid var(--border);
+    background-color: var(--surface-3);
     padding-left: 4%;
     outline: none;
     border-radius: 7px;
@@ -560,16 +560,16 @@
     height: 4vh;
     border: none;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     border-radius: 5px;
     cursor: pointer;
     transition: .2s ease;
 
 }
 .ConteinerRightMenuMobileTurmaBox2MenuadminTurmaConteinerAddAlunoScrollDadosContBoxBtn button:nth-child(2){
-    background-color: var(--white);
-    color: #1f1f1f;
-    border: 1px solid #d2d2d2;
+    background-color: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
 }
 .ConteinerRightMenuMobileTurmaBox2MenuadminTurmaConteinerAddAlunoScrollDadosContBoxBtn button:active{
     transition: .2s ease;
@@ -579,7 +579,7 @@
     position: absolute;
     width: 70%;
     height: 5vh;
-    border: 1px solid red;
+    border: 1px solid var(--status-danger);
     margin-left: 15%;
     margin-top: 2%;
     border-radius: 7px;
@@ -605,12 +605,12 @@
     }
 }
 .ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoScrollMenssage b{
-    color: var(--white);
+    color: var(--text-on-primary);
     font-size: 12px;
     padding: 2%;
 }
 .ConteinerRightMenuMobileTurmaBox2MenuAdminTurmaConteinerAddAlunoScrollMenssage svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .ConteinerFoto{
     position: absolute;
@@ -622,7 +622,7 @@
     text-align: center;
     align-items: center;
     justify-content: center;
-    background-color: #fff;
+    background-color: var(--surface);
 }
 .ConteinerFoto img{
     width: 100%;
@@ -644,7 +644,7 @@
     justify-content: center;
     background-color: var(--teal-600);
     border-radius: 7px;
-    color: var(--white);
+    color: var(--text-on-primary);
     cursor: pointer;
     transition: .2s ease;
 }
@@ -661,7 +661,7 @@
     margin-bottom: 17%;
     width: 85%;
     height: 35%;
-    background-color: var(--white);
+    background-color: var(--surface);
     box-shadow: var(--shadow-sm);
     border-bottom: 4px solid var(--teal-600);
     border-radius: 10px;
@@ -677,8 +677,8 @@
 .ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAgendarLive input{
     width: 95%;
     height: 6vh;
-    background-color: #f1f1f1;
-    border: 1px solid #d2d2d2;
+    background-color: var(--surface-3);
+    border: 1px solid var(--border);
     border-radius: 7px;
     padding-left: 4%;
     outline-color: var(--teal-600);
@@ -687,7 +687,7 @@
     width: 95%;
     height: 6vh;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     border: none;
     border-radius: 7px;
     cursor: pointer;
@@ -721,7 +721,7 @@
     height: 4.4vh;
     margin-left: 5%;
     background-color: var(--teal-500);
-    color: var(--white);
+    color: var(--text-on-primary);
     display: flex;
     text-align: center;
     align-items: center;
@@ -738,7 +738,7 @@
 .ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAddVideo{
     width: 80%;
     height: 40%;
-    background-color: var(--white);
+    background-color: var(--surface);
     position: absolute;
     bottom: 0;
     right: 0;
@@ -763,8 +763,8 @@
 .ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAddVideo input{
     width: 90%;
     height: 6vh;
-    border: 1px solid #d2d2d2;
-    background-color: #f1f1f1;
+    border: 1px solid var(--border);
+    background-color: var(--surface-3);
     border-radius: 7px;
     padding-left: 4%;
     outline-color: var(--teal-600);
@@ -773,9 +773,9 @@
 .ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAddVideo label{
     width: 90%;
     height: 6vh;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     border-style: dotted;
-    background-color: #f1f1f1;
+    background-color: var(--surface-3);
     border-radius: 7px;
     display: flex;
     text-align: center;
@@ -787,7 +787,7 @@
 .ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAddVideo label:hover{
     transition: .2s ease;
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     border: none;
 
 }
@@ -796,7 +796,7 @@
 }
 .ConteinerRightMenuMobileTurmaBox2DivMenuAdminTurmaAddVideo button{
     background-color: var(--teal-600);
-    color: var(--white);
+    color: var(--text-on-primary);
     width: 90%;
     height: 6vh;
     border: none;
@@ -818,7 +818,7 @@
     text-align: center;
     align-items: center;
     justify-content: center;
-    background-color: #11111181;
+    background-color: var(--modal-backdrop);
     border-radius: 10px;
     backdrop-filter: blur(10px);
 }
@@ -826,7 +826,7 @@
     width: 50px;
     height: 50px;
     background-color: var(--teal-500);
-    color: var(--white);
+    color: var(--text-on-primary);
     display: flex;
     text-align: center;
     align-items: center;
@@ -835,7 +835,7 @@
     border-radius: 50%;
 }
 .ConteinerLoadingVideoAula li{
-    color: var(--white);
+    color: var(--text-on-primary);
     font-size: 18px;
     padding-left: 5%;
     display: flex;
@@ -844,7 +844,7 @@
     gap: 5px;
 }
 .ConteinerLoadingVideoAula li svg{
-    color: var(--white);
+    color: var(--text-on-primary);
     width: 20px;
     height: 20px;
 }

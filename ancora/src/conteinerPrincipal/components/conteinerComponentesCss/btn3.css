@@ -24,12 +24,12 @@
 
 }
 .btn3:hover svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 
 }
 .btn3:active{
-    background-color: teal;
+    background-color: var(--primary-dark);
 }
 .btn3:active svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }

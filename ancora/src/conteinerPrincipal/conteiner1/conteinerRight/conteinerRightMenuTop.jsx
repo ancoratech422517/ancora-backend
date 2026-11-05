@@ -103,7 +103,7 @@ export default function ConteinerRightMenuTop({ativarConteiner}) {
                     {/* LÓGICA DINÂMICA: Prioridade para 'Digitando', depois Status de conexão */}
                     {estaDigitando ? (
                         <li style={{ 
-                            color: '#25D366', 
+                            color: 'var(--status-online)',
                             listStyle: 'none', 
                             fontSize: '12px', 
                             fontWeight: '600',
@@ -113,7 +113,7 @@ export default function ConteinerRightMenuTop({ativarConteiner}) {
                         </li>
                     ) : (
                         <li style={{ 
-                            color: statusAtual === 'online' ? '#25D366' : '#888',
+                            color: statusAtual === 'online' ? 'var(--status-online)' : 'var(--text-muted)',
                             listStyle: 'none',
                             fontSize: '13px',
                             fontWeight: '500'

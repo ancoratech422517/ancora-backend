@@ -1,8 +1,8 @@
 :root[data-theme=dark]{
-    --bg:#0e0b21;
-    --fg:#ece9ff;
-    --mut:#a29dc9;
-    --ac:#a78bfa
+    --bg:var(--surface);
+    --fg:var(--text-primary);
+    --mut:var(--text-muted);
+    --ac:var(--primary)
 }
 .GeralChatEstadoViewDateAudioBox{
     width: 100%;
@@ -46,7 +46,7 @@
     -webkit-appearance:none;
     width:20px;height:20px;
     border-radius:50%;
-    background:#fff;
+    background:var(--surface);
     transition:transform .2s;
     box-shadow:0 0 0 4px #22d3ee66,0 0 16px #22d3ee;
 }
@@ -55,7 +55,7 @@
     height:20px;
     border:0;
     border-radius:50%;
-    background:#fff;
+    background:var(--surface);
     transition:transform .2s;
     box-shadow:0 0 0 4px #22d3ee66,0 0 16px #22d3ee;
 }
@@ -80,7 +80,7 @@ justify-content: center;
 .btn svg{
     width: 40px;
     height: 40px;
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .btn:hover{transform:scale(1.1);box-shadow:0 10px 34px #22d3ee88}
 .btn:active{transform:scale(.92)}
@@ -90,14 +90,14 @@ justify-content: center;
     margin-left:5px;
     border-style:solid;
     border-width:12px 0 12px 20px;
-    border-color:transparent transparent transparent #fff;
+    border-color:transparent transparent transparent var(--text-on-primary);
     transition:.25s;
 
 }
 .on .btn i{
     margin-left:0;
     border-style:double;
-    border-width:0 0 0 20px;border-color:#fff;
+    border-width:0 0 0 20px;border-color:var(--text-on-primary);
 }
 
 
@@ -164,14 +164,14 @@ justify-content: center;
     color: var(--teal-600);
 }
 .GeralChatEstadoViewDateAudioBoxDadosPerfilBox1Conteudo li{
-    color: #1f1f1f;
+    color: var(--text-primary);
 
 }
 .GeralChatEstadoViewDateAudioBoxDadosPerfilBox1FotoUser{
     width: 70px;
     height: 70px;
-    background-color: #f1f1f1;
-    border: 1px solid #d2d2d2;
+    background-color: var(--surface-3);
+    border: 1px solid var(--border);
     border-radius: 50%;
 }
 .GeralChatEstadoViewDateAudioBoxDadosPerfilBox1FotoUser img{
@@ -189,14 +189,14 @@ justify-content: center;
 
 }
 .GeralChatEstadoViewDateAudioBoxDadosPerfilBox2 li{
-    color: #1f1f1f;
+    color: var(--text-primary);
     line-height: 22px;
 }
 .GeralChatEstadoViewDateAudioBoxBUTOON{
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #000;
+    background-color: var(--surface-deep);
     position: absolute;
     top: 5%;
     right: 5%;
@@ -205,7 +205,7 @@ justify-content: center;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
-    color: #fff;
+    color: var(--text-on-primary);
     cursor: pointer;
     transition: .2s ease;
 
@@ -226,9 +226,9 @@ justify-content: center;
 .GeralChatEstadoViewDateAudioBoxReacaoBox{
     width: 55px;
     height: 55px;
-    background-color: var(--white);
+    background-color: var(--surface);
     border-radius: 50%;
-    border: 1px solid #d2d2d2;
+    border: 1px solid var(--border);
     cursor: pointer;
     transition: .2s ease;
     display: flex;
@@ -248,9 +248,9 @@ justify-content: center;
 .GeralChatEstadoViewDateAudioBoxReacaoBox svg{
     width: 25px;
     height: 25px;
-    color: black;
+    color: var(--text-primary);
 }
 .GeralChatEstadoViewDateAudioBoxReacaoBox:hover svg{
     transition: .2s ease;
-    color: var(--white);
+    color: var(--text-on-primary);
 }

@@ -3,7 +3,7 @@
     height: 100%;
     box-shadow: inset 0px -300px 60px 10px #0000001e;
     /* background-color: rgba(247, 53, 85, 0.568); */
-    background-color: rgba(0, 128, 128, 0.288);
+    background-color: var(--primary-overlay);
     padding: 2%;
 }
 .GeralChatEstadoViewDateTextoTXT{
@@ -19,7 +19,7 @@
     overflow: hidden;
     overflow-y: auto;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #1f1f1f;
+    color: var(--text-primary);
 }
 .GeralChatEstadoViewDateTextoPerfilUsuario{
     width: 100%;
@@ -39,7 +39,7 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background-color: var(--white);
+    background-color: var(--surface);
 }
 .GeralChatEstadoViewDateTextoPerfilUsuarioBox1FotoUsuario img{
     width: 100%;
@@ -70,7 +70,7 @@
 .GeralChatEstadoViewDateTextoPerfilUsuarioBox2Icone{
     width: 50px;
     height: 50px;
-    background-color: var(--white);
+    background-color: var(--surface);
     border-radius: 50%;
     display: flex;
     text-align: center;
@@ -87,14 +87,14 @@
     transform: scale(0.8);
 }
 .GeralChatEstadoViewDateTextoPerfilUsuarioBox2Icone:hover svg{
-    color: var(--white);
+    color: var(--text-on-primary);
     transition: .2s ease;
 }
 .GeralChatEstadoViewDateTextoPerfilUsuarioBox2Icone svg{
     width: 30px;
     height: 30px;
     transition: .2s ease;
-    color: black;
+    color: var(--text-primary);
 }
 .GeralChatEstadoViewDateTextoVoltar{
     width: 30px;
@@ -112,7 +112,7 @@
 .GeralChatEstadoViewDateTextoVoltar svg{
     width: 40px;
     height: 40px;
-    color: #1f1f1f;
+    color: var(--text-primary);
 
 }
 .GeralChatEstadoViewDateTextoVoltar:active{

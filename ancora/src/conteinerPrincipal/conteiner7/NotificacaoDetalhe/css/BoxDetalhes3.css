@@ -6,7 +6,7 @@
     margin-top: 40%;
     margin-left: 5%;
     border-radius: 10px;
-    background-color: var(--white);
+    background-color: var(--surface);
     border-bottom: 4px solid var(--teal-600);
     box-shadow: var(--shadow-sm);
 
@@ -87,5 +87,5 @@
     transition: .2s ease;
 }
 .closeDetalhe3 svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }

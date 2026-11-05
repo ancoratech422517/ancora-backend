@@ -12,7 +12,7 @@
     transition: .2s ease;
     cursor: pointer;
     background-color: var(--teal-400);
-    color: #fff;
+    color: var(--text-on-primary);
 }
 .btn2:hover{
     transition: .2s ease;
@@ -20,7 +20,7 @@
 
 }
 .btn2 svg{
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .btn2:active{
     background-color: var(--teal-400);

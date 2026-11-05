@@ -3,7 +3,7 @@
     height: 100%;
     position: absolute;
     top: 0;
-    background-color: #f1f1f1;
+    background-color: var(--surface-3);
     /* background: linear-gradient(25deg , #1f1f1f 45%, teal 85%); */
     backdrop-filter: blur(10px);
     display: flex;

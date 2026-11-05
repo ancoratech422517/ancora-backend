@@ -6,8 +6,8 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    background-color: var(--white);
-    border-bottom: 1px solid #d2d2d2;
+    background-color: var(--surface);
+    border-bottom: 1px solid var(--border);
     padding-bottom: 2%;
     
 }
@@ -15,8 +15,8 @@
     width: 80%;
     height: 50px;
     border-radius: 40px;
-    background-color: #f1f1f1;
-    border: 1px solid #d2d2d2;
+    background-color: var(--surface-3);
+    border: 1px solid var(--border);
     padding-left: 2%;
     outline-color: var(--teal-600);
 
@@ -25,7 +25,7 @@
     width: 10%;
     height: 7vh;
     border-radius: 30px;
-    color: var(--white);
+    color: var(--text-on-primary);
     background-color: var(--teal-600);
     border: none;
     cursor: pointer;

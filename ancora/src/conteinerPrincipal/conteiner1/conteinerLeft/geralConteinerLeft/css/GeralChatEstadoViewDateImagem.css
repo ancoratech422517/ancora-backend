@@ -43,7 +43,7 @@
 .GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox1Foto{
     width: 60px;
     height: 60px;
-    background-color: #f1f1f1;
+    background-color: var(--surface-3);
     border-radius: 50%;
 }
 .GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox1Foto img{
@@ -57,14 +57,14 @@
     color: var(--teal-600);
 }
 .GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox1Conteudo li{
-    color: #f1f1f1;
+    color: var(--text-on-primary);
     /* font-weight: 600; */
 }
 .GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox2{
     display: flex;
     text-align: left;
     align-items: center;
-    color: #fff;
+    color: var(--text-on-primary);
     line-height: 22px;
 }
 .GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox3{
@@ -76,7 +76,7 @@
 .GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox3IconeReacao{
     width: 50px;
     height: 50px;
-    background-color: var(--white);
+    background-color: var(--surface);
     border-radius: 50%;
     display: flex;
     text-align: center;
@@ -89,14 +89,14 @@
     width: 30px;
     height: 30px;
     transition: .2s ease;
-    color: black;
+    color: var(--text-primary);
 }
 .GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox3IconeReacao:hover{
     transition: .2s ease;
     background-color: var(--teal-600);
 }
 .GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox3IconeReacao:hover svg{
-    color: var(--white);
+    color: var(--text-on-primary);
     transition: .2s ease;
 }
 .GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuarioBox3IconeReacao:active{
@@ -105,7 +105,7 @@
 .GeralChatEstadoViewDateImagemVoltar{
     width: 50px;
     height: 50px;
-    /* border: 1px solid red; */
+    /* border: 1px solid var(--status-danger); */
     border-radius: 50%;
     position: absolute;
     top: 2%;
@@ -117,7 +117,7 @@
 .GeralChatEstadoViewDateImagemVoltar svg{
     width: 50px;
     height: 50px;
-    color: var(--white);
+    color: var(--text-on-primary);
 }
 .GeralChatEstadoViewDateImagemVoltar:active{
     transition: .2s ease;
