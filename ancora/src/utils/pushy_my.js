@@ -14,6 +14,10 @@ export function solicitarTokenPushy() {
     return Promise.reject(new Error('O SDK nativo do Pushy não está disponível.'));
   }
 
+  if (typeof pushyNative.listen !== 'function') {
+    return Promise.reject(new Error('O SDK nativo do Pushy não está inicializado corretamente.'));
+  }
+
   pushyNative.listen();
   return new Promise((resolve, reject) => {
     pushyNative.register((erro, pushToken) => {

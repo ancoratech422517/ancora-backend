@@ -5,6 +5,7 @@ build/
 android/
 !android/
 android/*
+android-native/
 !android/app/
 android/app/*
 !android/app/src/

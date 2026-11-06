@@ -14,11 +14,13 @@ import me.pushy.sdk.Pushy;
 public class MainActivity extends BridgeActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 123;
+    private static final String PUSHY_APP_ID = "6ace3eb4d819808c52e4fdeb";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Pushy.setAppId(PUSHY_APP_ID, this);
         Pushy.listen(this);
 
         // 1. Pedir permissões nativas
