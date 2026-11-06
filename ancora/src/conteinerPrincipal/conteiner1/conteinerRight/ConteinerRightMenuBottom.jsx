@@ -13,6 +13,8 @@ import Reencaminhar from "../../components/conteinerSvg/reencaminhar";
 import Responder from "../../components/conteinerSvg/responder";
 import Denunciar from "../../components/conteinerSvg/denunciar";
 import { Eliminar_menssagem } from "./js/eliminar_menssagem";
+import { TirarSelecao } from "./js/TirarSelecao";
+import { fetchComAuth } from "../../../utils/api";
 
 export default function ConteinerRightMenuBottom() {
     const { 
@@ -23,12 +25,15 @@ export default function ConteinerRightMenuBottom() {
         menssagens, 
         editar_menssagem_no_array, 
         setMenssagem , 
-        urlBancoDeDados 
+        urlBancoDeDados,
+        setIdMenssagem
     } = useUserStore();
     const { IdMenssagem } = useUserStore();
     
     const [texto, setTexto] = useState("");
     const [editandoID, setEditandoID] = useState(null);
+    const [salvandoEdicao, setSalvandoEdicao] = useState(false);
+    const [replyTo, setReplyTo] = useState(null);
 
     const [mostrarPicker, setMostrarPicker] = useState(false);
     const [mostrarGifs, setMostrarGifs] = useState(false);
@@ -92,9 +97,8 @@ export default function ConteinerRightMenuBottom() {
         const detectedType = detectResourceType(file);
 
         // 1. Pedir assinatura ao backend
-        const signatureResponse = await fetch(`${urlBancoDeDados}/api/create-upload-signature`, {
+        const signatureResponse = await fetchComAuth(`${urlBancoDeDados}/api/create-upload-signature`, {
             method: "POST",
-            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 filename: file.name,
@@ -226,9 +230,8 @@ export default function ConteinerRightMenuBottom() {
         }
 
         // 2. Finalizar no teu backend
-        const finalizeResponse = await fetch(`${urlBancoDeDados}/api/finalize-chunked-upload`, {
+        const finalizeResponse = await fetchComAuth(`${urlBancoDeDados}/api/finalize-chunked-upload`, {
             method: "POST",
-            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 upload_ticket: signatureData.upload_ticket,
@@ -311,6 +314,9 @@ export default function ConteinerRightMenuBottom() {
             const optimisticMsg = {
                 id: tempId,
                 menssagem: payload,
+                reply_to_id: replyTo?.id,
+                reply_to_menssagem: replyTo?.menssagem,
+                reply_to_nome: replyTo?.nome_remitente,
                 blobUrl: URL.createObjectURL(file),
                 id_remitente: dadosUsuario?.id,
                 id_destinatario: ChatAtivo?.id_amigo,
@@ -336,11 +342,15 @@ export default function ConteinerRightMenuBottom() {
                 setQuantidadeMensagemNaoLida,
                 null,
                 (sendResult) => {
-                    if (sendResult?.success) return;
+                    if (sendResult?.success) {
+                        setReplyTo(null);
+                        return;
+                    }
                     useUserStore.getState().elimiar_menssagem_array?.(tempId, ChatAtivo?.nossa_sala);
                     URL.revokeObjectURL(optimisticMsg.blobUrl);
                     alert(sendResult?.error || "O backend não confirmou o armazenamento do arquivo.");
-                }
+                },
+                replyTo
             );
         } catch (error) {
             console.error("Falha no upload:", error);
@@ -360,29 +370,90 @@ export default function ConteinerRightMenuBottom() {
 
     const GIPHY_KEY = "BNRiiBPysmC7ZtoZZqIQMVVvaZCgmYvR";
 
-    const iniciarEdicao = (e, msgId) => {
-        e.preventDefault();
-        const msgParaEditar = menssagens.find(m => m.id === msgId);
-        const tirar_menu = document.querySelector(".conteinerRightMenuBottomBox")
-        if (tirar_menu){
-            tirar_menu.style.display = "none"
+    const iniciarEdicao = (event, msgId) => {
+        event.preventDefault();
+        const mensagem = menssagens.find((item) => String(item.id) === String(msgId));
+        if (!mensagem) {
+            alert("Não foi possível encontrar a mensagem para editar.");
+            return;
         }
-        
-        if (msgParaEditar) {
-            setEditandoID(msgId);
-            setTexto(msgParaEditar.menssagem); 
-            setMostrarPicker(false);
-            setMostrarGifs(false);
+        if (String(mensagem.id_remitente) !== String(dadosUsuario?.id)) {
+            alert("Só pode editar as suas próprias mensagens.");
+            TirarSelecao();
+            setIdMenssagem(null);
+            return;
         }
+        if (typeof mensagem.menssagem !== "string" || mensagem.file_url) {
+            alert("Só é possível editar mensagens de texto.");
+            TirarSelecao();
+            setIdMenssagem(null);
+            return;
+        }
+
+        setEditandoID(mensagem.id);
+        setReplyTo(null);
+        setTexto(mensagem.menssagem);
+        setMostrarPicker(false);
+        setMostrarGifs(false);
+        TirarSelecao();
+        setIdMenssagem(null);
+        textareaRef.current?.focus();
     };
 
     const cancelarEdicao = () => {
+        if (salvandoEdicao) return;
         setEditandoID(null);
         setTexto("");
     };
 
+    const obterTextoResposta = (mensagem) => {
+        const conteudo = mensagem?.menssagem;
+        if (typeof conteudo !== "string") return "Mensagem";
+        if (conteudo.startsWith("data:audio")) return "Mensagem de áudio";
+        if (conteudo.includes("giphy.com")) return "GIF";
+
+        try {
+            const dados = JSON.parse(conteudo);
+            if (dados?.isFile) return dados.fileName || "Ficheiro";
+        } catch {
+            // Mensagens de texto simples não são JSON.
+        }
+
+        return conteudo.slice(0, 500);
+    };
+
+    const iniciarResposta = () => {
+        const mensagemOriginal = menssagens.find(
+            (mensagem) => String(mensagem.id) === String(IdMenssagem?.id_menssagem)
+        );
+        if (!mensagemOriginal) return;
+
+        setReplyTo({
+            id: mensagemOriginal.id,
+            menssagem: obterTextoResposta(mensagemOriginal),
+            nome_remitente: mensagemOriginal.nome_remitente || "Utilizador"
+        });
+        const menu = document.querySelector(".conteinerRightMenuBottomBox");
+        if (menu) menu.style.display = "none";
+        TirarSelecao();
+        setIdMenssagem(null);
+        textareaRef.current?.focus();
+    };
+
+    const tratarResultadoEnvio = (resultado) => {
+        if (resultado?.success) {
+            setReplyTo(null);
+        } else {
+            alert(resultado?.error || "Não foi possível enviar a mensagem.");
+        }
+    };
+
     const sendMenssage = (e) => {
-        if (texto.trim() === "") return;
+        if (texto.trim() === "" || salvandoEdicao) return;
+        if (editandoID !== null && !socket) {
+            alert("A ligação ao chat não está disponível. Tente novamente.");
+            return;
+        }
 
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
         
@@ -392,37 +463,40 @@ export default function ConteinerRightMenuBottom() {
             digitando: false
         });
 
-        if (editandoID) {
-            if (editar_menssagem_no_array) {
-                editar_menssagem_no_array(editandoID, texto);
-            }
-
-            const elementoVisual = document.getElementById(editandoID);
-            if (elementoVisual && elementoVisual.classList.contains("textoUserMim")) {
-                elementoVisual.innerText = texto;
-            } else {
-                const todosTextoUser = document.querySelectorAll(".textoUserMim");
-                todosTextoUser.forEach(el => {
-                    if (el.innerText === menssagens.find(m => m.id === editandoID)?.menssagem) {
-                        el.innerText = texto;
-                    }
-                });
-            }
-
-            socket.emit("editar_menssagem", {
+        if (editandoID !== null) {
+            setSalvandoEdicao(true);
+            socket.timeout(10000).emit("editar_menssagem", {
                 id_menssagem: editandoID,
                 sala_menssagem: ChatAtivo?.nossa_sala,
                 novo_conteudo: texto,
                 id_remitente: dadosUsuario?.id
-            });
-            const dados = document.querySelectorAll(".ConteinerRightDadosWindowMenssageMim")
-                dados.forEach((dados) =>{
-                    dados.classList.remove("ativar_selecao_menssagem")
-                })
+            }, (erro, resultado) => {
+                setSalvandoEdicao(false);
+                if (erro || !resultado?.success) {
+                    alert(resultado?.error || "Não foi possível confirmar a edição. Verifique a ligação e tente novamente.");
+                    return;
+                }
 
-            setEditandoID(null); 
+                editar_menssagem_no_array?.(editandoID, texto, ChatAtivo?.nossa_sala);
+                setEditandoID(null);
+                setTexto("");
+                setIdMenssagem(null);
+            });
+            return;
         } else {
-            Enviar_menssagem(e, socket, ChatAtivo?.nossa_sala, ChatAtivo?.id_amigo, ChatAtivo?.nome_amigo, texto, dadosUsuario, setQuantidadeMensagemNaoLida);
+            Enviar_menssagem(
+                e,
+                socket,
+                ChatAtivo?.nossa_sala,
+                ChatAtivo?.id_amigo,
+                ChatAtivo?.nome_amigo,
+                texto,
+                dadosUsuario,
+                setQuantidadeMensagemNaoLida,
+                null,
+                tratarResultadoEnvio,
+                replyTo
+            );
         }
 
         setTexto("");
@@ -473,7 +547,10 @@ export default function ConteinerRightMenuBottom() {
                             ChatAtivo?.nome_amigo, 
                             base64Audio, 
                             dadosUsuario, 
-                            setQuantidadeMensagemNaoLida
+                            setQuantidadeMensagemNaoLida,
+                            null,
+                            tratarResultadoEnvio,
+                            replyTo
                         );
                     };
 
@@ -521,7 +598,19 @@ export default function ConteinerRightMenuBottom() {
     useEffect(() => { if (mostrarGifs) buscarGifsGiphy(); }, [mostrarGifs]);
 
     const enviarGif = (urlDoGif) => {
-        Enviar_menssagem(null, socket, ChatAtivo?.nossa_sala, ChatAtivo?.id_amigo, ChatAtivo?.nome_amigo, urlDoGif, dadosUsuario);
+        Enviar_menssagem(
+            null,
+            socket,
+            ChatAtivo?.nossa_sala,
+            ChatAtivo?.id_amigo,
+            ChatAtivo?.nome_amigo,
+            urlDoGif,
+            dadosUsuario,
+            null,
+            null,
+            tratarResultadoEnvio,
+            replyTo
+        );
         setMostrarGifs(false);
     };
 
@@ -541,8 +630,10 @@ export default function ConteinerRightMenuBottom() {
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text-on-primary)"><rect x="7" y="7" width="10" height="10" rx="2" /></svg>
             </button>
         );
-        if (texto.trim() !== "" || editandoID) return (
-            <button onClick={sendMenssage} className="btn-send"><Send /></button>
+        if (texto.trim() !== "" || editandoID !== null) return (
+            <button onClick={sendMenssage} className="btn-send" disabled={salvandoEdicao}>
+                {salvandoEdicao ? "..." : <Send />}
+            </button>
         );
         return (
             <button onClick={alternarGravacao} className="btn-audio-start"><Audio color="var(--text-on-primary)" /></button>
@@ -698,14 +789,14 @@ export default function ConteinerRightMenuBottom() {
             <div className="conteinerRightMenuBottomBox">
                 <div className="conteinerRightMenuBottomBoxCont">
                     <li onClick={(e) => Eliminar_menssagem(e, IdMenssagem, socket)}>
-                        <b>Eliminar</b> <Erro />
+                       <Erro /> <b>Eliminar</b>
                     </li>
                     <li onClick={(e) => iniciarEdicao(e, IdMenssagem.id_menssagem)}>
-                        <b>Editar</b> <Editar />
+                       <Editar />  <b>Editar</b>
                     </li>
-                    <li><b>Reencaminhar</b> <Reencaminhar /></li>
-                    <li><b>Responder</b> <Responder /></li>
-                    <li><b>Denunciar</b> <Denunciar /></li>
+                    <li><Reencaminhar /><b>Reencaminhar</b></li>
+                    <li onClick={iniciarResposta}><Responder /> <b>Responder</b> </li>
+                    <li><Denunciar /> <b>Denunciar</b> </li>
                 </div>
             </div>
 
@@ -840,6 +931,21 @@ export default function ConteinerRightMenuBottom() {
                     <button onClick={() => { setMostrarGifs(!mostrarGifs); setMostrarPicker(false); }}>GIF</button>
             </div>
             <div className="ConteinerRigtMenuBottomBoxsTop">
+                {replyTo && (
+                    <div className="mensagem-resposta-ativa">
+                        <div>
+                            <strong>A responder a {replyTo.nome_remitente}</strong>
+                            <span>{replyTo.menssagem}</span>
+                        </div>
+                        <button
+                            type="button"
+                            aria-label="Cancelar resposta"
+                            onClick={() => setReplyTo(null)}
+                        >
+                            ×
+                        </button>
+                    </div>
+                )}
                 <div className="ConteinerRightMenuBottomCaxa2">
                     <textarea
                         ref={textareaRef}
@@ -852,12 +958,22 @@ export default function ConteinerRightMenuBottom() {
                         value={texto}
                         onChange={(e) => { setTexto(e.target.value); aoDigitar(e); }}
                         onKeyDown={(e) => {
-                            if (e.key === 'Enter') sendMenssage(e);
-                            if (e.key === 'Escape') cancelarEdicao();
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                sendMenssage(e);
+                            }
+                            if (e.key === 'Escape') {
+                                if (replyTo) setReplyTo(null);
+                                else cancelarEdicao();
+                            }
                         }}
-                        disabled={gravando || isUploading}
+                        disabled={gravando || isUploading || salvandoEdicao}
                     />
-                    {editandoID && <small className="cancel-label" onClick={cancelarEdicao}>Cancelar Edição</small>}
+                    {editandoID !== null && (
+                        <small className="cancel-label" onClick={cancelarEdicao}>
+                            {salvandoEdicao ? "A guardar..." : "Cancelar Edição"}
+                        </small>
+                    )}
                 </div>
             </div>
             <div className="ConteinerRightMenuBottomCaxa3">

@@ -188,7 +188,6 @@ export default function ConteinerRightMenuMobile () {
     }
     const [estadoLiveTurmaCont , setEstadoLiveTurmaCont] = useState("pendente")
     const condicaoEstadoLiveTurmaCont = (dados)=>{
-        alert(dados)
         switch(dados?.status_agenda_live || "vazio"){
             case "ativo":
                 return(
@@ -222,7 +221,6 @@ export default function ConteinerRightMenuMobile () {
                     
                 )
             case "vazio":
-                alert("dentro")
                 return(
                     <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersProximasDadosVazio"></div>
                 )
@@ -445,10 +443,12 @@ export default function ConteinerRightMenuMobile () {
             case "proximas":
                 return (
                     <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersProximas">
-                        {Dados_Agenda_Turma.length < 0 ? (
-                            Dados_Agenda_Turma.map((dados)=>{
+                        {Array.isArray(Dados_Agenda_Turma) && Dados_Agenda_Turma.length > 0 ? (
+                            Dados_Agenda_Turma.map((dados, index)=>{
                                 return(
-                                    condicaoEstadoLiveTurmaCont(dados)
+                                    <div key={`${dados.data_hora_agenda_live || "agenda"}-${index}`}>
+                                        {condicaoEstadoLiveTurmaCont(dados)}
+                                    </div>
                                 )
                             })
                         ):(
@@ -472,11 +472,13 @@ export default function ConteinerRightMenuMobile () {
                             <li>Videos Da Turma</li>
                         </div>
                         <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3Scroll">
-                            {Dados_Biblioteca_Video_Turma.length < 0 ? (
-                                Dados_Biblioteca_Video_Turma.map((dados)=>{
-                                
-                                return(
-                                    <div onClick={()=>{set_EstadoConteinerVideoTurmaExibir(true) , set_Dados_Video_Atual_Click(dados.url_video)}} className="ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3ScrollDados">
+                            {Array.isArray(Dados_Biblioteca_Video_Turma) && Dados_Biblioteca_Video_Turma.length > 0 ? (
+                                Dados_Biblioteca_Video_Turma.map((dados, index)=>(
+                                    <div
+                                        key={`${dados.url_video || "aula"}-${index}`}
+                                        onClick={()=>{set_EstadoConteinerVideoTurmaExibir(true) , set_Dados_Video_Atual_Click(dados.url_video)}}
+                                        className="ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3ScrollDados"
+                                    >
                                         <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3ScrollDadosMedia">
                                             <video src={getUrlVideo(dados.url_video)} controls ></video>
                                         </div>
@@ -485,8 +487,7 @@ export default function ConteinerRightMenuMobile () {
                                             <li>12min - 37 visualização</li>
                                         </div>
                                     </div>
-                                )    
-                            })
+                                ))
                             ):(
                                 <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersProximaDados3ScrollFundoVazio">
                                     <img src={Video} alt="" />

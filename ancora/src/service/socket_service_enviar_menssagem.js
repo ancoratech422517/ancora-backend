@@ -10,7 +10,8 @@ export function Enviar_menssagem(
     dadosUsuario , 
     setQuantidadeMensagemNaoLida , 
     setAtivar,
-    onResult
+    onResult,
+    replyTo
 )
 {
     if (!socket || !nossa_sala) return;
@@ -21,27 +22,16 @@ export function Enviar_menssagem(
         "menssagem":menssagem,
         "id_remitente":dadosUsuario.id,
         "nome_remitente":dadosUsuario.nome,
-        "foto_usuario": dadosUsuario.foto_usuario
+        "foto_usuario": dadosUsuario.foto_usuario,
+        "reply_to": replyTo ? {
+            "id": replyTo.id,
+            "menssagem": replyTo.menssagem,
+            "nome_remitente": replyTo.nome_remitente
+        } : null
     }
 
     socket.emit("enviar_menssagem_na_sala" , dados, (result) => onResult?.(result))
     socket.emit("nova_quantidade_de_menssagem" , dados)
-    let negritar = useUserStore.getState().Negritar
-    try{
-        let nossSala = document.getElementById(nossa_sala).innerHTML = menssagem
-        const horaMinuto  = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        let horaMenssagem = document.getElementById(`hora_mensagem_${nossa_sala}`).innerHTML = horaMinuto
-         let index = `index_${nossa_sala}`
-        let GeralChatDados = document.getElementById(index)
-        let GeralChatUsuario = document.getElementById("GeralChatUsuario")
-        if(GeralChatDados && GeralChatUsuario){
-            GeralChatUsuario.prepend(GeralChatDados)
-        }
-
-    }
-    catch(erro){
-        console.log("erro")
-    }
-    
-
+    const horaMensagem = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    useUserStore.getState().atualizarUltimaMensagemChat(nossa_sala, menssagem, horaMensagem);
 }

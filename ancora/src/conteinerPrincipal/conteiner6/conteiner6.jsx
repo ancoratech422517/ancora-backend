@@ -3,7 +3,7 @@ import "./css/Conteiner6.css"
 import Conteiner6WindowBoxLogin from "./.Conteiner6WindowBoxLogin";
 import Conteiner6WindowBoxRegistro from "./Conteiner6WindowBoxRegistro";
 import Video from "../../assets/fundo-chat.jpg"
-import FotoLogin from "../../assets/fundo-logar7.jpg"
+import FotoLogin from "../../assets/fundo-logar7.png"
 export default function Conteiner6 ({ativarConteiner}) {
     const [conta , setConta] = useState("Login")
 

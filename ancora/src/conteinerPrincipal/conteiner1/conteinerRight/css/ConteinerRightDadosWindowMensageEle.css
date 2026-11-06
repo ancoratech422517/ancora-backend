@@ -37,7 +37,6 @@
     
     max-width: 450px;
     height: fit-content;
-    padding: 8px 10px;
     background-color: var(--chat-message-other-bg);
     
     /* 2. ALTERADO: Deixamos o canto superior esquerdo reto (0px) para encaixar a ponta */
@@ -51,6 +50,7 @@
     /* border: 1px solid #a3a3a3; */
     width: max-content;
     border-bottom: 1px solid var(--border);
+    padding: 2px;
 }
 .textoUserEle b{
     font-size: 12px;
@@ -86,7 +86,9 @@
     border-bottom: 10px solid transparent;
     border-right: 10px solid var(--chat-message-other-bg); /* Cor do fundo do balão */
 }
-
+.textoUserEle li{
+        padding: 8px 10px;
+}
 /* --- O RESTO CONTINUA IGUAL --- */
 
 .IconePerfilElePadrao img{
@@ -104,4 +106,43 @@
     font-size: 11px;
     padding-left: 40px;
     color: var(--text-secondary);
+}
+.responder_menssagem_usuarioEle{
+    background-color: var(--chat-reply-bg);
+    background-color: #00000016;
+    /* border: 1px solid var(--border); */
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 3px;
+    border-radius: 8px;
+    /* background-color: var(--surface-3); */
+    min-width: 150px;
+    margin-right: 2px;
+    padding-top: 5px;
+    width: 98%;
+    margin-left: 3px;
+    margin-top: 3px;
+    border-left: 5px solid rgb(0, 132, 255);
+    padding: 7px;
+
+}
+.responder_menssagem_usuarioEle h3{
+    padding-left: 3px;
+    color: var(--text-on-primary);
+    flex-wrap: nowrap;
+    font-size: 14px;
+    color:rgb(0, 132, 255);
+}
+.responder_menssagem_usuarioEle em{
+
+    display: flex;
+    text-align: left;
+    align-items: center;
+    color: #d0dcda;
+    font-size: 13px;
+    padding-left: 4px;
+    line-height: 22px;
+    color: var(--gray-700);
+
 }

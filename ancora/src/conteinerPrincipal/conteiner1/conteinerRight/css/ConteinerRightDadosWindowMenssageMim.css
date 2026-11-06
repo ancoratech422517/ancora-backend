@@ -70,9 +70,7 @@
     cursor: default;
     /* box-shadow: 1px 1.5px 3px 2px #11111122; */
     border-bottom: 1px solid var(--border);
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding: 8px 10px;
+
 }
 
 /* 4. ADICIONADO: A pontinha apontando para a DIREITA */
@@ -86,6 +84,7 @@
     border-top: 0px solid transparent;
     border-bottom: 10px solid transparent;
     border-left: 10px solid var(--chat-message-own-bg); /* O triângulo usa a exata mesma cor do balão */
+
 }
 
 /* --- O RESTO CONTINUA IGUAL --- */
@@ -104,45 +103,49 @@
 
 }
 .responder_menssagem_usuario{
-    padding: 2%;
     background-color: var(--chat-reply-bg);
-    border-radius: 10px;
+    background-color: #00000061;
     /* border: 1px solid var(--border); */
     display: flex;
     flex-direction: column;
     text-align: left;
     gap: 3px;
-    border-radius: 7px;
-    margin-bottom: 2%;
-    border-left: 4px solid var(--primary-dark);
+    border-radius: 8px;
     /* background-color: var(--surface-3); */
-    margin-top: 0.3%;
+    min-width: 150px;
+    margin-right: 2px;
+    padding-top: 5px;
+    width: 98%;
+    margin-left: 3px;
+    margin-top: 3px;
+    border-left: 5px solid khaki;
+    padding: 7px;
 
 }
 .responder_menssagem_usuario h3{
-    padding-left: 2%;
-    color: var(--primary-dark);
-    border-bottom: 1px solid var(--chat-reply-border);
+    padding-left: 3px;
+    color: var(--text-on-primary);
+    flex-wrap: nowrap;
+    font-size: 14px;
+    color:khaki;
 }
-.responder_menssagem_usuario li{
+.responder_menssagem_usuario em{
+
     display: flex;
     text-align: left;
     align-items: center;
-    width: 100%;
-    color: var(--text-secondary);
-    font-size: 9px;
+    color: #d0dcda;
+    font-size: 13px;
+    padding-left: 4px;
+    line-height: 22px;
+
 }
 .Conteiner_displayFlex{
     display: flex;
 }
-/* .textoUserMim li{
-    line-height: 22px;
-    font-size: 15px;
-    width: fit-content;
-    min-width: 90px;
-    margin-left: 5px;
-    padding-right: 3px;
-} */
+.textoUserMim li{
+    padding: 8px 10px;
+}
 .IconePerfilElePadrao img{
     transform: scale(1.3);
 }

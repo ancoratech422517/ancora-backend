@@ -2,7 +2,9 @@ import { useState } from "react";
 import "./css/ConteinerRightDadosWindowMensageEle.css"
 import { useUserStore } from "../../../useUseSotore";
 import Perfil from "../../../assets/img_fundo_vazio/perfil.png"
-export default function ConteinerRightDadosWindowMenssageEle ({texto , hora , nome , fundo , foto_amigo}) {
+import { Selecionar_menssagem } from "./js/conteinerRightDadosMenssage";
+import { TirarSelecao } from "./js/TirarSelecao";
+export default function ConteinerRightDadosWindowMenssageEle ({texto , hora , nome , fundo , id , nossa_sala , id_remitente, foto_amigo, mensagemOriginal, nomeOriginal}) {
     const iniciais = nome 
     ? nome.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase() 
     : "??";
@@ -12,7 +14,7 @@ export default function ConteinerRightDadosWindowMenssageEle ({texto , hora , no
         valor = "ativo"
     }
     const [estadoFotoPerfil , setEstadoFotoPerfil] = useState(valor)
-    const {urlBancoDeDados , Tipo_Chat_Turma} = useUserStore()
+    const {urlBancoDeDados , Tipo_Chat_Turma , setIdMenssagem} = useUserStore()
 
     const condicao_mostrar_nome_amigo_turma = ()=>{
         switch(Tipo_Chat_Turma){
@@ -52,12 +54,18 @@ export default function ConteinerRightDadosWindowMenssageEle ({texto , hora , no
     }
 
     return (
-        <div className="conteiner_block_mensage_chat">
-            <div className="ConteinerRightDadosWindowMensageEle">
+        <div className="conteiner_block_mensage_chat" >
+            <div className="ConteinerRightDadosWindowMensageEle" onDoubleClick={(e) => Selecionar_menssagem(e , id , nossa_sala, id_remitente, setIdMenssagem)} onClick={TirarSelecao}>
                 
                 <div className="iconeUserEle"> {condicaoEstadoFotoPerfil()} </div>
                 <div className="textoUserEle">
                     {condicao_mostrar_nome_amigo_turma()}
+                    {mensagemOriginal && (
+                        <div className="responder_menssagem_usuarioEle">
+                            <h3>Eu</h3>
+                            <em>{mensagemOriginal}</em>
+                        </div>
+                    )}
                     <li> {texto} </li>
                 </div>
             </div>

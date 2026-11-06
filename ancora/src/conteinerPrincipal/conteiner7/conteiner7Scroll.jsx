@@ -9,7 +9,7 @@ import Conteiner7ScrollDados3 from "./Conteiner7ScrollDados3";
 import Conteiner7ScrollDados4 from "./Conteiner7ScrollDados4";
 import Conteiner7ScrollDados5 from "./Conteiner7ScrollDados5";
 import Conteiner7ScrollDados6 from "./Conteiner7ScrollDados6";
-import FundoVazioNotificacao from "../../assets/fundo_vazio_notificacao.jpg";
+import FundoVazioNotificacao from "../../assets/fundo_vazio_notificacao.png";
 export default function Conteiner7Scroll() {
     const { socket, notificacoes, setNotificacoes , dadosUsuario } = useUserStore();
         // 1. Mapeia cada tipo para seu componente

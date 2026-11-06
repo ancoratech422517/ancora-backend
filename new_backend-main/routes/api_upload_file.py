@@ -310,7 +310,10 @@ def download_file():
     public_id_candidates.insert(0, public_id)
     public_id_candidates = list(dict.fromkeys(
         candidate for candidate in public_id_candidates
-        if re.fullmatch(r'(?:documentos/)?[A-Za-z0-9_-]+(?:\.[A-Za-z0-9]+)?', candidate)
+        if re.fullmatch(
+            r'(?:[A-Za-z0-9_-]+/)*[A-Za-z0-9_-]+(?:\.[A-Za-z0-9]+)?',
+            candidate
+        )
     ))
 
     if (
@@ -333,27 +336,41 @@ def download_file():
         upstream = requests.get(file_url, stream=True, timeout=(10, 120))
         if upstream.status_code != 200:
             upstream.close()
+            upstream = None
 
-            if public_id_candidates:
-                for candidate in public_id_candidates:
-                    try:
-                        asset = cloudinary.api.resource(candidate, resource_type='raw')
-                        canonical_url = asset.get('secure_url', '')
-                        canonical_parts = urlsplit(canonical_url)
-                        if (
-                            canonical_parts.scheme == 'https'
-                            and canonical_parts.netloc == 'res.cloudinary.com'
-                            and canonical_parts.path.startswith(expected_path)
-                        ):
-                            upstream = requests.get(canonical_url, stream=True, timeout=(10, 120))
-                        else:
-                            upstream = None
-                        break
-                    except Exception as error:
-                        current_app.logger.info(
-                            f"Cloudinary não encontrou o public_id {candidate}: {error}"
+            for candidate in public_id_candidates:
+                try:
+                    asset = cloudinary.api.resource(candidate, resource_type='raw')
+                    canonical_url = asset.get('secure_url', '')
+                    canonical_parts = urlsplit(canonical_url)
+                    if (
+                        canonical_parts.scheme != 'https'
+                        or canonical_parts.netloc != 'res.cloudinary.com'
+                        or not canonical_parts.path.startswith(expected_path)
+                    ):
+                        current_app.logger.warning(
+                            f"Cloudinary devolveu URL inválida para o public_id {candidate}"
                         )
-                        upstream = None
+                        continue
+
+                    candidate_upstream = requests.get(
+                        canonical_url,
+                        stream=True,
+                        timeout=(10, 120)
+                    )
+                    if candidate_upstream.status_code == 200:
+                        upstream = candidate_upstream
+                        break
+
+                    current_app.logger.info(
+                        "URL canónica Cloudinary indisponível: "
+                        f"status={candidate_upstream.status_code}, public_id={candidate}"
+                    )
+                    candidate_upstream.close()
+                except Exception as error:
+                    current_app.logger.info(
+                        f"Cloudinary não conseguiu recuperar o public_id {candidate}: {error}"
+                    )
 
             if upstream is None or upstream.status_code != 200:
                 status = upstream.status_code if upstream is not None else 'indisponível'

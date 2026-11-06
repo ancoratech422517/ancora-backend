@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import "./css/ConteinerRightWindowProdutsScroll.css"
 import Conteiner2RightWindowProdutsCard from "./Conteiner2RightWindowProdutsCard";
-import Loja from "../../assets/Loja.jpg"
+import Loja from "../../assets/Loja7.png"
 import { useUserStore } from "../../useUseSotore";
 import Loading3 from "../components/conteinerComponentesJsx/loading3";
 import Conteiner2RightWindowProdutoCardComentarioUsuario from "./Conteiner2RightWindowProdutoCardComentarioUsuario";

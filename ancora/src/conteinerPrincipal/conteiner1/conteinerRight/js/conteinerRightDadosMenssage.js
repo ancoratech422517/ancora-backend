@@ -1,7 +1,7 @@
 
 
 export function Selecionar_menssagem (event , id_menssagem , sala_menssagem , id_remitente, setIdMenssagem) {
-    const dados = document.querySelectorAll(".ConteinerRightDadosWindowMenssageMim")
+    const dados = document.querySelectorAll(".ConteinerRightDadosWindowMenssageMim, .ConteinerRightDadosWindowMensageEle")
     dados.forEach((dados) =>{
         dados.classList.remove("ativar_selecao_menssagem")
     })

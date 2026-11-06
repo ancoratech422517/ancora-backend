@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useUserStore } from "../../../../../useUseSotore";
 import "../css/GeralChatUsuario.css";
 import GeralChatDados from "./geralChatDados";
-import FundoVazioChat from "../../../../../assets/fundo_vazio_chat2.jpg";
+import FundoVazioChat from "../../../../../assets/fundo_vazio_chat2.png";
 import NaoLidasImg from "../../../../../assets/img_fundo_vazio/img_nao_lida.png"
 import Img_privado from "../../../../../assets/img_fundo_vazio/img_privado.png"
 import Img_Bloqueado from "../../../../../assets/img_fundo_vazio/img_bloqueado.png"

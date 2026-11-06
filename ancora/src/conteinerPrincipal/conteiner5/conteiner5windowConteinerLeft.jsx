@@ -3,10 +3,11 @@ import "./css/Conteiner5WindowConteinerLeft.css"
 import { useUserStore } from "../../useUseSotore";
 import Editar from "../components/conteinerSvg/editar";
 import Logo from "../../assets/logo2.png"
+import Perfil from "../../assets/img_fundo_vazio/perfil.png"
 import { Actualizar_foto_Perfil } from "./js/Conteiner5WindowConteinerRegistrarFoto";
 import { Imagem_em_tempo_real } from "./js/imagem_tempo_real";
 export default function Conteiner5WindowConteinerLeft () {
-        const {setMostrarContRightWindow5 , dadosUsuario , urlBancoDeDados} = useUserStore()
+        const {setMostrarContRightWindow5 , dadosUsuario , urlBancoDeDados, logout} = useUserStore()
         const [estadoFoto , setEstadoFoto] = useState("texto")
         const [valorFoto , setValorFoto] = useState("CA")
         const getUrlVideo = (url) => {
@@ -17,18 +18,22 @@ export default function Conteiner5WindowConteinerLeft () {
             return isUrlCompleta ? url : `${urlBancoDeDados}/${url}`;
         };
 
-        let valor = "none"
-
-        if(dadosUsuario.foto_usuario !== "none"){
-            valor = "ativo"
-        }
+        const fotoPerfilRegistrada = dadosUsuario?.foto_usuario
+        const temFotoPerfil = Boolean(
+            fotoPerfilRegistrada &&
+            fotoPerfilRegistrada !== "none" &&
+            !fotoPerfilRegistrada.endsWith("/none")
+        )
+        const valor = temFotoPerfil ? "ativo" : "none"
 
         const [estado_escolha , setEstadoEscolha] = useState(valor)
         const estadoEscolhaPerfil = ()=>{
             switch(estado_escolha){
                 case "none":
                     return (
-                        <b> {valorFoto} </b>
+                        <div className="contImagemActualizacao">
+                            <img src={Perfil} alt="Perfil padrão do usuário" />
+                        </div>
                     )
                 case "ativo":
                     const urlImage = `${getUrlVideo(dadosUsuario.foto_usuario)}`
@@ -77,6 +82,12 @@ export default function Conteiner5WindowConteinerLeft () {
                         <li>Empresa-Ancora</li>
                     </div>
                     <button>Editar Perfil</button>
+                    <button className="botaoTerminarSessao" type="button" onClick={() => void logout()}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5m5 5H3" />
+                        </svg>
+                        Terminar sessão
+                    </button>
                 </div>
 
                 <div className="Conteiner5WindowConteinerLeftInformacapContacto">

@@ -1,35 +1,20 @@
-import { useState } from "react";
 import "./css/BoxButtomConteinerLeft.css"
 import Button6 from "../../components/conteinerComponentesJsx/btn6";
 import { useUserStore } from "../../../useUseSotore";
+import Perfil from "../../../assets/img_fundo_vazio/perfil.png"
 export default function ({ativarConteiner}){
-    const {dadosUsuario , urlBancoDeDados} = useUserStore()
-    let valor = "false"
-    if (dadosUsuario.foto_usuario !== "none"){
-        valor = "True"
-    }
-    const [estadoFotoUsuario , setEstadoFotoUsuario] = useState(valor)
-    const condiaoEstadoFotoUsuario = ()=>{
-        switch(estadoFotoUsuario){
-            case "False":
-                return (
-                    <b>
-                        a
-                    </b>
-                )
-            case "True":
-                const URLIMAGE = `${dadosUsuario.foto_usuario}`
-                return (
-                    <div className="BoxButtomConteinerLeftIcone">
-                        <img src={URLIMAGE} alt="" />
-                    </div>
-                )
-        }
-    }
+    const {dadosUsuario} = useUserStore()
+    const fotoUsuario = dadosUsuario?.foto_usuario
+    const temFotoPerfil = Boolean(fotoUsuario && fotoUsuario !== "none" && !fotoUsuario.endsWith("/none"))
 
     return (
         <div className="BoxButtomConteinerLeft">
-           {condiaoEstadoFotoUsuario()}
+            <div className="BoxButtomConteinerLeftIcone">
+                <img
+                    src={temFotoPerfil ? fotoUsuario : Perfil}
+                    alt={temFotoPerfil ? "Foto de perfil do usuário" : "Perfil padrão do usuário"}
+                />
+            </div>
         </div>
     )
 }

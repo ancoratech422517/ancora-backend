@@ -4,7 +4,6 @@ import ConteinerRightMenuTop from "./conteinerRightMenuTop";
 import ConteinerRightWindowMenssage from "./conteinerRightWindowMenssage";
 import ConteinerRightMenuBottom from "./ConteinerRightMenuBottom";
 import { useUserStore } from "../../../useUseSotore";
-import ConteinerRightLive from "./ConteinerRightLive.jsx";
 import IMGPERFIL from "../../../assets/IMGPERFIL.png";
 import CHAT from "../../../assets/chat.png"
 import Notificacao from "../../../assets/notificacao.png";
@@ -13,7 +12,7 @@ import CursoVideo from "../../../assets/curso_video.png";
 import { AdicionarFundoPontoAOChat } from "./js/ConeinerRightConteudo-fundo-po-my-ponto.js";
 
 export default function ConteinerRight({ ativarConteiner }) {
-    const { ChatAtivo , MostrarChat , estado_conteiner_live , Dados_Live_Ancora} = useUserStore();
+    const { ChatAtivo , MostrarChat } = useUserStore();
     const [isMobile, setIsMobile] = useState(false);
     //alert(Dados_Live_Ancora.sala_Turma)
 
@@ -30,18 +29,6 @@ export default function ConteinerRight({ ativarConteiner }) {
             window.removeEventListener('resize', checkScreenSize);
         };
     }, []);
-
-    if (estado_conteiner_live) {
-        return (
-            <div className="conteinerRight conteinerRightLiveHost">
-                <ConteinerRightLive
-                    roomName={Dados_Live_Ancora?.sala_Turma}
-                    nome_Turma={Dados_Live_Ancora?.nome_Turma}
-                    id_admin_turma={Dados_Live_Ancora?.id_admin_turma}
-                />
-            </div>
-        );
-    }
 
     if (!ChatAtivo) {
         return (

@@ -34,13 +34,5 @@ export function DadosActive (event , nome_amigo , id_amigo, nossa_sala , foto_am
         setChatAtivo(dados_amigo)
     }
     socket.emit("Entrar_na_sala" , dados_amigo)
-    try{
-        let classeSala = document.querySelector(`.${nossa_sala}`)
-        classeSala.style.color = "#282828"
-        classeSala.style.fontWeight = "500"
-    }
-    catch(erro){
-        console.log("erro ao normalizar a formatação do texto:" , erro)
-    }
 
 }

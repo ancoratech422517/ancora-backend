@@ -75,6 +75,13 @@
     color: var(--teal-600);
     margin-top: 3%;
 }
+.ConteinerRightInicial > p{
+    max-width: 720px;
+    padding: 0 24px;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+}
 .ConteinerRightInicialBoxs .ConeinerRightInicialBoxsCaxa{
     width: 24%;
     border: 1px solid var(--border);

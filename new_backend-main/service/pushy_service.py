@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import re
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
@@ -10,6 +11,12 @@ from models.database import Usuario, db
 logger = logging.getLogger(__name__)
 PUSHY_NOTIFICATION_ICON = "https://ancora-ecommerc-tawny.vercel.app/logo2.png"
 FRONTEND_PUBLIC_URL = os.getenv("FRONTEND_URL") or "https://ancora-ecommerc-tawny.vercel.app"
+PUSHY_ATTACHMENT_ICONS = {
+    "imagem": "image.svg",
+    "audio": "audio.svg",
+    "video": "video.svg",
+    "ficheiro": "file.svg",
+}
 
 
 def _imagem_url_valida(url):
@@ -96,6 +103,52 @@ def _resolver_icone_pushy(dados=None):
     return PUSHY_NOTIFICATION_ICON
 
 
+def _formatar_previa_mensagem(mensagem, dados):
+    if not isinstance(dados, dict):
+        return mensagem, None
+
+    conteudo = {}
+    mensagem_audio = isinstance(mensagem, str) and mensagem.startswith("data:audio/")
+    if isinstance(mensagem, str) and not mensagem_audio:
+        try:
+            parsed = json.loads(mensagem)
+            if isinstance(parsed, dict):
+                conteudo = parsed
+        except (TypeError, ValueError):
+            pass
+
+    eh_arquivo = dados.get("message_type") == "arquivo" or conteudo.get("isFile")
+    if not eh_arquivo and not mensagem_audio:
+        return mensagem, None
+
+    nome = str(dados.get("file_name") or conteudo.get("fileName") or "").strip()
+    mime_type = str(dados.get("mime_type") or conteudo.get("mimeType") or "").lower()
+    extensao = nome.rsplit(".", 1)[-1].lower() if "." in nome else ""
+
+    if mensagem_audio or mime_type.startswith("audio/") or extensao in {
+        "mp3", "wav", "ogg", "m4a", "aac", "flac"
+    }:
+        tipo = "audio"
+        rotulo = "Áudio"
+    elif mime_type.startswith("image/") or extensao in {
+        "jpg", "jpeg", "png", "gif", "webp", "bmp", "svg", "tiff", "heic", "avif"
+    }:
+        tipo = "imagem"
+        rotulo = "Imagem"
+    elif mime_type.startswith("video/") or extensao in {
+        "mp4", "webm", "mov", "avi", "mkv", "m4v", "flv"
+    }:
+        tipo = "video"
+        rotulo = "Vídeo"
+    else:
+        tipo = "ficheiro"
+        rotulo = "Ficheiro"
+
+    nome = re.sub(r"[\r\n]+", " ", nome)
+    previa = f"{rotulo}: {nome}" if nome else rotulo
+    return previa[:160], tipo
+
+
 def enviar_notificacao_pushy(
     usuario_id,
     titulo,
@@ -125,14 +178,23 @@ def enviar_notificacao_pushy(
         logger.error("Pushy não configurado: defina PUSHY_API_KEY no ambiente do backend.")
         return False
 
-    icon_url = _resolver_icone_pushy(dados)
+    mensagem, tipo_anexo = _formatar_previa_mensagem(mensagem, dados)
+    icon_url = (
+        f"{FRONTEND_PUBLIC_URL.rstrip('/')}/pushy-icons/"
+        f"{PUSHY_ATTACHMENT_ICONS[tipo_anexo]}"
+        if tipo_anexo
+        else _resolver_icone_pushy(dados)
+    )
+    dados_notificacao = {**(dados or {})}
+    if tipo_anexo:
+        dados_notificacao["attachment_type"] = tipo_anexo
 
     conteudo = {
         "to": usuario.id_app_usuario_pushy,
         "data": {
+            **dados_notificacao,
             "title": titulo,
-            "message": mensagem,
-            **(dados or {})
+            "message": mensagem
         },
         "notification": {
             "title": titulo,

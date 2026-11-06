@@ -179,6 +179,21 @@ export const useUserStore = create(
       },
       setNotificacoes: (lista) => set({ notificacoes: lista }),
       setAmigos: (amigo) => set({ amigos: amigo }),
+      atualizarUltimaMensagemChat: (nossaSala, mensagem, horario) => set((state) => {
+        const amigosAtualizados = state.amigos.map((amigo) =>
+          String(amigo.nossa_sala) === String(nossaSala)
+            ? { ...amigo, ultima_menssagem: mensagem, HoraMenssagem: horario }
+            : amigo
+        )
+        const indiceAmigo = amigosAtualizados.findIndex(
+          (amigo) => String(amigo.nossa_sala) === String(nossaSala)
+        )
+        return {
+          amigos: indiceAmigo > 0
+            ? [amigosAtualizados[indiceAmigo], ...amigosAtualizados.slice(0, indiceAmigo), ...amigosAtualizados.slice(indiceAmigo + 1)]
+            : amigosAtualizados
+        }
+      }),
       setChat: (chat) => set({ chats: chat }),
       setTexto: (text) => set({ texto: text }),
       setMenssagemLida: (lida) => set({ MenssagemLida: lida }),
@@ -280,17 +295,17 @@ export const useUserStore = create(
         return { menssagens: novasMensagens }
       }),
       // AQUI ESTAS A ACTUALIZAR A MENSSAGEM DO CHAT DE CONVERSA FOCA-TE NO PONTO CRUCIAL , PORUQE ESTOU A USAR MAPAEAMENTO 
-      editar_menssagem_no_array: (id, novoConteudo) => {
-        const mensagensAtuais = get().menssagens
-        if (mensagensAtuais.length === 0) return
-        const novasMensagens = mensagensAtuais.map((msg) => {
-          if (String(msg.id) === String(id)) {
+      editar_menssagem_no_array: (id, novoConteudo, sala_menssagem) => set((state) => ({
+        menssagens: state.menssagens.map((msg) => {
+          if (
+            String(msg.id) === String(id) &&
+            (!sala_menssagem || String(msg.nossa_sala) === String(sala_menssagem))
+          ) {
             return { ...msg, menssagem: novoConteudo }
           }
           return msg
         })
-        set({ menssagens: [...novasMensagens] })
-      },
+      })),
 
       buscarAmigosNoBanco: async (userId) => {
         if (!userId) return
@@ -482,7 +497,11 @@ export const useUserStore = create(
             })
 
             novoSocket.on("editar_menssagem_array", (data) => {
-              get().editar_menssagem_no_array(data.id_menssagem, data.novo_conteudo)
+              get().editar_menssagem_no_array(
+                data.id_menssagem,
+                data.novo_conteudo,
+                data.sala_menssagem
+              )
             })
 
             novoSocket.on("convite_turma" , (dados)=>{
@@ -589,28 +608,7 @@ export const useUserStore = create(
               const qtd = data.quantidade_menssagem_nao_lida ?? data.quantidade
               const nossa_sala = data.nossa_sala
               const nova_menssagem = data.nova_menssagem
-              // -----------------------------------------------------------
-              let index = `index_${data.nossa_sala}`
-              let GeralChatDados = document.getElementById(index)
-              let GeralChatUsuario = document.getElementById("GeralChatUsuario")
-              if(GeralChatDados && GeralChatUsuario){
-                  GeralChatUsuario.prepend(GeralChatDados)
-              }
-              // ----------------------------------------------------------------
-              
-              try{
-                let hora_mensagem = document.getElementById(`hora_mensagem_${data.nossa_sala}`)
-                
-                hora_mensagem.innerHTML = data.horario_formatado
-
-                const sala_user_amigo = document.getElementById(nossa_sala).innerHTML = nova_menssagem
-                let classeSala = document.querySelector(`.${data.nossa_sala}`)
-                classeSala.style.color = "black"
-                classeSala.style.fontWeight = "600"
-              }
-              catch(erro){
-                console.log("erro ao adicionar a nova mensagem:" , erro)
-              }
+              get().atualizarUltimaMensagemChat(nossa_sala, nova_menssagem, data.horario_formatado)
            
               if (id_amigo !== undefined && qtd !== undefined) {
                 get().setQuantidadeMensagemNaoLida(id_amigo, qtd)
@@ -684,10 +682,13 @@ export const useUserStore = create(
 
       logout: async () => {
         try {
-          await fetch(`${url}/Logout`, {
+          const resposta = await fetch(`${get().urlBancoDeDados}/Logout`, {
             method: "POST",
             credentials: "include"
           })
+          if (!resposta.ok) {
+            throw new Error(`Falha ao terminar a sessão: HTTP ${resposta.status}`)
+          }
         } catch (err) {
           console.error("Erro logout:", err)
         } finally {
@@ -707,8 +708,11 @@ export const useUserStore = create(
             ProdutoUsuario: [],
             TodosProdutos: [],
             DadosSombra: [],
-            ProdutoUsuarioChat: []
+            ProdutoUsuarioChat: [],
+            ativar: "conteiner6"
           })
+          localStorage.removeItem("user-store")
+          localStorage.removeItem("token_sessao")
         }
       }
     }),

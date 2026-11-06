@@ -4,6 +4,7 @@ import SetaEsquerda from "../../../../components/conteinerSvg/setaEsquerda";
 import { useUserStore } from "../../../../../useUseSotore";
 import { GeralChatMenuButtomBuscarDadosEstado } from "../js/geralChatMenuBoxButtom";
 import Imagem_fundo_vazio from "../../../../../assets/fundo_vazio_estado4.png"
+import Perfil from "../../../../../assets/img_fundo_vazio/perfil.png"
 export default function GeralConteinerPrincipalLeftConteinerEstado ({setViewChat}) {
     const {
             set_CONDICACAOMOSTRARESTADOETRURMAVIEWS , 
@@ -12,9 +13,22 @@ export default function GeralConteinerPrincipalLeftConteinerEstado ({setViewChat
             DADOSESTADOAMIGO , 
             setTipoConteudoViewEstado , 
             setDadosGeralEstadoUser , 
-            setMostrarConteinerEstadoUserViews
+            setMostrarConteinerEstadoUserViews,
+            urlBancoDeDados
 
     } = useUserStore()
+    const getImagemPerfilEstado = (fotoUsuario) => {
+        if (!fotoUsuario || fotoUsuario === "none" || fotoUsuario.endsWith("/none")) {
+            return Perfil
+        }
+
+        if (fotoUsuario.startsWith("http://") || fotoUsuario.startsWith("https://") || fotoUsuario.startsWith("data:")) {
+            return fotoUsuario
+        }
+
+        return `${urlBancoDeDados}/${fotoUsuario}`
+    }
+
     return (
         <div className="GeralConteinerPrincipalLeftConteinerEstado">
             <header className="GeralConteinerPrincipalLeftConteinerEstado_menu">
@@ -37,9 +51,10 @@ export default function GeralConteinerPrincipalLeftConteinerEstado ({setViewChat
                     </div>
                     <div className="GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateConteinerScroll">
                         {DADOSESTADOAMIGO.map((dados)=>{
+                            const imagemPerfil = getImagemPerfilEstado(dados.foto_usuario_estado)
                             return(
-                                <div className="GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateConteinerScrollDate" onClick={()=>{setViewChat("estado_usuario") , setTipoConteudoViewEstado(dados.tipo_estado) , setDadosGeralEstadoUser(dados) , setMostrarConteinerEstadoUserViews(true) , set_CONFIRMARSAIDA(true) , setViewChat = setViewChat}}>
-                                    <img src={dados.foto_usuario_estado} alt="" />
+                                <div key={dados.id} className="GeralConteinerPrincipalLeftConteinerEstadoConteinerPerfilDateConteinerScrollDate" onClick={()=>{setViewChat("estado_usuario") , setTipoConteudoViewEstado(dados.tipo_estado) , setDadosGeralEstadoUser(dados) , setMostrarConteinerEstadoUserViews(true) , set_CONFIRMARSAIDA(true) , setViewChat = setViewChat}}>
+                                    <img src={imagemPerfil} alt={`Perfil de ${dados.nome_usuario_estado || "amigo"}`} />
                                 </div>
                             )
                         })}

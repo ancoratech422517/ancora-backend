@@ -4,7 +4,7 @@ import { Selecionar_menssagem } from "./js/conteinerRightDadosMenssage";
 import { useUserStore } from "../../../useUseSotore";
 import { TirarSelecao } from "./js/TirarSelecao";
 import Perfil from "../../../assets/img_fundo_vazio/perfil.png"
-export default function ConteinerRightDadosWindowMenssageMim ({texto , hora , nome , fundo , id , nossa_sala , id_remitente , foto_usuario}) {
+export default function ConteinerRightDadosWindowMenssageMim ({texto , hora , nome , fundo , id , nossa_sala , id_remitente , foto_usuario, mensagemOriginal, nomeOriginal}) {
     const {socket , urlBancoDeDados} = useUserStore()
     const {setIdMenssagem} = useUserStore()
     const getUrlVideo = (url) => {
@@ -48,10 +48,12 @@ export default function ConteinerRightDadosWindowMenssageMim ({texto , hora , no
                         <div className="Conteiner_displayFlex">
 
                             <div className="textoUserMim">
-                                {/* <div className="responder_menssagem_usuario">
-                                    <h3>Cláudio Avelino</h3>
-                                    <li>ola pessoal como vai</li>
-                                </div> */}
+                            {mensagemOriginal && (
+                                <div className="responder_menssagem_usuario">
+                                    <h3>{nomeOriginal}</h3>
+                                    <em>{mensagemOriginal}</em>
+                                </div>
+                            )}
                                     
                                 <li id={id}>{texto}</li>
                                 

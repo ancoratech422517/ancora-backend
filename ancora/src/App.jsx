@@ -66,9 +66,9 @@ function App() {
                     </div>
 
                     <div className="ConteinerViseualizacaoVideoTurmaConteinerListaVideoScroll">
-                      {Dados_Biblioteca_Video_Turma.map((dados)=>{
+                      {Array.isArray(Dados_Biblioteca_Video_Turma) && Dados_Biblioteca_Video_Turma.map((dados, index)=>{
                         return(
-                            <div onClick={()=>{set_Dados_Video_Atual_Click(getUrlVideo(dados.url_video))}} className="ConteinerViseualizacaoVideoTurmaConteinerListaVideoScrollDados">
+                            <div key={`${dados.url_video || "aula"}-${index}`} onClick={()=>{set_Dados_Video_Atual_Click(getUrlVideo(dados.url_video))}} className="ConteinerViseualizacaoVideoTurmaConteinerListaVideoScrollDados">
 
                               <div className="ConteinerViseualizacaoVideoTurmaConteinerListaVideoScrollDadosVideo">
                                 <video src={getUrlVideo(dados.url_video)} ></video>

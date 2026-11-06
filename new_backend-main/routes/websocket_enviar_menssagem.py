@@ -17,6 +17,40 @@ def enviar_menssagem_na_sala(data):
     foto_remitente = data.get("foto_usuario") or data.get("foto_remitente")
     id_amigo = data.get("id_amigo")
     nome_amigo = data.get("nome_amigo")
+    dados_resposta = data.get("reply_to") or {}
+    mensagem_original = None
+    reply_to_id = None
+    reply_to_texto = None
+    reply_to_nome = None
+
+    try:
+        reply_to_id = int(dados_resposta.get("id"))
+    except (TypeError, ValueError):
+        reply_to_id = None
+
+    if reply_to_id is not None:
+        mensagem_original = Menssagens.query.filter_by(
+            id=reply_to_id,
+            nossa_sala=nossa_sala
+        ).first()
+
+    if mensagem_original:
+        reply_to_nome = mensagem_original.nome_remitente
+        if mensagem_original.file_url:
+            reply_to_texto = mensagem_original.file_name or "Ficheiro"
+        elif (mensagem_original.menssagem or "").startswith("data:audio"):
+            reply_to_texto = "Mensagem de áudio"
+        elif "giphy.com" in (mensagem_original.menssagem or ""):
+            reply_to_texto = "GIF"
+        else:
+            try:
+                conteudo_original = json.loads(mensagem_original.menssagem)
+                if isinstance(conteudo_original, dict) and conteudo_original.get("isFile"):
+                    reply_to_texto = conteudo_original.get("fileName") or "Ficheiro"
+            except (TypeError, ValueError):
+                pass
+            if reply_to_texto is None:
+                reply_to_texto = (mensagem_original.menssagem or "")[:500]
 
     dados_arquivo = {}
     try:
@@ -52,6 +86,9 @@ def enviar_menssagem_na_sala(data):
         "data_envio": horario_formatado,
         "lida": False, 
         "tipo": dados_arquivo.get("tipo", "texto"),
+        "reply_to_id": mensagem_original.id if mensagem_original else None,
+        "reply_to_menssagem": reply_to_texto,
+        "reply_to_nome": reply_to_nome,
         **dados_arquivo
     }
     verificar_amizade = Amigo.query.all()

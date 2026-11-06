@@ -67,37 +67,32 @@ height:90px;
 border:0;
 border-radius:50%;
 cursor:pointer;
-display:grid;
-place-items:center;
+display:flex;
+align-items:center;
+justify-content:center;
 background:linear-gradient(135deg,#7c3aed,#22d3ee);
 box-shadow:0 8px 26px #7c3aed99;
 transition:transform .2s,box-shadow .2s;
-display: flex;
-text-align: center;
-align-items: center;
-justify-content: center;
-}
-.btn svg{
-    width: 40px;
-    height: 40px;
-    color: var(--text-on-primary);
+padding:0;
 }
 .btn:hover{transform:scale(1.1);box-shadow:0 10px 34px #22d3ee88}
 .btn:active{transform:scale(.92)}
 .btn i{
-    width:50px;
-    height:50px;
-    margin-left:5px;
+    display:block;
+    width:0;
+    height:0;
+    margin-left:0;
+    transform:translateX(3px);
     border-style:solid;
     border-width:12px 0 12px 20px;
     border-color:transparent transparent transparent var(--text-on-primary);
     transition:.25s;
-
 }
 .on .btn i{
-    margin-left:0;
+    transform:none;
     border-style:double;
-    border-width:0 0 0 20px;border-color:var(--text-on-primary);
+    border-width:0 0 0 20px;
+    border-color:var(--text-on-primary);
 }
 
 

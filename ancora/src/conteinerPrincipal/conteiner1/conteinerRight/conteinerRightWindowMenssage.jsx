@@ -205,16 +205,18 @@ const PlayerAudioCustomizado = ({ src, isMyMessage = false, currentlyPlayingSrc,
         onClick={alternarPlay}
         aria-label={isPlaying ? "Pausar" : "Reproduzir"}
         style={{
-          all: "unset",
           cursor: "pointer",
           width: 38,
           height: 38,
           borderRadius: "50%",
-          display: "grid",
-          placeItems: "center",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           flexShrink: 0,
           border: `2px solid ${c}`,
           color: c,
+          background: "transparent",
+          padding: 0,
           boxSizing: "border-box",
         }}
       >
@@ -820,16 +822,31 @@ export default function ConteinerRightWindowMenssage() {
       ["var(--chat-identity-5)", "var(--chat-identity-6)"],
       ["var(--chat-identity-7)", "var(--chat-identity-8)"]
     ];
-    const parDeCores = coresBase[id % coresBase.length];
+    const idNumerico = Number(id);
+    const indice = Number.isFinite(idNumerico) ? Math.abs(idNumerico) % coresBase.length : 0;
+    const parDeCores = coresBase[indice];
     return `linear-gradient(135deg, ${parDeCores[0]}, ${parDeCores[1]})`;
   };
 
   const formatBytes = (bytes) => {
-    if (bytes === 0) return "0 Bytes";
+    const tamanho = Number(bytes);
+    if (!Number.isFinite(tamanho) || tamanho <= 0) return "0 Bytes";
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+    const i = Math.min(Math.floor(Math.log(tamanho) / Math.log(k)), sizes.length - 1);
+    return parseFloat((tamanho / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+  };
+
+  const getCloudinaryResourceType = (src) => {
+    if (!src) return null;
+
+    try {
+      const url = new URL(src, window.location.href);
+      if (!url.hostname.endsWith("cloudinary.com")) return null;
+      return url.pathname.match(/\/(raw|image|video)\/upload\//)?.[1] || null;
+    } catch {
+      return null;
+    }
   };
 
   const getDownloadUrl = (src, fileName, resourceType) => {
@@ -841,7 +858,8 @@ export default function ConteinerRightWindowMenssage() {
         return src;
       }
 
-      if (resourceType === "raw" || url.pathname.includes("/raw/upload/")) {
+      const actualResourceType = getCloudinaryResourceType(src) || resourceType;
+      if (actualResourceType === "raw") {
         return src;
       }
 
@@ -853,8 +871,9 @@ export default function ConteinerRightWindowMenssage() {
   };
 
   const downloadMedia = async (src, fileName, resourceType, fileUrl, publicId) => {
-    const isRawFile = resourceType === "raw" || /\/raw\/upload\//.test(fileUrl || src || "");
-    const sourceFileUrl = fileUrl || (isRawFile ? src : "");
+    const sourceFileUrl = fileUrl || src;
+    const urlResourceType = getCloudinaryResourceType(sourceFileUrl);
+    const isRawFile = urlResourceType ? urlResourceType === "raw" : resourceType === "raw";
     let downloadUrl = getDownloadUrl(src, fileName, resourceType);
     let temporaryUrl = null;
 
@@ -1121,85 +1140,6 @@ export default function ConteinerRightWindowMenssage() {
     return texto;
   };
 
-  const renderMensagemRespondida = (msg, souEu) => {
-    const nomeOriginal = msg.nome_original || (souEu ? ChatAtivo?.nome_amigo : msg.nome_remitente);
-    const mensagemOriginal = msg.mensagemOriginal || msg.conteudoOriginal || "Mensagem original";
-
-    return (
-      <div
-        key={msg.id || Math.random()}
-        style={{
-          display: 'flex',
-          justifyContent: souEu ? 'flex-end' : 'flex-start',
-          margin: '12px 10px',
-          width: '100%'
-        }}
-      >
-        <div style={{
-          maxWidth: '72%',
-          backgroundColor: "var(--chat-message-quote-bg)",
-          borderRadius: '12px',
-          padding: '10px',
-          boxShadow: "var(--shadow-sm)",
-          borderLeft: "4px solid var(--chat-message-quote-accent)"
-        }}>
-          <div style={{
-            backgroundColor: "var(--surface-3)",
-            borderRadius: '8px',
-            padding: '9px 12px',
-            marginBottom: '10px',
-            fontSize: '14px',
-            color: "var(--chat-message-quote-text)",
-            borderLeft: "3px solid var(--chat-message-quote-accent)"
-          }}>
-            <div style={{ 
-              fontSize: '12.8px', 
-              fontWeight: '600', 
-              color: "var(--chat-message-quote-accent)",
-              marginBottom: '4px'
-            }}>
-              {souEu ? `Respondendo a ${nomeOriginal}` : `${nomeOriginal} respondeu`}
-            </div>
-            <div style={{
-              fontSize: '14px',
-              lineHeight: '1.45',
-              opacity: 0.9,
-              maxHeight: '65px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              display: '-webkit-box',
-              WebkitLineClamp: 3,
-              WebkitBoxOrient: 'vertical'
-            }}>
-              {mensagemOriginal}
-            </div>
-          </div>
-
-          <div style={{
-            padding: '6px 10px',
-            fontSize: '15.2px',
-            color: "var(--text-primary)",
-            lineHeight: '1.48'
-          }}>
-            {msg.menssagem || msg.conteudo}
-          </div>
-
-          <div style={{ 
-            textAlign: 'right', 
-            fontSize: '11px', 
-            color: "var(--text-secondary)",
-            marginTop: '6px',
-            paddingRight: '6px',
-          
-          }}>
-            {msg.data_envio || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            {souEu && <StatusVisualizacao lida={msg.lida} statusAmigo={statusAmigoAtual} />}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   const closeModal = () => setModalImage(null);
 
   const handleDownload = () => {
@@ -1217,11 +1157,8 @@ export default function ConteinerRightWindowMenssage() {
           {menssagens.map((msg, index) => {
             const souEu = String(msg.id_remitente) === String(dadosUsuario?.id);
             const isAudio = typeof msg.menssagem === 'string' && msg.menssagem.startsWith("data:audio");
-            const isResposta = msg.respondendoA || msg.tipo === "resposta" || msg.mensagemOriginal;
-
-            if (isResposta) {
-              return renderMensagemRespondida(msg, souEu);
-            }
+            const mensagemOriginal = msg.reply_to_menssagem || msg.mensagemOriginal || msg.conteudoOriginal;
+            const nomeOriginal = msg.reply_to_nome || msg.nome_original;
 
 if (isAudio) {
   const meuGradiente = gerarGradienteElegante(msg.id_destinatario || 0);
@@ -1258,6 +1195,8 @@ if (isAudio) {
       nossa_sala={msg.nossa_sala}
       id_remitente={msg.id_remitente}
       foto_usuario={ChatAtivo?.foto_usuario}
+      mensagemOriginal={mensagemOriginal}
+      nomeOriginal={nomeOriginal}
     />
   ) : (
     <ConteinerRightDadosWindowMenssageEle 
@@ -1266,8 +1205,12 @@ if (isAudio) {
       hora={msg.data_envio} 
       nome={msg.nome_remitente} 
       fundo={meuGradiente} 
+      id={msg.id}
+      nossa_sala={msg.nossa_sala}
       id_remitente={msg.id_remitente}
       foto_amigo={ChatAtivo?.foto_amigo}
+      mensagemOriginal={mensagemOriginal}
+      nomeOriginal={nomeOriginal}
     />
   );
 }           const meuGradiente = gerarGradienteElegante(msg.id_destinatario);
@@ -1287,7 +1230,10 @@ if (isAudio) {
                 fundo={meuGradiente} 
                 id={msg.id}
                 nossa_sala={msg.nossa_sala}
+                id_remitente={msg.id_remitente}
                 foto_usuario = {ChatAtivo?.foto_usuario}
+                mensagemOriginal={msg.reply_to_menssagem || msg.mensagemOriginal || msg.conteudoOriginal}
+                nomeOriginal={msg.reply_to_nome || msg.nome_original}
               />
             ) : (
               <ConteinerRightDadosWindowMenssageEle 
@@ -1296,8 +1242,12 @@ if (isAudio) {
                 hora={msg.data_envio} 
                 nome={msg.nome_remitente} 
                 fundo={meuGradiente} 
+                id={msg.id}
+                nossa_sala={msg.nossa_sala}
                 id_remitente={msg.id_remitente}
                 foto_amigo = {ChatAtivo?.foto_amigo}
+                mensagemOriginal={msg.reply_to_menssagem || msg.mensagemOriginal || msg.conteudoOriginal}
+                nomeOriginal={msg.reply_to_nome || msg.nome_original}
               />
             );
           })}

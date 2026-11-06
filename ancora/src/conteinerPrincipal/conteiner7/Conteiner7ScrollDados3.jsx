@@ -3,6 +3,7 @@ import "./css/coneiner7ScrollDados3.css"
 import { Conteiner2ScrollDadosDeletarSms } from "./js/Conteiner2ScrolldadosDeletarSms";
 import { Conteiner2ScrollDadosDetalhesProduto } from "./js/Conteiner2ScrollDadosDetalhesProduto";
 import { useUserStore } from "../../useUseSotore";
+import Perfil from "../../assets/img_fundo_vazio/perfil.png";
 export default function Conteiner7ScrollDados3 ({dados}) {
 
     const {setAtivarDetalhes , setDetalhesProduto , dadosUsuario , buscar_notificacao , urlBancoDeDados} = useUserStore()
@@ -18,30 +19,15 @@ export default function Conteiner7ScrollDados3 ({dados}) {
     if (Estado === "buscar"){
         buscar_notificacao(dadosUsuario?.id)
     }
-    let valor = "A"
-    if (dados.foto_usuario !== "none"){
-        valor = "ativo"
-    }
-    const [estadoImage , setEstadoImage] = useState(valor)
-    const condicaoEstadoImage = ()=>{
-        switch(estadoImage){
-            case "none":
-                return (
-                    <b>A</b>
-                )
-            case "ativo":
-                const URLIMAGE = `${getUrlVideo(dados.foto_usuario)}`
-                return (
-                    <div className="Conteiner7ScrollDados3IconeIcone">
-                        <img src={URLIMAGE} alt="" />
-                    </div>
-                )
-        }
-    }
+    const fotoUsuario = dados.foto_usuario
+    const temFotoPerfil = Boolean(fotoUsuario && fotoUsuario !== "none" && !fotoUsuario.endsWith("/none"))
+    const imagemPerfil = temFotoPerfil ? getUrlVideo(fotoUsuario) : Perfil
     return (
         <div className="coneiner7ScrollDados3">
             <div className="Conteiner7ScrollDados3Icone">
-                {condicaoEstadoImage()}
+                <div className="Conteiner7ScrollDados3IconeIcone">
+                    <img src={imagemPerfil} alt={temFotoPerfil ? "Foto de perfil do usuário" : "Perfil padrão do usuário"} />
+                </div>
             </div>
             <div className="Conteiner7ScrollDados3Cont">
                 <b> {dados.nome_remetente} </b>

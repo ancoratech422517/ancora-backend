@@ -94,7 +94,9 @@ def send_message_with_file():
                 "type": "new_message",
                 "sender_id": id_remitente,
                 "room": nossa_sala,
-                "message_type": dados["tipo"]
+                "message_type": dados["tipo"],
+                "file_name": file_name,
+                "mime_type": mime_type
             },
             sala_ativa=nossa_sala
         )

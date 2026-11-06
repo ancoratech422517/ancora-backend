@@ -7,7 +7,9 @@ import { TrancarConversaUsuario } from "../js/TrancarConversaUsuario";
 import { Bloquear_Usuario } from "../js/bloquear_amigo";
 import { Exluir_Amigo } from "../js/Excluir_amigo";
 import Perfil from "../../../../../assets/img_fundo_vazio/perfil.png"
+import { tipoPreviaMensagem } from "../../../../../utils/mensagemPreview";
 export default function GeralChatDados ({dados, quantidade_menssagem_lida}) {
+    const tipoPrevia = tipoPreviaMensagem(dados?.ultima_menssagem);
  
     // REMOVIDO: socket daqui
     const { 
@@ -178,8 +180,41 @@ export default function GeralChatDados ({dados, quantidade_menssagem_lida}) {
                 <div className="formatarTextoLinewMenssage">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     <span class="nav-badge" id="chat-badge"></span>
-                    <li id={dados.nossa_sala} className={dados.nossa_sala} style={{color:`${quantidade_menssagem_lida !== 0 ? "black":"#6b7280"}` , fontWeight:`${quantidade_menssagem_lida !== 0 ? "bold":"500"}`}} >
-                        {dados.ultima_menssagem}
+                    <li
+                        id={dados.nossa_sala}
+                        className={dados.nossa_sala}
+                        style={{
+                            color: quantidade_menssagem_lida !== 0 ? "var(--text-primary)" : "var(--text-secondary)",
+                            fontWeight: quantidade_menssagem_lida !== 0 ? "bold" : "500"
+                        }}
+                    >
+                        {tipoPrevia ? (
+                            <span className="preview-multimedia-mensagem">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    {tipoPrevia === "audio" ? (
+                                        <>
+                                            <path d="M11 5 6 9H3v6h3l5 4V5Z" />
+                                            <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+                                            <path d="M19 5a10 10 0 0 1 0 14" />
+                                        </>
+                                    ) : tipoPrevia === "imagem" ? (
+                                        <>
+                                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                                            <circle cx="8.5" cy="8.5" r="1.5" />
+                                            <path d="m21 15-5-5L5 21" />
+                                        </>
+                                    ) : (
+                                        <>
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                            <path d="M14 2v6h6M8 13h8M8 17h8" />
+                                        </>
+                                    )}
+                                </svg>
+                                <span>
+                                    {tipoPrevia === "audio" ? "Áudio" : tipoPrevia === "imagem" ? "Imagem" : "Ficheiro"}
+                                </span>
+                            </span>
+                        ) : dados.ultima_menssagem}
                     </li>
                 </div>
             </div>

@@ -86,6 +86,16 @@
     align-items: center;
     gap: 4px;
 }
+.preview-multimedia-mensagem{
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.preview-multimedia-mensagem svg{
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+}
 
 .GeralChatDadosObject{
     width: 20%;

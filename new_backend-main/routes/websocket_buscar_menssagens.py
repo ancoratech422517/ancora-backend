@@ -22,11 +22,19 @@ def buscar_menssagens(data):
                 except (TypeError, ValueError):
                     payload_arquivo = {}
 
-                resource_type = "raw"
-                if (menssagem.mime_type or "").startswith("image/"):
-                    resource_type = "image"
-                elif (menssagem.mime_type or "").startswith("video/"):
-                    resource_type = "video"
+                resource_type = payload_arquivo.get("resourceType")
+                file_url = (menssagem.file_url or "").lower()
+                for candidate in ("image", "video", "raw"):
+                    if f"/{candidate}/upload/" in file_url:
+                        resource_type = candidate
+                        break
+
+                if resource_type not in ("image", "video", "raw"):
+                    resource_type = "raw"
+                    if (menssagem.mime_type or "").startswith("image/"):
+                        resource_type = "image"
+                    elif (menssagem.mime_type or "").startswith("video/"):
+                        resource_type = "video"
 
                 payload_arquivo.update({
                     "isFile": True,
@@ -54,7 +62,10 @@ def buscar_menssagens(data):
             "public_id":menssagem.public_id,
             "file_name":menssagem.file_name,
             "mime_type":menssagem.mime_type,
-            "file_size":menssagem.file_size
+            "file_size":menssagem.file_size,
+            "reply_to_id":menssagem.reply_to_id,
+            "reply_to_menssagem":menssagem.reply_to_menssagem,
+            "reply_to_nome":menssagem.reply_to_nome
             })
             dadosUsers["id_destinatario"] = menssagem.id_destinatario
             dadosUsers["id_remitente"] = menssagem.id_remitente

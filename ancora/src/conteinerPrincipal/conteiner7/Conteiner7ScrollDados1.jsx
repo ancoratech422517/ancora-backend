@@ -15,10 +15,12 @@ export default function Conteiner7ScrollDados1({ dados }) {
             return isUrlCompleta ? url : `${urlBancoDeDados}/${url}`;
         };
 
-    let valor = "none"
-    if (dados.foto_usuario !== "none"){
-        valor = "ativo"
-    }
+    const temFotoPerfil = Boolean(
+        dados.foto_usuario &&
+        dados.foto_usuario !== "none" &&
+        !dados.foto_usuario.endsWith("/none")
+    )
+    const valor = temFotoPerfil ? "ativo" : "none"
     const URLIMAGE = `${getUrlVideo(dados.foto_usuario)}`
     const [estadofotoPerfil , setEstadoFotoPerfil] = useState(valor)
     const condicaoEstadoPerfil = ()=>{

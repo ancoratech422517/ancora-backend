@@ -81,6 +81,9 @@ class Menssagens(db.Model):
     file_name = db.Column(db.Text, nullable=True)
     mime_type = db.Column(db.Text, nullable=True)
     file_size = db.Column(db.Integer, nullable=True)
+    reply_to_id = db.Column(db.Integer, nullable=True)
+    reply_to_menssagem = db.Column(db.Text, nullable=True)
+    reply_to_nome = db.Column(db.String(100), nullable=True)
 
     dados_remitente = db.relationship("Usuario", foreign_keys=[id_remitente])
     dados_destinatario = db.relationship("Usuario", foreign_keys=[id_destinatario])

@@ -17,17 +17,15 @@ export default function Conteiner7ScrollDados6 ({dados}){
             return isUrlCompleta ? url : `${urlBancoDeDados}/${url}`;
         };
 
-    const IMAGE = getUrlVideo(dados.foto_usuario)
-    let condicao_foto_padrao_user = ""
-    let classePadrao = ""
-    if (IMAGE === `${urlBancoDeDados}/none`){
-        condicao_foto_padrao_user = Perfil
-        classePadrao = `Conteiner7Scrolldados6Icone tirarBordaTurmaPeido`
-    }
-    else{
-        condicao_foto_padrao_user == IMAGE
-        classePadrao = "Conteiner7Scrolldados6Icone"
-    }
+    const temFotoPerfil = Boolean(
+        dados.foto_usuario &&
+        dados.foto_usuario !== "none" &&
+        !dados.foto_usuario.endsWith("/none")
+    )
+    const imagemPerfil = temFotoPerfil ? getUrlVideo(dados.foto_usuario) : Perfil
+    const classePadrao = temFotoPerfil
+        ? "Conteiner7Scrolldados6Icone"
+        : "Conteiner7Scrolldados6Icone tirarBordaTurmaPeido"
     const aceitarConviteOuSolicitacao = () => {
         const ehSolicitacao = dados.tipo_notificacao === "solicitacao"
         const idUsuarioNovo = ehSolicitacao ? dados.de_id : dadosUsuario?.id
@@ -47,7 +45,10 @@ export default function Conteiner7ScrollDados6 ({dados}){
     return (
         <div className="Conteiner7Scrolldados6">
             <div className={classePadrao}>
-                <img src={condicao_foto_padrao_user} alt="" />
+                <img
+                    src={imagemPerfil}
+                    alt={temFotoPerfil ? "Foto de perfil do usuário" : "Perfil padrão do usuário"}
+                />
             </div>
             <div className="Conteiner7Scrolldados6Cont">
                 <b> {dados.nome_remetente} </b>
