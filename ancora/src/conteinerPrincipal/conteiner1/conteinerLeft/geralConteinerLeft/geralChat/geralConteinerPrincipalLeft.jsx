@@ -43,14 +43,29 @@ export default function GeralConteinerPrincialLeft () {
 
     const URLIMAGE = getUrlVideo(dadosUsuario.foto_usuario)
     const [mostrar_conteiner_cursos, setmostrarConteinerCurso] = useState(false);
-    const buscar_aluno_turma = useCallback((nome_Turma , id_admin_Turma)=>{
-        
-        fetch(`${urlBancoDeDados}/buscar_aluno_turma/${nome_Turma}/${id_admin_Turma}`)
-        .then(dados=> dados.json())
-        .then(dados=>{
+    const buscar_aluno_turma = useCallback(async (nome_Turma , id_admin_Turma)=>{
+        try {
+            const params = new URLSearchParams({
+                nome_Turma: String(nome_Turma ?? ""),
+                id_admin_Turma: String(id_admin_Turma ?? "")
+            })
+            const resposta = await fetch(
+                `${urlBancoDeDados}/buscar_aluno_turma?${params.toString()}`
+            )
+            if (!resposta.ok) {
+                throw new Error(`Falha ao buscar alunos da turma: HTTP ${resposta.status}`)
+            }
+
+            const dados = await resposta.json()
+            if (!Array.isArray(dados)) {
+                throw new Error("Resposta inválida ao buscar alunos da turma.")
+            }
+
             setAlunTurma(dados)
-        })
-    } , [setAlunTurma])
+        } catch (erro) {
+            console.error("Erro ao buscar alunos da turma:", erro)
+        }
+    } , [setAlunTurma, urlBancoDeDados])
     //buscar a agenda das live da turma
     const buscar_agenda_turma = useCallback((nome_turma , id_admin_turma)=>{
         fetch(`${urlBancoDeDados}/buscar_agenda_turma/${nome_turma}/${id_admin_turma}`)
