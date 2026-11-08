@@ -1,11 +1,13 @@
 .ConteinerRightWindowMenssage{
     width: 100%;
-    height: 82%;
+    height: auto;
+    flex: 1 1 auto;
+    min-height: 0;
     padding: 3%;
     overflow: hidden;
     overflow-y: scroll;
     scrollbar-width: none;
-    padding-bottom: 10%;
+    padding-bottom: 3%;
     background: transparent;
 
 }
@@ -84,6 +86,6 @@
 /* Cláudio Avelino  ; Desenvolvidor Pleno */
 @media screen and (max-width: 700px) {
     .ConteinerRightWindowMenssage{
-        height: 83%;
+        height: auto;
     }
 }

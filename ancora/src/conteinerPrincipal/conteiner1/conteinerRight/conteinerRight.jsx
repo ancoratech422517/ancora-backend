@@ -10,10 +10,27 @@ import Notificacao from "../../../assets/notificacao.png";
 import Loja from "../../../assets/loja.png";
 import CursoVideo from "../../../assets/curso_video.png";
 import { AdicionarFundoPontoAOChat } from "./js/ConeinerRightConteudo-fundo-po-my-ponto.js";
+import { CHAT_THEMES, DEFAULT_CHAT_THEME } from "./chatThemes";
+import AnimatedChatBackground from "./AnimatedChatBackground";
+import { getAnimatedScene, getAnimatedSceneStyle } from "./animatedChatScenes";
 
 export default function ConteinerRight({ ativarConteiner }) {
-    const { ChatAtivo , MostrarChat } = useUserStore();
+    const {
+        ChatAtivo,
+        MostrarChat,
+        chatThemeId,
+        setChatThemeId,
+        chatThemeMode,
+        chatAnimatedSceneId,
+        setChatAnimatedSceneId,
+    } = useUserStore();
     const [isMobile, setIsMobile] = useState(false);
+    const chatTheme = [DEFAULT_CHAT_THEME, ...CHAT_THEMES].find((theme) => theme.id === chatThemeId) || DEFAULT_CHAT_THEME;
+    const animatedScene = getAnimatedScene(chatAnimatedSceneId);
+    const activeThemeStyle = chatThemeMode === "animated"
+        ? getAnimatedSceneStyle(animatedScene)
+        : chatTheme.style;
+    const [animationPaused, setAnimationPaused] = useState(false);
     //alert(Dados_Live_Ancora.sala_Turma)
 
     useEffect(() => {
@@ -74,13 +91,29 @@ export default function ConteinerRight({ ativarConteiner }) {
             {/* <div className="ConteinerRightVideo">
                 <video src={Video_Chat} autoPlay muted loop controls></video>
             </div> */}
-            <div className="ConeinerRightConteudo">
-                <div className="ConeinerRightConteudo-fundo-po">
-                    
+            <div
+                className="ConeinerRightConteudo"
+                data-chat-theme={chatThemeMode === "static" && chatTheme.id !== DEFAULT_CHAT_THEME.id ? chatTheme.id : undefined}
+                data-chat-theme-mode={chatThemeMode}
+                style={activeThemeStyle}
+            >
+                <div className="ConeinerRightConteudo-fundo-po" style={chatThemeMode === "animated" ? { background: "transparent" } : undefined}>
+                    {chatThemeMode === "animated" && (
+                        <AnimatedChatBackground sceneId={animatedScene.id} paused={animationPaused} />
+                    )}
                 </div>
 
                 <div className="ConeinerRightConteudo-fundo-conteudo-chat">
-                    <ConteinerRightMenuTop ativarConteiner={ativarConteiner} />
+                    <ConteinerRightMenuTop
+                        ativarConteiner={ativarConteiner}
+                        chatTheme={chatTheme}
+                        onSelectChatTheme={(theme) => setChatThemeId(theme.id)}
+                        chatThemeMode={chatThemeMode}
+                        animatedScene={animatedScene}
+                        onSelectAnimatedScene={setChatAnimatedSceneId}
+                        animationPaused={animationPaused}
+                        onToggleAnimation={() => setAnimationPaused((paused) => !paused)}
+                    />
                     <ConteinerRightWindowMenssage />
                     <ConteinerRightMenuBottom />
                 </div>

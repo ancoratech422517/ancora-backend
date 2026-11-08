@@ -12,6 +12,7 @@ import Conteiner_Animacao_Chamada_Grupo from './conteinerPrincipal/conteiner-ani
 import { useUserStore } from './useUseSotore'
 import { fetchComAuth } from './utils/api'
 import ConteinerRightLive from './conteinerPrincipal/conteiner1/conteinerRight/ConteinerRightLive.jsx'
+import { CHAT_THEMES, DEFAULT_CHAT_THEME } from './conteinerPrincipal/conteiner1/conteinerRight/chatThemes'
 
 
 function App() {
@@ -31,8 +32,10 @@ function App() {
     set_Dados_Video_Atual_Click,
     Dados_Video_Atual_Click,
     Dados_Biblioteca_Video_Turma,
-    EstadoChamadaGrupo
+    EstadoChamadaGrupo,
+    chatThemeId
   } = useUserStore()
+  const chatThemePalette = CHAT_THEMES.find((theme) => theme.id === chatThemeId)
 
   const condicaoEstadoChamadaGrupo = ()=>{
     switch(EstadoChamadaGrupo){
@@ -238,7 +241,11 @@ function App() {
   }
 
   return (
-    <section className='conteinerPrincipal' >
+    <section
+      className='conteinerPrincipal'
+      data-chat-theme-palette={chatThemeId !== DEFAULT_CHAT_THEME.id ? chatThemeId : undefined}
+      style={chatThemePalette?.style}
+    >
       {!carregandoSessao && ativar !== "conteiner6" && (
         <MenuConteinerLeft ativarConteiner={setAtivar} setDadosUsuario={setDados} />
       )}

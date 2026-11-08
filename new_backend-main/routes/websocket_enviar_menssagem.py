@@ -142,7 +142,9 @@ def enviar_menssagem_na_sala(data):
             "id_amigo": id_remitente,
             "nossa_sala":nossa_sala,
             "nova_menssagem":menssagem,
-            "horario_formatado":horario_formatado
+            "horario_formatado":horario_formatado,
+            "ultima_menssagem_remitente_id": id_remitente,
+            "ultima_menssagem_lida": False
         }, room = str(id_amigo))
     except Exception as err:
         print(f"mensagem persistida, mas falhou uma notificação secundária: {err}")

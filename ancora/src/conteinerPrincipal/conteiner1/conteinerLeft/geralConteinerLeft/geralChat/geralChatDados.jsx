@@ -8,6 +8,8 @@ import { Bloquear_Usuario } from "../js/bloquear_amigo";
 import { Exluir_Amigo } from "../js/Excluir_amigo";
 import Perfil from "../../../../../assets/img_fundo_vazio/perfil.png"
 import { tipoPreviaMensagem } from "../../../../../utils/mensagemPreview";
+import CheckOne from "../../../../components/conteinerSvg/chcke_one";
+import CheckTwo from "../../../../components/conteinerSvg/check_two";
 export default function GeralChatDados ({dados, quantidade_menssagem_lida}) {
     const tipoPrevia = tipoPreviaMensagem(dados?.ultima_menssagem);
  
@@ -178,7 +180,32 @@ export default function GeralChatDados ({dados, quantidade_menssagem_lida}) {
             }}>
                 <b>{dados.nome}</b>
                 <div className="formatarTextoLinewMenssage">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    {String(dados.ultima_menssagem_remitente_id) === String(dadosUsuario?.id) && (
+                        <span
+                            className={`GeralChatDadosStatusMensagem ${dados.ultima_menssagem_lida ? "lida" : ""}`}
+                            style={{
+                                color: dados.ultima_menssagem_lida
+                                    ? "var(--status-read)"
+                                    : "var(--text-muted)"
+                            }}
+                            title={
+                                dados.ultima_menssagem_lida
+                                    ? "Mensagem visualizada"
+                                    : dados.status === "online"
+                                        ? "Amigo online"
+                                        : "Mensagem enviada"
+                            }
+                            aria-label={
+                                dados.ultima_menssagem_lida
+                                    ? "Mensagem visualizada"
+                                    : dados.status === "online"
+                                        ? "Amigo online"
+                                        : "Mensagem enviada"
+                            }
+                        >
+                            {dados.ultima_menssagem_lida || dados.status === "online" ? <CheckTwo /> : <CheckOne />}
+                        </span>
+                    )}
                     <span class="nav-badge" id="chat-badge"></span>
                     <li
                         id={dados.nossa_sala}

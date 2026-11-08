@@ -32,6 +32,8 @@ class Meus_amigos:
 
       lastMensssage = ""
       HoraMenssagem = None  # Inicializa como None por segurança
+      ultima_menssagem_remitente_id = None
+      ultima_menssagem_lida = False
 
       try:
         ultima_menssagem = (
@@ -42,6 +44,8 @@ class Meus_amigos:
         if ultima_menssagem:
           lastMensssage = ultima_menssagem.menssagem
           HoraMenssagem = ultima_menssagem.data_envio
+          ultima_menssagem_remitente_id = ultima_menssagem.id_remitente
+          ultima_menssagem_lida = bool(ultima_menssagem.lida)
       except Exception as erro:
         print(f"ainda não foram criadas nenhuma menssagem nesta sala: {erro}")
 
@@ -67,6 +71,8 @@ class Meus_amigos:
           "quantidade_menssagem_nao_lida": quantidade_menssagem_nao_lida,
           "status": status,
           "ultima_menssagem": lastMensssage,
+          "ultima_menssagem_remitente_id": ultima_menssagem_remitente_id,
+          "ultima_menssagem_lida": ultima_menssagem_lida,
           "HoraMenssagem": HoraMenssagem,
           "estado_privado_usuario":estado_privado_usuario,
           "estado_bloqueado_usuario":estado_bloqueado_usuario,

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>15 estilos de campo de mensagem</title>
+<style>
+:root{--pg:#f5f5f7;--cd:#fff;--tx:#17171a;--mu:#6b6b76;--ln:#e4e4ea;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--pg:#101013;--cd:#1a1a1f;--tx:#f1f1f4;--mu:#9a9aa6;--ln:#2a2a31}}
+:root[data-theme="dark"]{--pg:#101013;--cd:#1a1a1f;--tx:#f1f1f4;--mu:#9a9aa6;--ln:#2a2a31}
+*{box-sizing:border-box}
+body{margin:0;background:var(--pg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:40px 20px 56px}
+h1{font-size:30px;letter-spacing:-.02em;margin:0 0 6px}
+.lead{color:var(--mu);margin:0 0 28px;max-width:60ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px}
+.card{background:var(--cd);border:1px solid var(--ln);border-radius:16px;padding:16px;min-width:0}
+.card h2{font-size:15px;margin:0}
+.card p{font-size:13px;color:var(--mu);margin:0 0 12px}
+/* base */
+.stage{border-radius:12px;padding:14px;background:var(--bg);display:flex;flex-direction:column;gap:12px;height:260px;overflow:hidden;color:var(--tx0,#111)}
+.th{flex:1;overflow:auto;display:flex;flex-direction:column;gap:6px;min-height:0}
+.b{padding:8px 12px;border-radius:var(--r,14px);max-width:82%;font-size:14px;line-height:1.35;background:var(--in);color:var(--inC);align-self:flex-start;word-break:break-word}
+.b.me{align-self:flex-end;background:var(--me);color:var(--meC)}
+.cmp{display:flex;align-items:flex-end;gap:8px;flex:none}
+textarea{flex:1;min-width:0;border:0;outline:0;background:transparent;resize:none;font:inherit;font-size:14px;color:inherit;max-height:110px;line-height:1.4;padding:0;margin:0}
+textarea::placeholder{color:var(--ph,#888);opacity:1}
+button{border:0;background:none;color:inherit;cursor:pointer;display:grid;place-items:center;padding:0;font:inherit}
+button:focus-visible,textarea:focus-visible{outline:2px solid #4c8dff;outline-offset:2px}
+svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.go{width:42px;height:42px;border-radius:50%;background:var(--ac);color:#fff;flex:none}
+.row{display:flex;align-items:center;gap:4px}
+.row button{width:28px;height:28px;border-radius:6px}
+.row svg{width:16px;height:16px}
+.row .sp{flex:1}
+.tg:not(.has) .send{display:none}.tg.has .mic{display:none}
+/* 1 clássica */
+.s1{--bg:#efe7dd;--me:#d9fdd3;--meC:#111;--in:#fff;--inC:#111;--ac:#00a884;--r:10px;--ph:#667781}
+.s1 .box{flex:1;display:flex;align-items:flex-end;gap:8px;background:#fff;border-radius:24px;padding:10px 12px;color:#667781;min-width:0}
+.s1 textarea{color:#111}
+/* 2 azul escura */
+.s2{--bg:#0e1621;--me:#2b5278;--meC:#fff;--in:#182533;--inC:#e8eef4;--r:12px;--ph:#6d7f92}
+.s2 .cmp{background:#17212b;border-radius:12px;padding:10px 12px;gap:10px;color:#7f91a4;align-items:center}
+.s2 textarea{color:#e8eef4}.s2 .send,.s2 .mic{color:#5fa8e8}
+/* 3 iOS */
+.s3{--bg:#fff;--me:#0a84ff;--meC:#fff;--in:#e9e9eb;--inC:#111;--r:18px;--ph:#8e8e93}
+.s3 .plus{width:34px;height:34px;border-radius:50%;background:#e9e9eb;color:#555;flex:none}
+.s3 .box{flex:1;display:flex;align-items:flex-end;gap:6px;border:1px solid #c8c8cc;border-radius:20px;padding:6px 6px 6px 14px;min-width:0}
+.s3 textarea{padding:3px 0}
+.s3 .go{width:28px;height:28px;background:#0a84ff}.s3 .go.mic{background:none;color:#8e8e93}
+/* 4 equipa */
+.s4{--bg:#f8f8f8;--me:#1264a3;--meC:#fff;--in:#fff;--inC:#1d1c1d;--r:8px;--ph:#868686}
+.s4 .cmp,.s10 .cmp,.s13 .cmp{flex-direction:column;align-items:stretch;gap:6px}
+.s4 .cmp{background:#fff;border:1px solid #bbb;border-radius:10px;padding:8px 10px;color:#616061}
+.s4 .cmp:focus-within{border-color:#1264a3;box-shadow:0 0 0 1px #1264a3}
+.s4 textarea{color:#1d1c1d}.s4 .row button:hover{background:#f0f0f0}
+.s4 .go{border-radius:5px;width:34px;height:28px;background:#007a5a}
+/* 5 comunidade */
+.s5{--bg:#313338;--me:#5865f2;--meC:#fff;--in:#2b2d31;--inC:#dbdee1;--r:10px;--ph:#949ba4}
+.s5 .cmp{background:#383a40;border-radius:10px;padding:10px 12px;align-items:center;gap:10px;color:#b5bac1}
+.s5 textarea{color:#dbdee1}
+.s5 .plus{width:24px;height:24px;border-radius:50%;background:#b5bac1;color:#383a40;flex:none}
+.s5 .plus svg{width:14px;height:14px;stroke-width:3}.s5 .send{color:#8c96ff}
+/* 6 linha */
+.s6{--bg:#fafafa;--me:#111;--meC:#fff;--in:#eee;--inC:#111;--r:2px;--ph:#999}
+.s6 .cmp{border-bottom:2px solid #111;padding-bottom:8px;gap:12px;transition:border-color .2s}
+.s6 .cmp:focus-within{border-color:#e4572e}
+.s6 .send{font-weight:600;font-size:14px;padding:4px 2px;color:#111}.s6 .send:hover{color:#e4572e}
+/* 7 vidro */
+.s7{--bg:linear-gradient(135deg,#6a5cff,#ff6ab0);--me:rgba(255,255,255,.3);--meC:#fff;--in:rgba(255,255,255,.15);--inC:#fff;--ph:rgba(255,255,255,.75);--tx0:#fff}
+.s7 .cmp{background:rgba(255,255,255,.18);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.45);border-radius:22px;padding:8px 8px 8px 16px;align-items:center}
+.s7 .go{background:#fff;color:#6a5cff}
+/* 8 neumórfico */
+.s8{--bg:#e4e9f1;--me:#e4e9f1;--meC:#2a3350;--in:#e4e9f1;--inC:#2a3350;--ph:#8b94a8;--tx0:#2a3350}
+.s8 .b{box-shadow:3px 3px 7px #c5cad3,-3px -3px 7px #fff}
+.s8 .cmp{box-shadow:inset 5px 5px 10px #c5cad3,inset -5px -5px 10px #fff;border-radius:22px;padding:10px 12px 10px 18px;align-items:center;color:#2a3350}
+.s8 .go{background:#e4e9f1;color:#4a6cf7;box-shadow:4px 4px 8px #c5cad3,-4px -4px 8px #fff}
+.s8 .go:active{box-shadow:inset 3px 3px 6px #c5cad3,inset -3px -3px 6px #fff}
+/* 9 terminal */
+.s9{--bg:#0a110e;--ph:#3f6b55;--tx0:#7dffb0;font-family:ui-monospace,Menlo,Consolas,monospace}
+.s9 .b,.s9 .b.me,.s9 .b.in{background:none;padding:0;color:#7dffb0;max-width:100%;align-self:flex-start;border-radius:0}
+.s9 .b.in{color:#4fb383}.s9 .b.me::before{content:"$ "}.s9 .b.in::before{content:"> "}
+.s9 .cmp{border-top:1px dashed #21443a;padding-top:10px;align-items:center;gap:8px;color:#7dffb0}
+.s9 .cmp::before{content:"$"}
+.s9 textarea{caret-color:#7dffb0;font-family:inherit;font-size:13px}
+.s9 .send{font-size:12px;border:1px solid #2c5e47;padding:5px 10px;border-radius:3px}
+.s9 .send:hover{background:#7dffb0;color:#0a110e}
+/* 10 IA */
+.s10{--bg:#0f1020;--me:#2a2c52;--meC:#fff;--in:transparent;--inC:#c9cbe8;--r:14px;--ph:#7d80a8;--tx0:#fff}
+.s10 .b.in{padding-left:0}
+.s10 .cmp{padding:12px 12px 10px 14px;border:1.5px solid transparent;border-radius:18px;background:linear-gradient(#15172e,#15172e) padding-box,linear-gradient(120deg,#7c5cff,#27c4f5,#ff7ac6) border-box;color:#9aa0d0}
+.s10 textarea{color:#fff}.s10 .row button:hover{background:#ffffff14}
+.s10 .row .pill{width:auto;padding:0 10px;gap:6px;font-size:12px;border:1px solid #ffffff2a;border-radius:99px;display:flex;align-items:center}
+.s10 .go{width:32px;height:32px;background:linear-gradient(135deg,#7c5cff,#27c4f5)}
+/* 11 apoio */
+.s11{--bg:#f1f5fa;--me:#1d5bd6;--meC:#fff;--in:#fff;--inC:#1b2430;--r:12px;--ph:#8a96a6}
+.chips{display:flex;flex-wrap:wrap;gap:6px;flex:none}
+.chips button{font-size:12px;padding:5px 10px;border-radius:99px;border:1px solid #c9d6ea;background:#fff;color:#1d5bd6}
+.chips button:hover{background:#e6eefb}
+.s11 .cmp{background:#fff;border:1px solid #d5deea;border-radius:12px;padding:8px;align-items:center;gap:6px;color:#6b7a90}
+.s11 textarea{color:#1b2430}
+.s11 .send{background:#1d5bd6;color:#fff;border-radius:8px;padding:0 14px;height:34px;font-size:13px;font-weight:600}
+/* 12 neon */
+.s12{--bg:#07060f;--me:#2a0a2e;--meC:#ffd6fa;--in:#0b1a24;--inC:#bff8ff;--r:4px;--ph:#8a6a98;--tx0:#fff}
+.s12 .b.me{border:1px solid #ff2bd6}.s12 .b.in{border:1px solid #00f0ff55}
+.s12 .cmp{border:1.5px solid #ff2bd6;border-radius:6px;padding:8px 8px 8px 14px;align-items:center;box-shadow:0 0 14px #ff2bd677,inset 0 0 10px #ff2bd633;transition:box-shadow .2s}
+.s12 .cmp:focus-within{box-shadow:0 0 22px #ff2bd6,inset 0 0 14px #ff2bd655}
+.s12 .go{border-radius:4px;background:#00f0ff;color:#07060f;box-shadow:0 0 12px #00f0ff;width:38px;height:34px}
+/* 13 editor */
+.s13{--bg:#f4f4f6;--me:#18181b;--meC:#fff;--in:#fff;--inC:#18181b;--r:14px;--ph:#9a9aa3}
+.s13 .cmp{background:#fff;border:1px solid #e2e2e8;border-radius:16px;padding:12px 12px 10px;box-shadow:0 1px 2px #0001;color:#71717a}
+.s13 textarea{color:#18181b}.s13 .row button:hover{background:#f0f0f3}
+.cnt{font-size:12px;color:#9a9aa3;margin-right:8px}
+.s13 .send{background:#18181b;color:#fff;border-radius:99px;padding:0 14px;height:32px;font-size:13px;font-weight:600;gap:6px;display:flex;align-items:center}
+/* 14 brutalista */
+.s14{--bg:#ffe14d;--me:#000;--meC:#ffe14d;--in:#fff;--inC:#000;--r:0;--ph:#555;font-weight:600}
+.s14 .b{border:2px solid #000}
+.s14 .cmp{background:#fff;border:3px solid #000;box-shadow:5px 5px 0 #000;padding:8px;align-items:center;gap:8px}
+.s14 .send{background:#000;color:#ffe14d;padding:0 14px;height:36px;font-weight:800;font-size:13px}
+.s14 .send:active{transform:translate(2px,2px)}
+/* 15 voz */
+.s15{--bg:#e8f3f0;--me:#0f766e;--meC:#fff;--in:#fff;--inC:#12312d;--r:16px;--ph:#6b8c86;--ac:#0f766e}
+.s15 .cmp{background:#fff;border-radius:30px;padding:7px 7px 7px 18px;align-items:center;gap:8px;box-shadow:0 2px 10px #0f766e22;color:#12312d}
+.s15 .go.mic{width:44px;height:44px}.s15 .go.send{background:#12312d}
+.vm:not(.has):not(.rec) .send{display:none}
+.wave{display:none;flex:1;align-items:center;gap:3px;height:24px;color:#dc2626;font-size:13px}
+.wave b{width:3px;border-radius:2px;background:#dc2626;animation:w .9s ease-in-out infinite;height:6px}
+.wave b:nth-child(2){animation-delay:.15s}.wave b:nth-child(3){animation-delay:.3s}.wave b:nth-child(4){animation-delay:.45s}.wave b:nth-child(5){animation-delay:.6s}
+.wave span{margin-left:8px}
+.rec .wave{display:flex}.rec textarea{display:none}
+.rec .mic{background:#dc2626;animation:p 1.2s infinite}
+@keyframes w{50%{height:20px}}
+@keyframes p{0%{box-shadow:0 0 0 0 #dc262666}100%{box-shadow:0 0 0 14px #dc262600}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<h1>15 estilos de campo de mensagem</h1>
+<p class="lead">Cada campo funciona: escreve e prime Enter para enviar. Shift+Enter muda de linha.</p>
+<div class="grid">
+
+<article class="card"><h2>Mensageria clássica</h2><p>Apps de conversas pessoais</p>
+<div class="stage s1" data-in="Chegas a que horas?"><div class="th"></div>
+<div class="cmp tg"><div class="box"><button aria-label="Emojis"><i data-i="smile"></i></button><textarea rows="1" placeholder="Escreve uma mensagem"></textarea><button aria-label="Anexar"><i data-i="clip"></i></button></div><button class="go send" aria-label="Enviar"><i data-i="send"></i></button><button class="go mic" aria-label="Gravar voz"><i data-i="mic"></i></button></div></div></article>
+
+<article class="card"><h2>Barra escura azul</h2><p>Chats rápidos com muitos grupos</p>
+<div class="stage s2" data-in="Já viste o ficheiro novo?"><div class="th"></div>
+<div class="cmp tg"><button aria-label="Anexar"><i data-i="clip"></i></button><textarea rows="1" placeholder="Mensagem"></textarea><button aria-label="Emojis"><i data-i="smile"></i></button><button class="send" aria-label="Enviar"><i data-i="send"></i></button><button class="mic" aria-label="Gravar voz"><i data-i="mic"></i></button></div></div></article>
+
+<article class="card"><h2>Pílula minimalista</h2><p>Mensagens curtas e limpas</p>
+<div class="stage s3" data-in="Tens um minuto?"><div class="th"></div>
+<div class="cmp tg"><button class="plus" aria-label="Mais"><i data-i="plus"></i></button><div class="box"><textarea rows="1" placeholder="iMessage"></textarea><button class="go send" aria-label="Enviar"><i data-i="up"></i></button><button class="go mic" aria-label="Gravar voz"><i data-i="mic"></i></button></div></div></div></article>
+
+<article class="card"><h2>Compositor de equipa</h2><p>Trabalho colaborativo com formatação</p>
+<div class="stage s4" data-in="Podes rever o PR até às 15h?"><div class="th"></div>
+<div class="cmp"><div class="row"><button aria-label="Negrito"><i data-i="bold"></i></button><button aria-label="Itálico"><i data-i="italic"></i></button><button aria-label="Link"><i data-i="link"></i></button><button aria-label="Código"><i data-i="code"></i></button></div><textarea rows="1" placeholder="Mensagem para #geral"></textarea><div class="row"><button aria-label="Anexar"><i data-i="clip"></i></button><button aria-label="Emojis"><i data-i="smile"></i></button><span class="sp"></span><button class="go send" aria-label="Enviar"><i data-i="send"></i></button></div></div></div></article>
+
+<article class="card"><h2>Comunidade escura</h2><p>Servidores e canais de comunidade</p>
+<div class="stage s5" data-in="Bem-vindo ao canal #geral!"><div class="th"></div>
+<div class="cmp"><button class="plus" aria-label="Adicionar"><i data-i="plus"></i></button><textarea rows="1" placeholder="Conversar em #geral"></textarea><button aria-label="Emojis"><i data-i="smile"></i></button><button class="send" aria-label="Enviar"><i data-i="send"></i></button></div></div></article>
+
+<article class="card"><h2>Linha minimalista</h2><p>Interfaces editoriais e discretas</p>
+<div class="stage s6" data-in="Obrigado pelo envio."><div class="th"></div>
+<div class="cmp"><textarea rows="1" placeholder="Escreve aqui"></textarea><button class="send">Enviar</button></div></div></article>
+
+<article class="card"><h2>Vidro fosco</h2><p>Apps modernas com fundo colorido</p>
+<div class="stage s7" data-in="Que tal este fundo?"><div class="th"></div>
+<div class="cmp"><textarea rows="1" placeholder="Diz algo..."></textarea><button class="go send" aria-label="Enviar"><i data-i="send"></i></button></div></div></article>
+
+<article class="card"><h2>Neumórfico</h2><p>Visual suave em relevo</p>
+<div class="stage s8" data-in="Tudo pronto por aqui."><div class="th"></div>
+<div class="cmp"><textarea rows="1" placeholder="Escreve a tua mensagem"></textarea><button class="go send" aria-label="Enviar"><i data-i="send"></i></button></div></div></article>
+
+<article class="card"><h2>Terminal</h2><p>Ferramentas para programadores</p>
+<div class="stage s9" data-in="sessão iniciada. escreve um comando."><div class="th"></div>
+<div class="cmp"><textarea rows="1" placeholder="digita aqui"></textarea><button class="send">enviar</button></div></div></article>
+
+<article class="card"><h2>Assistente de IA</h2><p>Chats com assistentes inteligentes</p>
+<div class="stage s10" data-in="Olá! Em que posso ajudar hoje?"><div class="th"></div>
+<div class="cmp"><textarea rows="1" placeholder="Pergunta qualquer coisa"></textarea><div class="row"><button aria-label="Anexar"><i data-i="clip"></i></button><button class="pill"><i data-i="spark"></i>Pensar</button><span class="sp"></span><button class="go send" aria-label="Enviar"><i data-i="up"></i></button></div></div></div></article>
+
+<article class="card"><h2>Apoio ao cliente</h2><p>Helpdesk com respostas rápidas</p>
+<div class="stage s11" data-in="Olá! Como podemos ajudar?"><div class="th"></div>
+<div class="chips"><button data-fill="Onde está o meu pedido?">Onde está o meu pedido?</button><button data-fill="Quero falar com uma pessoa">Falar com uma pessoa</button></div>
+<div class="cmp"><button aria-label="Anexar"><i data-i="clip"></i></button><textarea rows="1" placeholder="Descreve o teu problema"></textarea><button class="send">Enviar</button></div></div></article>
+
+<article class="card"><h2>Neon gaming</h2><p>Chats de jogos e comunidades gamer</p>
+<div class="stage s12" data-in="Pronto para a partida?"><div class="th"></div>
+<div class="cmp"><textarea rows="1" placeholder="Escreve para a equipa"></textarea><button class="go send" aria-label="Enviar"><i data-i="send"></i></button></div></div></article>
+
+<article class="card"><h2>Editor com contador</h2><p>Publicações e mensagens com limite</p>
+<div class="stage s13" data-in="Escreve a tua atualização."><div class="th"></div>
+<div class="cmp"><textarea rows="2" placeholder="O que queres partilhar?" maxlength="280"></textarea><div class="row"><button aria-label="Imagem"><i data-i="img"></i></button><button aria-label="Anexar"><i data-i="clip"></i></button><button aria-label="Emojis"><i data-i="smile"></i></button><span class="sp"></span><span class="cnt" data-max="280">0/280</span><button class="send"><i data-i="send"></i>Enviar</button></div></div></div></article>
+
+<article class="card"><h2>Brutalista</h2><p>Marcas com personalidade forte</p>
+<div class="stage s14" data-in="Sem rodeios: diz o que precisas."><div class="th"></div>
+<div class="cmp"><textarea rows="1" placeholder="Escreve já"></textarea><button class="send">ENVIAR</button></div></div></article>
+
+<article class="card"><h2>Voz primeiro</h2><p>Carrega no microfone para gravar</p>
+<div class="stage s15" data-in="Envia texto ou uma nota de voz."><div class="th"></div>
+<div class="cmp vm"><textarea rows="1" placeholder="Escreve ou grava"></textarea><span class="wave"><b></b><b></b><b></b><b></b><b></b><span>A gravar</span></span><button class="go mic" aria-label="Gravar voz"><i data-i="mic"></i></button><button class="go send" aria-label="Enviar"><i data-i="send"></i></button></div></div></article>
+
+</div>
+</main>
+<script>
+const I={
+send:"M22 2L11 13M22 2l-7 20-4-9-9-4z",
+up:"M12 19V5M5 12l7-7 7 7",
+clip:"M21 12l-9 9a6 6 0 01-9-9l9-9a4 4 0 016 6l-9 9a2 2 0 01-3-3l8-8",
+smile:"M12 2a10 10 0 100 20 10 10 0 000-20zM8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01",
+mic:"M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3zM19 10v2a7 7 0 01-14 0v-2M12 19v3",
+plus:"M12 5v14M5 12h14",
+bold:"M6 4h8a4 4 0 010 8H6zM6 12h9a4 4 0 010 8H6z",
+italic:"M19 4h-9M14 20H5M15 4L9 20",
+link:"M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1",
+code:"M16 18l6-6-6-6M8 6l-6 6 6 6",
+img:"M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zM8.5 8.5h.01M21 15l-5-5L5 21",
+spark:"M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"};
+document.querySelectorAll("i[data-i]").forEach(e=>{e.outerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+I[e.dataset.i]+'"/></svg>'});
+document.querySelectorAll(".stage").forEach(st=>{
+ const th=st.querySelector(".th"),c=st.querySelector(".cmp"),f=c.querySelector("textarea"),cnt=c.querySelector(".cnt");
+ const add=(t,k)=>{const d=document.createElement("div");d.className="b "+k;d.textContent=t;th.append(d);th.scrollTop=th.scrollHeight};
+ add(st.dataset.in,"in");
+ const upd=()=>{f.style.height="auto";f.style.height=Math.min(f.scrollHeight,110)+"px";c.classList.toggle("has",!!f.value.trim());if(cnt)cnt.textContent=f.value.length+"/"+cnt.dataset.max};
+ const send=()=>{const t=f.value.trim();
+  if(!t){if(c.classList.contains("rec")){add("Mensagem de voz · 0:04","me");c.classList.remove("rec");upd()}return}
+  add(t,"me");f.value="";upd();c.classList.remove("rec")};
+ f.addEventListener("input",upd);
+ f.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
+ c.querySelectorAll(".send").forEach(b=>b.onclick=send);
+ st.querySelectorAll("[data-fill]").forEach(b=>b.onclick=()=>{f.value=b.dataset.fill;upd();f.focus()});
+ c.querySelectorAll(".mic").forEach(b=>b.onclick=()=>{if(c.classList.contains("vm")){c.classList.toggle("rec")}});
+});
+</script>
+</body>
+</html>

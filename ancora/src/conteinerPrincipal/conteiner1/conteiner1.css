@@ -13,3 +13,92 @@
         height: 90%;
     }
 }
+
+.conteinerPrincipal[data-chat-theme-palette]{
+    color: var(--chat-theme-foreground);
+    background: var(--chat-wallpaper);
+}
+.conteinerPrincipal[data-chat-theme-palette] .GeralChatMenuTopTextP,
+.conteinerPrincipal[data-chat-theme-palette] .GeralChatDadosObject h5,
+.conteinerPrincipal[data-chat-theme-palette] .GeralChatDadosTexto li{
+    color: var(--chat-theme-muted) !important;
+}
+.conteinerPrincipal[data-chat-theme-palette] .GeralChatDadosTexto b,
+.conteinerPrincipal[data-chat-theme-palette] .GeralChatMenuTopText h2,
+.conteinerPrincipal[data-chat-theme-palette] .GeralChatMenuTopText h3,
+.conteinerPrincipal[data-chat-theme-palette] .GeralChatMenuTopText,
+.conteinerPrincipal[data-chat-theme-palette] .GeralChatDadosTexto{
+    color: var(--chat-theme-foreground);
+}
+.conteinerPrincipal[data-chat-theme-palette] .GeralChatDados:hover:not(.dadosActive){
+    background: #80808020;
+}
+.conteinerPrincipal[data-chat-theme-palette] .GeralChatMenuTopIcone button{
+    color: var(--chat-theme-foreground);
+    background: transparent;
+}
+.conteinerPrincipal[data-chat-theme-palette] .GeralChatMenuTopIcone button:hover{
+    background: #80808022;
+}
+
+.conteinerPrincipal[data-chat-theme-palette] > .menuConteinerLeft{
+    color: var(--chat-theme-foreground);
+    background: var(--chat-theme-bar);
+    border-right: 1px solid #80808055;
+}
+.conteinerPrincipal[data-chat-theme-palette] .boxTopMenuConteinerLeftBTN li,
+.conteinerPrincipal[data-chat-theme-palette] .boxTopMenuConteinerLeft svg,
+.conteinerPrincipal[data-chat-theme-palette] .theme-toggle{
+    color: var(--chat-theme-foreground);
+}
+.conteinerPrincipal[data-chat-theme-palette] .boxTopMenuConteinerLeftBTN > button:not(.btn2){
+    color: var(--chat-theme-foreground);
+    background: transparent;
+}
+.conteinerPrincipal[data-chat-theme-palette] .boxTopMenuConteinerLeftBTN > button:not(.btn2):hover{
+    background: #80808022;
+}
+.conteinerPrincipal[data-chat-theme-palette] .boxTopMenuConteinerLeftBTN > .btn2{
+    color: var(--chat-message-own-text);
+    background: var(--chat-message-own-bg);
+}
+.conteinerPrincipal[data-chat-theme-palette] .boxTopMenuConteinerLeftBTN > .btn2 svg{
+    color: var(--chat-message-own-text);
+}
+.conteinerPrincipal[data-chat-theme-palette] .theme-toggle:active{
+    color: var(--chat-message-own-text);
+    background: var(--chat-message-own-bg);
+}
+.conteinerPrincipal[data-chat-theme-palette] .conteiner1{
+    background: transparent;
+}
+.conteinerPrincipal[data-chat-theme-palette] > :is(
+    .conteiner1,
+    .Conteiner2,
+    .Conteiner3,
+    .Conteiner,
+    .Conteiner5,
+    .Conteiner6,
+    .Conteiner8,
+    .Conteiner9
+){
+    color: var(--chat-theme-foreground);
+    background: var(--chat-wallpaper);
+}
+.conteinerPrincipal[data-chat-theme-palette] .conteiner1 .conteinerLeft{
+    background: var(--chat-theme-bar);
+    border-right-color: #80808055;
+    color: var(--chat-theme-foreground);
+}
+.conteinerPrincipal[data-chat-theme-palette] :is(
+    .conteiner2,
+    .conteiner3,
+    .conteiner4,
+    .conteiner5,
+    .conteiner6,
+    .conteiner7,
+    .conteiner8,
+    .conteiner9
+){
+    color: var(--chat-theme-foreground);
+}

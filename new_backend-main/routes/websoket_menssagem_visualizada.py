@@ -17,6 +17,7 @@ def menssagem_visualizada (data):
             lida = False
         ).all()
 
+        remetentes_notificar = {str(msg.id_remitente) for msg in mensagens_para_marcar}
         for msg in mensagens_para_marcar:
             msg.lida = True
         
@@ -33,12 +34,14 @@ def menssagem_visualizada (data):
             "id_amigo": id_amigo # O ID do amigo que deve ficar com 0 na minha lista
         }, room=str(meu_id))
 
-        # 3. NOVIDADE: AVISA O AMIGO (O Remetente) que as mensagens dele foram lidas
-            # Enviamos para a sala para que o Frontend dele atualize os checks
-        emit("confirmacao_leitura_remetente", {
+        # Avisa os remetentes na sala pessoal para atualizar os checks mesmo
+        # quando não estão com a conversa aberta.
+        confirmacao = {
                 "nossa_sala": nossa_sala,
                 "lido_por": meu_id
-            }, room=nossa_sala, include_self=False)
+            }
+        for id_remetente in remetentes_notificar:
+            emit("confirmacao_leitura_remetente", confirmacao, room=id_remetente)
 
     except Exception as erro:
         db.session.rollback()

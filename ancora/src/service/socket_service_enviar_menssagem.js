@@ -33,5 +33,11 @@ export function Enviar_menssagem(
     socket.emit("enviar_menssagem_na_sala" , dados, (result) => onResult?.(result))
     socket.emit("nova_quantidade_de_menssagem" , dados)
     const horaMensagem = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    useUserStore.getState().atualizarUltimaMensagemChat(nossa_sala, menssagem, horaMensagem);
+    useUserStore.getState().atualizarUltimaMensagemChat(
+        nossa_sala,
+        menssagem,
+        horaMensagem,
+        dadosUsuario.id,
+        false
+    );
 }

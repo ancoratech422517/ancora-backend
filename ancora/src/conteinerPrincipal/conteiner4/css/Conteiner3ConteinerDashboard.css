@@ -1,9 +1,20 @@
 .Conteiner3ConteinerDashboard{
     width: 100%;
     height: 85%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+@media screen and (min-width: 701px) {
+    .Conteiner3ConteinerDashboard > .Conteiner4RightWindowBoxCenter {
+        flex: 0 0 30%;
+        min-height: 0;
+    }
 }
 @media screen and (max-width: 700px) {
     .Conteiner3ConteinerDashboard{
+        display: block;
         overflow: hidden;
         overflow-y: scroll;
         scrollbar-width: none;

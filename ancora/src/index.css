@@ -62,7 +62,7 @@ body{
   --surface-hover: #f3f4f6;
   --surface-sunken: #e5e7eb;
   --surface-deep: #0f172a;
-  --chat-wallpaper: linear-gradient(135deg, #f3f7f7 0%, #e8f1f0 55%, #f6f8f8 100%);
+  --chat-wallpaper: radial-gradient(#00000026 1px, transparent 1.2px) 0 0 / 16px 16px, #f4f5f7;
   --chat-dot-color: #e3ebea;
   --chat-message-own-bg: #0d9488;
   --chat-message-own-text: #ffffff;
@@ -158,9 +158,10 @@ body{
   --surface-hover: #263333;
   --surface-sunken: #111819;
   --surface-deep: #0b1112;
-  --chat-wallpaper: linear-gradient(135deg, #101819 0%, #172223 55%, #11191a 100%);
+  --chat-wallpaper: url("./assets/fundo/chat-claro.png") center / cover no-repeat;
   --chat-dot-color: #233031;
   --chat-message-own-bg: #146b64;
+  --mm: rgb(251, 241, 188);
   --chat-message-own-text: #f5faf9;
   --chat-message-other-bg: #202a2b;
   --chat-message-other-text: #edf4f2;

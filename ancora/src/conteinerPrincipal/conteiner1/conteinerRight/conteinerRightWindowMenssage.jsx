@@ -8,6 +8,8 @@ import CheckOne from "../../components/conteinerSvg/chcke_one";
 import CheckTwo from "../../components/conteinerSvg/check_two";
 import Loading3 from "../../components/conteinerComponentesJsx/loading3";
 // Função para gerar as iniciais
+
+
 const getInitials = (nome) => {
   if (!nome || typeof nome !== "string") return "?";
   return nome

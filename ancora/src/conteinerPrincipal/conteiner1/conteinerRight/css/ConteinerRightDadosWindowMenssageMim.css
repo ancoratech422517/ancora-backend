@@ -46,7 +46,7 @@
     /* 1. ADICIONADO: Necessário para prender a pontinha ao balão */
     position: relative; 
     
-    background-color: var(--chat-message-own-bg);
+    background: var(--chat-message-own-bg);
     
     /* 2. PADRONIZADO: Canto superior direito reto (0px) para encaixar a ponta. Resto em 10px. */
     border-radius: 8px 0px 8px 8px; 
@@ -83,7 +83,7 @@
     height: 0;
     border-top: 0px solid transparent;
     border-bottom: 10px solid transparent;
-    border-left: 10px solid var(--chat-message-own-bg); /* O triângulo usa a exata mesma cor do balão */
+    border-left: 10px solid var(--chat-message-own-tail, var(--chat-message-own-bg));
 
 }
 
@@ -161,4 +161,16 @@
     top: 0;
     border: 1px solid var(--status-danger);
 
+}
+
+.ConeinerRightConteudo:is([data-chat-theme], [data-chat-theme-mode="animated"]) .horaMim{
+    color: var(--chat-message-own-muted);
+}
+.ConeinerRightConteudo:is([data-chat-theme], [data-chat-theme-mode="animated"]) .responder_menssagem_usuario{
+    background: #00000018;
+    border-left-color: var(--chat-theme-reply-accent);
+}
+.ConeinerRightConteudo:is([data-chat-theme], [data-chat-theme-mode="animated"]) .responder_menssagem_usuario h3,
+.ConeinerRightConteudo:is([data-chat-theme], [data-chat-theme-mode="animated"]) .responder_menssagem_usuario em{
+    color: var(--chat-message-own-text);
 }

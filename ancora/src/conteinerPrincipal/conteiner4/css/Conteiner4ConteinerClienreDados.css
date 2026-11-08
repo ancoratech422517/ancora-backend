@@ -1,76 +1,131 @@
-.Conteiner4ConteinerClienreDados{
-    width: 98%;
-    height: 15%;
-    border-radius: 10px;
-    margin: 4% auto;
+.cliente-item {
     display: flex;
-    text-align: left;
+    flex: 0 0 auto;
     align-items: center;
-    padding-left: 1%;
-    gap: 10px;
+    gap: 14px;
+    opacity: 0;
+    transform: translateX(18px);
+    animation: cliente-item-in .6s cubic-bezier(.2, .8, .2, 1) forwards;
 }
-.Conteiner4ConteinerClienreDadosIcone{
+
+.cliente-avatar {
+    position: relative;
+    display: grid;
+    flex: none;
     width: 70px;
     height: 70px;
-    background-color: var(--surface-3);
-    border: 1px solid var(--border);
+    place-items: center;
+    border: 1px solid var(--client-line);
     border-radius: 50%;
+    background: var(--client-avatar);
+    color: var(--client-dark);
+    font-size: 20px;
+    font-weight: 700;
+}
 
+.cliente-avatar::after {
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
+    width: 13px;
+    height: 13px;
+    border: 2px solid var(--surface);
+    border-radius: 50%;
+    background: #2ecc71;
+    content: "";
 }
-.Conteiner4ConteinerClienreDadosText{
-    width: 50%;
-    height: 70px;
+
+.cliente-dados {
+    flex: 1;
+    min-width: 0;
+}
+
+.cliente-dados b {
+    display: block;
+    color: var(--client-ink);
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.cliente-dados span {
+    color: var(--client-ink);
+    font-size: 15px;
+    opacity: .85;
+}
+
+.cliente-conversar {
     display: flex;
-    flex-direction: column;
-    text-align: left;
-    justify-content: center;
-    gap: 5px;
-}
-.Conteiner4ConteinerClienreDadosText b{
-    font-size: 1.1em;
-}
-.Conteiner4ConteinerClienreDadosBtn{
-    width: 25%;
-    height: 70px;
-    display: flex;
-    text-align: center;
+    flex: none;
     align-items: center;
-    justify-content: center;
-    gap: 5px;
-}
-.Conteiner4ConteinerClienreDadosBtn button{
-    width: 90%;
-    height: 7vh;
-    background-color: var(--surface-deep);
-    color: var(--text-on-primary);
-    border: none;
-    border-radius: 40px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: .2s ease;
-    display: flex;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
     gap: 10px;
+    height: 57px;
+    padding: 0 26px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--client-button);
+    color: #fff;
+    font: 700 13.5px 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background .25s, transform .2s, box-shadow .25s;
 }
-.Conteiner4ConteinerClienreDadosBtn button:hover{
-    transition: .2s ease;
-    background-color: var(--teal-500);
-    border: none;
+
+.cliente-conversar svg {
+    width: 19px;
+    height: 19px;
+    transition: transform .25s;
 }
-.Conteiner4ConteinerClienreDadosBtn button:active{
-    transform: scale(0.9);
+
+.cliente-conversar:hover,
+.cliente-conversar:focus-visible {
+    outline: none;
+    background: var(--client-dark);
+    box-shadow: 0 8px 20px rgba(15, 143, 134, .35);
 }
-.Conteiner4ConteinerClienreDadosBtn svg{
-    color: var(--text-on-primary);
+
+.cliente-conversar:hover svg {
+    transform: translate(3px, -2px) rotate(-8deg);
 }
-@media screen and (max-width: 700px) {
-    .Conteiner4ConteinerClienreDadosBtn {
-        width: 30%;
+
+.cliente-conversar:active {
+    transform: scale(.96);
+}
+
+@keyframes cliente-item-in {
+    to {
+        opacity: 1;
+        transform: none;
     }
-    .Conteiner4ConteinerClienreDadosBtn button{
-        height: 6vh;
-        font-size: 12px;
+}
+
+@media (max-width: 700px) {
+    .cliente-avatar {
+        width: 54px;
+        height: 54px;
+    }
+
+    .cliente-dados b {
+        font-size: 15px;
+    }
+
+    .cliente-dados span {
+        font-size: 13px;
+    }
+
+    .cliente-conversar {
+        height: 48px;
+        padding: 0 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cliente-item {
+        opacity: 1;
+        transform: none;
+        animation: none;
+    }
+
+    .cliente-conversar,
+    .cliente-conversar svg {
+        transition: none;
     }
 }

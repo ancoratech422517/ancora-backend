@@ -13,7 +13,7 @@ import { useUserStore } from "../../useUseSotore";
 import { Tirar_formulario } from "./js/tirar_formulario";
 export default function Conteiner4RightWindow () {
     const [telaAtiva , setTelaAtiva] = useState("dashboard")
-    const {socket , dadosUsuario} = useUserStore()
+    const {dadosUsuario} = useUserStore()
     const RenderizarConteiner = ()=>{
         switch(telaAtiva){
             case "dashboard":
@@ -33,7 +33,9 @@ export default function Conteiner4RightWindow () {
     return (
         <div className="Conteiner4RightWindow">
             <Conteiner4RighrWindowMenuTop ativarConteiner = {setTelaAtiva} />
-            {RenderizarConteiner()}
+            <div className={`Conteiner4RightWindowConteudo${telaAtiva === "cliente" ? " Conteiner4RightWindowConteudo--cliente" : ""}${telaAtiva === "afiliado" ? " Conteiner4RightWindowConteudo--afiliado" : ""}`}>
+                {RenderizarConteiner()}
+            </div>
             <div className="Conteiner4ConteinerProdutoFormulario">
                 {/* INICIO DA FORMATAÇÃO DO NOVO PRODUTO */}
                 <div className="novo_produto">
@@ -70,4 +72,3 @@ export default function Conteiner4RightWindow () {
         </div>
     )
 }
-

@@ -5,7 +5,7 @@ import Imoge from "../../components/conteinerSvg/imoge";
 import Send from "../../components/conteinerSvg/send";
 import { useUserStore } from "../../../useUseSotore";
 import { Enviar_menssagem } from "../../../service/socket_service_enviar_menssagem";
-import EmojiPicker from 'emoji-picker-react';
+import EmojiPicker, { Theme as EmojiTheme } from 'emoji-picker-react';
 import Erro from "../../components/conteinerSvg/erro";
 import Audio from "../../components/conteinerSvg/audio";
 import Editar from "../../components/conteinerSvg/editar";
@@ -37,6 +37,8 @@ export default function ConteinerRightMenuBottom() {
 
     const [mostrarPicker, setMostrarPicker] = useState(false);
     const [mostrarGifs, setMostrarGifs] = useState(false);
+    const [mostrarMenuMedia, setMostrarMenuMedia] = useState(false);
+    const [temaEscuro, setTemaEscuro] = useState(() => document.documentElement.dataset.theme === "dark");
     const [gifs, setGifs] = useState([]);
     const [gravando, setGravando] = useState(false);
 
@@ -57,6 +59,17 @@ export default function ConteinerRightMenuBottom() {
 
     const xhrRef = useRef(null);
     const uploadStartTimeRef = useRef(null);
+
+    useEffect(() => {
+        const observer = new MutationObserver(() => {
+            setTemaEscuro(document.documentElement.dataset.theme === "dark");
+        });
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ["data-theme"],
+        });
+        return () => observer.disconnect();
+    }, []);
 
     const formatBytes = (bytes) => {
         if (bytes === 0) return "0 Bytes";
@@ -397,7 +410,7 @@ export default function ConteinerRightMenuBottom() {
         setMostrarGifs(false);
         TirarSelecao();
         setIdMenssagem(null);
-        textareaRef.current?.focus();
+        inputMensagemRef.current?.focus();
     };
 
     const cancelarEdicao = () => {
@@ -437,7 +450,7 @@ export default function ConteinerRightMenuBottom() {
         if (menu) menu.style.display = "none";
         TirarSelecao();
         setIdMenssagem(null);
-        textareaRef.current?.focus();
+        inputMensagemRef.current?.focus();
     };
 
     const tratarResultadoEnvio = (resultado) => {
@@ -640,18 +653,13 @@ export default function ConteinerRightMenuBottom() {
         );
     };
 
-    const textareaRef = useRef(null);
-    const adjustTextareaHeight = () => {
-        const textarea = textareaRef.current;
-        if (!textarea) return;
-        textarea.style.height = 'auto'; 
-        const maxHeightPx = parseFloat(getComputedStyle(textarea).maxHeight) || Infinity;
-        const newHeight = Math.min(textarea.scrollHeight, maxHeightPx);
-        textarea.style.height = `${newHeight}px`;
-    };
+    const inputMensagemRef = useRef(null);
 
     useEffect(() => {
-        adjustTextareaHeight();
+        const input = inputMensagemRef.current;
+        if (!input) return;
+        input.style.height = "auto";
+        input.style.height = `${Math.min(input.scrollHeight, 96)}px`;
     }, [texto]);
 
     useEffect(() => {
@@ -808,7 +816,8 @@ export default function ConteinerRightMenuBottom() {
                         bottom: "100%",
                         left: "12px",           
                         zIndex: 10000,
-                        backgroundColor: "var(--surface)",
+                        backgroundColor: "var(--chat-theme-composer-bg, var(--surface))",
+                        color: "var(--chat-theme-foreground, var(--text-primary))",
                         borderRadius: "16px",
                         boxShadow: "var(--shadow-md)",
                         padding: "10px",
@@ -819,11 +828,54 @@ export default function ConteinerRightMenuBottom() {
                         border: "1px solid var(--border)"
                     }}
                 >
+                    <div className="composer-panel-header">
+                        <strong>Emojis</strong>
+                        <button
+                            type="button"
+                            className="composer-panel-close"
+                            aria-label="Fechar emojis"
+                            onClick={() => setMostrarPicker(false)}
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M18 6 6 18M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
                     <EmojiPicker 
                         onEmojiClick={(emojiData) => setTexto(prev => prev + emojiData.emoji)} 
+                        theme={temaEscuro ? EmojiTheme.DARK : EmojiTheme.LIGHT}
                         width="100%"
-                        height="400px"
+                        height="360px"
                     />
+                </div>
+            )}
+
+            {mostrarMenuMedia && (
+                <div className="composer-media-menu" role="menu" aria-label="Escolher emoji ou GIF">
+                    <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => {
+                            setMostrarPicker(true);
+                            setMostrarGifs(false);
+                            setMostrarMenuMedia(false);
+                        }}
+                    >
+                        <Imoge />
+                        <span>Emoji</span>
+                    </button>
+                    <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => {
+                            setMostrarGifs(true);
+                            setMostrarPicker(false);
+                            setMostrarMenuMedia(false);
+                        }}
+                    >
+                        <span className="composer-gif-icon" aria-hidden="true">GIF</span>
+                        <span>GIF</span>
+                    </button>
                 </div>
             )}
 
@@ -835,7 +887,8 @@ export default function ConteinerRightMenuBottom() {
                         bottom: "calc(100% + 12px)",
                         left: "12px",
                         zIndex: 10000,
-                        backgroundColor: "var(--surface)",
+                        backgroundColor: "var(--chat-theme-composer-bg, var(--surface))",
+                        color: "var(--chat-theme-foreground, var(--text-primary))",
                         borderRadius: "16px",
                         boxShadow: "var(--shadow-md)",
                         padding: "14px",
@@ -857,6 +910,19 @@ export default function ConteinerRightMenuBottom() {
                         `}
                     </style>
 
+                    <div className="composer-panel-header">
+                        <strong>GIFs</strong>
+                        <button
+                            type="button"
+                            className="composer-panel-close"
+                            aria-label="Fechar GIFs"
+                            onClick={() => setMostrarGifs(false)}
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M18 6 6 18M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
                     <input
                         type="text"
                         placeholder="Pesquisar GIF..."
@@ -869,18 +935,19 @@ export default function ConteinerRightMenuBottom() {
                             marginBottom: "12px",
                             fontSize: "14px",
                             outline: "none",
-                            background: "var(--surface-2)",
+                            background: "var(--chat-theme-input-bg, var(--surface-2))",
+                            color: "var(--chat-theme-input-text, var(--text-primary))",
                             transition: "all 0.2s",
                             boxSizing: "border-box"
                         }}
                         onFocus={(e) => {
                             e.currentTarget.style.borderColor = "var(--primary)";
-                            e.currentTarget.style.background = "var(--surface)";
+                            e.currentTarget.style.background = "var(--chat-theme-input-bg, var(--surface))";
                             e.currentTarget.style.boxShadow = "var(--shadow-teal)";
                         }}
                         onBlur={(e) => {
                             e.currentTarget.style.borderColor = "var(--border)";
-                            e.currentTarget.style.background = "var(--surface-2)";
+                            e.currentTarget.style.background = "var(--chat-theme-input-bg, var(--surface-2))";
                             e.currentTarget.style.boxShadow = "none";
                         }}
                     />
@@ -923,76 +990,77 @@ export default function ConteinerRightMenuBottom() {
                     </div>
                 </div>
             )}
-            <div className="ConteinerRightMenuBottomCaxa1">
-                    <button onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-                        <Arquivo />
-                    </button>
-                    <button onClick={() => { setMostrarPicker(!mostrarPicker); setMostrarGifs(false); }}><Imoge /></button>
-                    <button onClick={() => { setMostrarGifs(!mostrarGifs); setMostrarPicker(false); }}>GIF</button>
-            </div>
-            <div className="ConteinerRigtMenuBottomBoxsTop">
-                {replyTo && (
-                    <div className="mensagem-resposta-ativa">
-                        <div>
-                            <strong>A responder a {replyTo.nome_remitente}</strong>
-                            <span>{replyTo.menssagem}</span>
-                        </div>
-                        <button
-                            type="button"
-                            aria-label="Cancelar resposta"
-                            onClick={() => setReplyTo(null)}
-                        >
-                            ×
-                        </button>
-                    </div>
-                )}
-                <div className="ConteinerRightMenuBottomCaxa2">
-                    <textarea
-                        ref={textareaRef}
-                        type="text"
-                        className={editandoID ? "input-editando" : ""}
-                        placeholder={
-                            gravando ? "🔴 Gravando..." : 
-                            editandoID ? "Editando mensagem (Esc para cancelar)..." : "Menssagem..."
-                        }
-                        value={texto}
-                        onChange={(e) => { setTexto(e.target.value); aoDigitar(e); }}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault();
-                                sendMenssage(e);
-                            }
-                            if (e.key === 'Escape') {
-                                if (replyTo) setReplyTo(null);
-                                else cancelarEdicao();
-                            }
-                        }}
-                        disabled={gravando || isUploading || salvandoEdicao}
-                    />
-                    {editandoID !== null && (
-                        <small className="cancel-label" onClick={cancelarEdicao}>
-                            {salvandoEdicao ? "A guardar..." : "Cancelar Edição"}
-                        </small>
-                    )}
-                </div>
-            </div>
-            <div className="ConteinerRightMenuBottomCaxa3">
-                    {renderBotaoDireito()}
-            </div>
-
-            {/* <div className="ConteinerRigtMenuBottomBoxsBottom">
+            <div className="composer-box">
                 <div className="ConteinerRightMenuBottomCaxa1">
-                    <button onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+                    <button
+                        type="button"
+                        aria-label="Anexar ficheiro"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploading}
+                    >
                         <Arquivo />
                     </button>
-                    <button onClick={() => { setMostrarPicker(!mostrarPicker); setMostrarGifs(false); }}><Imoge /></button>
-                    <button onClick={() => { setMostrarGifs(!mostrarGifs); setMostrarPicker(false); }}>GIF</button>
+                    <button
+                        type="button"
+                        className="composer-media-toggle"
+                        aria-label="Abrir opções de emoji e GIF"
+                        aria-expanded={mostrarMenuMedia}
+                        onClick={() => setMostrarMenuMedia((aberto) => !aberto)}
+                    >
+                        <Imoge />
+                        <span className="composer-gif-icon" aria-hidden="true">GIF</span>
+                    </button>
                 </div>
-
+                <div className="ConteinerRigtMenuBottomBoxsTop">
+                    {replyTo && (
+                        <div className="mensagem-resposta-ativa">
+                            <div>
+                                <strong>A responder a {replyTo.nome_remitente}</strong>
+                                <span>{replyTo.menssagem}</span>
+                            </div>
+                            <button
+                                type="button"
+                                aria-label="Cancelar resposta"
+                                onClick={() => setReplyTo(null)}
+                            >
+                                ×
+                            </button>
+                        </div>
+                    )}
+                    <div className="ConteinerRightMenuBottomCaxa2">
+                        <textarea
+                            ref={inputMensagemRef}
+                            rows={1}
+                            className={editandoID ? "input-editando" : ""}
+                            placeholder={
+                                gravando ? "🔴 Gravando..." :
+                                editandoID ? "Editando mensagem (Esc para cancelar)..." : "Mensagem..."
+                            }
+                            value={texto}
+                            onChange={(e) => { setTexto(e.target.value); aoDigitar(e); }}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    sendMenssage(e);
+                                }
+                                if (e.key === 'Escape') {
+                                    if (replyTo) setReplyTo(null);
+                                    else cancelarEdicao();
+                                }
+                            }}
+                            disabled={gravando || isUploading || salvandoEdicao}
+                        />
+                        {editandoID !== null && (
+                            <small className="cancel-label" onClick={cancelarEdicao}>
+                                {salvandoEdicao ? "A guardar..." : "Cancelar Edição"}
+                            </small>
+                        )}
+                    </div>
+                </div>
                 <div className="ConteinerRightMenuBottomCaxa3">
                     {renderBotaoDireito()}
                 </div>
-            </div> */}
+            </div>
 
         </div>
     );

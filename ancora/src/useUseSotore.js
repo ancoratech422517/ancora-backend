@@ -5,6 +5,16 @@ import { fetchComAuth } from './utils/api'
 
 let url = "https://ancora-backend-09zc.onrender.com"
 let url2 = "http://127.0.0.1:5000"
+const CHAT_THEME_STORAGE_KEY = "ancora-chat-theme"
+
+function getInitialChatThemeId() {
+  try {
+    return localStorage.getItem(CHAT_THEME_STORAGE_KEY) || "original"
+  } catch (error) {
+    console.error("Não foi possível carregar o tema do chat:", error)
+    return "original"
+  }
+}
 
 // teste
 export const useUserStore = create(
@@ -13,6 +23,9 @@ export const useUserStore = create(
   persist( 
     (set, get) => ({
       urlBancoDeDados: url,
+      chatThemeId: getInitialChatThemeId(),
+      chatThemeMode: "static",
+      chatAnimatedSceneId: "warp",
       dadosUsuario: null,
       socket: null,
       socketConnecting: false,
@@ -178,11 +191,29 @@ export const useUserStore = create(
         })
       },
       setNotificacoes: (lista) => set({ notificacoes: lista }),
+      setChatThemeId: (chatThemeId) => {
+        set({ chatThemeId, chatThemeMode: "static" })
+        try {
+          localStorage.setItem(CHAT_THEME_STORAGE_KEY, chatThemeId)
+        } catch (error) {
+          console.error("Não foi possível guardar o tema do chat:", error)
+        }
+      },
+      setChatAnimatedSceneId: (chatAnimatedSceneId) => set({
+        chatAnimatedSceneId,
+        chatThemeMode: "animated",
+      }),
       setAmigos: (amigo) => set({ amigos: amigo }),
-      atualizarUltimaMensagemChat: (nossaSala, mensagem, horario) => set((state) => {
+      atualizarUltimaMensagemChat: (nossaSala, mensagem, horario, remetenteId, lida = false) => set((state) => {
         const amigosAtualizados = state.amigos.map((amigo) =>
           String(amigo.nossa_sala) === String(nossaSala)
-            ? { ...amigo, ultima_menssagem: mensagem, HoraMenssagem: horario }
+            ? {
+                ...amigo,
+                ultima_menssagem: mensagem,
+                HoraMenssagem: horario,
+                ultima_menssagem_remitente_id: remetenteId ?? amigo.ultima_menssagem_remitente_id,
+                ultima_menssagem_lida: remetenteId == null ? amigo.ultima_menssagem_lida : lida
+              }
             : amigo
         )
         const indiceAmigo = amigosAtualizados.findIndex(
@@ -517,6 +548,15 @@ export const useUserStore = create(
                   menssagens: state.menssagens.map((msg) => ({ ...msg, lida: true }))
                 }))
               }
+              const meuId = get().dadosUsuario?.id
+              set((state) => ({
+                amigos: state.amigos.map((amigo) =>
+                  String(amigo.nossa_sala) === String(data.nossa_sala) &&
+                  String(amigo.ultima_menssagem_remitente_id) === String(meuId)
+                    ? { ...amigo, ultima_menssagem_lida: true }
+                    : amigo
+                )
+              }))
             })
 
             novoSocket.on("usuario_status_alterado", (data) => {
@@ -608,7 +648,13 @@ export const useUserStore = create(
               const qtd = data.quantidade_menssagem_nao_lida ?? data.quantidade
               const nossa_sala = data.nossa_sala
               const nova_menssagem = data.nova_menssagem
-              get().atualizarUltimaMensagemChat(nossa_sala, nova_menssagem, data.horario_formatado)
+              get().atualizarUltimaMensagemChat(
+                nossa_sala,
+                nova_menssagem,
+                data.horario_formatado,
+                data.ultima_menssagem_remitente_id,
+                data.ultima_menssagem_lida
+              )
            
               if (id_amigo !== undefined && qtd !== undefined) {
                 get().setQuantidadeMensagemNaoLida(id_amigo, qtd)
@@ -721,7 +767,10 @@ export const useUserStore = create(
       name: 'user-store',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
-        dadosUsuario: state.dadosUsuario
+        dadosUsuario: state.dadosUsuario,
+        chatThemeId: state.chatThemeId,
+        chatThemeMode: state.chatThemeMode,
+        chatAnimatedSceneId: state.chatAnimatedSceneId,
       }),
     }
   )

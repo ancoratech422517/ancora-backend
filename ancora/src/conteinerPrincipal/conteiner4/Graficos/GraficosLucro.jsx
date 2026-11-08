@@ -1,10 +1,44 @@
-import { useState } from "react";
-import { Chart as Chartjs } from "chart.js/auto"
+import { useLayoutEffect, useRef, useState } from "react";
 import { Line } from "react-chartjs-2";
+import { useUserStore } from "../../../useUseSotore";
 import DataLucro from "../data/DataLucro.json"
 
-export default function GraficoLucro () {
+const DEFAULT_COLORS = {
+    accent: "#3b82f6",
+    accentSoft: "#15c0b7",
+    card: "#fff",
+    text: "#333",
+    tooltipText: "#fff",
+    muted: "#555",
+    grid: "rgba(0,0,0,0.1)",
+    highlight: "#22c55e",
+};
+
+export default function GraficoLucro() {
+    const containerRef = useRef(null);
+    const chatThemeId = useUserStore((state) => state.chatThemeId);
+    const [colors, setColors] = useState(DEFAULT_COLORS);
+
+    useLayoutEffect(() => {
+        const themeContainer = containerRef.current?.closest(".conteinerPrincipal");
+        if (!themeContainer) return;
+
+        const styles = getComputedStyle(themeContainer);
+        const getColor = (name, fallback) => styles.getPropertyValue(name).trim() || fallback;
+        setColors({
+            accent: getColor("--chat-chart-accent", DEFAULT_COLORS.accent),
+            accentSoft: getColor("--chat-chart-accent-soft", DEFAULT_COLORS.accentSoft),
+            card: getColor("--chat-chart-card", DEFAULT_COLORS.card),
+            text: getColor("--chat-chart-text", DEFAULT_COLORS.text),
+            tooltipText: getColor("--chat-chart-tooltip-text", DEFAULT_COLORS.tooltipText),
+            muted: getColor("--chat-chart-muted", DEFAULT_COLORS.muted),
+            grid: getColor("--chat-chart-grid", DEFAULT_COLORS.grid),
+            highlight: getColor("--chat-chart-3", DEFAULT_COLORS.highlight),
+        });
+    }, [chatThemeId]);
+
     return (
+        <div ref={containerRef} className="grafico-lucro-theme">
                         <Line
                             data={{
                                 labels: DataLucro.map((data) => data.label),
@@ -13,7 +47,7 @@ export default function GraficoLucro () {
                                         label: "Lucro Obtido",
                                         data: DataLucro.map((data) => data.value),
         
-                                        borderColor: "#3b82f6",
+                                        borderColor: colors.accent,
                                         borderWidth: 3,
         
                                         fill: true,
@@ -23,7 +57,7 @@ export default function GraficoLucro () {
                                             const chart = context.chart;
                                             const { ctx, chartArea } = chart;
         
-                                            if (!chartArea) return null;
+                                            if (!chartArea) return colors.accent;
         
                                             const gradient = ctx.createLinearGradient(
                                                 0,
@@ -32,8 +66,8 @@ export default function GraficoLucro () {
                                                 chartArea.bottom
                                             );
         
-                                            gradient.addColorStop(0, "rgba(21, 192, 183, 0.5)");
-                                            gradient.addColorStop(1, "rgba(59,130,246,0)");
+                                            gradient.addColorStop(0, colors.accentSoft);
+                                            gradient.addColorStop(1, "transparent");
         
                                             return gradient;
                                         },
@@ -46,12 +80,12 @@ export default function GraficoLucro () {
                                         // 🔥 Destaque automático do maior valor
                                         pointBackgroundColor: DataLucro.map((data) =>
                                             data.value === Math.max(...DataLucro.map(d => d.value))
-                                                ? "#22c55e"
-                                                : "#3b82f6"
+                                                ? colors.highlight
+                                                : colors.accent
                                         ),
         
                                         pointBorderWidth: 2,
-                                        pointBorderColor: "#fff"
+                                        pointBorderColor: colors.card
                                     }
                                 ]
                             }}
@@ -63,7 +97,7 @@ export default function GraficoLucro () {
                                     legend: {
                                         display: true,
                                         labels: {
-                                            color: "#333",
+                                            color: colors.text,
                                             font: {
                                                 size: 14
                                             }
@@ -71,19 +105,19 @@ export default function GraficoLucro () {
                                     },
         
                                     tooltip: {
-                                        backgroundColor: "#111",
-                                        titleColor: "#fff",
-                                        bodyColor: "#fff",
+                                        backgroundColor: colors.accent,
+                                        titleColor: colors.tooltipText,
+                                        bodyColor: colors.tooltipText,
                                         padding: 10,
                                         borderWidth: 1,
-                                        borderColor: "#3b82f6"
+                                        borderColor: colors.accent
                                     }
                                 },
         
                                 scales: {
                                     x: {
                                         ticks: {
-                                            color: "#555"
+                                            color: colors.muted
                                         },
                                         grid: {
                                             display: false
@@ -91,15 +125,15 @@ export default function GraficoLucro () {
                                     },
                                     y: {
                                         ticks: {
-                                            color: "#555"
+                                            color: colors.muted
                                         },
                                         grid: {
-                                            color: "rgba(0,0,0,0.1)"
+                                            color: colors.grid
                                         }
                                     }
                                 }
                             }}
                         />
-        
+        </div>
     )
 }
