@@ -176,12 +176,15 @@ def chamada_voz_iniciar(data):
     if not remetente or not destinatario:
         return {"ok": False, "erro": "Usuário não encontrado"}
 
+    call_type = str(data.get("call_type") or data.get("callType") or "voice").lower()
     convite = {
         "call_id": call_id,
         "room_name": room_name,
         "caller_id": str(id_remetente),
         "caller_name": remetente.nome,
         "caller_photo": remetente.foto_usuario,
+        "call_type": "video" if call_type == "video" else "voice",
+        "sound": "default",
     }
     if usuarios_online.get(str(id_destinatario)):
         socketio.emit("chamada_voz_recebida", convite, room=str(id_destinatario))
@@ -202,6 +205,8 @@ def chamada_voz_iniciar(data):
             "notification_type": "chamada_voz",
             "sender_id": str(id_remetente),
             **convite,
+            "call_type": convite["call_type"],
+            "sound": "default",
             "url": f"{FRONTEND_PUBLIC_URL.rstrip('/')}/?{query}",
         },
     )
@@ -238,6 +243,7 @@ def responder_chamada_voz(data):
                 "call_id": call_id,
                 "room_name": room_name,
                 "status": resposta,
+                "call_type": "video" if data.get("call_type") == "video" or data.get("callType") == "video" else "voice",
                 "peer_id": str(id_destinatario),
                 "peer_name": outro_usuario.nome if outro_usuario else "Usuário",
             },

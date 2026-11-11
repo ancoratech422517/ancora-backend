@@ -5,6 +5,7 @@ import {
   LiveKitRoom,
   RoomAudioRenderer,
   StartAudio,
+  VideoConference,
   useRoomContext,
 } from "@livekit/components-react";
 import { useUserStore } from "../../../useUseSotore";
@@ -20,7 +21,16 @@ function atualizarChamada(callId, atualizar) {
   ));
 }
 
-function AudioCallControls({ muted, onMutedChange, speakerEnabled, onSpeakerChange, onHangup }) {
+function AudioCallControls({
+  muted,
+  onMutedChange,
+  speakerEnabled,
+  onSpeakerChange,
+  onHangup,
+  tipoChamada,
+  onToggleTipo,
+  onInviteUser,
+}) {
   const room = useRoomContext();
 
   const alternarMicrofone = async () => {
@@ -63,6 +73,32 @@ function AudioCallControls({ muted, onMutedChange, speakerEnabled, onSpeakerChan
               {speakerEnabled
                 ? <path d="M4 9v6h4l5 4V5L8 9H4zm13-1a5 5 0 0 1 0 8" />
                 : <path d="M4 9v6h4l5 4V5L8 9H4zm14-1 4 8m0-8-4 8" />}
+            </svg>
+          </button>
+          <button
+            type="button"
+            className="voice-call-button"
+            aria-label={tipoChamada === "video" ? "Voltar para chamada de voz" : "Alternar para chamada em vídeo"}
+            title={tipoChamada === "video" ? "Voltar para chamada de voz" : "Alternar para chamada em vídeo"}
+            onClick={() => onToggleTipo(tipoChamada === "video" ? "voice" : "video")}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              {tipoChamada === "video"
+                ? <><path d="M5 7h9a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z" /><path d="m16 10 4-2v8l-4-2" /></>
+                : <><rect x="3" y="6" width="12" height="12" rx="2" /><path d="m15 10 6-4v12l-6-4" /></>}
+            </svg>
+          </button>
+          <button
+            type="button"
+            className="voice-call-button"
+            aria-label="Convidar amigo para a chamada"
+            title="Convidar amigo"
+            onClick={onInviteUser}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="10" cy="7" r="4" />
+              <path d="M19 8v6M16 11h6" />
             </svg>
           </button>
           <button type="button" className="voice-call-button voice-call-button--end" aria-label="Encerrar chamada" onClick={onHangup}>
@@ -152,6 +188,7 @@ export default function VoiceCallOverlay() {
   const chamada = useUserStore((state) => state.chamadaVozAtiva);
   const socket = useUserStore((state) => state.socket);
   const usuario = useUserStore((state) => state.dadosUsuario);
+  const amigos = useUserStore((state) => state.amigos);
   const urlBancoDeDados = useUserStore((state) => state.urlBancoDeDados);
   const setChamadaVozAtiva = useUserStore((state) => state.setChamadaVozAtiva);
   const pararSomChamada = useUserStore((state) => state.pararSomChamada);
@@ -160,6 +197,8 @@ export default function VoiceCallOverlay() {
   const [microfoneSilenciado, setMicrofoneSilenciado] = useState(false);
   const [altoFalanteAtivo, setAltoFalanteAtivo] = useState(true);
   const [duracao, setDuracao] = useState(0);
+  const [mostrarConvites, setMostrarConvites] = useState(false);
+  const [amigoSelecionado, setAmigoSelecionado] = useState("");
   const pushListenerUser = useRef(null);
   const callTimer = useRef(null);
 
@@ -185,6 +224,7 @@ export default function VoiceCallOverlay() {
           return {
             ...atual,
             status: "connecting",
+            type: estado.call_type || atual?.type || "voice",
             peerId: String(estado.peer_id || atual.peerId),
             peerName: estado.peer_name || atual.peerName,
           };
@@ -260,7 +300,7 @@ export default function VoiceCallOverlay() {
   }, []);
 
   useEffect(() => {
-    if (chamada?.status !== "connecting" || !usuario?.id) return undefined;
+    if (!chamada?.callId || !usuario?.id || !["connecting", "connected"].includes(chamada.status)) return undefined;
     let cancelada = false;
 
     const conectar = async () => {
@@ -271,6 +311,7 @@ export default function VoiceCallOverlay() {
             callId: chamada.callId,
             roomName: chamada.roomName,
             peerId: chamada.peerId,
+            callType: chamada.type || "voice",
           }),
         });
         const dados = await resposta.json();
@@ -293,7 +334,7 @@ export default function VoiceCallOverlay() {
     return () => {
       cancelada = true;
     };
-  }, [chamada?.callId, chamada?.status, chamada?.roomName, chamada?.peerId, usuario?.id, urlBancoDeDados]);
+  }, [chamada?.callId, chamada?.status, chamada?.roomName, chamada?.peerId, chamada?.type, usuario?.id, urlBancoDeDados]);
 
   useEffect(() => {
     if (chamada?.status !== "connected") {
@@ -348,6 +389,7 @@ export default function VoiceCallOverlay() {
       room_name: chamada.roomName,
       caller_id: chamada.peerId,
       response: "accepted",
+      call_type: chamada.type || "voice",
     }, (resposta) => {
       if (!resposta?.ok) {
         atualizarChamada(chamada.callId, (atual) => ({
@@ -364,6 +406,33 @@ export default function VoiceCallOverlay() {
 
   const conectado = () => {
     atualizarChamada(chamada.callId, (atual) => ({ ...atual, status: "connected" }));
+  };
+
+  const alternarTipoChamada = (novoTipo) => {
+    if (!chamada || !socket?.connected || !usuario?.id) return;
+    const tipo = novoTipo === "video" ? "video" : "voice";
+    if ((chamada.type || "voice") === tipo) return;
+    atualizarChamada(chamada.callId, (atual) => ({ ...atual, type: tipo, status: "connecting" }));
+    setToken(null);
+    setServerUrl(null);
+  };
+
+  const convidarAmigoParaChamada = () => {
+    if (!chamada || !socket?.connected || !amigoSelecionado) return;
+
+    socket.emit("chamada_voz_iniciar", {
+      call_id: chamada.callId,
+      room_name: chamada.roomName,
+      recipient_id: String(amigoSelecionado),
+      call_type: chamada.type || "voice",
+    }, (resposta) => {
+      if (!resposta?.ok) {
+        console.error("Não foi possível convidar para a chamada:", resposta?.erro || "Erro desconhecido");
+        return;
+      }
+      setMostrarConvites(false);
+      setAmigoSelecionado("");
+    });
   };
 
   const encerrarPorDesconexao = () => {
@@ -391,6 +460,10 @@ export default function VoiceCallOverlay() {
           ? "Chamada de voz recebida"
           : "Chamando...";
   const mostrarControles = ["connecting", "connected"].includes(chamada.status) && token && serverUrl;
+  const amigosParaConvidar = (amigos || []).filter(
+    (amigo) => String(amigo?.id_amigo) !== String(chamada.peerId)
+      && String(amigo?.id_amigo) !== String(usuario?.id),
+  );
 
   return (
     <div className="voice-call-overlay" role="dialog" aria-modal="true" aria-label="Chamada de voz">
@@ -400,7 +473,7 @@ export default function VoiceCallOverlay() {
           serverUrl={serverUrl}
           connect
           audio
-          video={false}
+          video={chamada?.type === "video"}
           onConnected={conectado}
           onDisconnected={encerrarPorDesconexao}
           onError={(erro) => {
@@ -413,18 +486,49 @@ export default function VoiceCallOverlay() {
           }}
           data-lk-theme="default"
         >
+          {chamada?.type === "video" && <VideoConference />}
           <VoiceCallCard
             chamada={chamada}
             statusTexto={statusTexto}
             fecharChamada={fecharChamada}
           >
-            <AudioCallControls
-              muted={microfoneSilenciado}
-              onMutedChange={setMicrofoneSilenciado}
-              speakerEnabled={altoFalanteAtivo}
-              onSpeakerChange={setAltoFalanteAtivo}
-              onHangup={() => fecharChamada("ended")}
-            />
+            <div className="voice-call-mobile-stack">
+              <AudioCallControls
+                muted={microfoneSilenciado}
+                onMutedChange={setMicrofoneSilenciado}
+                speakerEnabled={altoFalanteAtivo}
+                onSpeakerChange={setAltoFalanteAtivo}
+                onHangup={() => fecharChamada("ended")}
+                tipoChamada={chamada.type || "voice"}
+                onToggleTipo={alternarTipoChamada}
+                onInviteUser={() => setMostrarConvites((ativo) => !ativo)}
+              />
+              {mostrarConvites && (
+                <div className="voice-call-invite-panel">
+                  <label htmlFor="voice-call-invite">Convidar para a chamada</label>
+                  <select
+                    id="voice-call-invite"
+                    value={amigoSelecionado}
+                    onChange={(evento) => setAmigoSelecionado(evento.target.value)}
+                  >
+                    <option value="">Selecione um amigo</option>
+                    {amigosParaConvidar.map((amigo) => (
+                      <option key={amigo.id_amigo} value={String(amigo.id_amigo)}>
+                        {amigo.nome_amigo}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="voice-call-controls voice-call-invite-actions">
+                    <button type="button" className="voice-call-button voice-call-button--accept" onClick={convidarAmigoParaChamada}>
+                      Convidar
+                    </button>
+                    <button type="button" className="voice-call-button" onClick={() => setMostrarConvites(false)}>
+                      Fechar
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </VoiceCallCard>
         </LiveKitRoom>
       ) : (

@@ -1,6 +1,6 @@
 import { useUserStore } from "../../../useUseSotore";
 
-export async function iniciarChamadaVoz({ socket, dadosUsuario, destinatario }) {
+export async function iniciarChamadaVoz({ socket, dadosUsuario, destinatario, tipo = "voice" }) {
   const store = useUserStore.getState();
   if (store.chamadaVozAtiva) return;
 
@@ -8,6 +8,7 @@ export async function iniciarChamadaVoz({ socket, dadosUsuario, destinatario }) 
     store.setChamadaVozAtiva({
       direction: "outgoing",
       status: "error",
+      type: tipo,
       error: "Não foi possível iniciar a chamada. Verifique a conexão e o usuário selecionado.",
     });
     return;
@@ -19,6 +20,7 @@ export async function iniciarChamadaVoz({ socket, dadosUsuario, destinatario }) 
     roomName: `voice-${callId}`,
     direction: "outgoing",
     status: "ringing",
+    type: tipo === "video" ? "video" : "voice",
     peerId: String(destinatario.id_amigo),
     peerName: destinatario.nome_amigo || "Usuário",
     peerPhoto: destinatario.foto_amigo,
@@ -32,6 +34,7 @@ export async function iniciarChamadaVoz({ socket, dadosUsuario, destinatario }) 
         call_id: callId,
         room_name: call.roomName,
         recipient_id: call.peerId,
+        call_type: call.type,
       }, (resultado) => {
         clearTimeout(timeout);
         if (!resultado?.ok) {
@@ -63,6 +66,7 @@ export function chamadaRecebidaDePush(notificacao) {
   const callId = payload.call_id || payload.voice_call_id;
   const roomName = payload.room_name || payload.voice_room;
   const callerId = payload.caller_id || payload.sender_id || payload.voice_caller;
+  const callType = payload.call_type || payload.callType || "voice";
   if (!callId || !roomName || !callerId) {
     console.error("Notificação de chamada de voz incompleta:", payload);
     return false;
@@ -74,6 +78,7 @@ export function chamadaRecebidaDePush(notificacao) {
     roomName,
     direction: "incoming",
     status: "ringing",
+    type: callType === "video" ? "video" : "voice",
     peerId: String(callerId),
     peerName: payload.caller_name || payload.voice_caller_name || "Usuário",
     peerPhoto: payload.caller_photo,

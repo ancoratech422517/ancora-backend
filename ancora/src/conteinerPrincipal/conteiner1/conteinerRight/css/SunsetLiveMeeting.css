@@ -1,0 +1,787 @@
+.ConteinerRightLive.is-connected .ConteinerRightLiveMenuTop {
+  display: none;
+}
+
+.ConteinerRightLive.is-connected .ConteudoLive {
+  position: absolute;
+  inset: 0;
+}
+
+.ConteinerRightLive.is-connected [data-lk-theme="default"] {
+  width: 100%;
+  height: 100% !important;
+}
+
+.ConteinerRightLive:not(.is-connected) {
+  background: var(--surface-2);
+}
+
+.ConteinerRightLive:not(.is-connected) .ConteudoLive {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.ConteinerRightLive:not(.is-connected) .ConteinerRightLiveMenuTop {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  flex: 0 0 76px;
+  height: 76px;
+  padding: 10px 24px;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.ConteinerRightLive:not(.is-connected) .ConteinerRightLiveMenuTopBox {
+  width: auto;
+  height: auto;
+  gap: 10px;
+}
+
+.ConteinerRightLive:not(.is-connected) .ConteinerRightLiveMenuTopBox h3,
+.ConteinerRightLive:not(.is-connected) .ConteinerRightLiveMenuTopBox b,
+.ConteinerRightLive:not(.is-connected) .ConteinerRightLiveMenuTopBox li,
+.ConteinerRightLive:not(.is-connected) .ConteinerRightLiveMenuTopBox svg {
+  color: var(--text-primary);
+}
+
+.ConteinerRightLive:not(.is-connected) .ConteinerRightLiveMenuTopBox h3 {
+  font-size: 1.35rem;
+}
+
+.ConteinerRightLive:not(.is-connected) .ConteinerRightLiveMenuTopBox h3 svg {
+  width: 22px;
+  height: 22px;
+}
+
+.ConteinerRightLive:not(.is-connected) .widgwtSairSalaLive {
+  position: static;
+  flex: 0 0 auto;
+  width: auto;
+  height: 40px;
+  margin: 0 0 0 auto;
+  padding: 0 18px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--primary-dark);
+  color: var(--text-on-primary);
+  font-size: 13px;
+}
+
+.ConteinerRightLive:not(.is-connected) .join-live-area.janela {
+  flex: 1;
+  height: auto !important;
+  min-height: 320px;
+  margin: 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+}
+
+.ConteinerRightLive:not(.is-connected) .join-live-area.janela h2,
+.ConteinerRightLive:not(.is-connected) .join-live-area.janela p,
+.ConteinerRightLive:not(.is-connected) .join-live-area.janela svg {
+  color: var(--text-primary);
+}
+
+.ConteinerRightLive:not(.is-connected) .join-live-area.janela button {
+  width: auto;
+  min-width: 220px;
+  height: 54px;
+  padding: 0 24px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--primary-dark);
+  color: var(--text-on-primary);
+  font-weight: 700;
+}
+
+.ConteinerRightLive:not(.is-connected) .join-live-area.janela button svg {
+  width: 22px;
+  height: 22px;
+  color: var(--text-on-primary);
+}
+
+.ConteinerRightLive:not(.is-connected) .join-live-area.janela button:hover {
+  background: var(--primary);
+  color: var(--text-on-primary);
+  box-shadow: var(--shadow-teal);
+}
+
+.sunset-meeting {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--text-primary);
+  background: var(--surface-2);
+  font: 14px/1.4 "Segoe UI", sans-serif;
+}
+
+.sunset-header {
+  z-index: 3;
+  display: flex;
+  min-height: 66px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 22px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.sunset-brand,
+.sunset-meeting-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sunset-brand > div {
+  display: grid;
+  gap: 1px;
+}
+
+.sunset-brand strong {
+  font-size: 16px;
+}
+
+.sunset-brand span:last-child {
+  max-width: min(46vw, 460px);
+  overflow: hidden;
+  color: var(--text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sunset-live-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--status-online);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--status-online) 20%, transparent);
+}
+
+.sunset-count,
+.sunset-duration {
+  padding: 4px 11px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-3);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.sunset-main {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  padding: 15px 20px;
+}
+
+.sunset-stage {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 16px;
+}
+
+.sunset-photo-grid {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: minmax(170px, 1fr);
+  align-content: center;
+  gap: 20px;
+  overflow: auto;
+  padding: 5px 8px 14px;
+}
+
+.sunset-photo {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  padding: 8px 8px 0;
+  border: 1px solid var(--border);
+  border-bottom: 20px solid var(--surface);
+  border-radius: 3px;
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+  color: var(--text-primary);
+  transform: rotate(-1.5deg);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.sunset-photo:nth-child(even) {
+  transform: rotate(1.6deg);
+}
+
+.sunset-photo:hover,
+.sunset-photo.is-speaking {
+  z-index: 1;
+  box-shadow: var(--shadow-lg);
+  transform: rotate(0) scale(1.025);
+}
+
+.sunset-photo.is-speaking {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.sunset-photo-image {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--surface-deep);
+}
+
+.sunset-photo-image > video,
+.sunset-photo-image video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sunset-photo.is-local .sunset-photo-image video {
+  transform: scaleX(-1);
+}
+
+.sunset-avatar {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  background: linear-gradient(135deg, var(--primary-light), var(--surface-deep));
+}
+
+.sunset-avatar span {
+  display: grid;
+  width: clamp(54px, 30%, 116px);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary) 16%, var(--surface));
+  font-size: clamp(20px, 4vw, 38px);
+  font-weight: 700;
+}
+
+.sunset-photo-caption {
+  display: flex;
+  height: 25px;
+  flex: 0 0 25px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 2px;
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.sunset-participant-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sunset-participant-state {
+  color: var(--status-online);
+  font-size: 12px;
+}
+
+.sunset-hand-raised {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface-deep);
+  color: var(--text-on-primary);
+  font-size: 22px;
+  animation: sunset-wave 850ms ease-in-out infinite alternate;
+}
+
+.sunset-screen-shares {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sunset-shared-screen {
+  position: relative;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  border: 6px solid var(--surface);
+  border-bottom-width: 26px;
+  background: var(--surface-deep);
+  box-shadow: var(--shadow-md);
+}
+
+.sunset-shared-screen video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.sunset-shared-screen > span {
+  position: absolute;
+  right: 8px;
+  bottom: -22px;
+  left: 8px;
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sunset-stage:has(.sunset-screen-shares) {
+  grid-template-columns: minmax(0, 1fr) minmax(130px, 190px);
+}
+
+.sunset-stage:has(.sunset-screen-shares) .sunset-photo-grid {
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: minmax(112px, 1fr);
+  gap: 12px;
+}
+
+.sunset-empty-state {
+  align-self: center;
+  justify-self: center;
+  padding: 18px 24px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.sunset-chat {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  width: min(320px, 86vw);
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+.sunset-chat-header {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sunset-icon-button {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface-3);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 22px;
+}
+
+.sunset-chat-messages {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+  overflow: auto;
+  padding: 12px;
+}
+
+.sunset-chat-message {
+  display: grid;
+  max-width: 88%;
+  gap: 3px;
+  align-self: flex-start;
+  padding: 7px 11px;
+  border-radius: 12px 12px 12px 3px;
+  background: var(--surface-3);
+  overflow-wrap: anywhere;
+}
+
+.sunset-chat-message small {
+  color: var(--text-secondary);
+  font-size: 10px;
+}
+
+.sunset-chat-message.is-mine {
+  align-self: flex-end;
+  border-radius: 12px 12px 3px 12px;
+  background: var(--primary-dark);
+  color: var(--text-on-primary);
+}
+
+.sunset-chat-message.is-mine small {
+  color: var(--text-on-primary);
+}
+
+.sunset-chat-form {
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+}
+
+.sunset-chat-form input {
+  min-width: 0;
+  flex: 1;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 999px;
+  outline: none;
+  background: var(--surface-2);
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.sunset-chat-form input::placeholder {
+  color: var(--text-muted);
+}
+
+.sunset-chat-form button {
+  width: 36px;
+  flex: 0 0 36px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--primary-dark);
+  color: var(--text-on-primary);
+  cursor: pointer;
+}
+
+.sunset-chat-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.sunset-chat-error {
+  padding: 0 12px 10px;
+  color: var(--status-danger);
+  font-size: 12px;
+}
+
+.sunset-reaction-layer {
+  position: absolute;
+  z-index: 5;
+  inset: 68px 0 76px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sunset-floating-reaction {
+  position: absolute;
+  bottom: 12px;
+  left: calc(10% + (var(--reaction-index, 0) * 10%));
+  display: grid;
+  justify-items: center;
+  font-size: 36px;
+  filter: drop-shadow(0 4px 8px color-mix(in srgb, var(--text-primary) 25%, transparent));
+  animation: sunset-rise 3.5s ease-out forwards;
+}
+
+.sunset-floating-reaction:nth-child(2n) {
+  left: 38%;
+}
+
+.sunset-floating-reaction:nth-child(3n) {
+  left: 67%;
+}
+
+.sunset-floating-reaction small {
+  max-width: 130px;
+  overflow: hidden;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--surface-deep);
+  color: var(--text-on-primary);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sunset-notice {
+  position: absolute;
+  z-index: 8;
+  top: 78px;
+  left: 50%;
+  max-width: calc(100% - 32px);
+  padding: 9px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-deep);
+  color: var(--text-on-primary);
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+.sunset-footer {
+  z-index: 6;
+  display: flex;
+  min-height: 72px;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 12px 12px;
+}
+
+.sunset-toolbar {
+  display: flex;
+  max-width: 96vw;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  box-shadow: var(--shadow-md);
+}
+
+.sunset-control {
+  position: relative;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface-3);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 19px;
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.sunset-control:hover {
+  background: var(--surface-hover);
+  transform: translateY(-3px) scale(1.06);
+}
+
+.sunset-control.is-selected {
+  background: var(--primary-dark);
+  color: var(--text-on-primary);
+}
+
+.sunset-control.is-off,
+.sunset-control-end {
+  background: var(--status-danger);
+  color: var(--text-on-primary);
+}
+
+.sunset-control-end {
+  transform: rotate(135deg);
+}
+
+.sunset-reaction-control {
+  position: relative;
+}
+
+.sunset-reaction-menu {
+  position: absolute;
+  bottom: 54px;
+  left: 50%;
+  display: grid;
+  width: 180px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-lg);
+  transform: translateX(-50%);
+}
+
+.sunset-reaction-menu button {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 21px;
+}
+
+.sunset-reaction-menu button:hover {
+  background: var(--surface-hover);
+}
+
+@keyframes sunset-rise {
+  0% { opacity: 0; transform: translateY(0) scale(0.55); }
+  12% { opacity: 1; transform: translateY(-22px) scale(1.1); }
+  100% { opacity: 0; transform: translateY(-62vh) scale(0.9); }
+}
+
+@keyframes sunset-wave {
+  to { transform: rotate(16deg); }
+}
+
+@media (max-width: 800px) {
+  .sunset-header {
+    min-height: 58px;
+    padding: 8px 12px;
+  }
+
+  .sunset-main {
+    padding: 10px 8px;
+  }
+
+  .sunset-photo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(140px, 1fr);
+    gap: 14px;
+    padding: 4px 5px 10px;
+  }
+
+  .sunset-stage:has(.sunset-screen-shares) {
+    grid-template-columns: minmax(0, 1fr) 112px;
+    gap: 8px;
+  }
+
+  .sunset-stage:has(.sunset-screen-shares) .sunset-photo-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: minmax(94px, 1fr);
+    gap: 8px;
+  }
+
+  .sunset-photo {
+    padding: 5px 5px 0;
+    border-bottom-width: 17px;
+  }
+
+  .sunset-photo-caption {
+    height: 22px;
+    flex-basis: 22px;
+    font-size: 10px;
+  }
+
+  .sunset-toolbar {
+    gap: 5px;
+    padding: 6px 8px;
+  }
+
+  .sunset-control {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    font-size: 16px;
+  }
+
+  .sunset-chat {
+    right: 6px;
+    bottom: 6px;
+    width: min(300px, calc(100% - 12px));
+    max-height: 72%;
+  }
+
+  .ConteinerRightLive:not(.is-connected) .ConteinerRightLiveMenuTop {
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  .ConteinerRightLive:not(.is-connected) .ConteinerRightLiveMenuTopBox:nth-child(2) {
+    display: none;
+  }
+
+  .ConteinerRightLive:not(.is-connected) .join-live-area.janela {
+    margin: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .sunset-header {
+    min-height: 54px;
+  }
+
+  .sunset-brand strong {
+    font-size: 14px;
+  }
+
+  .sunset-brand span:last-child {
+    max-width: 42vw;
+    font-size: 11px;
+  }
+
+  .sunset-count,
+  .sunset-duration {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+
+  .sunset-footer {
+    min-height: 62px;
+    padding: 6px 5px 8px;
+  }
+
+  .sunset-toolbar {
+    max-width: calc(100vw - 10px);
+    gap: 4px;
+    padding: 5px;
+  }
+
+  .sunset-control {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+    font-size: 15px;
+  }
+
+  .sunset-reaction-menu {
+    bottom: 46px;
+  }
+
+  .sunset-stage:has(.sunset-screen-shares) {
+    grid-template-columns: minmax(0, 1fr) 88px;
+  }
+
+  .sunset-stage:has(.sunset-screen-shares) .sunset-photo-grid {
+    grid-auto-rows: minmax(76px, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sunset-meeting *,
+  .sunset-meeting *::before,
+  .sunset-meeting *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

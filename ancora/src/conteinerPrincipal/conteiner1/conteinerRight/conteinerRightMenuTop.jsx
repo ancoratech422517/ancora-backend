@@ -240,7 +240,7 @@ export default function ConteinerRightMenuTop({
                 </div>
                 <button
                     type="button"
-                    className="ConteinerRightMenuTopBoxRightCaxa"
+                    className="ConteinerRightMenuTopBoxRightCaxa chat-call-button"
                     aria-label={`Ligar para ${ChatAtivo.nome_amigo}`}
                     title="Iniciar chamada de voz"
                     disabled={Boolean(chamadaVozAtiva)}
@@ -248,9 +248,28 @@ export default function ConteinerRightMenuTop({
                         socket,
                         dadosUsuario,
                         destinatario: ChatAtivo,
+                        tipo: "voice",
                     })}
                 >
                     <Telefone />
+                </button>
+                <button
+                    type="button"
+                    className="ConteinerRightMenuTopBoxRightCaxa chat-call-button"
+                    aria-label={`Iniciar vídeo chamada com ${ChatAtivo.nome_amigo}`}
+                    title="Iniciar vídeo chamada"
+                    disabled={Boolean(chamadaVozAtiva)}
+                    onClick={() => void iniciarChamadaVoz({
+                        socket,
+                        dadosUsuario,
+                        destinatario: ChatAtivo,
+                        tipo: "video",
+                    })}
+                >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M3 7.5A2.5 2.5 0 0 1 5.5 5h8A2.5 2.5 0 0 1 16 7.5v9A2.5 2.5 0 0 1 13.5 19h-8A2.5 2.5 0 0 1 3 16.5z" />
+                        <path d="m16 10 5-3v10l-5-3" />
+                    </svg>
                 </button>
             </div>
         </div>

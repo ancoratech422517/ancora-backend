@@ -186,6 +186,53 @@
     align-items:center;
     gap:10px;
 }
+.voice-call-mobile-stack{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+    width:100%;
+}
+.voice-call-invite-panel{
+    display:flex;
+    width:100%;
+    flex-direction:column;
+    gap:10px;
+    padding:12px;
+    border:1px solid rgba(59,108,255,.15);
+    border-radius:16px;
+    background:rgba(59,108,255,.05);
+    color:#1b1d29;
+}
+:root[data-theme="dark"] .voice-call-invite-panel{
+    border-color:rgba(255,255,255,.08);
+    background:rgba(255,255,255,.04);
+    color:#fff;
+}
+.voice-call-invite-panel label{
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    opacity:.8;
+}
+.voice-call-invite-panel select{
+    width:100%;
+    min-height:40px;
+    padding:8px 12px;
+    border:1px solid rgba(59,108,255,.25);
+    border-radius:12px;
+    background:#fff;
+    color:#1b1d29;
+    font:inherit;
+}
+:root[data-theme="dark"] .voice-call-invite-panel select{
+    background:#101922;
+    color:#fff;
+    border-color:rgba(255,255,255,.15);
+}
+.voice-call-invite-actions{
+    justify-content:center;
+}
 .voice-call-connected-controls .lk-start-audio-button{
     width:auto;
     min-height:28px;

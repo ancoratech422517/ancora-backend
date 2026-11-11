@@ -189,17 +189,29 @@ def enviar_notificacao_pushy(
     if tipo_anexo:
         dados_notificacao["attachment_type"] = tipo_anexo
 
+    tipo_chamada = str(
+        dados_notificacao.get("type")
+        or dados_notificacao.get("notification_type")
+        or ""
+    ).lower()
+    eh_chamada = tipo_chamada in {"voice_call", "chamada_voz"}
+    som_notificacao = "default" if eh_chamada else None
+    if som_notificacao:
+        dados_notificacao["sound"] = som_notificacao
+
     conteudo = {
         "to": usuario.id_app_usuario_pushy,
         "data": {
             **dados_notificacao,
             "title": titulo,
-            "message": mensagem
+            "message": mensagem,
+            "sound": som_notificacao or "default",
         },
         "notification": {
             "title": titulo,
             "body": mensagem,
-            "icon": icon_url
+            "icon": icon_url,
+            **({"sound": som_notificacao} if som_notificacao else {}),
         },
         "time_to_live": 86400
     }

@@ -1,15 +1,14 @@
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import "./css/ConteinerRightLive.css";
-import LightRays from './js/menuMobileAgendarLiveBackgroung.jsx';
 import { Conteiner_Chamada_Grupo } from "./ConteinerRightLive.js";
 import "@livekit/components-styles";
 
 import {
   LiveKitRoom,
-  VideoConference,
   StartAudio,
 } from "@livekit/components-react";
 import { Room } from "livekit-client";
+import SunsetLiveMeeting from "./SunsetLiveMeeting";
 
 import { useUserStore } from "../../../useUseSotore";
 
@@ -131,22 +130,7 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
   };
 
   return (
-    <div className="ConteinerRightLive">
-        <LightRays
-          raysOrigin="top-center"
-          raysColor="#ffffff"
-          raysSpeed={1}
-          lightSpread={0.5}
-          rayLength={3}
-          followMouse={true}
-          mouseInfluence={0.1}
-          noiseAmount={0}
-          distortion={0}
-          className="custom-rays"
-          pulsating={false}
-          fadeDistance={1}
-          saturation={1}
-      />
+    <div className={`ConteinerRightLive${isConnected ? " is-connected" : ""}`}>
       <div className="ConteudoLive">
       <div className="ConteinerRightLiveMenuTop">
         <div className="ConteinerRightLiveMenuTopBox">
@@ -192,7 +176,7 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
            </svg>
             {nome_Turma}
           </p>
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          {error && <p style={{ color: "var(--status-danger)" }}>{error}</p>}
           <button onClick={() => setRetryCount((count) => count + 1)} disabled={loading} className="btn-enter-live">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-camera-video-fill" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2z"/>
@@ -221,11 +205,11 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
           onDisconnected={handleDisconnected}
           onError={handleLiveKitError}
           onMediaDeviceFailure={handleMediaDeviceFailure}
-          style={{ height: "calc(100vh - 85px)" }}
+          style={{ height: "100%" }}
           data-lk-theme="default"
         >
           <StartAudio label="Ativar áudio da turma" />
-          <VideoConference />
+          <SunsetLiveMeeting nomeTurma={nome_Turma} onLeave={() => void leaveRoom()} />
         </LiveKitRoom>
       )}
       </div>

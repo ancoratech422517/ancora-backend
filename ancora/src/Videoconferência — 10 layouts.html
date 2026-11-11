@@ -1,0 +1,209 @@
+<!DOCTYPE html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Videoconferência — 10 layouts</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit;margin:0}
+html,body{height:100%}
+body{font:14px/1.4 system-ui,'Segoe UI',Roboto,sans-serif;background:#0b0b14;color:#fff;overflow:hidden}
+button{font:inherit}
+#app{--bg:#0f1020;--t:#1b1c34;--a:#8b5cf6;--x:#fff;--r:18px;--g:12px;--bar:#ffffff1a;--w:#ffffff1f;height:100%;display:flex;flex-direction:column;position:relative;overflow:hidden;color:var(--x);background:var(--bg)}
+header{display:flex;align-items:center;gap:8px;padding:10px 14px;z-index:5;flex-wrap:wrap}
+header b{font-size:15px}
+#tm,#rec,#cnt{padding:3px 10px;border-radius:99px;background:var(--w);font-size:12px;font-variant-numeric:tabular-nums}
+#rec{display:none;color:#ff4d5e;font-weight:700}
+#app.rc #rec{display:inline;animation:bl 1s infinite}
+#ln{margin-left:auto;font-size:13px;font-weight:600}
+#ls{display:flex;gap:4px;flex-wrap:wrap}
+#ls button{width:26px;height:26px;border-radius:50%;border:0;background:var(--w);color:inherit;cursor:pointer;font-size:12px;transition:.25s}
+#ls button.on{background:var(--a);color:#fff;transform:scale(1.18)}
+main{flex:1;min-height:0;display:flex;gap:var(--g);padding:0 14px;position:relative}
+#stage{flex:1;min-width:0;min-height:0;display:grid;gap:var(--g);grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,minmax(0,1fr))}
+.t{position:relative;overflow:hidden;min-height:0;border-radius:var(--r);background:var(--t);border:2px solid transparent;cursor:pointer;animation:in .6s both;transition:transform .3s}
+.v{position:absolute;inset:0;background:radial-gradient(circle at 25% 25%,color-mix(in srgb,var(--c) 65%,transparent),transparent 55%),radial-gradient(circle at 80% 85%,color-mix(in srgb,var(--c) 40%,#000),transparent 60%);background-size:170% 170%;animation:mv 9s ease-in-out infinite alternate}
+.v video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.av{position:absolute;inset:0;display:none;place-items:center;background:var(--t)}
+.av i{width:clamp(44px,36%,110px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font:700 clamp(20px,3vw,40px) system-ui;color:#fff;background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 40%,#000))}
+.t.co .av,#app.ao .t:not(.sc) .av{display:grid}
+.t.co .v,#app.ao .t:not(.sc) .v{display:none}
+.nm{position:absolute;left:10px;bottom:10px;display:flex;gap:6px;align-items:center;padding:4px 10px;border-radius:99px;background:#0008;backdrop-filter:blur(8px);font-size:12px;color:#fff;max-width:calc(100% - 20px);white-space:nowrap}
+.mo{display:none}.t.mu .mo{display:inline}
+.eq{display:none;gap:2px;align-items:flex-end;height:12px}.t.sp .eq{display:inline-flex}
+.eq i{width:3px;height:3px;background:var(--a);animation:eq .6s infinite alternate}
+.eq i:nth-child(2){animation-delay:.2s}.eq i:nth-child(3){animation-delay:.4s}
+.hd{position:absolute;top:10px;right:10px;font-size:28px;display:none;animation:wv .9s infinite;filter:drop-shadow(0 2px 6px #0008)}
+.t.hr .hd{display:block}
+.t.sp{outline:3px solid var(--a);outline-offset:2px;box-shadow:0 0 34px color-mix(in srgb,var(--a) 60%,transparent)!important}
+.sc .v{background:linear-gradient(135deg,#0f172a,#1e293b);animation:none}
+.sc .v::before{content:'';position:absolute;inset:10% 7%;border-radius:8px;background:repeating-linear-gradient(#ffffff2e 0 9px,transparent 9px 28px);animation:pu 3s infinite}
+footer{display:flex;justify-content:center;padding:12px;z-index:5}
+#bar{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:8px 12px;max-width:96vw;border-radius:99px;background:var(--bar);backdrop-filter:blur(16px);border:1px solid #ffffff1f}
+.b{width:46px;height:46px;border-radius:50%;border:0;background:var(--w);color:inherit;font-size:19px;cursor:pointer;position:relative;transition:transform .2s,background .2s}
+.b:hover{transform:translateY(-4px) scale(1.1)}
+.b.on{background:var(--a);color:#fff}
+.b.off,.b.end{background:#ef4444;color:#fff}
+.b.off::after{content:'';position:absolute;left:11px;right:11px;top:50%;height:3px;border-radius:3px;background:#fff;transform:rotate(-45deg)}
+#rp{position:absolute;bottom:84px;left:50%;display:flex;gap:4px;padding:8px 12px;border-radius:99px;background:var(--bar);backdrop-filter:blur(16px);border:1px solid #ffffff1f;transform:translate(-50%,12px) scale(.9);opacity:0;pointer-events:none;transition:.25s;z-index:9}
+#rp.o{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+#rp button{font-size:26px;background:none;border:0;cursor:pointer;transition:transform .2s}
+#rp button:hover{transform:scale(1.45) translateY(-5px)}
+aside{position:absolute;right:14px;top:0;bottom:0;width:min(300px,86vw);display:flex;flex-direction:column;border-radius:var(--r);background:var(--bar);backdrop-filter:blur(20px);border:1px solid #ffffff1f;transform:translateX(115%);transition:transform .45s cubic-bezier(.2,.9,.3,1.15);z-index:6;overflow:hidden}
+#app.chat aside{transform:none}
+#msgs{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.m{max-width:88%;padding:7px 11px;border-radius:14px;background:var(--w);font-size:13px;animation:in .3s both}
+.m small{display:block;opacity:.7;font-size:11px}
+.m.me{align-self:flex-end;background:var(--a);color:#fff}
+aside form{display:flex;gap:6px;padding:8px}
+aside input{flex:1;min-width:0;border:0;border-radius:99px;padding:9px 14px;background:var(--w);color:inherit;font:inherit;outline:0}
+aside button{border:0;border-radius:50%;width:36px;background:var(--a);color:#fff;cursor:pointer}
+#fx{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:8}
+.fl{position:absolute;bottom:80px;text-align:center;animation:rise var(--d,3.4s) ease-out forwards;filter:drop-shadow(0 4px 8px #0006)}
+.fl small{display:block;font-size:10px;color:#fff;background:#0008;border-radius:99px;padding:1px 7px}
+#ts{position:absolute;top:56px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:20;pointer-events:none}
+.to{display:flex;gap:8px;align-items:center;padding:10px 18px;border-radius:99px;background:#14141ee8;color:#fff;box-shadow:0 10px 30px #0006;animation:tin .5s cubic-bezier(.2,1.4,.4,1) both,tout .4s 3.2s forwards}
+.to.hand{border:1px solid #fbbf24}
+.to b{font-size:26px;display:inline-block;animation:wv .8s infinite}
+#end{position:absolute;inset:0;z-index:30;display:none;place-items:center;background:#000d;backdrop-filter:blur(10px);text-align:center;color:#fff}
+#app.en #end{display:grid}
+#end h2{margin-bottom:6px}#end .b{width:auto;padding:0 22px;border-radius:99px;margin-top:16px;font-size:14px;background:#8b5cf6}
+
+/* 1 Aurora */
+#app[data-l="1"]{--bg:#0a0820;--t:#171433;--a:#a78bfa;--r:24px;background:radial-gradient(60% 50% at 15% 5%,#5b21b6aa,transparent),radial-gradient(50% 50% at 90% 95%,#0891b2aa,transparent),#0a0820;background-size:150% 150%;animation:au 16s ease-in-out infinite alternate}
+/* 2 Orador */
+#app[data-l="2"]{--bg:#111827;--t:#1f2937;--a:#22c55e;--r:14px}
+#app[data-l="2"] #stage{grid-template-columns:1fr 210px;grid-template-rows:repeat(5,minmax(0,1fr))}
+#app[data-l="2"] .f{grid-column:1;grid-row:1/-1}
+/* 3 Neon */
+#app[data-l="3"]{--bg:#05060f;--t:#0b0d1f;--a:#00f0ff;--r:10px;font-family:ui-monospace,Consolas,monospace;background-image:linear-gradient(#00f0ff14 1px,transparent 1px),linear-gradient(90deg,#00f0ff14 1px,transparent 1px);background-size:36px 36px}
+#app[data-l="3"] .t{border-color:#00f0ff77;box-shadow:0 0 16px #00f0ff33,inset 0 0 24px #00f0ff14}
+#app[data-l="3"] .t:nth-child(even){border-color:#ff2bd677;box-shadow:0 0 16px #ff2bd633,inset 0 0 24px #ff2bd614}
+#app[data-l="3"] #bar{border-color:#00f0ff88;box-shadow:0 0 20px #00f0ff44}
+/* 4 Claro */
+#app[data-l="4"]{--bg:#eef1f6;--t:#d9dfeb;--a:#1a73e8;--x:#1f2937;--r:16px;--bar:#fff;--w:#0000001a}
+#app[data-l="4"] #bar{box-shadow:0 8px 28px #0002;border-color:#0001}
+/* 5 Equipa */
+#app[data-l="5"]{--bg:#1f1d33;--t:#2b2947;--a:#7b83eb;--r:8px}
+#app[data-l="5"] aside{position:static;transform:none;order:-1;width:250px;flex:none}
+#app[data-l="5"]:not(.chat) aside{display:none}
+/* 6 Cinema */
+#app[data-l="6"]{--bg:#000;--t:#111;--a:#f5c451;--r:6px}
+#app[data-l="6"] #stage{grid-template-columns:repeat(5,1fr);grid-template-rows:minmax(0,1fr) 112px}
+#app[data-l="6"] .f{grid-column:1/-1;grid-row:1}
+/* 7 Bolhas */
+#app[data-l="7"]{--bg:#0b1d3a;--t:#16305c;--a:#38bdf8;background:radial-gradient(70% 60% at 50% 40%,#12407a,#0b1d3a)}
+#app[data-l="7"] #stage{display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:24px}
+#app[data-l="7"] .t{flex:none;width:clamp(110px,22vmin,230px);aspect-ratio:1;border-radius:50%;animation:in .6s both,bob 5s ease-in-out .6s infinite}
+#app[data-l="7"] .t.f{width:clamp(150px,30vmin,300px)}
+#app[data-l="7"] .nm{left:50%;bottom:12%;transform:translateX(-50%)}
+/* 8 Pôr do Sol */
+#app[data-l="8"]{--bg:linear-gradient(135deg,#ff7e5f,#c33764);--t:#3b1f3a;--a:#ffd166;--r:4px;--g:24px}
+#app[data-l="8"] .t{border:6px solid #fff;border-bottom-width:24px;transform:rotate(var(--rot,-1.5deg));box-shadow:0 14px 32px #0005}
+#app[data-l="8"] .t:nth-child(even){--rot:1.6deg}
+#app[data-l="8"] .t:hover{transform:rotate(0) scale(1.03)}
+/* 9 Minimal */
+#app[data-l="9"]{--bg:#f5f5f4;--t:#e7e5e4;--a:#111;--x:#111;--r:0;--bar:#fff;--w:#0000001a}
+#app[data-l="9"] .t{border:1px solid #111}
+#app[data-l="9"] .v{filter:grayscale(1)}
+#app[data-l="9"] .nm{background:#111}
+#app[data-l="9"] main{padding-left:88px}
+#app[data-l="9"] footer{position:absolute;left:12px;top:50%;translate:0 -50%;padding:0}
+#app[data-l="9"] #bar{flex-direction:column;flex-wrap:nowrap;border-radius:30px;box-shadow:0 8px 28px #0002}
+/* 10 Bento */
+#app[data-l="10"]{--bg:#06130f;--t:#0f2a22;--a:#34d399;--r:28px}
+#app[data-l="10"] #stage{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,minmax(0,1fr))}
+#app[data-l="10"] .f{grid-column:span 2;grid-row:span 2}
+/* partilha de ecrã */
+#app.share #stage{display:grid;grid-template-columns:1fr 170px;grid-template-rows:repeat(6,minmax(0,1fr))}
+#app.share .t{width:auto;aspect-ratio:auto;border-radius:var(--r)}
+#app.share .t.f{grid-column:auto;grid-row:auto}
+#app.share .sc{grid-column:1;grid-row:1/span 6}
+@media(max-width:700px){
+#stage{grid-template-columns:repeat(2,1fr)!important;grid-template-rows:repeat(3,minmax(0,1fr))!important}
+.t.f{grid-column:auto!important;grid-row:auto!important}
+#app[data-l="9"] main{padding-left:14px}
+#app[data-l="9"] footer{position:static;translate:none;padding:12px}
+#app[data-l="9"] #bar{flex-direction:row;flex-wrap:wrap}
+.b{width:38px;height:38px;font-size:16px}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important}}
+@keyframes mv{to{background-position:100% 100%}}
+@keyframes in{from{opacity:0;transform:scale(.9) translateY(14px)}}
+@keyframes wv{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(24deg)}}
+@keyframes eq{to{height:12px}}
+@keyframes bl{50%{opacity:.25}}
+@keyframes pu{50%{opacity:.3}}
+@keyframes au{to{background-position:100% 100%}}
+@keyframes bob{50%{translate:0 -12px}}
+@keyframes tin{from{transform:translateY(-24px) scale(.8);opacity:0}}
+@keyframes tout{to{opacity:0;transform:translateY(-12px)}}
+@keyframes rise{0%{transform:translate(0,0) scale(.3);opacity:0}10%{opacity:1;transform:translate(0,-30px) scale(1.15)}35%{transform:translate(calc(var(--dx)*-1),-24vh) scale(1)}65%{transform:translate(var(--dx),-46vh)}100%{transform:translate(0,-70vh) scale(.9);opacity:0}}
+</style></head><body>
+<div id="app" data-l="1">
+<header><b>Reunião Âncora</b><span id="cnt">👥 6</span><span id="tm">00:00</span><span id="rec">● REC</span><span id="ln"></span><nav id="ls"></nav></header>
+<main><section id="stage"></section>
+<aside><div id="msgs"></div><form><input name="t" placeholder="Escreve uma mensagem…" autocomplete="off"><button>➤</button></form></aside></main>
+<footer><div id="bar">
+<button class="b" data-a="mic" title="Microfone">🎤</button>
+<button class="b" data-a="cam" title="Câmara">🎥</button>
+<button class="b" data-a="md" title="Alternar áudio / vídeo">🎧</button>
+<button class="b" data-a="scr" title="Partilhar ecrã">🖥️</button>
+<button class="b" data-a="hd" title="Levantar a mão">✋</button>
+<button class="b" data-a="rx" title="Reações">😀</button>
+<button class="b" data-a="ch" title="Chat">💬</button>
+<button class="b" data-a="rc" title="Gravar">⏺</button>
+<button class="b" data-a="fs" title="Ecrã inteiro">⛶</button>
+<button class="b end" data-a="end" title="Sair da chamada">📞</button>
+</div></footer>
+<div id="rp"></div><div id="fx"></div><div id="ts"></div>
+<div id="end"><div><h2>Chamada terminada 👋</h2><p>Obrigado por participares.</p><button class="b" id="rj">Voltar a entrar</button></div></div>
+</div>
+<script>
+const $=s=>document.querySelector(s),app=$('#app'),st=$('#stage'),R=n=>Math.random()*n|0;
+const N=['Aurora','Orador','Neon','Claro','Equipa','Cinema','Bolhas','Pôr do Sol','Minimal','Bento'];
+const E=['👍','❤️','😂','👏','🎉','😮','🔥','🙏'];
+const P=[['Eu','#8b5cf6'],['Maria Luanda','#ff6b9d'],['João Kiala','#22d3ee'],['Ana Bela','#f59e0b'],['Pedro Neto','#34d399'],['Sofia Dias','#f472b6']].map((p,i)=>({n:p[0],c:p[1],i,mu:i==3,co:i==4,hr:0}));
+const me=P[0];let pin=null,sp=2,cur=0,stream=null,scr=null,t0=Date.now();
+function upd(p){const c=p.el.classList;c.toggle('mu',p.mu);c.toggle('co',p.co);c.toggle('hr',!!p.hr)}
+function feat(){P.forEach(p=>p.el.classList.toggle('f',p.i==(pin??sp)));P.forEach(p=>p.el.classList.toggle('sp',p.i==sp&&!p.mu))}
+function toast(h,c=''){const d=document.createElement('div');d.className='to '+c;d.innerHTML=h;$('#ts').append(d);setTimeout(()=>d.remove(),3700)}
+P.forEach(p=>{const d=document.createElement('div');d.className='t';d.style.setProperty('--c',p.c);d.style.animationDelay=p.i*80+'ms';
+d.innerHTML=`<div class="v"></div><div class="av"><i>${p.n[0]}</i></div><div class="nm"><span class="mo">🔇</span><span class="eq"><i></i><i></i><i></i></span>${p.n}</div><span class="hd">✋</span>`;
+d.onclick=()=>{pin=pin==p.i?null:p.i;feat();toast(pin==null?'Destaque automático':'📌 '+p.n+' fixado')};
+st.append(d);p.el=d;upd(p)});feat();
+function fly(e,n){const f=document.createElement('span'),s=f.style;f.className='fl';f.innerHTML=e+'<small>'+n+'</small>';
+s.left=8+Math.random()*80+'%';s.fontSize=28+R(26)+'px';s.setProperty('--dx',20+R(50)+'px');s.setProperty('--d',2.8+Math.random()*1.6+'s');$('#fx').append(f);setTimeout(()=>f.remove(),4600)}
+$('#rp').innerHTML=E.map(e=>`<button>${e}</button>`).join('');
+$('#rp').onclick=e=>{if(e.target.tagName=='BUTTON'){for(let k=0;k<4;k++)setTimeout(()=>fly(e.target.textContent,'Eu'),k*130);$('#rp').classList.remove('o')}};
+function hand(p,v){p.hr=v;upd(p);if(v)toast('<b>✋</b> '+p.n+' quer falar','hand')}
+function msg(n,t,m){const d=document.createElement('div');d.className='m'+(m?' me':'');d.innerHTML='<small></small><span></span>';d.firstChild.textContent=n;d.lastChild.textContent=t;$('#msgs').append(d);$('#msgs').scrollTop=1e9}
+$('aside form').onsubmit=e=>{e.preventDefault();const i=e.target.t;if(i.value.trim())msg('Eu',i.value,1);i.value=''};
+function stopScr(){if(!scr)return;scr.s&&scr.s.getTracks().forEach(t=>t.stop());scr.remove();scr=null;app.classList.remove('share');$('[data-a=scr]').classList.remove('on')}
+$('#bar').onclick=async e=>{const b=e.target.closest('.b');if(!b)return;const a=b.dataset.a;
+if(a=='mic'){me.mu=!me.mu;b.classList.toggle('off',me.mu);upd(me);toast(me.mu?'🔇 Microfone desligado':'🎤 Microfone ligado')}
+if(a=='cam'){me.co=!me.co;b.classList.toggle('off',me.co);upd(me);const v=me.el.querySelector('.v');
+ if(me.co){stream&&stream.getTracks().forEach(t=>t.stop());stream=null;v.innerHTML=''}
+ else try{stream=await navigator.mediaDevices.getUserMedia({video:true});const m=document.createElement('video');m.srcObject=stream;m.muted=m.playsInline=true;m.play();v.innerHTML='';v.append(m)}catch(_){}
+ toast(me.co?'📷 Câmara desligada':'🎥 Câmara ligada')}
+if(a=='md'){const o=app.classList.toggle('ao');b.classList.toggle('on',o);toast(o?'🎧 Modo só áudio':'🎥 Modo vídeo')}
+if(a=='scr'){if(scr)return stopScr();let s=null;try{s=await navigator.mediaDevices.getDisplayMedia({video:true})}catch(_){}
+ scr=document.createElement('div');scr.className='t sc';scr.innerHTML='<div class="v"></div><div class="nm">🖥️ Eu estou a partilhar o ecrã</div>';
+ if(s){const m=document.createElement('video');m.srcObject=s;m.muted=true;m.play();m.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000';scr.append(m);s.getVideoTracks()[0].onended=stopScr;scr.s=s}
+ st.prepend(scr);app.classList.add('share');b.classList.add('on');toast('🖥️ A partilhar o ecrã')}
+if(a=='hd'){me.hr=me.hr?0:1;upd(me);b.classList.toggle('on',!!me.hr);toast(me.hr?'<b>✋</b> Pediste a palavra':'Mão baixada','hand')}
+if(a=='rx')$('#rp').classList.toggle('o');
+if(a=='ch'){b.classList.toggle('on',app.classList.toggle('chat'))}
+if(a=='rc'){const r=app.classList.toggle('rc');b.classList.toggle('on',r);toast(r?'⏺ Gravação iniciada':'⏹ Gravação terminada')}
+if(a=='fs'){try{document.fullscreenElement?document.exitFullscreen():app.requestFullscreen().catch(()=>{})}catch(_){}}
+if(a=='end'){stopScr();app.classList.add('en')}};
+$('#rj').onclick=()=>{app.classList.remove('en');t0=Date.now()};
+$('#ls').innerHTML=N.map((n,i)=>`<button title="${n}">${i+1}</button>`).join('');
+function lay(n){cur=(n+10)%10;app.dataset.l=cur+1;[...$('#ls').children].forEach((b,i)=>b.classList.toggle('on',i==cur));$('#ln').textContent=N[cur];$('[data-a=ch]').classList.toggle('on',app.classList.toggle('chat',cur==4))}
+$('#ls').onclick=e=>{if(e.target.tagName=='BUTTON')lay([...$('#ls').children].indexOf(e.target))};
+onkeydown=e=>{if(e.target.tagName!='INPUT'){if(e.key=='ArrowRight')lay(cur+1);if(e.key=='ArrowLeft')lay(cur-1)}};
+lay(0);
+setInterval(()=>{const s=(Date.now()-t0)/1e3|0;$('#tm').textContent=String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},1000);
+setInterval(()=>{const c=P.filter(p=>p.i&&!p.mu);sp=c[R(c.length)].i;feat()},2600);
+setInterval(()=>fly(E[R(E.length)],P[1+R(5)].n),1700);
+setInterval(()=>{const p=P[1+R(5)];if(p.hr)hand(p,0);else if(Math.random()<.5)hand(p,1)},7000);
+const C=['Boa tarde a todos! 👋','Consegues partilhar o ecrã?','Excelente apresentação!','Podes repetir, por favor?','Concordo totalmente 👏'];
+setInterval(()=>msg(P[1+R(5)].n,C[R(C.length)]),9000);
+setTimeout(()=>hand(P[1],1),2500);
+</script></body></html>

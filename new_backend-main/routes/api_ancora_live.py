@@ -22,7 +22,6 @@ def get_livekit_token():
         room_name = data.get('roomName')
         participant_name = data.get('participantName')
         participant_id = data.get('participantId')
-        is_teacher = data.get('isTeacher', False)
 
         # Validações
         if not LIVEKIT_API_KEY or not LIVEKIT_API_SECRET or not LIVEKIT_SERVER_URL:
@@ -34,9 +33,12 @@ def get_livekit_token():
             }), 400
 
         # Criação do token
-        publish_sources = ["microphone", "camera"]
-        if is_teacher:
-            publish_sources.extend(["screen_share", "screen_share_audio"])
+        publish_sources = [
+            "microphone",
+            "camera",
+            "screen_share",
+            "screen_share_audio",
+        ]
 
         token = api.AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET) \
             .with_identity(f"user-{str(participant_id).strip()}") \
@@ -72,6 +74,7 @@ def get_livekit_call_token():
         data = request.get_json(silent=True) or {}
         room_name = data.get("roomName")
         peer_id = data.get("peerId")
+        call_type = str(data.get("callType") or data.get("call_type") or "voice").lower()
         try:
             call_id = str(UUID(str(data.get("callId"))))
         except (TypeError, ValueError, AttributeError):
@@ -103,6 +106,10 @@ def get_livekit_call_token():
         if not LIVEKIT_API_KEY or not LIVEKIT_API_SECRET or not LIVEKIT_SERVER_URL:
             return jsonify({"error": "Configuração do LiveKit incompleta no servidor"}), 500
 
+        publish_sources = ["microphone"]
+        if call_type == "video":
+            publish_sources.append("camera")
+
         token = api.AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET) \
             .with_identity(f"user-{str(usuario_id).strip()}") \
             .with_name(usuario.nome) \
@@ -112,7 +119,7 @@ def get_livekit_call_token():
                 can_publish=True,
                 can_subscribe=True,
                 can_publish_data=True,
-                can_publish_sources=["microphone"],
+                can_publish_sources=publish_sources,
             ))
 
         return jsonify({"token": token.to_jwt(), "serverUrl": LIVEKIT_SERVER_URL})
