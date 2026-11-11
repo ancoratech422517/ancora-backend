@@ -37,7 +37,6 @@ function App() {
     chatThemeId
   } = useUserStore()
   const chatThemePalette = CHAT_THEMES.find((theme) => theme.id === chatThemeId)
-
   const condicaoEstadoChamadaGrupo = ()=>{
     switch(EstadoChamadaGrupo){
       case true:

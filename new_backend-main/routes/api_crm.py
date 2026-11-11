@@ -15,6 +15,7 @@ CRM_FIELDS = {
     "projectos": {
         "nome": "text", "cliente": "text", "estado": "estado_projecto",
         "orcamento": "number", "prazo": "date", "progresso": "percent",
+        "arrendamento": "arrendamento",
     },
     "clientes": {
         "nome": "text", "email": "email", "telefone": "text",
@@ -129,6 +130,52 @@ def _validate_data(resource, incoming):
             except ValueError:
                 raise ValueError("A hora deve estar no formato HH:MM")
             result[field] = value
+        elif kind == "arrendamento":
+            if value is None:
+                continue
+            if not isinstance(value, dict) or set(value) != {
+                "inquilino", "data_pagamento", "valor_pago", "data_fim", "senhoria"
+            }:
+                raise ValueError("Os dados do arrendamento são inválidos")
+
+            inquilino = value.get("inquilino")
+            senhoria = value.get("senhoria")
+            if not isinstance(inquilino, str) or not inquilino.strip() or len(inquilino.strip()) > 255:
+                raise ValueError("O nome do inquilino deve ter entre 1 e 255 caracteres")
+            if not isinstance(senhoria, str) or not senhoria.strip() or len(senhoria.strip()) > 255:
+                raise ValueError("O nome da senhoria deve ter entre 1 e 255 caracteres")
+
+            valor_pago = value.get("valor_pago")
+            if (
+                isinstance(valor_pago, bool)
+                or not isinstance(valor_pago, (int, float))
+                or not math.isfinite(valor_pago)
+                or valor_pago < 0
+                or valor_pago > 1_000_000_000_000
+            ):
+                raise ValueError("O valor pago deve ser numérico e não negativo")
+            valor_pago = round(float(valor_pago), 2)
+
+            datas = {}
+            for campo, descricao in (
+                ("data_pagamento", "pagamento"),
+                ("data_fim", "término do arrendamento"),
+            ):
+                data = value.get(campo)
+                if not isinstance(data, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", data):
+                    raise ValueError(f"A data de {descricao} é inválida")
+                try:
+                    date.fromisoformat(data)
+                except ValueError:
+                    raise ValueError(f"A data de {descricao} é inválida")
+                datas[campo] = data
+
+            result[field] = {
+                "inquilino": inquilino.strip(),
+                **datas,
+                "valor_pago": int(valor_pago) if valor_pago.is_integer() else valor_pago,
+                "senhoria": senhoria.strip(),
+            }
 
     return result
 

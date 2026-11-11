@@ -49,3 +49,23 @@
 .crmStatus{font-size:12px;font-weight:500;padding:3px 10px;border-radius:20px;margin-left:8px;white-space:nowrap}
 .crmStatus.on{background:#dcfce7;color:#166534}
 .crmStatus.off{background:#fef3c7;color:#92400e}
+.rentalModal{width:min(520px,92vw);max-height:90vh;overflow:auto;display:flex;flex-direction:column;gap:14px;padding:24px}
+.rentalModalHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:4px}
+.rentalModalHeader h3{margin:2px 0 0}
+.rentalEyebrow{color:var(--primary-dark);font-size:12px;font-weight:700;text-transform:uppercase}
+.rentalClose{width:38px;min-width:38px;height:38px;padding:0;justify-content:center;font-size:22px}
+.rentalActions{justify-content:flex-end;margin-top:8px}
+.rentalShareModal>p{margin:0;text-align:left;color:var(--text-secondary)}
+.rentalShareActions{display:flex;flex-wrap:wrap;gap:10px}
+.rentalShareStatus{padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2);color:var(--text-primary);text-align:left}
+.rentalFriendForm{display:flex;align-items:flex-end;gap:10px;padding:14px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2)}
+.rentalFriendForm label{min-width:0;flex:1}
+.rentalFriendForm select{width:100%}
+.rentalHint{width:100%;margin:0;color:var(--text-secondary);font-size:13px;text-align:left}
+@media(max-width:600px){
+	.pgHead{align-items:flex-start;flex-direction:column}
+	.rentalModal{padding:18px}
+	.rentalShareActions,.rentalFriendForm{align-items:stretch;flex-direction:column}
+	.rentalShareActions .crmBtn,.rentalFriendForm>.crmBtn{width:100%;justify-content:center}
+	.rentalActions{flex-wrap:wrap}
+}

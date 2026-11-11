@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Ico from "./Icons";
 import { api, useList, loadDash, ymd } from "./api";
 import { AreaChart, BarChart, kz, short } from "./Charts";
+import ArrendamentoProjectModal from "./ArrendamentoProjectModal";
 
 /* [chave, rótulo, tipo (text|number|date|time|sel), extra (opções do select | "kz" | "%")] */
 export const CFG = {
@@ -49,6 +50,7 @@ function FormModal({ f, init, titulo, onSave, onDel, onClose }) {
 /* Listagem e CRUD sempre no backend Flask. */
 export function DataPage({ res, novo = 0 }) {
   const c = CFG[res], { rows, load, error, reload } = useList(res), [q, setQ] = useState(""), [m, setM] = useState(null);
+  const [mostrarArrendamento, setMostrarArrendamento] = useState(false);
   useEffect(() => { if (novo) setM({}); }, [novo]);
   const lista = rows.filter(r => JSON.stringify(r).toLowerCase().includes(q.toLowerCase()));
   const del = async r => { if (window.confirm("Eliminar este registo?")) { await api.remove(res, r.id); await reload(); } };
@@ -56,6 +58,7 @@ export function DataPage({ res, novo = 0 }) {
     <Shell>
       <div className="pgHead"><h2>{c.t}</h2>
         <div className="crmRow"><input placeholder="Pesquisar…" value={q} onChange={e => setQ(e.target.value)} />
+          {res === "projectos" && <button type="button" className="crmBtn ghost" onClick={() => setMostrarArrendamento(true)}>Registar arrendamento</button>}
           <button className="crmBtn" onClick={() => setM({})}><Ico n="plus" />{c.n}</button></div></div>
       {error && <p className="crmErr" role="alert">{error} <button type="button" className="crmBtn ghost" onClick={() => void reload().catch(() => {})}>Tentar novamente</button></p>}
       <div className="crmCard tbl"><table>
@@ -67,6 +70,7 @@ export function DataPage({ res, novo = 0 }) {
         </tbody></table></div>
       {m && <FormModal f={c.f} init={m} titulo={m.id ? "Editar " + c.t : c.n} onClose={() => setM(null)}
         onSave={d => (m.id ? api.update(res, m.id, d) : api.create(res, d)).then(reload)} />}
+      {mostrarArrendamento && <ArrendamentoProjectModal onClose={() => setMostrarArrendamento(false)} onRegistered={() => reload().catch(() => {})} />}
     </Shell>
   );
 }
