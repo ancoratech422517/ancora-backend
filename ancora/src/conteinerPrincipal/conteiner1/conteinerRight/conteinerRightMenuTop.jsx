@@ -10,6 +10,7 @@ import { MenuMobileRight } from "./js/menuMobile";
 import Perfil from "../../../assets/img_fundo_vazio/perfil.png"
 import { CHAT_THEMES, DEFAULT_CHAT_THEME } from "./chatThemes";
 import { ANIMATED_CHAT_SCENES } from "./animatedChatScenes";
+import { iniciarChamadaVoz } from "./voiceCalls";
 export default function ConteinerRightMenuTop({
     ativarConteiner,
     chatTheme,
@@ -28,7 +29,9 @@ export default function ConteinerRightMenuTop({
         digitandoStatus , 
         setMostrarChat , 
         urlBancoDeDados , 
-        setIsMobile
+        setIsMobile,
+        dadosUsuario,
+        chamadaVozAtiva,
     } = useUserStore();
 
     // 2. Buscamos o status atualizado diretamente no array de amigos
@@ -235,9 +238,20 @@ export default function ConteinerRightMenuTop({
                 <div className="ConteinerRightMenuTopBoxRightCaxa" onClick={ ()=> MenuMobileRight(setMostrarChat)}>
                     <Store />
                 </div>
-                <div className="ConteinerRightMenuTopBoxRightCaxa">
+                <button
+                    type="button"
+                    className="ConteinerRightMenuTopBoxRightCaxa"
+                    aria-label={`Ligar para ${ChatAtivo.nome_amigo}`}
+                    title="Iniciar chamada de voz"
+                    disabled={Boolean(chamadaVozAtiva)}
+                    onClick={() => void iniciarChamadaVoz({
+                        socket,
+                        dadosUsuario,
+                        destinatario: ChatAtivo,
+                    })}
+                >
                     <Telefone />
-                </div>
+                </button>
             </div>
         </div>
     );

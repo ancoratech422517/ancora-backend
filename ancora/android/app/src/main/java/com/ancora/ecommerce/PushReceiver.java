@@ -9,10 +9,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 
 import androidx.core.app.NotificationCompat;
 
 import java.util.UUID;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class PushReceiver extends BroadcastReceiver {
     private static final String CHANNEL_ID = "ancora_pushy_notifications";
@@ -49,6 +52,19 @@ public class PushReceiver extends BroadcastReceiver {
 
         Intent openAppIntent = new Intent(context, MainActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Bundle pushExtras = intent.getExtras();
+        if (pushExtras != null) {
+            JSONObject payload = new JSONObject();
+            for (String key : pushExtras.keySet()) {
+                try {
+                    payload.put(key, pushExtras.get(key));
+                } catch (JSONException erro) {
+                    continue;
+                }
+            }
+            openAppIntent.putExtra("_pushyNotificationClicked", true);
+            openAppIntent.putExtra("_pushyNotificationPayload", payload.toString());
+        }
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,
                 UUID.randomUUID().hashCode(),

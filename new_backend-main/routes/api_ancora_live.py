@@ -1,7 +1,9 @@
 from flask import request, jsonify, Blueprint
 from livekit import api
 import os
+from uuid import UUID
 from dotenv import load_dotenv
+from models.database import Amigo, Usuario
 
 load_dotenv()
 
@@ -56,3 +58,64 @@ def get_livekit_token():
     except Exception as e:
         print(f"Erro ao gerar token LiveKit: {str(e)}")  # Para debug no terminal
         return jsonify({"error": "Erro interno ao gerar token"}), 500
+
+
+@Ancora_Live.route('/api/livekit/call-token', methods=['POST'])
+def get_livekit_call_token():
+    try:
+        from routes.websoket_conectUser import get_user_id_from_cookie
+
+        usuario_id = get_user_id_from_cookie()
+        if not usuario_id:
+            return jsonify({"error": "Autenticação necessária"}), 401
+
+        data = request.get_json(silent=True) or {}
+        room_name = data.get("roomName")
+        peer_id = data.get("peerId")
+        try:
+            call_id = str(UUID(str(data.get("callId"))))
+        except (TypeError, ValueError, AttributeError):
+            return jsonify({"error": "Identificador de chamada inválido"}), 400
+
+        if room_name != f"voice-{call_id}" or peer_id is None:
+            return jsonify({"error": "Sala ou participante inválido"}), 400
+
+        amizade = Amigo.query.filter(
+            ((Amigo.id_usuario == usuario_id) & (Amigo.id_amigo == peer_id))
+            | ((Amigo.id_usuario == peer_id) & (Amigo.id_amigo == usuario_id))
+        ).first()
+        if not amizade:
+            return jsonify({"error": "A chamada só pode ocorrer entre amigos"}), 403
+
+        bloqueios = {
+            f"bloquear_usuario_{usuario_id}",
+            f"bloquear_usuario_{peer_id}",
+        }
+        if bloqueios.intersection({
+            amizade.condicao_estado_Bloqueado1,
+            amizade.condicao_estado_Bloqueado2,
+        }):
+            return jsonify({"error": "Não é possível ligar para este usuário"}), 403
+
+        usuario = Usuario.query.get(usuario_id)
+        if not usuario:
+            return jsonify({"error": "Usuário não encontrado"}), 404
+        if not LIVEKIT_API_KEY or not LIVEKIT_API_SECRET or not LIVEKIT_SERVER_URL:
+            return jsonify({"error": "Configuração do LiveKit incompleta no servidor"}), 500
+
+        token = api.AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET) \
+            .with_identity(f"user-{str(usuario_id).strip()}") \
+            .with_name(usuario.nome) \
+            .with_grants(api.VideoGrants(
+                room_join=True,
+                room=room_name,
+                can_publish=True,
+                can_subscribe=True,
+                can_publish_data=True,
+                can_publish_sources=["microphone"],
+            ))
+
+        return jsonify({"token": token.to_jwt(), "serverUrl": LIVEKIT_SERVER_URL})
+    except Exception as erro:
+        print(f"Erro ao gerar token de chamada LiveKit: {erro}")
+        return jsonify({"error": "Erro interno ao gerar token de chamada"}), 500

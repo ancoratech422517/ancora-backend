@@ -1,0 +1,51 @@
+/* Páginas extra, modais, gráficos e estado do backend – usa as variáveis do tema existente (com fallback) */
+.crmPage h2,.crmPage h3,.chartBox h3{color:var(--text-primary,#0f172a)}
+.pgHead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.crmRow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.crmPage input,.crmPage select{height:42px;border:1px solid var(--border,#e2e8f0);border-radius:10px;padding:0 12px;background:var(--surface,#fff);color:var(--text-primary,#0f172a);font-size:15px;outline:none}
+.crmPage input:focus,.crmPage select:focus{border-color:var(--teal-600,#0d9488)}
+.crmBtn{height:42px;padding:0 18px;border:0;border-radius:10px;background:var(--teal-600,#0d9488);color:var(--text-on-primary,#fff);cursor:pointer;display:flex;align-items:center;gap:8px;font-size:15px;transition:.2s ease}
+.crmBtn:active{transform:scale(.95)}
+.crmBtn.ghost{background:var(--surface,#fff);color:var(--text-primary,#0f172a);border:1px solid var(--border,#e2e8f0)}
+.crmBtn svg{width:18px;height:18px}
+.crmCard{background:var(--surface,#fff);border:1px solid var(--border,#e2e8f0);border-radius:20px;padding:2%;overflow:auto;margin-bottom:16px}
+.crmPage table{width:100%;border-collapse:collapse}
+.crmPage th{text-align:left;color:var(--gray-500,#64748b);font-weight:600;font-size:13px}
+.crmPage th,.crmPage td{padding:12px 10px;border-bottom:1px solid var(--border,#e2e8f0)}
+.acts{white-space:nowrap;text-align:right}
+.acts button{border:0;background:none;cursor:pointer;color:var(--gray-500,#64748b);padding:4px}
+.acts button:hover{color:var(--teal-600,#0d9488)}
+.acts svg{width:18px;height:18px}
+.bd{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-style:normal;background:var(--surface-3,#f1f5f9);color:var(--gray-600,#475569)}
+.bd.activo,.bd.paga,.bd.concluido,.bd.concluida,.bd.receita,.bd.aula{background:#dcfce7;color:#166534}
+.bd.emcurso,.bd.pendente,.bd.planeado,.bd.planeada,.bd.reuniao,.bd.entrega{background:#ccfbf1;color:#0f766e}
+.bd.atrasada,.bd.despesa,.bd.inactivo,.bd.pausado,.bd.pagamento{background:#fee2e2;color:#991b1b}
+.crmModal{position:fixed;inset:0;background:rgba(15,23,42,.45);display:grid;place-items:center;z-index:50}
+.crmModal form{width:min(460px,92vw);max-height:90vh;display:flex;flex-direction:column;gap:12px;margin:0}
+.crmModal label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--gray-600,#475569)}
+.crmModal .crmRow{justify-content:flex-end}
+.crmErr{color:#dc2626}
+.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.calGrid>b{text-align:center;color:var(--gray-500,#64748b);font-size:13px}
+.calDia{min-height:92px;border:1px solid var(--border,#e2e8f0);border-radius:10px;padding:6px;cursor:pointer;display:flex;flex-direction:column;gap:3px;overflow:hidden}
+.calDia:hover{border-color:var(--teal-600,#0d9488)}
+.calDia.vazio{border:0;cursor:default}
+.calDia span{font-weight:600;font-size:13px}
+.calDia em{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:6px;cursor:pointer}
+.chartBox{display:flex;flex-direction:column;gap:8px;padding:2%;overflow:auto}
+.chartBox h3{display:flex;align-items:center;gap:10px}
+.chartBox h3 small{margin-left:auto;display:flex;align-items:center;gap:6px;font-weight:500;color:var(--gray-500,#64748b)}
+.chartBox h3 i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.chartBox svg{flex:1;min-height:0;width:100%}
+.evItem{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border,#e2e8f0)}
+.evItem b{color:var(--teal-600,#0d9488)}
+.evItem small{margin-left:auto;color:var(--gray-500,#64748b)}
+.relGrid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.relGrid .crmCard{height:40vh}
+.ConteinerMenuRightCRMDashboardBoxTopCaxa p{display:grid;place-items:center}
+.ConteinerMenuRightCRMDashboardBoxTopCaxa p svg{width:22px;height:22px}
+.ConteinerMenuRightCRMDashboardBoxTopCaxa ul svg{width:16px;height:16px}
+.ConteinerMenuRightCRMDashboardBoxTopCaxa ul.bad svg,.ConteinerMenuRightCRMDashboardBoxTopCaxa ul.bad span{color:#dc2626}
+.crmStatus{font-size:12px;font-weight:500;padding:3px 10px;border-radius:20px;margin-left:8px;white-space:nowrap}
+.crmStatus.on{background:#dcfce7;color:#166534}
+.crmStatus.off{background:#fef3c7;color:#92400e}

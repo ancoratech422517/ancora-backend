@@ -1,174 +1,72 @@
-import { useState } from "react";
-import "./css/ConteinerMenuRightCRMDashboard.css"
-export default function ConteinerMenuRightCRMDashboard () {
+import { useState, useEffect } from "react";
+import "./css/ConteinerMenuRightCRMDashboard.css";
+import Ico from "./Icons";
+import { api, loadDash, ymd } from "./api";
+import { AreaChart, BarChart, Donut, kz } from "./Charts";
+
+const C = "ConteinerMenuRightCRMDashboard";
+export default function ConteinerMenuRightCRMDashboard() {
+    const [d, setD] = useState(null), [ev, setEv] = useState([]), [error, setError] = useState(""), [attempt, setAttempt] = useState(0);
+    useEffect(() => {
+        let active = true;
+        Promise.all([loadDash(), api.list("calendario")])
+            .then(([dashboard, calendar]) => {
+                if (!active) return;
+                setD(dashboard);
+                setEv(calendar.filter(e => e.data >= ymd(new Date())).sort((a, b) => (a.data + (a.hora || "")).localeCompare(b.data + (b.hora || ""))).slice(0, 5));
+                setError("");
+            })
+            .catch(requestError => {
+                if (active) setError(requestError.message || "Não foi possível carregar o dashboard.");
+            });
+        return () => { active = false; };
+    }, [attempt]);
+    if (error && !d) return <div className={C}><p className="crmErr" role="alert">{error}</p><button className="crmBtn" onClick={() => { setError(""); setAttempt(value => value + 1); }}>Tentar novamente</button></div>;
+    if (!d) return <div className={C}>A carregar…</div>;
+    const { kpi: k, serie, cats, projEstado, fatEstado } = d, total = cats.reduce((s, x) => s + x.valor, 0) || 1;
+    const sg = n => (n >= 0 ? "+" : "") + n + "% este mes";
+    const KPI = [
+        ["Saldo Actual", "dollar", kz(k.saldo), sg(k.dRec)],
+        ["Recebido", "up", kz(k.recebido), sg(k.dRec)],
+        ["Gastos", "down", kz(k.gastos), sg(k.dGas), k.dGas > 0],
+        ["Projectos Ativos", "briefcase", k.activos, k.totalProj + " Totais"],
+        ["Faturas Pendente", "faturas", kz(k.pendente), k.nPend + " em aberto", k.nPend > 0],
+    ];
     return (
-        <div className="ConteinerMenuRightCRMDashboard">
-            {/* INICIO DA ORMATAÇÃO DA BOX TOP */}
-            <div className="ConteinerMenuRightCRMDashboardBoxTop">
-                <div className="ConteinerMenuRightCRMDashboardBoxTopCaxa">
-                    <div>
-                        <li>Saldo Actual</li>
-                        <p>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="teal" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dollar-sign">
-                                <line x1="12" x2="12" y1="2" y2="22"></line>
-                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                            </svg>
-                        </p>
+        <div className={C}>
+            <div className={C + "BoxTop"}>
+                {KPI.map(([t, ic, v, s, bad]) => (
+                    <div className={C + "BoxTopCaxa"} key={t}>
+                        <div><li>{t}</li><p><Ico n={ic} /></p></div>
+                        <h2>{v}</h2>
+                        <ul className={bad ? "bad" : ""}><Ico n="arrow" /><span>{s}</span></ul>
                     </div>
-                    <h2>KZ 123.750</h2>
-                    <ul>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right">
-                            <path d="M7 7h10v10"></path>
-                            <path d="M7 17 17 7"></path>
-                        </svg>
-                        <span>+12% este mes</span>
-                    </ul>
-                </div>
-                <div className="ConteinerMenuRightCRMDashboardBoxTopCaxa">
-                    <div>
-                        <li>Recebido</li>
-                        <p>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="teal" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"class="lucide lucide-trending-up">
-                                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-                                <polyline points="16 7 22 7 22 13"></polyline>
-                            </svg>
-                        </p>
-                    </div>
-                    <h2>KZ 123.750</h2>
-                    <ul>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right">
-                            <path d="M7 7h10v10"></path>
-                            <path d="M7 17 17 7"></path>
-                        </svg>
-                        <span>+12% este mes</span>
-                    </ul>
-                </div>
-                <div className="ConteinerMenuRightCRMDashboardBoxTopCaxa">
-                    <div>
-                        <li>Gastos</li>
-                        <p>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="teal" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-down">
-                               <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
-                               <polyline points="16 17 22 17 22 11"></polyline>
-                            </svg>
-                        </p>
-                    </div>
-                    <h2>KZ 123.750</h2>
-                    <ul>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right">
-                            <path d="M7 7h10v10"></path>
-                            <path d="M7 17 17 7"></path>
-                        </svg>
-                        <span>+12% este mes</span>
-                    </ul>
-                </div>
-                <div className="ConteinerMenuRightCRMDashboardBoxTopCaxa">
-                    <div>
-                        <li>Projectos Ativos</li>
-                        <p>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="teal" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-briefcase">
-                               <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                               <rect width="20" height="14" x="2" y="6" rx="2"></rect>
-                            </svg>
-                        </p>
-                    </div>
-                    <h2>7</h2>
-                    <ul>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right">
-                            <path d="M7 7h10v10"></path>
-                            <path d="M7 17 17 7"></path>
-                        </svg>
-                        <span>10 Totais</span>
-                    </ul>
-                </div>
-                <div className="ConteinerMenuRightCRMDashboardBoxTopCaxa">
-                    <div>
-                        <li>Faturas Pendente</li>
-                        <p>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="teal" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text">
-                                <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
-                                <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
-                                <path d="M10 9H8"></path>
-                                <path d="M16 13H8"></path>
-                                <path d="M16 17H8"></path>
-                            </svg>
-                        </p>
-                    </div>
-                    <h2>KZ 123.750</h2>
-                    <ul>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right">
-                            <path d="M7 7h10v10"></path>
-                            <path d="M7 17 17 7"></path>
-                        </svg>
-                        <span>+12% este mes</span>
-                    </ul>
-                </div>
-
+                ))}
             </div>
-            {/* FIM DA ORMATAÇÃO DA BOX TOP */}
-
-            {/* INICIO DA FORMATAÇÃO DA BOX CENTER */}
-            <div className="ConteinerMenuRightCRMDashboardBoxCenter">
-                <div className="ConteinerMenuRightCRMDashboardBoxCenterBox1"></div>
-                <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2">
-                    <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box1">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-pie" >
-                            <path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"></path>
-                            <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
-                        </svg>
-                        <h3>Gastos por Categoria</h3>
-                    </div>
-                    <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box2">
-                        <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box2Conteudo">
-                            <li>Parede</li>
-                            <b>85% - 75.000 KZ</b>
-                        </div>
-                        <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box2Progresso">
-                            <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box2ProgressoDados1"></div>
-                        </div>
-                    </div>
-                    <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box2">
-                        <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box2Conteudo">
-                            <li>Afiliados</li>
-                            <b>85% - 75.000 KZ</b>
-                        </div>
-                        <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box2Progresso">
-                            <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box2ProgressoDados1"></div>
-                        </div>
-                    </div>
-                    <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box2">
-                        <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box2Conteudo">
-                            <li>Ferramentas</li>
-                            <b>21% - 75.000 KZ</b>
-                        </div>
-                        <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box2Progresso">
-                            <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box2ProgressoDados1"></div>
-                        </div>
-                    </div>
-                    <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box2">
-                        <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box2Conteudo">
-                            <li>Trafego Pago</li>
-                            <b>13% - 75.000 KZ</b>
-                        </div>
-                        <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box2Progresso">
-                            <div className="ConteinerMenuRightCRMDashboardBoxCenterBox2Box2ProgressoDados1"></div>
-                        </div>
-                    </div>
-
+            <div className={C + "BoxCenter"}>
+                <div className={C + "BoxCenterBox1 chartBox"}>
+                    <h3>Receitas vs Despesas <small><i style={{ background: "#0d9488" }} />Receitas <i style={{ background: "#f59e0b" }} />Despesas</small></h3>
+                    <AreaChart id="receitas-despesas" data={serie} />
+                </div>
+                <div className={C + "BoxCenterBox2"}>
+                    <div className={C + "BoxCenterBox2Box1"}><Ico n="pie" /><h3>Gastos por Categoria</h3></div>
+                    {cats.slice(0, 4).map(c => { const p = Math.round(c.valor / total * 100); return (
+                        <div className={C + "BoxCenterBox2Box2"} key={c.nome}>
+                            <div className={C + "BoxCenterBox2Box2Conteudo"}><li>{c.nome}</li><b>{p}% - {kz(c.valor)}</b></div>
+                            <div className={C + "BoxCenterBox2Box2Progresso"}><div className={C + "BoxCenterBox2Box2ProgressoDados1"} style={{ width: p + "%" }} /></div>
+                        </div>); })}
                 </div>
             </div>
-            {/* FIM DA FORMATAÇÃO DA BOX CENTER */}
-
-            {/* INICIO DA FORMATAÇÃO DA BOX BOTTOM */}
-            <div className="ConteinerMenuRightCRMDashboardBoxBottom">
-                <div className="ConteinerMenuRightCRMDashboardBoxBottomBoxLeft">
-                    <div className="ConteinerMenuRightCRMDashboardBoxBottomBoxLeftBox1"></div>
-                    <div className="ConteinerMenuRightCRMDashboardBoxBottomBoxLeftBox2"></div>
+            <div className={C + "BoxBottom"}>
+                <div className={C + "BoxBottomBoxLeft"}>
+                    <div className={C + "BoxBottomBoxLeftBox1 chartBox"}><h3>Projectos por Estado</h3><BarChart id="projectos-estado" data={projEstado} /></div>
+                    <div className={C + "BoxBottomBoxLeftBox2 chartBox"}><h3>Faturas por Estado</h3><Donut id="faturas-estado" data={fatEstado} /></div>
                 </div>
-                <div className="ConteinerMenuRightCRMDashboardBoxBottomRight"></div>
+                <div className={C + "BoxBottomRight chartBox"}>
+                    <h3>Próximos Eventos</h3>
+                    {ev.length ? ev.map(e => <div className="evItem" key={e.id}><b>{e.data.slice(8)}/{e.data.slice(5, 7)}</b><span>{e.titulo}</span><small>{e.hora}</small></div>) : <p>Sem eventos.</p>}
+                </div>
             </div>
-            {/* FIM DA FORMATAÇÃO DA BOX BOTTOM */}
-
         </div>
-    )
+    );
 }

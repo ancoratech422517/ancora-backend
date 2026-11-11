@@ -1,37 +1,41 @@
-import { useState } from "react";
-import "./css/ConteinerMenuRightCRM.css"
-import { Polyline } from "ogl";
+import { useState, useEffect } from "react";
+import "./css/ConteinerMenuRightCRM.css";
+import "./css/ConteinerCRMPages.css";
+import Ico from "./Icons";
+import { useUserStore } from "../../useUseSotore";
+import { onStatus } from "./api";
+import { exportSvgs } from "./Charts";
 import ConteinerMenuRightCRMDashboard from "./ConteinerMenuRightCRMDashboard";
-export default function ConteinerMenuRightCRM(){
+import PERFIL from "../../assets/img_fundo_vazio/perfil.png";
+import { DataPage, Calendario, Relatorios } from "./ConteinerCRMPages";
+
+export default function ConteinerMenuRightCRM({ page, onPage, onMenu }) {
+    const fotoUsuario = useUserStore(state => state.dadosUsuario?.foto_usuario || PERFIL);
+    const [on, setOn] = useState(null), [novo, setNovo] = useState(0);
+    const nomeUsuario = useUserStore(state => state.dadosUsuario?.nome);
+    useEffect(() => onStatus(setOn), []);
+    useEffect(() => { if (page !== "projectos") setNovo(0); }, [page]);
+    const P = { dashboard: <ConteinerMenuRightCRMDashboard />, calendario: <Calendario />, relatorios: <Relatorios /> };
+    const statusLabel = on === true ? "Base de dados ligada" : on === false ? "Backend indisponível" : "A ligar ao backend";
     return (
         <div className="ConteinerMenuRightCRM">
             <div className="ConteinerMenuRightCRMMenuTop">
                 <div className="ConteinerMenuRightCRMMenuTopBox1">
-                    <div className="ConteinerMenuRightCRMMenuTopBox1FotoPerfilUsuario"></div>
+                    <button className="crmMenuBtn" onClick={onMenu} aria-label="Abrir menu"><Ico n="menu" /></button>
+                    <div className="ConteinerMenuRightCRMMenuTopBox1FotoPerfilUsuario">
+                        <img src={fotoUsuario} alt="" />
+                    </div>
                     <div className="ConteinerMenuRightCRMMenuTopBox1DadosUsuario">
-                        <h2>Cláudio Avelino</h2>
+                        <h2>{nomeUsuario || "Minha conta"} <span className={"crmStatus " + (on ? "on" : "off")}>{statusLabel}</span></h2>
                         <li>CRM-Administrativo da Âncora Ecommerce</li>
                     </div>
                 </div>
                 <div className="ConteinerMenuRightCRMMenuTopBox2">
-                    <button>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" x2="12" y1="15" y2="3"></line>
-                        </svg>
-                        Exportar SVG
-                    </button>
-                    <button>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus">
-                            <path d="M5 12h14"></path>
-                            <path d="M12 5v14"></path>
-                        </svg>
-                        Novo Projecto
-                    </button>
+                    <button onClick={exportSvgs} title="Exportar SVG"><Ico n="download" /><span className="lbl">Exportar SVG</span></button>
+                    <button onClick={() => { onPage("projectos"); setNovo(n => n + 1); }} title="Novo Projecto"><Ico n="plus" /><span className="lbl">Novo Projecto</span></button>
                 </div>
             </div>
-            <ConteinerMenuRightCRMDashboard />
+            {P[page] || <DataPage key={page} res={page} novo={page === "projectos" ? novo : 0} />}
         </div>
-    )
+    );
 }

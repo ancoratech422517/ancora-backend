@@ -174,6 +174,39 @@ class Cliente_vendedor(db.Model):
     nome_produto = db.Column(db.Text  , default = "none")
     data_registro = db.Column(db.DateTime , server_default = db.func.current_timestamp())
     #esta tabela serve para registrar os clientes de cada vendedor com base nas compras realizadas
+
+
+class CRMRegistro(db.Model):
+    """Registos do CRM, isolados por conta autenticada."""
+    __tablename__ = "crm_registros"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("usuarios.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    recurso = db.Column(db.String(32), nullable=False)
+    dados = db.Column(db.JSON, nullable=False)
+    criado_em = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow,
+        server_default=db.func.current_timestamp(),
+    )
+    atualizado_em = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+        server_default=db.func.current_timestamp(),
+    )
+
+    __table_args__ = (
+        db.Index("ix_crm_registros_user_recurso", "user_id", "recurso"),
+    )
+
+
 class Turma_Aula (db.Model):
     __tablename__ = "Turma_Aula"
     id = db.Column(db.Integer , primary_key = True)

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>10 Templates de Chamada de Voz</title>
+<style>
+:root{--bg:#f2f3f7;--tx:#1b1d29;--mu:#6b7080;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d0f17;--tx:#eef0f8;--mu:#8b90a5}}
+:root[data-theme="dark"]{--bg:#0d0f17;--tx:#eef0f8;--mu:#8b90a5}
+*{box-sizing:border-box;margin:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--tx);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;padding:32px 18px 48px}
+h1{text-align:center;font-size:clamp(22px,4vw,32px);font-weight:700}
+.sub{text-align:center;color:var(--mu);margin:8px 0 34px;font-size:15px}
+.grid{max-width:1200px;margin:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:34px 22px;justify-items:center}
+figure{width:100%;max-width:290px}
+figcaption{text-align:center;color:var(--mu);font-size:13px;margin-top:12px;letter-spacing:.04em}
+.call{height:430px;border-radius:30px;padding:30px 18px 24px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;position:relative;overflow:hidden;text-align:center;color:var(--c,#fff);box-shadow:0 20px 50px rgba(0,0,0,.28);animation:in .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes in{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
+.call>*{position:relative;z-index:2}
+.top{display:flex;flex-direction:column;align-items:center;gap:6px}
+.st{font-size:11px;letter-spacing:.16em;text-transform:uppercase;opacity:.75}
+.nm{font-size:21px;font-weight:700}
+.t{font-variant-numeric:tabular-nums;font-size:15px;opacity:.85}
+.avw{position:relative;width:96px;height:96px;display:grid;place-items:center;margin:8px 0}
+.av{width:88px;height:88px;border-radius:50%;display:grid;place-items:center;font-size:30px;font-weight:700;background:var(--ab,rgba(255,255,255,.18));color:inherit;position:relative;z-index:2;animation:float 4s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-5px)}}
+.avw .r{position:absolute;inset:0;border-radius:50%;border:2px solid var(--acc);opacity:0;animation:rip 2.6s ease-out infinite}
+.avw .r:nth-child(2){animation-delay:.87s}.avw .r:nth-child(3){animation-delay:1.74s}
+@keyframes rip{0%{transform:scale(.9);opacity:.8}100%{transform:scale(2.3);opacity:0}}
+.viz{display:flex;align-items:center;justify-content:center;gap:4px;height:44px}
+.viz i{display:block;width:4px;height:100%;border-radius:4px;background:var(--acc);transform:scaleY(.12);animation:eq 1s ease-in-out infinite alternate}
+@keyframes eq{to{transform:scaleY(1)}}
+.btns{display:flex;gap:14px}
+.btns button{width:54px;height:54px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;color:inherit;background:var(--bb,rgba(255,255,255,.16));transition:transform .2s,background .2s}
+.btns button:hover{transform:translateY(-3px) scale(1.06)}
+.btns button:active{transform:scale(.92)}
+.btns button.on{background:var(--acc);color:#0a0a12}
+.btns .end{background:#ef3b4c;color:#fff;animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(239,59,76,.55)}70%,100%{box-shadow:0 0 0 14px rgba(239,59,76,0)}}
+
+/* 1 Glass */
+.c1{background:linear-gradient(135deg,#5b5bff,#b24bf3 60%,#ff6fb5);--acc:#fff}
+.c1::before,.c1::after{content:"";position:absolute;width:200px;height:200px;border-radius:50%;filter:blur(40px);background:rgba(255,255,255,.35);animation:blob 8s ease-in-out infinite alternate}
+.c1::before{top:-50px;left:-40px}.c1::after{bottom:-60px;right:-50px;background:rgba(80,200,255,.5);animation-delay:-4s}
+@keyframes blob{to{transform:translate(60px,50px) scale(1.2)}}
+.c1 .top,.c1 .btns{backdrop-filter:blur(14px);background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:22px;padding:14px 20px}
+/* 2 Neon */
+.c2{background:#07080f;--acc:#00f0ff;--bb:#10131f;box-shadow:0 0 0 1.5px #00f0ff,0 0 40px rgba(0,240,255,.35);animation:in .7s both,glow 3s ease-in-out infinite alternate}
+@keyframes glow{to{box-shadow:0 0 0 1.5px #ff2bd6,0 0 50px rgba(255,43,214,.4)}}
+.c2 .nm{text-shadow:0 0 12px #00f0ff}.c2 .av{border:2px solid #00f0ff;box-shadow:0 0 20px #00f0ff inset,0 0 20px #00f0ff}
+/* 3 Messenger */
+.c3{background:#0b141a;--acc:#25d366;--ab:#1f3b33}
+.c3 .btns button.on{color:#fff}
+/* 4 Light minimal */
+.c4{background:#fff;--c:#1b1d29;--acc:#3b6cff;--bb:#eef1f8;--ab:#e3ebff;box-shadow:0 20px 50px rgba(30,50,120,.18)}
+.c4 .av{color:#3b6cff}.c4 .btns button.on{color:#fff}
+/* 5 Aurora */
+.c5{background:linear-gradient(120deg,#0f2027,#00c9a7,#845ec2,#ff6f91,#0f2027);background-size:300% 300%;animation:in .7s both,aur 10s linear infinite;--acc:#fff}
+@keyframes aur{to{background-position:300% 50%}}
+/* 6 Equalizer */
+.c6{background:#12081f;--acc:#ff4d8d;--ab:#2a1146}
+.c6 .viz{height:130px;gap:6px;align-items:flex-end;width:100%}
+.c6 .viz i{width:9px;border-radius:6px 6px 0 0;transform-origin:bottom;background:linear-gradient(#ff4d8d,#7b4dff)}
+/* 7 Radar */
+.c7{background:radial-gradient(circle at 50% 38%,#0e3a5c,#06121f 70%);--acc:#4de2ff}
+.c7 .avw{width:110px;height:110px;margin:16px 0}.c7 .av{width:100px;height:100px}
+/* 8 Cyber */
+.c8{background:#fcee0a;--c:#111;--acc:#111;--bb:#111;border-radius:0;clip-path:polygon(0 0,88% 0,100% 8%,100% 100%,12% 100%,0 92%);box-shadow:none;--ab:#111}
+.c8 .av{color:#fcee0a;border-radius:0;clip-path:polygon(20% 0,100% 0,100% 80%,80% 100%,0 100%,0 20%)}
+.c8 .btns button{color:#fcee0a;border-radius:0}.c8 .btns button.on{background:#ff2a6d;color:#fff}
+.c8::after{content:"";position:absolute;left:0;right:0;height:60px;top:-60px;background:linear-gradient(transparent,rgba(0,0,0,.12),transparent);animation:scan 3.5s linear infinite;z-index:1}
+@keyframes scan{to{top:110%}}
+.c8 .avw .r{border-radius:0}
+/* 9 Neumorph */
+.c9{background:#e0e5ec;--c:#3d4466;--acc:#6c63ff;--bb:#e0e5ec;--ab:#e0e5ec;box-shadow:12px 12px 26px #b8bdc9,-12px -12px 26px #fff}
+.c9 .av{box-shadow:8px 8px 16px #b8bdc9,-8px -8px 16px #fff}
+.c9 .btns button{box-shadow:5px 5px 10px #b8bdc9,-5px -5px 10px #fff}
+.c9 .btns button.on{box-shadow:inset 4px 4px 8px #b8bdc9,inset -4px -4px 8px #fff;background:#e0e5ec;color:#6c63ff}
+/* 10 Sunset */
+.c10{background:linear-gradient(160deg,#ff9a3c,#ff4e6a 55%,#8a2be2);--acc:#fff;background-size:100% 160%;animation:in .7s both,sun 7s ease-in-out infinite alternate}
+@keyframes sun{to{background-position:0 100%}}
+.c10 .btns{gap:10px}.c10 .btns button{width:60px;height:60px;border-radius:20px}
+.c10 .btns button.on{color:#ff4e6a}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important}}
+</style>
+</head>
+<body>
+<h1>10 Templates de Chamada de Voz</h1>
+<p class="sub">Clica nos botões para alternar mudo, altifalante e teclado</p>
+<div class="grid" id="g"></div>
+<script>
+var I={
+mic:'<rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+spk:'<path d="M4 9v6h4l5 4V5L8 9H4zM17 8a5 5 0 0 1 0 8"/>',
+key:'<circle cx="6" cy="6" r="1.2"/><circle cx="12" cy="6" r="1.2"/><circle cx="18" cy="6" r="1.2"/><circle cx="6" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/><circle cx="12" cy="18" r="1.2"/>',
+end:'<path d="M3 15c5-5 13-5 18 0l-2.5 3-3.5-1.5V14c-2-.8-4-.8-6 0v2.5L5.5 18z"/>'};
+function ic(k){return '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+I[k]+'</svg>'}
+var D=[["Glassmorphism","Ana Beatriz","AB",26],["Neon Cyber","Cláudio Pedro","CP",18],["Messenger Verde","Mariana Costa","MC",22],["Minimal Claro","Edson Ferreira","EF",14],["Aurora","Luzia Santos","LS",24],["Equalizer","Kiala Domingos","KD",20],["Radar","Âncora Tech","ÂT",16],["Cyberpunk","Bruno Dias","BD",18],["Neumorfismo","Sofia Neto","SN",14],["Pôr do Sol","Helena Gomes","HG",12]];
+var g=document.getElementById("g");
+D.forEach(function(d,n){
+var bars="";for(var i=0;i<d[3];i++)bars+='<i style="animation-delay:'+(-Math.random()*1).toFixed(2)+'s;animation-duration:'+(.5+Math.random()*.8).toFixed(2)+'s"></i>';
+var f=document.createElement("figure");
+f.innerHTML='<div class="call c'+(n+1)+'" style="animation-delay:'+(n*.07)+'s"><div class="top"><span class="st">Em chamada</span><div class="nm">'+d[1]+'</div><div class="t">00:00</div></div><div class="avw"><span class="r"></span><span class="r"></span><span class="r"></span><div class="av">'+d[2]+'</div></div><div class="viz">'+bars+'</div><div class="btns"><button data-t>'+ic("mic")+'</button><button data-t>'+ic("spk")+'</button><button data-t>'+ic("key")+'</button><button class="end">'+ic("end")+'</button></div></div><figcaption>'+String(n+1).padStart(2,"0")+' · '+d[0]+'</figcaption>';
+g.appendChild(f)});
+g.addEventListener("click",function(e){var b=e.target.closest("button[data-t]");if(b)b.classList.toggle("on")});
+var s=0;setInterval(function(){s++;var m=String(Math.floor(s/60)).padStart(2,"0"),x=String(s%60).padStart(2,"0");
+document.querySelectorAll(".t").forEach(function(el,i){var v=s+i*7;el.textContent=String(Math.floor(v/60)).padStart(2,"0")+":"+String(v%60).padStart(2,"0")})},1000);
+document.querySelectorAll(".t").forEach(function(el,i){var v=i*7;el.textContent=String(Math.floor(v/60)).padStart(2,"0")+":"+String(v%60).padStart(2,"0")});
+</script>
+</body>
+</html>

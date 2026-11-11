@@ -13,6 +13,7 @@ import { useUserStore } from './useUseSotore'
 import { fetchComAuth } from './utils/api'
 import ConteinerRightLive from './conteinerPrincipal/conteiner1/conteinerRight/ConteinerRightLive.jsx'
 import { CHAT_THEMES, DEFAULT_CHAT_THEME } from './conteinerPrincipal/conteiner1/conteinerRight/chatThemes'
+import VoiceCallOverlay from './conteinerPrincipal/conteiner1/conteinerRight/VoiceCallOverlay'
 
 
 function App() {
@@ -253,6 +254,7 @@ function App() {
       {condicaoEstadoMenuLiveAncora()}
       {condicaoEstadoConteinerTurmaVideoExibir()}
       {condicaoEstadoChamadaGrupo()}
+      <VoiceCallOverlay />
 
     </section>
   )

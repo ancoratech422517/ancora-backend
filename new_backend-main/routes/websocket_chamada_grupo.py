@@ -1,3 +1,6 @@
+from urllib.parse import urlencode
+from uuid import UUID
+
 from routes.websocket import socketio
 from flask_socketio import join_room, leave_room
 from routes.websoket_conectUser import (
@@ -5,12 +8,46 @@ from routes.websoket_conectUser import (
     usuario_esta_na_sala,
     usuarios_online,
 )
-from models.database import Turma_Aula
-from service.pushy_service import enviar_notificacao_pushy
+from models.database import Amigo, Turma_Aula, Usuario, db
+from service.pushy_service import FRONTEND_PUBLIC_URL, enviar_notificacao_pushy
 
 
 def _sala_live(sala_turma):
     return f"live_turma:{sala_turma}"
+
+
+def _amizade_ativa(id_usuario, id_amigo):
+    amizade = Amigo.query.filter(
+        ((Amigo.id_usuario == id_usuario) & (Amigo.id_amigo == id_amigo))
+        | ((Amigo.id_usuario == id_amigo) & (Amigo.id_amigo == id_usuario))
+    ).first()
+    if not amizade:
+        return None
+
+    bloqueios = {
+        f"bloquear_usuario_{id_usuario}",
+        f"bloquear_usuario_{id_amigo}",
+    }
+    if bloqueios.intersection({
+        amizade.condicao_estado_Bloqueado1,
+        amizade.condicao_estado_Bloqueado2,
+    }):
+        return None
+    return amizade
+
+
+def _identificar_sala_chamada(data):
+    if not isinstance(data, dict):
+        return None, None
+    try:
+        call_id = str(UUID(str(data.get("call_id"))))
+    except (TypeError, ValueError, AttributeError):
+        return None, None
+
+    room_name = f"voice-{call_id}"
+    if data.get("room_name") != room_name:
+        return None, None
+    return call_id, room_name
 
 
 @socketio.on("entrar_live_turma")
@@ -118,3 +155,119 @@ def chamada_grupo(data):
     except Exception as erro:
         print(f"ouve um erro ao emitir a chamada para os alunos:{erro}")
         return {"ok": False, "erro": "Erro interno ao emitir a chamada"}
+
+
+@socketio.on("chamada_voz_iniciar")
+def chamada_voz_iniciar(data):
+    id_remetente = get_user_id_from_cookie()
+    if not id_remetente:
+        return {"ok": False, "erro": "Sessão expirada"}
+
+    call_id, room_name = _identificar_sala_chamada(data)
+    id_destinatario = data.get("recipient_id") if isinstance(data, dict) else None
+    if not call_id or id_destinatario is None or str(id_destinatario) == str(id_remetente):
+        return {"ok": False, "erro": "Destinatário ou chamada inválidos"}
+
+    if not _amizade_ativa(id_remetente, id_destinatario):
+        return {"ok": False, "erro": "Não é possível ligar para este usuário"}
+
+    remetente = db.session.get(Usuario, id_remetente)
+    destinatario = db.session.get(Usuario, id_destinatario)
+    if not remetente or not destinatario:
+        return {"ok": False, "erro": "Usuário não encontrado"}
+
+    convite = {
+        "call_id": call_id,
+        "room_name": room_name,
+        "caller_id": str(id_remetente),
+        "caller_name": remetente.nome,
+        "caller_photo": remetente.foto_usuario,
+    }
+    if usuarios_online.get(str(id_destinatario)):
+        socketio.emit("chamada_voz_recebida", convite, room=str(id_destinatario))
+        return {"ok": True, "delivery": "socket"}
+
+    query = urlencode({
+        "voice_call_id": call_id,
+        "voice_room": room_name,
+        "voice_caller": str(id_remetente),
+        "voice_caller_name": remetente.nome,
+    })
+    push_enviado = enviar_notificacao_pushy(
+        id_destinatario,
+        f"{remetente.nome} está ligando",
+        "Toque para atender à chamada de voz.",
+        {
+            "type": "voice_call",
+            "notification_type": "chamada_voz",
+            "sender_id": str(id_remetente),
+            **convite,
+            "url": f"{FRONTEND_PUBLIC_URL.rstrip('/')}/?{query}",
+        },
+    )
+    if not push_enviado:
+        return {
+            "ok": False,
+            "erro": "O usuário está offline e não foi possível enviar a notificação de chamada",
+        }
+    return {"ok": True, "delivery": "push"}
+
+
+@socketio.on("responder_chamada_voz")
+def responder_chamada_voz(data):
+    id_destinatario = get_user_id_from_cookie()
+    if not id_destinatario:
+        return {"ok": False, "erro": "Sessão expirada"}
+
+    call_id, room_name = _identificar_sala_chamada(data)
+    id_remetente = data.get("caller_id") if isinstance(data, dict) else None
+    resposta = data.get("response") if isinstance(data, dict) else None
+    if (
+        not call_id
+        or id_remetente is None
+        or resposta not in {"accepted", "rejected"}
+        or not _amizade_ativa(id_remetente, id_destinatario)
+    ):
+        return {"ok": False, "erro": "Resposta de chamada inválida"}
+
+    if usuarios_online.get(str(id_remetente)):
+        outro_usuario = db.session.get(Usuario, id_destinatario)
+        socketio.emit(
+            "chamada_voz_status",
+            {
+                "call_id": call_id,
+                "room_name": room_name,
+                "status": resposta,
+                "peer_id": str(id_destinatario),
+                "peer_name": outro_usuario.nome if outro_usuario else "Usuário",
+            },
+            room=str(id_remetente),
+        )
+    return {"ok": True}
+
+
+@socketio.on("encerrar_chamada_voz")
+def encerrar_chamada_voz(data):
+    id_remetente = get_user_id_from_cookie()
+    call_id, room_name = _identificar_sala_chamada(data)
+    id_destinatario = data.get("peer_id") if isinstance(data, dict) else None
+    if (
+        not id_remetente
+        or not call_id
+        or id_destinatario is None
+        or not _amizade_ativa(id_remetente, id_destinatario)
+    ):
+        return {"ok": False, "erro": "Encerramento de chamada inválido"}
+
+    if usuarios_online.get(str(id_destinatario)):
+        socketio.emit(
+            "chamada_voz_status",
+            {
+                "call_id": call_id,
+                "room_name": room_name,
+                "status": "ended",
+                "peer_id": str(id_remetente),
+            },
+            room=str(id_destinatario),
+        )
+    return {"ok": True}

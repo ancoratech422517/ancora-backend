@@ -1,0 +1,69 @@
+/* Responsivo: tablet/telemóvel ≤1024px (menu em gaveta) e ≤700px (layout de 1 coluna) */
+.crmMenuBtn{display:none;flex:none;width:42px;height:42px;border:1px solid var(--border,#e2e8f0);border-radius:12px;background:var(--surface,#fff);color:var(--text-primary,#0f172a);cursor:pointer;place-items:center}
+.crmMenuBtn svg{width:22px;height:22px}
+.crmOverlay{display:none}
+.calDia.sel{border-color:var(--teal-600,#0d9488);background:var(--surface-3,#f1f5f9)}
+
+@media (max-width:1024px){
+  .Conteiner3 .ConteinerMenuLeftCRM{position:absolute;top:0;bottom:0;left:0;width:min(290px,84vw);z-index:60;transform:translateX(-102%);transition:transform .25s ease;overflow-y:auto}
+  .Conteiner3 .ConteinerMenuLeftCRM.aberto{transform:none;box-shadow:8px 0 30px rgba(15,23,42,.2)}
+  .Conteiner3 .crmOverlay{display:block;position:absolute;inset:0;z-index:55;background:rgba(15,23,42,.4);opacity:0;pointer-events:none;transition:opacity .25s}
+  .Conteiner3 .crmOverlay.aberto{opacity:1;pointer-events:auto}
+  .Conteiner3 .ConteinerMenuLeftCRM_Menu_Center{height:auto;gap:6px;padding-bottom:16px}
+  .Conteiner3 .ConteinerMenuLeftCRM_Menu_Center_Menu_Center_TXT{height:auto;min-height:46px}
+  .Conteiner3 .crmMenuBtn{display:grid}
+  .Conteiner3 .ConteinerMenuRightCRM{width:100%;display:flex;flex-direction:column}
+  .Conteiner3 .ConteinerMenuRightCRMMenuTop{height:auto;padding:10px 12px;gap:10px;align-items:center}
+  .Conteiner3 .ConteinerMenuRightCRMMenuTopBox1{width:auto;flex:1;min-width:0;gap:10px}
+  .Conteiner3 .ConteinerMenuRightCRMMenuTopBox2{width:auto;height:auto;gap:8px}
+  .Conteiner3 .ConteinerMenuRightCRMMenuTopBox2 button{width:auto;height:42px;padding:0 14px}
+  .Conteiner3 .ConteinerMenuRightCRMDashboard{flex:1;min-height:0;height:auto;padding:12px;border-left:0;border-radius:16px 16px 0 0}
+  .Conteiner3 .ConteinerMenuRightCRMDashboardBoxTop{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .Conteiner3 .ConteinerMenuRightCRMDashboardBoxTopCaxa{width:auto;height:auto;min-height:120px}
+  .Conteiner3 .ConteinerMenuRightCRMDashboardBoxCenter,.Conteiner3 .ConteinerMenuRightCRMDashboardBoxBottom{height:auto;flex-direction:column;gap:12px;margin-top:12px}
+  .Conteiner3 .ConteinerMenuRightCRMDashboardBoxCenterBox1,.Conteiner3 .ConteinerMenuRightCRMDashboardBoxCenterBox2,.Conteiner3 .ConteinerMenuRightCRMDashboardBoxBottomBoxLeft,.Conteiner3 .ConteinerMenuRightCRMDashboardBoxBottomRight{width:100%;height:auto}
+  .Conteiner3 .ConteinerMenuRightCRMDashboardBoxCenterBox2{padding:16px}
+  .Conteiner3 .ConteinerMenuRightCRMDashboardBoxBottomBoxLeft{gap:12px}
+  .Conteiner3 .ConteinerMenuRightCRMDashboardBoxBottomBoxLeftBox1,.Conteiner3 .ConteinerMenuRightCRMDashboardBoxBottomBoxLeftBox2{height:auto}
+  .Conteiner3 .chartBox{padding:14px}
+  .Conteiner3 .chartBox svg{flex:none;height:240px}
+  .Conteiner3 .relGrid{grid-template-columns:1fr}
+  .Conteiner3 .relGrid .crmCard{height:auto}
+}
+
+@media (max-width:700px){
+  .Conteiner3 .lbl{display:none}
+  .Conteiner3 .ConteinerMenuRightCRMMenuTopBox2 button{width:42px;padding:0}
+  .Conteiner3 .ConteinerMenuRightCRMMenuTopBox1FotoPerfilUsuario{width:40px;height:40px;flex:none}
+  .Conteiner3 .ConteinerMenuRightCRMMenuTopBox1DadosUsuario li{display:none}
+  .Conteiner3 .ConteinerMenuRightCRMMenuTopBox1DadosUsuario h2{font-size:16px;line-height:1.3}
+  .Conteiner3 .crmStatus{display:inline-block;margin:2px 0 0}
+  .Conteiner3 .ConteinerMenuRightCRMDashboardBoxTop{grid-template-columns:repeat(2,1fr)}
+  .Conteiner3 .ConteinerMenuRightCRMDashboardBoxTopCaxa:last-child{grid-column:1/-1}
+  .Conteiner3 .ConteinerMenuRightCRMDashboardBoxTopCaxa h2{font-size:18px}
+  .Conteiner3 .ConteinerMenuRightCRMDashboardBoxBottomBoxLeft{flex-direction:column}
+  .Conteiner3 .ConteinerMenuRightCRMDashboardBoxBottomBoxLeftBox1,.Conteiner3 .ConteinerMenuRightCRMDashboardBoxBottomBoxLeftBox2{width:100%}
+  .Conteiner3 .chartBox svg{height:220px}
+  /* listagens: cabeçalho, pesquisa e tabela em cartões */
+  .Conteiner3 .pgHead{flex-direction:column;align-items:stretch}
+  .Conteiner3 .pgHead input{flex:1;min-width:0}
+  .Conteiner3 .crmPage input,.Conteiner3 .crmPage select{font-size:16px}
+  .Conteiner3 .tbl{background:none;border:0;padding:0;overflow:visible}
+  .Conteiner3 .crmPage table,.Conteiner3 .crmPage tbody,.Conteiner3 .crmPage tr,.Conteiner3 .crmPage td{display:block;width:100%}
+  .Conteiner3 .crmPage thead{display:none}
+  .Conteiner3 .crmPage tr{border:1px solid var(--border,#e2e8f0);border-radius:14px;padding:6px 12px;margin-bottom:10px;background:var(--surface,#fff)}
+  .Conteiner3 .crmPage td{display:flex;justify-content:space-between;gap:12px;border:0;padding:6px 0;text-align:right}
+  .Conteiner3 .crmPage td::before{content:attr(data-label);color:var(--gray-500,#64748b);font-size:12px;text-align:left}
+  .Conteiner3 .crmPage td.acts{justify-content:flex-end}
+  .Conteiner3 .crmPage td.acts::before{content:none}
+  .Conteiner3 .acts button{padding:8px}
+  /* modal como folha inferior */
+  .Conteiner3 .crmModal{place-items:end center}
+  .Conteiner3 .crmModal form{width:100%;max-height:92vh;border-radius:20px 20px 0 0}
+  .Conteiner3 .crmModal .crmRow{flex-wrap:nowrap}
+  .Conteiner3 .crmModal .crmBtn{flex:1;justify-content:center;padding:0 10px}
+  /* calendário: pontos coloridos + agenda do dia por baixo */
+  .Conteiner3 .calGrid{gap:3px;padding:10px}
+  .Conteiner3 .calDia{min-height:54px;padding:4px;align-items:center}
+  .Conteiner3 .calDia em{font-size:0;padding:0;width:7px;height:7px;border-radius:50%;pointer-events:none}
+}
