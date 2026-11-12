@@ -3,7 +3,7 @@ import IMGPERFIL from "../../assets/IMGPERFIL.png";
 import Ico from "./Icons";
 import { useUserStore } from "../../useUseSotore";
 import PERFIL from "../../assets/img_fundo_vazio/perfil.png";
-export const MENU = [["dashboard", "DashBoard"], ["projectos", "Projectos"], ["clientes", "Clientes"], ["financeiro", "Financeiro"], ["faturas", "Faturas"], ["calendario", "Calendario"], ["relatorios", "Relatorios"], ["turmas", "Turmas"]];
+export const MENU = [["dashboard", "DashBoard"], ["projectos", "Projectos"], ["clientes", "Clientes"], ["financeiro", "Financeiro"], ["faturas", "Faturas"], ["calendario", "Calendario"], ["relatorios", "Relatorios"], ["turmas", "Turmas"], ["anuncios", "Gerar anúncios"], ["leads", "Leads"]];
 const T = "ConteinerMenuLeftCRM_Menu_Center_Menu_Center_TXT";
 
 export default function ConteinerMenuLeftCRM({ page, onPage, onVoltar, aberto }) {

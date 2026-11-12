@@ -14,9 +14,11 @@ import { fetchComAuth } from './utils/api'
 import ConteinerRightLive from './conteinerPrincipal/conteiner1/conteinerRight/ConteinerRightLive.jsx'
 import { CHAT_THEMES, DEFAULT_CHAT_THEME } from './conteinerPrincipal/conteiner1/conteinerRight/chatThemes'
 import VoiceCallOverlay from './conteinerPrincipal/conteiner1/conteinerRight/VoiceCallOverlay'
+import PublicAdPage from './conteinerPrincipal/conteiner3/PublicAdPage'
 
 
 function App() {
+  const publicAdId = new URLSearchParams(window.location.search).get("ad")
   const { 
     dadosUsuario, 
     conectarSocket, 
@@ -175,6 +177,10 @@ function App() {
     jaChegouSessao.current = true
 
     async function checarSessao() {
+      if (publicAdId) {
+        setCarregandoSessao(false)
+        return
+      }
       const inicio = Date.now() // ⬅️ marca início
 
       try {
@@ -209,7 +215,7 @@ function App() {
       }
     }
     checarSessao()
-  }, []) // DEPENDÊNCIA VAZIA AGORA
+  }, [publicAdId])
 
   const renderizar_conteiner = () => {
     if (carregandoSessao) return <div className='loading-page'>
@@ -239,6 +245,8 @@ function App() {
         return <Conteiner2 ativarConteiner={setAtivar} setConta={setAtivar} />
     }
   }
+
+  if (publicAdId) return <PublicAdPage adId={publicAdId} />
 
   return (
     <section

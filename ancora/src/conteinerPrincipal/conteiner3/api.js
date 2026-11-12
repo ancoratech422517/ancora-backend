@@ -9,6 +9,8 @@ const RESOURCES = new Set([
   "faturas",
   "turmas",
   "calendario",
+  "anuncios",
+  "leads",
 ]);
 
 let online = null;
@@ -114,6 +116,29 @@ export const api = {
   },
 
   dashboard: () => http("GET", "/dashboard"),
+  async adMetrics(period) {
+    const response = await http("GET", `/anuncios/metricas?periodo=${encodeURIComponent(period)}`);
+    if (!response?.data?.totais || !Array.isArray(response.data.serie) || !Array.isArray(response.data.anuncios)) {
+      throw new Error("O servidor devolveu métricas de anúncios inválidas.");
+    }
+    return response.data;
+  },
+  async publicAd(id) {
+    const response = await http("GET", `/public/anuncios/${encodeURIComponent(id)}`);
+    if (!response?.data) throw new Error("Anúncio não encontrado.");
+    return response.data;
+  },
+  async trackPublicAd(id, type, visitorId) {
+    await http("POST", `/public/anuncios/${encodeURIComponent(id)}/eventos`, {
+      tipo: type,
+      visitante: visitorId,
+    });
+  },
+  async submitPublicLead(id, lead) {
+    const response = await http("POST", `/public/anuncios/${encodeURIComponent(id)}/leads`, lead);
+    if (!response?.data) throw new Error("O servidor não confirmou o registo do interesse.");
+    return response.data;
+  },
 };
 
 export function useList(resource) {

@@ -8,6 +8,8 @@ import { exportSvgs } from "./Charts";
 import ConteinerMenuRightCRMDashboard from "./ConteinerMenuRightCRMDashboard";
 import PERFIL from "../../assets/img_fundo_vazio/perfil.png";
 import { DataPage, Calendario, Relatorios } from "./ConteinerCRMPages";
+import AnunciosPage from "./AnunciosPage";
+import LeadsPage from "./LeadsPage";
 
 export default function ConteinerMenuRightCRM({ page, onPage, onMenu }) {
     const fotoUsuario = useUserStore(state => state.dadosUsuario?.foto_usuario || PERFIL);
@@ -15,7 +17,7 @@ export default function ConteinerMenuRightCRM({ page, onPage, onMenu }) {
     const nomeUsuario = useUserStore(state => state.dadosUsuario?.nome);
     useEffect(() => onStatus(setOn), []);
     useEffect(() => { if (page !== "projectos") setNovo(0); }, [page]);
-    const P = { dashboard: <ConteinerMenuRightCRMDashboard />, calendario: <Calendario />, relatorios: <Relatorios /> };
+    const P = { dashboard: <ConteinerMenuRightCRMDashboard />, calendario: <Calendario />, relatorios: <Relatorios />, anuncios: <AnunciosPage />, leads: <LeadsPage /> };
     const statusLabel = on === true ? "Base de dados ligada" : on === false ? "Backend indisponível" : "A ligar ao backend";
     return (
         <div className="ConteinerMenuRightCRM">
