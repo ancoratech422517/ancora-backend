@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Âncora Status - Estados dos Amigos</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{font-family:Inter,sans-serif;background:#080808;color:#fff}
+.scroll-hide::-webkit-scrollbar{display:none}
+.scroll-hide{-ms-overflow-style:none;scrollbar-width:none}
+.story-ring{background:conic-gradient(from 0deg,#f59e0b,#ec4899,#8b5cf6,#f59e0b);padding:2.5px}
+.story-ring-seen{background:#2a2a2e;padding:2.5px}
+.glass{backdrop-filter:blur(20px);background:rgba(20,20,22,0.8);border:1px solid rgba(255,255,255,0.08)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect} = React;
+
+const amigosData = [
+  {id:1, nome:"Fernando Lucas", username:"fernando.lucas", avatar:"https://i.pravatar.cc/150?img=11", estado:"Mostrando o app Camba Sport que desenvolvi", tempo:"há 2h", tipo:"Novo projeto", visto:false, img:"https://images.unsplash.com/photo-1551650975-87deedd944c3?w=600", cor:"#f59e0b"},
+  {id:2, nome:"Petter Clever", username:"petter.clever", avatar:"https://i.pravatar.cc/150?img=12", estado:"Quem você anda determina quem você se torna", tempo:"há 5h", tipo:"Motivação", visto:false, img:"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600", cor:"#8b5cf6"},
+  {id:3, nome:"Samuel Luemba", username:"samuel.luemba", avatar:"https://i.pravatar.cc/150?img=13", estado:"Imagina os servidores desse jogo sufocados 😅", tempo:"há 1d", tipo:"Gaming", visto:false, img:"https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600", cor:"#06b6d4"},
+  {id:4, nome:"Maria Miguel", username:"maria.miguel", avatar:"https://i.pravatar.cc/150?img=26", estado:"Novo dia, novas oportunidades ✨", tempo:"há 1d", tipo:"Lifestyle", visto:true, img:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600", cor:"#ec4899"},
+  {id:5, nome:"Santos André", username:"santos.andre", avatar:"https://i.pravatar.cc/150?img=15", estado:"Ensaio hoje no estúdio 🎸", tempo:"há 2d", tipo:"Música", visto:false, img:"https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600", cor:"#10b981"},
+  {id:6, nome:"Euriana Dos Santos", username:"euriana.santos", avatar:"https://i.pravatar.cc/150?img=32", estado:"Luanda ao entardecer é mágica", tempo:"há 3h", tipo:"Luanda", visto:false, img:"https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=600", cor:"#f97316"},
+  {id:7, nome:"Felisberto André", username:"felisberto", avatar:"https://i.pravatar.cc/150?img=16", estado:"Foco total no projeto final", tempo:"há 6h", tipo:"Trabalho", visto:true, img:"https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600", cor:"#6366f1"},
+  {id:8, nome:"Margareth Vicenti", username:"margareth", avatar:"https://i.pravatar.cc/150?img=33", estado:"Café da manhã com vista", tempo:"há 8h", tipo:"Food", visto:false, img:"https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600", cor:"#f43f5e"},
+];
+
+function App(){
+  const [ativo, setAtivo] = useState(null);
+  const [amigos, setAmigos] = useState(amigosData);
+  const [progress, setProgress] = useState(0);
+  const [filtro, setFiltro] = useState("Todos");
+
+  useEffect(()=>{
+    if(!ativo) return;
+    setProgress(0);
+    const iv = setInterval(()=>{ setProgress(p=>{
+      if(p>=100){ 
+        // próximo
+        const idx = amigos.findIndex(a=>a.id===ativo.id);
+        if(idx < amigos.length-1){ setAtivo(amigos[idx+1]); } else { setAtivo(null); }
+        return 0;
+      }
+      return p+0.6;
+    })}, 30);
+    return ()=>clearInterval(iv);
+  },[ativo]);
+
+  const marcarVisto = (id)=>{
+    setAmigos(amigos.map(a=>a.id===id?{...a,visto:true}:a));
+  };
+
+  const filtros = ["Todos","Não vistos","Projetos","Luanda"];
+  const listaFiltrada = amigos.filter(a=>{
+    if(filtro==="Não vistos") return !a.visto;
+    if(filtro==="Projetos") return a.tipo==="Novo projeto"||a.tipo==="Trabalho";
+    if(filtro==="Luanda") return a.tipo==="Luanda"||a.nome.includes("Santos");
+    return true;
+  });
+
+  return (
+    <div className="min-h-screen bg-[#080808] flex">
+      {/* SIDEBAR */}
+      <div className="w-full md:w-[380px] border-r border-white/10 bg-[#0e0e10] flex flex-col h-screen sticky top-0">
+        <div className="p-6 border-b border-white/10">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-white text-black grid place-items-center font-black">A</div>
+              <div><p className="font-extrabold leading-none">ÂNCORA STATUS</p><p className="text-[10px] tracking-[0.2em] text-white/40">ESTADOS • PROFISSIONAL</p></div>
+            </div>
+            <div className="w-8 h-8 rounded-full bg-white/5 grid place-items-center">◐</div>
+          </div>
+          <div className="flex gap-2 overflow-x-auto scroll-hide pb-2">
+            {filtros.map(f=><button key={f} onClick={()=>setFiltro(f)} className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition ${filtro===f?'bg-white text-black':'bg-white/5 text-white/60 hover:bg-white/10'}`}>{f}</button>)}
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto scroll-hide">
+          <div className="p-3">
+            <p className="text-[11px] tracking-widest text-white/30 px-3 py-2">ATUALIZAÇÕES RECENTES • {listaFiltrada.length}</p>
+            {listaFiltrada.map(amigo=>(
+              <button key={amigo.id} onClick={()=>{setAtivo(amigo); marcarVisto(amigo.id);}} className={`w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-white/[0.04] transition text-left ${ativo?.id===amigo.id?'bg-white/[0.06]':''}`}>
+                <div className={amigo.visto?'story-ring-seen rounded-full':'story-ring rounded-full'}>
+                  <img src={amigo.avatar} className="w-[48px] h-[48px] rounded-full border-[3px] border-[#0e0e10] object-cover" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm flex items-center gap-2">{amigo.nome} {!amigo.visto && <span className="w-2 h-2 rounded-full bg-amber-400"></span>}</p>
+                  <p className="text-xs text-white/50 truncate">{amigo.estado}</p>
+                </div>
+                <div className="text-right"><p className="text-[10px] text-white/30">{amigo.tempo}</p><p className="text-[9px] tracking-widest mt-1 px-2 py-0.5 rounded-full bg-white/5">{amigo.tipo}</p></div>
+              </button>
+            ))}
+          </div>
+
+          <div className="p-6 mt-4">
+            <div className="glass rounded-[20px] p-4">
+              <p className="text-xs font-bold mb-2">💡 Dica Profissional</p>
+              <p className="text-[11px] text-white/50 leading-relaxed">Toque no estado para ver em tela cheia, como WhatsApp. O anel dourado = não visto. Seus amigos de Luanda aparecem primeiro.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* VIEWER */}
+      <div className="hidden md:flex flex-1 bg-[#050507] relative items-center justify-center">
+        {!ativo ? (
+          <div className="text-center max-w-md">
+            <div className="w-[120px] h-[120px] mx-auto rounded-[32px] bg-white/5 border border-white/10 grid place-items-center mb-6 text-4xl">◑</div>
+            <h2 className="text-2xl font-bold mb-2">Selecione um estado</h2>
+            <p className="text-sm text-white/40 leading-relaxed">Veja os estados dos seus amigos em formato profissional, com viewer em tela cheia, progresso automático e marcação de visto. Inspirado no WhatsApp + Instagram Stories.</p>
+            <div className="mt-8 grid grid-cols-3 gap-3">
+              {amigos.slice(0,3).map(a=><div key={a.id} className="rounded-2xl overflow-hidden aspect-[3/4] bg-white/5 border border-white/10 relative"><img src={a.img} className="w-full h-full object-cover opacity-60" /><div className="absolute bottom-2 left-2 right-2"><img src={a.avatar} className="w-6 h-6 rounded-full mb-1" /><p className="text-[10px] font-bold">{a.nome.split(' ')[0]}</p></div></div>)}
+            </div>
+          </div>
+        ) : (
+          <div className="relative w-[380px] h-[720px] rounded-[36px] overflow-hidden bg-black border border-white/10 shadow-2xl">
+            <img src={ativo.img} className="absolute inset-0 w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/10 to-black/80"></div>
+            
+            {/* Progress */}
+            <div className="absolute top-0 left-0 right-0 p-2 flex gap-1 z-10">
+              <div className="h-[3px] flex-1 bg-white/20 rounded-full overflow-hidden"><div className="h-full bg-white transition-all" style={{width:`${progress}%`}}></div></div>
+            </div>
+
+            {/* Header */}
+            <div className="absolute top-6 left-0 right-0 p-4 flex items-center justify-between z-10">
+              <div className="flex items-center gap-3">
+                <img src={ativo.avatar} className="w-10 h-10 rounded-full border-2 border-white/20" />
+                <div><p className="font-bold text-sm">{ativo.nome}</p><p className="text-[11px] text-white/60">{ativo.tempo} • {ativo.tipo}</p></div>
+              </div>
+              <button onClick={()=>setAtivo(null)} className="w-8 h-8 rounded-full bg-white/15 backdrop-blur-md grid place-items-center">✕</button>
+            </div>
+
+            {/* Content */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+              <div className="glass rounded-2xl p-4">
+                <p className="font-medium leading-snug">{ativo.estado}</p>
+                <div className="flex items-center gap-2 mt-4">
+                  <button className="flex-1 bg-white text-black font-bold py-3 rounded-full text-sm">Responder</button>
+                  <button className="w-11 h-11 rounded-full bg-white/15 grid place-items-center">❤</button>
+                  <button className="w-11 h-11 rounded-full bg-white/15 grid place-items-center">↗</button>
+                </div>
+              </div>
+              <div className="flex justify-center gap-2 mt-4">
+                <button onClick={()=>{
+                  const idx = amigos.findIndex(a=>a.id===ativo.id);
+                  if(idx>0) setAtivo(amigos[idx-1]);
+                }} className="w-10 h-10 rounded-full bg-white/10 grid place-items-center">‹</button>
+                <button onClick={()=>{
+                  const idx = amigos.findIndex(a=>a.id===ativo.id);
+                  if(idx < amigos.length-1) setAtivo(amigos[idx+1]);
+                }} className="w-10 h-10 rounded-full bg-white/10 grid place-items-center">›</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Mobile overlay */}
+        {ativo && (
+          <div className="md:hidden fixed inset-0 z-50 bg-black">
+            {/* same viewer but fullscreen mobile */}
+            <div className="w-full h-full relative">
+              <img src={ativo.img} className="absolute inset-0 w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/80"></div>
+              <div className="absolute top-0 left-0 right-0 p-2 flex gap-1"><div className="h-[3px] flex-1 bg-white/20 rounded-full overflow-hidden"><div className="h-full bg-white" style={{width:`${progress}%`}}></div></div></div>
+              <div className="absolute top-6 left-0 right-0 p-4 flex justify-between"><div className="flex gap-3 items-center"><img src={ativo.avatar} className="w-10 h-10 rounded-full" /><div><p className="font-bold text-sm">{ativo.nome}</p><p className="text-[11px] text-white/60">{ativo.tempo}</p></div></div><button onClick={()=>setAtivo(null)} className="w-8 h-8 rounded-full bg-white/15 grid place-items-center">✕</button></div>
+              <div className="absolute bottom-0 p-6 w-full"><div className="glass rounded-2xl p-4"><p>{ativo.estado}</p><button className="mt-4 w-full bg-white text-black font-bold py-3 rounded-full">Responder</button></div></div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Mobile list click opens fullscreen handled above */}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
