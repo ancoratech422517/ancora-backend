@@ -5,7 +5,7 @@ import { fetchComAuth } from './utils/api'
 
 const defaultBackendUrl = "https://ancora-backend-09zc.onrender.com"
 const CHAT_THEME_STORAGE_KEY = "ancora-chat-theme"
-
+const url = defaultBackendUrl
 function getInitialChatThemeId() {
   try {
     return localStorage.getItem(CHAT_THEME_STORAGE_KEY) || "original"
