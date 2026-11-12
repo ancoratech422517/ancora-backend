@@ -3,9 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import { io } from 'socket.io-client'
 import { fetchComAuth } from './utils/api'
 
-const defaultBackendUrl = import.meta.env.DEV
-  ? "http://127.0.0.1:5000"
-  : "https://ancora-backend-09zc.onrender.com"
+const defaultBackendUrl = "https://ancora-backend-09zc.onrender.com"
 const CHAT_THEME_STORAGE_KEY = "ancora-chat-theme"
 
 function getInitialChatThemeId() {
