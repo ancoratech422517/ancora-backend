@@ -282,7 +282,7 @@ export default function AnunciosPage() {
         : await api.create("anuncios", payload);
       await reload();
       setMetricsRefresh((value) => value + 1);
-      const link = `${window.location.origin}${window.location.pathname}?ad=${saved.id}`;
+      const link = api.publicAdShareUrl(saved.id);
       setGeneratedLink(link);
       setEditingId(null);
       setForm(initialForm(user?.nome || ""));
@@ -581,7 +581,7 @@ export default function AnunciosPage() {
         <div className="adsGrid">
           {rows.map((ad) => {
             const adImage = getImageUrl(ad.img, backend);
-            const link = `${window.location.origin}${window.location.pathname}?ad=${ad.id}`;
+            const link = api.publicAdShareUrl(ad.id);
             const adMetrics = metricsByAd.get(String(ad.id));
             return (
               <article className="adsSavedCard" key={ad.id}>

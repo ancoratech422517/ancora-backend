@@ -3,8 +3,9 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import { io } from 'socket.io-client'
 import { fetchComAuth } from './utils/api'
 
-let url = "https://ancora-backend-09zc.onrender.com"
-let url2 = "http://127.0.0.1:5000"
+const defaultBackendUrl = import.meta.env.DEV
+  ? "http://127.0.0.1:5000"
+  : "https://ancora-backend-09zc.onrender.com"
 const CHAT_THEME_STORAGE_KEY = "ancora-chat-theme"
 
 function getInitialChatThemeId() {
@@ -22,7 +23,7 @@ export const useUserStore = create(
   
   persist( 
     (set, get) => ({
-      urlBancoDeDados: url,
+      urlBancoDeDados: defaultBackendUrl,
       chatThemeId: getInitialChatThemeId(),
       chatThemeMode: "static",
       chatAnimatedSceneId: "warp",

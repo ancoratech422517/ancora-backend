@@ -1,12 +1,14 @@
 from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta, timezone
 import hashlib
+from html import escape
 import hmac
 import math
 import re
+from urllib.parse import urljoin, urlparse
 
 import jwt
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, current_app, jsonify, make_response, request
 
 from models.database import CRMRegistro, Registrar_produto, Turma_Aula, Usuario, db
 
@@ -529,6 +531,69 @@ def crm_public_advertisement(record_id):
             **{field: record.dados[field] for field in public_fields},
         },
     })
+
+
+@crm_bp.route("/public/anuncios/<int:record_id>/partilhar", methods=["GET"])
+def crm_public_advertisement_share(record_id):
+    record = CRMRegistro.query.filter_by(
+        id=record_id,
+        recurso="anuncios",
+    ).first()
+    if not record:
+        return jsonify({"error": "Anúncio não encontrado"}), 404
+
+    data = record.dados
+    title = data["title"]
+    description = (
+        data.get("descCurta")
+        or data.get("descLonga")
+        or f"{data.get('categoria', 'Anúncio')} · {data.get('preco', '')}"
+    )
+    image_path = data.get("img")
+    if not isinstance(image_path, str) or not image_path.strip():
+        return jsonify({"error": "A imagem do anúncio não tem um endereço público válido"}), 422
+    image = urljoin(request.url_root, image_path.strip())
+    parsed_image = urlparse(image)
+    if parsed_image.scheme not in {"http", "https"} or not parsed_image.netloc:
+        return jsonify({"error": "A imagem do anúncio não tem um endereço público válido"}), 422
+
+    frontend_url = current_app.config["FRONTEND_URL"].rstrip("/")
+    destination = f"{frontend_url}/?ad={record.id}"
+    share_url = request.url
+    escaped_title = escape(title, quote=True)
+    escaped_description = escape(description, quote=True)
+    escaped_image = escape(image, quote=True)
+    escaped_share_url = escape(share_url, quote=True)
+    escaped_destination = escape(destination, quote=True)
+    html = f"""<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{escaped_title} | Âncora</title>
+  <meta name="description" content="{escaped_description}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Âncora">
+  <meta property="og:url" content="{escaped_share_url}">
+  <meta property="og:title" content="{escaped_title}">
+  <meta property="og:description" content="{escaped_description}">
+  <meta property="og:image" content="{escaped_image}">
+  <meta property="og:image:alt" content="{escaped_title}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{escaped_title}">
+  <meta name="twitter:description" content="{escaped_description}">
+  <meta name="twitter:image" content="{escaped_image}">
+  <meta http-equiv="refresh" content="0;url={escaped_destination}">
+</head>
+<body>
+  <p>A abrir o anúncio <strong>{escaped_title}</strong>.</p>
+  <p><a href="{escaped_destination}">Abrir anúncio</a></p>
+</body>
+</html>"""
+    response = make_response(html)
+    response.headers["Content-Type"] = "text/html; charset=utf-8"
+    response.headers["Cache-Control"] = "public, max-age=300"
+    return response
 
 
 @crm_bp.route("/public/anuncios/<int:record_id>/eventos", methods=["POST"])
