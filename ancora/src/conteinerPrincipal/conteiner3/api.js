@@ -133,7 +133,7 @@ export const api = {
     if (import.meta.env.DEV) {
       return `${window.location.origin}${window.location.pathname}?ad=${encodedId}`;
     }
-    return `${getApiBase()}/public/anuncios/${encodedId}/partilhar`;
+    return `${getApiBase()}/public/anuncios/${encodedId}/partilhar?preview=2`;
   },
   async trackPublicAd(id, type, visitorId) {
     await http("POST", `/public/anuncios/${encodeURIComponent(id)}/eventos`, {

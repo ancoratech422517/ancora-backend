@@ -592,17 +592,17 @@
 }
 .publicAdContent {
   display: grid;
-  width: min(1120px, 90vw);
-  grid-template-columns: minmax(0, 1fr) minmax(0, .9fr);
+  width: min(1240px, 94vw);
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
   align-items: start;
-  gap: 42px;
+  gap: 48px;
   margin: 48px auto;
 }
 .publicAdImage {
   overflow: hidden;
   border: 1px solid var(--border, #e2e8f0);
   border-radius: 22px;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 10;
   background: var(--surface, #fff);
 }
 .publicAdImage img {
@@ -674,7 +674,8 @@
 }
 .publicAdDescription {
   color: var(--gray-600, #475569);
-  line-height: 1.7;
+  font-size: 18px;
+  line-height: 1.75;
   white-space: pre-wrap;
 }
 .publicAdBenefits {
@@ -826,6 +827,9 @@
     width: calc(100% - 32px);
     gap: 24px;
     margin: 26px auto;
+  }
+  .publicAdDescription {
+    font-size: 17px;
   }
   .publicAdBrand {
     flex-wrap: wrap;

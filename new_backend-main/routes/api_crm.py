@@ -5,7 +5,7 @@ from html import escape
 import hmac
 import math
 import re
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin, urlparse, urlunparse
 
 import jwt
 from flask import Blueprint, current_app, jsonify, make_response, request
@@ -533,6 +533,19 @@ def crm_public_advertisement(record_id):
     })
 
 
+def _share_preview_image_url(image_url):
+    parsed = urlparse(image_url)
+    if parsed.netloc.lower() != "res.cloudinary.com" or "/image/upload/" not in parsed.path:
+        return image_url, False
+
+    transformed_path = parsed.path.replace(
+        "/image/upload/",
+        "/image/upload/c_fill,w_1200,h_630,g_auto,q_auto,f_jpg/",
+        1,
+    )
+    return urlunparse(parsed._replace(path=transformed_path)), True
+
+
 @crm_bp.route("/public/anuncios/<int:record_id>/partilhar", methods=["GET"])
 def crm_public_advertisement_share(record_id):
     record = CRMRegistro.query.filter_by(
@@ -544,11 +557,23 @@ def crm_public_advertisement_share(record_id):
 
     data = record.dados
     title = data["title"]
-    description = (
-        data.get("descCurta")
-        or data.get("descLonga")
-        or f"{data.get('categoria', 'Anúncio')} · {data.get('preco', '')}"
-    )
+    description_parts = []
+    for field in ("descCurta", "descLonga"):
+        value = data.get(field)
+        if isinstance(value, str) and value.strip() and value.strip() not in description_parts:
+            description_parts.append(value.strip())
+    details = [
+        value.strip()
+        for value in (data.get("categoria"), data.get("preco"))
+        if isinstance(value, str) and value.strip()
+    ]
+    if details:
+        description_parts.append(" · ".join(details))
+    description = re.sub(r"\s+", " ", " | ".join(description_parts)).strip()
+    description = description[:500].rstrip()
+    twitter_description = description[:200]
+    if len(description) > 200 and " " in twitter_description:
+        twitter_description = twitter_description.rsplit(" ", 1)[0]
     image_path = data.get("img")
     if not isinstance(image_path, str) or not image_path.strip():
         return jsonify({"error": "A imagem do anúncio não tem um endereço público válido"}), 422
@@ -556,15 +581,29 @@ def crm_public_advertisement_share(record_id):
     parsed_image = urlparse(image)
     if parsed_image.scheme not in {"http", "https"} or not parsed_image.netloc:
         return jsonify({"error": "A imagem do anúncio não tem um endereço público válido"}), 422
+    image, is_large_image = _share_preview_image_url(image)
 
     frontend_url = current_app.config["FRONTEND_URL"].rstrip("/")
     destination = f"{frontend_url}/?ad={record.id}"
     share_url = request.url
     escaped_title = escape(title, quote=True)
     escaped_description = escape(description, quote=True)
+    escaped_twitter_description = escape(twitter_description, quote=True)
     escaped_image = escape(image, quote=True)
     escaped_share_url = escape(share_url, quote=True)
     escaped_destination = escape(destination, quote=True)
+    secure_image_tag = (
+        f'<meta property="og:image:secure_url" content="{escaped_image}">'
+        if parsed_image.scheme == "https"
+        else ""
+    )
+    image_dimensions = (
+        '<meta property="og:image:width" content="1200">\n'
+        '  <meta property="og:image:height" content="630">\n'
+        '  <meta property="og:image:type" content="image/jpeg">'
+        if is_large_image
+        else ""
+    )
     html = f"""<!doctype html>
 <html lang="pt">
 <head>
@@ -578,10 +617,12 @@ def crm_public_advertisement_share(record_id):
   <meta property="og:title" content="{escaped_title}">
   <meta property="og:description" content="{escaped_description}">
   <meta property="og:image" content="{escaped_image}">
+  {secure_image_tag}
+  {image_dimensions}
   <meta property="og:image:alt" content="{escaped_title}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{escaped_title}">
-  <meta name="twitter:description" content="{escaped_description}">
+  <meta name="twitter:description" content="{escaped_twitter_description}">
   <meta name="twitter:image" content="{escaped_image}">
   <meta http-equiv="refresh" content="0;url={escaped_destination}">
 </head>
