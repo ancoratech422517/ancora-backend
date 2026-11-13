@@ -136,7 +136,7 @@ app = Flask(__name__)
 # ===================== CORS =====================
 CORS(app, resources={r"/*": {
     "origins": [
-        "http://127.0.0.1:5173",
+        "http://127.0.0.1:5000",
         "http://localhost:5173",
         "https://localhost",
         "http://localhost",

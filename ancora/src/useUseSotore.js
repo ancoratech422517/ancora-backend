@@ -5,7 +5,8 @@ import { fetchComAuth } from './utils/api'
 import { saveChatHistory, saveChatMessage } from './utils/offlineStorage'
 
 const CHAT_THEME_STORAGE_KEY = "ancora-chat-theme"
-const url = "https://ancora-backend-09zc.onrender.com" || "https://ancora-backend-09zc.onrender.com"
+let url2 = "http://127.0.0.1:5000"
+let url = "https://ancora-backend-09zc.onrender.com"
 function messageKey(message) {
   if (message.client_message_id) return `client:${message.client_message_id}`
   if (message.id != null) return `id:${message.id}`
