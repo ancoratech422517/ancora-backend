@@ -1,4 +1,5 @@
 import { useUserStore } from "../../../useUseSotore";
+import { fetchComAuth } from "../../../utils/api";
 
 export async function Conteiner7Scrolldados6AceitarConviteTurma(
     id_turma_convite,
@@ -18,7 +19,7 @@ export async function Conteiner7Scrolldados6AceitarConviteTurma(
     const buscarNoficacao = useUserStore.getState().buscar_notificacao
     const SOCKET = useUserStore.getState().socket
     try {
-        const respostaAceitar = await fetch(`${URLBACKEND}/aceitar_convite_turma`, {
+        const respostaAceitar = await fetchComAuth(`${URLBACKEND}/aceitar_convite_turma`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -50,6 +51,7 @@ export async function Conteiner7Scrolldados6AceitarConviteTurma(
         SOCKET.emit("notificar_usuario_solicirante", {"id_usuario_solicitante": id_usuario, "id_admin_turma": id_admin, "id_turma": id_turma_convite})
         return true
     } catch (erro) {
+        if (erro?.queued) return true
         console.error("Erro ao aceitar convite/solicitacao:", erro)
         return false
     }

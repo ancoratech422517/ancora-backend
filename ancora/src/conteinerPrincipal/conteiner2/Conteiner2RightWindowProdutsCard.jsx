@@ -5,6 +5,7 @@ import { useUserStore } from "../../useUseSotore";
 import { Sistema_de_adoro_dinamico } from "./js/ConteinerSistemaAdoro";
 // Importamos uma imagem padrão caso o produto não tenha foto
 import ImageDefault from "../../assets/image_card.png";
+import CachedImage from "../../components/CachedImage";
 
 export default function Conteiner2RightWindowProdutsCard({ dados }) {
     // Adicionei TodosProdutos aqui para monitorar a Store global
@@ -49,10 +50,7 @@ export default function Conteiner2RightWindowProdutsCard({ dados }) {
       };
 
 
-    let urlImagem = getUrlVideo(dados.url_imagem_produto)
-    
-        ? `${dados.url_imagem_produto}` 
-        : ImageDefault;
+    const urlImagem = getUrlVideo(dados.url_imagem_produto) || ImageDefault;
 
     let valor = "none"
     if(dados.foto_vendedor !== "none"){
@@ -99,7 +97,12 @@ export default function Conteiner2RightWindowProdutsCard({ dados }) {
                 </div>
             </div>
             <div className="ImageCard">
-                <img src={urlImagem} alt={dados.nome_produto} />
+                <CachedImage
+                    src={urlImagem}
+                    blurHash={dados.url_imagem_produto_blurhash}
+                    alt={dados.nome_produto}
+                    loading="lazy"
+                />
             </div>
             <div className="dadosCard">
                 <li>{dados.tipo_produto || "Geral"}</li>

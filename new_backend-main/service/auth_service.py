@@ -29,6 +29,7 @@ class AuthService:
             "nome":usuario.nome,
             "telefone":usuario.telefone,
             "foto_usuario":usuario.foto_usuario,
+            "foto_usuario_blurhash":usuario.foto_usuario_blurhash,
             "email":usuario.email,
             "pais":usuario.pais,
             "provincia":usuario.provincia,

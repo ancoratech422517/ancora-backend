@@ -12,8 +12,14 @@ def Eliminar_menssagem (data):
         Menssagens.id == id_menssagem
     ).delete()
     
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as error:
+        db.session.rollback()
+        print(f"erro ao apagar a mensagem: {error}")
+        return {"success": False, "error": "Não foi possível apagar a mensagem"}
     print(f"menssagem apagada com sucesso na sala {sala_menssagem}")
 
     emit("elimiar_menssagem_array" , {"id_menssagem":id_menssagem , "sala_menssagem":sala_menssagem} , room = str(sala_menssagem))
+    return {"success": True}
     

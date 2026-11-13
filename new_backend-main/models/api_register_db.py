@@ -4,7 +4,7 @@ from cryptography.hazmat.primitives import serialization
 from werkzeug.security import generate_password_hash
 
 class RegisterService:
-    def registrar_user_in_db(self, nome, telefone, senha , email , data_nascimento , foto_usuario , continente , pais , provincia , capital , bairro):
+    def registrar_user_in_db(self, nome, telefone, senha , email , data_nascimento , foto_usuario , foto_usuario_blurhash=None , continente=None , pais=None , provincia=None , capital=None , bairro=None):
 
         # 2. Gerar o Par de Chaves Assimétricas (Para Saques/Pagamentos)
         # O RSA de 2048 bits é o padrão de segurança atual
@@ -37,6 +37,7 @@ class RegisterService:
                 senha_hash=senha_protegida,
                 chave_publica=public_pem, # Guardamos a pública para validar saques
                 foto_usuario = foto_usuario,
+                foto_usuario_blurhash = foto_usuario_blurhash,
                 email = email,
                 data_nascimento = data_nascimento , 
                 continente = continente,

@@ -19,6 +19,7 @@ def dados_estado(id_usuario):
                 todos_dados.append({
                     "id_usuario":x.id_usuario,
                     "dados_estado":x.dados_estado,
+                    "media_blurhash":x.media_blurhash,
                     "descricao_dados":x.descricao_dados,
                     "visualizacao_dados":x.visualizacao_dados,
                     "adoro_dados":x.adoro_dados,

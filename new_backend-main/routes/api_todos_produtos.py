@@ -12,6 +12,7 @@ def buscar_todos_produtos(id_usuario):
         resultados = db.session.query(
             Registrar_produto,
             Usuario.foto_usuario,
+            Usuario.foto_usuario_blurhash,
             Tabel_Reacao_Produto.estado_adoro
         ).join(
             Usuario, Registrar_produto.id_usuario == Usuario.id
@@ -23,7 +24,7 @@ def buscar_todos_produtos(id_usuario):
 
         lista_produto = []
 
-        for produto, foto_vendedor, estado_adoro in resultados:
+        for produto, foto_vendedor, foto_vendedor_blurhash, estado_adoro in resultados:
 
             if estado_adoro is None:
                 ja_adorou = "False"
@@ -39,9 +40,11 @@ def buscar_todos_produtos(id_usuario):
                 "tipo_produto": produto.tipo_produto,
                 "preco_produto": produto.preco_produto,
                 "url_imagem_produto": produto.url_imagem_produto,
+                "url_imagem_produto_blurhash": produto.url_imagem_produto_blurhash,
                 "id_usuario": produto.id_usuario,
                 "nome_vendedor": produto.nome_vendedor,
                 "foto_vendedor": foto_vendedor, # Vem direto da query otimizada
+                "foto_vendedor_blurhash": foto_vendedor_blurhash,
                 "avalicao_produto_estrela": produto.avalicao_produto_estrela,
                 "visualizacao_produto": produto.visualizacao_produto,
                 "quantidade_encomenda_produto": produto.quantidade_encomenda_produto,

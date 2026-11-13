@@ -16,43 +16,48 @@ def Aceitar_pedido_amizade(data):
         print("Erro: IDs inválidos recebidos")
         return
 
+    try:
+        id_usuario = int(id_usuario)
+        id_amigo = int(id_amigo)
+    except (TypeError, ValueError):
+        print("Erro: IDs inválidos recebidos")
+        return
+
     # Ordenar para criar sala única
-    ordernar_sala = sorted([int(id_usuario), int(id_amigo)])
+    ordernar_sala = sorted([id_usuario, id_amigo])
     nossa_sala = f"sala_{ordernar_sala[0]}_{ordernar_sala[1]}"
     
 
-    # ====================== NOVA LÓGICA: VERIFICAR SE JÁ SÃO AMIGOS ======================
-    # Verifica se já existe registo de amizade em qualquer sentido
-    ja_sao_amigos = Amigo.query.filter(
+    # Repara relações unidirecionais antigas sem duplicar relações existentes.
+    amizades_existentes = Amigo.query.filter(
         ((Amigo.id_usuario == id_usuario) & (Amigo.id_amigo == id_amigo)) |
         ((Amigo.id_usuario == id_amigo) & (Amigo.id_amigo == id_usuario))
-    ).first()
+    ).all()
+    pares_existentes = {
+        (amizade.id_usuario, amizade.id_amigo)
+        for amizade in amizades_existentes
+    }
 
-    if ja_sao_amigos:
-        print(f"Os usuários {id_usuario} e {id_amigo} já são amigos. Ignorando registo duplicado.")
-    else:
-        # Só regista se ainda não forem amigos
-        dados_remitente = {
-            "id_usuario": id_usuario,
-            "id_amigo": id_amigo,
-            "foto_amigo":foto_destinatario,
-            "nossa_sala": nossa_sala
-        }
-        dados_destinatario = {
-            "id_usuario": id_amigo,
-            "id_amigo": id_usuario,
-            "foto_amigo":foto_remitente,
-            "nossa_sala": nossa_sala
-        }
-        
-        novo_amigo_remitente = Amigo(**dados_remitente)
-        novo_amigo_destinatario = Amigo(**dados_destinatario)
+    novas_amizades = []
+    if (id_usuario, id_amigo) not in pares_existentes:
+        novas_amizades.append(Amigo(
+            id_usuario=id_usuario,
+            id_amigo=id_amigo,
+            foto_amigo=foto_destinatario,
+            nossa_sala=nossa_sala,
+        ))
+    if (id_amigo, id_usuario) not in pares_existentes:
+        novas_amizades.append(Amigo(
+            id_usuario=id_amigo,
+            id_amigo=id_usuario,
+            foto_amigo=foto_remitente,
+            nossa_sala=nossa_sala,
+        ))
 
-        db.session.add(novo_amigo_remitente)
-        db.session.add(novo_amigo_destinatario)
+    if novas_amizades:
+        db.session.add_all(novas_amizades)
         db.session.commit()
         print(f"Amizade registada com sucesso na sala: {nossa_sala}")
-    # ====================================================================================
 
     # Remover notificação da tabela Amizade (pedido de amizade)
     notificacao = Amizade.query.filter_by(

@@ -23,6 +23,7 @@ def estado_meu_amigo (id_usuario):
                     "id": estado.id,
                     "id_usuario": estado.id_usuario,
                     "dados_estado": estado.dados_estado,
+                    "media_blurhash": estado.media_blurhash,
                     "descricao_dados": estado.descricao_dados,
                     "visualizacao_dados": estado.visualizacao_dados,
                     "adoro_dados": estado.adoro_dados,

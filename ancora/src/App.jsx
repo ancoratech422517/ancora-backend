@@ -1,24 +1,30 @@
-import { useState, useEffect, useRef } from 'react'
+import { lazy, Suspense, useState, useEffect, useLayoutEffect, useRef } from 'react'
 import './App.css'
-import Conteiner1 from "./conteinerPrincipal/conteiner1/conteiner1"
-import Conteiner2 from './conteinerPrincipal/conteiner2/conteiner2'
-import Conteiner3 from './conteinerPrincipal/conteiner3/conteiner3'
-import Conteiner4 from './conteinerPrincipal/conteiner4/conteiner4'
-import Conteiner5 from './conteinerPrincipal/conteiner5/conteiner5'
-import Conteiner6 from "./conteinerPrincipal/conteiner6/conteiner6"
-import Conteiner8 from './conteinerPrincipal/conteiner8/conteiner8'
+const Conteiner1 = lazy(() => import("./conteinerPrincipal/conteiner1/conteiner1"))
+const Conteiner2 = lazy(() => import('./conteinerPrincipal/conteiner2/conteiner2'))
+const Conteiner3 = lazy(() => import('./conteinerPrincipal/conteiner3/conteiner3'))
+const Conteiner4 = lazy(() => import('./conteinerPrincipal/conteiner4/conteiner4'))
+const Conteiner5 = lazy(() => import('./conteinerPrincipal/conteiner5/conteiner5'))
+const Conteiner6 = lazy(() => import("./conteinerPrincipal/conteiner6/conteiner6"))
+const Conteiner8 = lazy(() => import('./conteinerPrincipal/conteiner8/conteiner8'))
 import MenuConteinerLeft from './conteinerPrincipal/conteiner1/conteinerLeft/menuConteinerLeft'
 import Conteiner_Animacao_Chamada_Grupo from './conteinerPrincipal/conteiner-animacao/conteiner-animacao-chamada/conteiner-animacao-chamada.jsx'
 import { useUserStore } from './useUseSotore'
 import { fetchComAuth } from './utils/api'
-import ConteinerRightLive from './conteinerPrincipal/conteiner1/conteinerRight/ConteinerRightLive.jsx'
+const ConteinerRightLive = lazy(() => import('./conteinerPrincipal/conteiner1/conteinerRight/ConteinerRightLive.jsx'))
 import { CHAT_THEMES, DEFAULT_CHAT_THEME } from './conteinerPrincipal/conteiner1/conteinerRight/chatThemes'
 import VoiceCallOverlay from './conteinerPrincipal/conteiner1/conteinerRight/VoiceCallOverlay'
-import PublicAdPage from './conteinerPrincipal/conteiner3/PublicAdPage'
+const PublicAdPage = lazy(() => import('./conteinerPrincipal/conteiner3/PublicAdPage'))
+import { getInitialTheme } from './utils/theme'
+import { preparePrivateMediaStorage } from './utils/privateMediaStorage'
+import OfflineSyncIndicator from './components/OfflineSyncIndicator'
 
 
 function App() {
   const publicAdId = new URLSearchParams(window.location.search).get("ad")
+  useLayoutEffect(() => {
+    document.documentElement.dataset.theme = getInitialTheme();
+  }, []);
   const { 
     dadosUsuario, 
     conectarSocket, 
@@ -38,6 +44,10 @@ function App() {
     EstadoChamadaGrupo,
     chatThemeId
   } = useUserStore()
+  const [carregandoSessao, setCarregandoSessao] = useState(false)
+  const [sessaoInicializada, setSessaoInicializada] = useState(false)
+  const buscouNotificacoes = useRef(false)
+  const jaChegouSessao = useRef(false)
   const chatThemePalette = CHAT_THEMES.find((theme) => theme.id === chatThemeId)
   const condicaoEstadoChamadaGrupo = ()=>{
     switch(EstadoChamadaGrupo){
@@ -111,9 +121,15 @@ function App() {
     }
   }
   
-  const [carregandoSessao, setCarregandoSessao] = useState(true)
-  const buscouNotificacoes = useRef(false)
-  const jaChegouSessao = useRef(false) // TRAVA NOVA
+  const containerAtual = sessaoInicializada
+    ? ativar
+    : dadosUsuario?.id ? "conteiner1" : "conteiner6"
+
+  useEffect(() => {
+    preparePrivateMediaStorage().catch((error) => {
+      console.error("Não foi possível preparar o armazenamento privado da Âncora:", error)
+    })
+  }, [])
 
   useEffect(() => {
     if (!socket) return
@@ -156,7 +172,7 @@ function App() {
           console.error("Erro na busca inicial:", err)
         })
     }
-  }, [dadosUsuario?.id, setNotificacoes])
+  }, [dadosUsuario?.id, setNotificacoes, urlBancoDeDados])
 
   // --- LÓGICA DO WEBSOCKET ---
   useEffect(() => {
@@ -178,10 +194,10 @@ function App() {
 
     async function checarSessao() {
       if (publicAdId) {
-        setCarregandoSessao(false)
         return
       }
-      const inicio = Date.now() // ⬅️ marca início
+      const cachedUser = useUserStore.getState().dadosUsuario
+      setAtivar(cachedUser?.id ? "conteiner1" : "conteiner6")
 
       try {
         console.log("🔍 Verificando sessão...")
@@ -192,30 +208,26 @@ function App() {
           setDados(dados)
           setAtivar("conteiner1")
           console.log("✅ Sessão restaurada:", dados.nome)
-        } else {
+        } else if (res.status === 401) {
           setAtivar("conteiner6")
           console.log("❌ Sem sessão ativa")
+        } else if (!cachedUser?.id) {
+          setAtivar("conteiner6")
         }
       } catch (err) {
-        console.log("❌ Erro ao checar sessão:", err)
-        setAtivar("conteiner6")
-      } finally {
-        const tempoDecorrido = Date.now() - inicio
-        const tempoMinimo = 2000 // ⬅️ 5 segundos
-
-        const tempoRestante = tempoMinimo - tempoDecorrido
-
-        if (tempoRestante > 0) {
-          setTimeout(() => {
-            setCarregandoSessao(false)
-          }, tempoRestante)
+        console.warn("Não foi possível validar a sessão com o servidor:", err)
+        if (cachedUser?.id && err?.message !== "Sessão expirada") {
+          setAtivar("conteiner1")
         } else {
-          setCarregandoSessao(false)
+          setAtivar("conteiner6")
         }
+      } finally {
+        setCarregandoSessao(false)
+        setSessaoInicializada(true)
       }
     }
     checarSessao()
-  }, [publicAdId])
+  }, [publicAdId, setAtivar, setDados, urlBancoDeDados])
 
   const renderizar_conteiner = () => {
     if (carregandoSessao) return <div className='loading-page'>
@@ -233,7 +245,7 @@ function App() {
 
     </div>
 
-    switch(ativar) {
+    switch(containerAtual) {
       case "conteiner1": return <Conteiner1 ativarConteiner={setAtivar} />
       case "conteiner2": return <Conteiner2 />
       case "conteiner3": return <Conteiner3 />
@@ -246,7 +258,13 @@ function App() {
     }
   }
 
-  if (publicAdId) return <PublicAdPage adId={publicAdId} />
+  if (publicAdId) {
+    return (
+      <Suspense fallback={<div className="loading-page">A carregar anúncio...</div>}>
+        <PublicAdPage adId={publicAdId} />
+      </Suspense>
+    )
+  }
 
   return (
     <section
@@ -254,14 +272,17 @@ function App() {
       data-chat-theme-palette={chatThemeId !== DEFAULT_CHAT_THEME.id ? chatThemeId : undefined}
       style={chatThemePalette?.style}
     >
-      {!carregandoSessao && ativar !== "conteiner6" && (
+      {!carregandoSessao && containerAtual !== "conteiner6" && (
         <MenuConteinerLeft ativarConteiner={setAtivar} setDadosUsuario={setDados} />
       )}
-      {renderizar_conteiner()}
-      {condicaoEstadoMenuLiveAncora()}
-      {condicaoEstadoConteinerTurmaVideoExibir()}
-      {condicaoEstadoChamadaGrupo()}
+      <Suspense fallback={<div className="loading-page">A carregar Âncora...</div>}>
+        {renderizar_conteiner()}
+        {condicaoEstadoMenuLiveAncora()}
+        {condicaoEstadoConteinerTurmaVideoExibir()}
+        {condicaoEstadoChamadaGrupo()}
+      </Suspense>
       <VoiceCallOverlay />
+      <OfflineSyncIndicator />
 
     </section>
   )

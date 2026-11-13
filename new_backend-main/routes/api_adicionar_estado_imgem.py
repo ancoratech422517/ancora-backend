@@ -1,6 +1,7 @@
 from flask import Blueprint , current_app , request , jsonify , url_for
 from models.database import Adicionar_dados_estado , db
 from service.estado_realtime_service import notificar_amigos_novo_estado
+from service.media_metadata import validate_blurhash
 import cloudinary.uploader
 import os
 from uuid import uuid4
@@ -18,6 +19,10 @@ def estado_imagem ():
         tipo_estado = request.form.get("tipo_estado")
         foto_usuario = request.form.get("foto_usuario")
         id_usuario = request.form.get("id_usuario")
+        try:
+            media_blurhash = validate_blurhash(request.form.get("blurhash"))
+        except ValueError as error:
+            return jsonify({"resposta": str(error)}), 400
         if not dados_estado or not dados_estado.filename:
             return jsonify({"resposta":"nenhuma imagem celecionada"}), 400
 
@@ -52,7 +57,8 @@ def estado_imagem ():
             "tipo_estado":tipo_estado,
             "descricao_dados":descricao_imagem,
             "id_usuario":id_usuario,
-            "dados_estado":URL_IMAGEM
+            "dados_estado":URL_IMAGEM,
+            "media_blurhash":media_blurhash
         }
         novo_estado = Adicionar_dados_estado(**dados_geral)
         db.session.add(novo_estado)

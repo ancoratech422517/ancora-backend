@@ -1,12 +1,12 @@
-import { useState } from "react";
 import "../css/GeralChatEstadoViewDateImagem.css"
 import SetaEsquerda from "../../../../components/conteinerSvg/setaEsquerda";
 import { useUserStore } from "../../../../../useUseSotore";
+import CachedImage from "../../../../../components/CachedImage";
 export default function GeralChatEstadoViewDateImagem (){
     const {setMostrarConteinerEstadoUserViews , DadosGeralEstadoUser , set_DADOSTIPOVIEWSLAYUTELEFT , CONFIRMARSAIDA} = useUserStore()
     return (
         <div className="GeralChatEstadoViewDateImagem">
-            <img src={DadosGeralEstadoUser.dados_estado} alt="" />
+            <CachedImage src={DadosGeralEstadoUser.dados_estado} blurHash={DadosGeralEstadoUser.media_blurhash} persistent alt="" />
             <div className="GeralChatEstadoViewDateImagemConteudo">
                 <div className="GeralChatEstadoViewDateImagemConteudoBox">
                     <div className="GeralChatEstadoViewDateImagemConteudoBoxDadosPerfilUsuario">

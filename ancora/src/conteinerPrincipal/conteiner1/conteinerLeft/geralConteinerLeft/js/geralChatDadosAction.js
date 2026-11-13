@@ -28,11 +28,12 @@ export function DadosActive (event , nome_amigo , id_amigo, nossa_sala , foto_am
 
     }
     
-    socket.emit("menssagem_visualizada" , dados_amigo)
-
     if(setChatAtivo){
         setChatAtivo(dados_amigo)
     }
-    socket.emit("Entrar_na_sala" , dados_amigo)
+    if (socket?.connected) {
+        socket.emit("menssagem_visualizada" , dados_amigo)
+        socket.emit("Entrar_na_sala" , dados_amigo)
+    }
 
 }

@@ -24,5 +24,9 @@ def AdicionarNovaDescricao(dados):
             db.session.commit()
             notificar_amigos_novo_estado(novo_dados)
             print("dados armazenados no banco de dados com sucesso!")
+            return {"success": True}
+        return {"success": False, "error": "Tipo de estado inválido"}
     except Exception as erro:
+        db.session.rollback()
         print(f"erro ao armazenar o novo estado:{erro}")    
+        return {"success": False, "error": "Não foi possível guardar o estado"}

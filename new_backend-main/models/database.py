@@ -1,10 +1,15 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from email.policy import default
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import cast
 from sqlalchemy.orm import foreign
 
 db = SQLAlchemy()
+
+
+def _utcnow_naive():
+    return datetime.now(timezone.utc).replace(tzinfo=None)
+
 
 class Usuario(db.Model):
     __tablename__ = 'usuarios'
@@ -13,6 +18,7 @@ class Usuario(db.Model):
     telefone = db.Column(db.String(20), unique=True, nullable=False)
     senha_hash = db.Column(db.String(255), nullable=False)
     foto_usuario = db.Column(db.Text, nullable=False, default="none")
+    foto_usuario_blurhash = db.Column(db.String(100), nullable=True)
     email = db.Column(db.Text, nullable=False)
     data_nascimento = db.Column(db.Text, nullable=False)
     continente = db.Column(db.Text, nullable=False, default="none")
@@ -84,6 +90,7 @@ class Menssagens(db.Model):
     reply_to_id = db.Column(db.Integer, nullable=True)
     reply_to_menssagem = db.Column(db.Text, nullable=True)
     reply_to_nome = db.Column(db.String(100), nullable=True)
+    client_message_id = db.Column(db.String(80), nullable=True, unique=True, index=True)
 
     dados_remitente = db.relationship("Usuario", foreign_keys=[id_remitente])
     dados_destinatario = db.relationship("Usuario", foreign_keys=[id_destinatario])
@@ -103,6 +110,7 @@ class Registrar_produto(db.Model):
     visualizacao_produto = db.Column(db.Text, nullable=False, default="0")
     quantidade_encomenda_produto = db.Column(db.Text, nullable=False, default="0")
     quantidade_adoro_produto = db.Column(db.Text, nullable=False, default="0")
+    url_imagem_produto_blurhash = db.Column(db.String(100), nullable=True)
     valor_antigo_produto = db.Column(db.Text, nullable=False, default="none")
     comentario_produto = db.Column(db.Text, nullable=False, default="none")
     Trafego_Pago = db.Column(db.Text, nullable=False, default="False")
@@ -216,6 +224,7 @@ class Turma_Aula (db.Model):
     id_aluno_Turma = db.Column(db.Text  , default = 0)
     sala_Turma = db.Column(db.Text ,  )
     imagem_perfil_Turma = db.Column(db.Text  , default = "None")
+    imagem_perfil_Turma_blurhash = db.Column(db.String(100), nullable=True)
     data_criacao_Turma = db.Column(db.DateTime, default=datetime.utcnow, server_default=db.func.current_timestamp())
     url_video_Turma = db.Column(db.Text  , default = "None")
     Titulo_video_Turma = db.Column(db.Text  , default = "None")
@@ -265,4 +274,88 @@ class Adicionar_dados_estado(db.Model):
     tipo_estado = db.Column(db.Text , default = "none")
     nome_usuario_estado = db.Column(db.Text , default = "none")
     foto_usuario_estado = db.Column(db.Text , default = "none")
+    media_blurhash = db.Column(db.String(100), nullable=True)
+
+
+class SocialPost(db.Model):
+    __tablename__ = "social_posts"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False, index=True)
+    texto = db.Column(db.Text, nullable=False, default="")
+    media_url = db.Column(db.Text, nullable=True)
+    media_type = db.Column(db.String(16), nullable=True)
+    media_blurhash = db.Column(db.String(100), nullable=True)
+    localizacao = db.Column(db.String(120), nullable=True)
+    criado_em = db.Column(db.DateTime, nullable=False, default=_utcnow_naive, server_default=db.func.current_timestamp(), index=True)
+
+
+class SocialLike(db.Model):
+    __tablename__ = "social_likes"
+
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey("social_posts.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False, index=True)
+    criado_em = db.Column(db.DateTime, nullable=False, default=_utcnow_naive, server_default=db.func.current_timestamp())
+
+    __table_args__ = (db.UniqueConstraint("post_id", "user_id", name="uq_social_like_post_user"),)
+
+
+class SocialComment(db.Model):
+    __tablename__ = "social_comments"
+
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey("social_posts.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False, index=True)
+    texto = db.Column(db.String(1000), nullable=False)
+    criado_em = db.Column(db.DateTime, nullable=False, default=_utcnow_naive, server_default=db.func.current_timestamp())
+
+
+class SocialBookmark(db.Model):
+    __tablename__ = "social_bookmarks"
+
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey("social_posts.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False, index=True)
+    criado_em = db.Column(db.DateTime, nullable=False, default=_utcnow_naive, server_default=db.func.current_timestamp())
+
+    __table_args__ = (db.UniqueConstraint("post_id", "user_id", name="uq_social_bookmark_post_user"),)
+
+
+class SocialFollow(db.Model):
+    __tablename__ = "social_follows"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False, index=True)
+    followed_user_id = db.Column(db.Integer, db.ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False, index=True)
+    criado_em = db.Column(db.DateTime, nullable=False, default=_utcnow_naive, server_default=db.func.current_timestamp())
+
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "followed_user_id", name="uq_social_follow_user_target"),
+        db.CheckConstraint("user_id != followed_user_id", name="ck_social_follow_not_self"),
+    )
+
+
+class SocialStory(db.Model):
+    __tablename__ = "social_stories"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False, index=True)
+    texto = db.Column(db.String(500), nullable=False, default="")
+    media_url = db.Column(db.Text, nullable=True)
+    media_type = db.Column(db.String(16), nullable=True)
+    media_blurhash = db.Column(db.String(100), nullable=True)
+    criado_em = db.Column(db.DateTime, nullable=False, default=_utcnow_naive, server_default=db.func.current_timestamp(), index=True)
+    expira_em = db.Column(db.DateTime, nullable=False, index=True)
+
+
+class SocialStoryView(db.Model):
+    __tablename__ = "social_story_views"
+
+    id = db.Column(db.Integer, primary_key=True)
+    story_id = db.Column(db.Integer, db.ForeignKey("social_stories.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False, index=True)
+    visto_em = db.Column(db.DateTime, nullable=False, default=_utcnow_naive, server_default=db.func.current_timestamp())
+
+    __table_args__ = (db.UniqueConstraint("story_id", "user_id", name="uq_social_story_view_user"),)
     

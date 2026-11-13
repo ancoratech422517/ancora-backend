@@ -54,7 +54,8 @@ def GETDATEUSERADD():
                     "capital":usuario.capital,
                     "bairro":usuario.bairro,
                     "id_usuario":usuario.id,
-                    "foto_usuario":usuario.foto_usuario
+                    "foto_usuario":usuario.foto_usuario,
+                    "foto_usuario_blurhash":usuario.foto_usuario_blurhash
                 }
                 DADOSUSUARIO.append(dicionario_geral_usuario)
 
@@ -69,6 +70,7 @@ def GETDATEUSERADD():
                 DADOSPRODUTO.append(
                     {
                         "url_imagem_produto":produto.url_imagem_produto,
+                        "url_imagem_produto_blurhash":produto.url_imagem_produto_blurhash,
                         "id_produto":produto.id
                     }
                 )
@@ -86,13 +88,16 @@ def GETDATEUSERADD():
                     Turma_Aula.nome_Turma == turma.nome_Turma,
                     Turma_Aula.id_admin_Turma == turma.id_admin_Turma
                 ).first()
-                turma.imagem_perfil_Turma = imagemTurma.imagem_perfil_Turma
+                if imagemTurma:
+                    turma.imagem_perfil_Turma = imagemTurma.imagem_perfil_Turma
+                    turma.imagem_perfil_Turma_blurhash = imagemTurma.imagem_perfil_Turma_blurhash
                 TotalAlunoTurmaResultado = len(TotalAlunoTurma)
                 dicionario_geral_turma = {
                     "id_turma":turma.id,
                     "id_admin_Turma":turma.id_admin_Turma,
                     "nome_Turma":turma.nome_Turma,
                     "imagem_perfil_Turma":turma.imagem_perfil_Turma,
+                    "imagem_perfil_Turma_blurhash":turma.imagem_perfil_Turma_blurhash,
                     "TotalAlunoTurmaResultado":TotalAlunoTurmaResultado
                 }
                 DADOSTURMA.append(dicionario_geral_turma)

@@ -7,6 +7,10 @@ import Loading2 from "../../components/conteinerComponentesJsx/loading.2";
 import CheckOne from "../../components/conteinerSvg/chcke_one";
 import CheckTwo from "../../components/conteinerSvg/check_two";
 import Loading3 from "../../components/conteinerComponentesJsx/loading3";
+import CachedImage from "../../../components/CachedImage";
+import useCachedMedia from "../../../hooks/useCachedMedia";
+import { getOutboxEntries, loadChatHistory } from "../../../utils/offlineStorage";
+import { confirmQueuedChatMessage } from "../../../service/chatOfflineSync";
 // Função para gerar as iniciais
 
 
@@ -34,12 +38,34 @@ const getMainColorForId = (id) => {
 };
 
 // --- LOGICA DE STATUS ---
-const StatusVisualizacao = ({ lida, statusAmigo, isAudio = false }) => {
+const StatusVisualizacao = ({ lida, statusAmigo, isAudio = false, pending = false }) => {
   const foiLido = lida === true || String(lida).toLowerCase() === "true" || lida === 1;
   const amigoEstaOnline = statusAmigo === "online";
 
   const corVerdeClaro = "var(--status-read)";
   const corCinza = isAudio ? "var(--media-player-muted)" : "var(--text-muted)";
+
+  if (pending) {
+    return (
+      <div
+        title="A aguardar ligação para enviar"
+        aria-label="Mensagem pendente de envio"
+        style={{ display: "flex", alignItems: "center", marginLeft: "5px" }}
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          aria-hidden="true"
+          style={{ color: "var(--text-muted)" }}
+        >
+          <circle cx="8" cy="8" r="6.25" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M8 4.5V8l2.25 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      </div>
+    );
+  }
 
   if (foiLido) {
     return (
@@ -73,6 +99,7 @@ const StatusVisualizacao = ({ lida, statusAmigo, isAudio = false }) => {
 // --- PLAYER DE ÁUDIO --- (mantido exatamente igual)
 // --- PLAYER DE ÁUDIO — ONDAS DUPLAS ---
 const PlayerAudioCustomizado = ({ src, isMyMessage = false, currentlyPlayingSrc, onPlayStart, onPlayStop, containerBgOverride = null }) => {
+  const cachedSrc = useCachedMedia(src, "audio", true);
   const [progresso, setProgresso] = useState(0); // 0–1
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -190,7 +217,7 @@ const PlayerAudioCustomizado = ({ src, isMyMessage = false, currentlyPlayingSrc,
     >
       <audio
         ref={audioRef}
-        src={src}
+        src={cachedSrc}
         preload="metadata"
         onTimeUpdate={atualizarProgresso}
         onLoadedMetadata={handleLoadedMetadata}
@@ -389,6 +416,7 @@ const PlayerVideoCustomizado = ({
   isMine = false,
   onViewed
 }) => {
+  const cachedVideoUrl = useCachedMedia(videoUrl, "video", true);
   const videoRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -496,7 +524,7 @@ const formatTime = (time) => {
       >
         <video
           ref={videoRef}
-          src={videoUrl}
+          src={cachedVideoUrl}
           muted={isMuted}
           playsInline
           onTimeUpdate={handleTimeUpdate}
@@ -759,6 +787,42 @@ export default function ConteinerRightWindowMenssage() {
   )?.status || "offline";
 
   useEffect(() => {
+    const userId = dadosUsuario?.id;
+    const roomId = ChatAtivo?.nossa_sala;
+    if (!userId || !roomId) return undefined;
+    let active = true;
+    const previewUrls = [];
+    Promise.all([loadChatHistory(userId, roomId), getOutboxEntries(userId)])
+      .then(([cachedMessages, queuedEntries]) => {
+        const current = useUserStore.getState();
+        if (
+          active
+          && String(current.ChatAtivo?.nossa_sala) === String(roomId)
+          && cachedMessages.length
+        ) {
+          const attachments = new Map(
+            queuedEntries
+              .filter((entry) => entry.type === "chat-message" && entry.attachment?.blob)
+              .map((entry) => [entry.id, entry.attachment.blob])
+          );
+          const messagesWithPreviews = cachedMessages.map((message) => {
+            const fileBlob = attachments.get(message.client_message_id);
+            if (!fileBlob || message.blobUrl) return message;
+            const blobUrl = URL.createObjectURL(fileBlob);
+            previewUrls.push(blobUrl);
+            return { ...message, blobUrl };
+          });
+          current.setMenssagensAntigas(messagesWithPreviews);
+        }
+      })
+      .catch((error) => console.error("Não foi possível carregar o histórico offline:", error));
+    return () => {
+      active = false;
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [ChatAtivo?.nossa_sala, dadosUsuario?.id]);
+
+  useEffect(() => {
     if (!socket) return;
 
     const tratarMensagemNova = (data) => { 
@@ -769,6 +833,11 @@ export default function ConteinerRightWindowMenssage() {
       if (!jaExiste) {
         setMenssagem(data); 
         tocarSomRecebido(); 
+      }
+      if (data.client_message_id) {
+        void confirmQueuedChatMessage(data).catch((error) =>
+          console.error("Não foi possível confirmar a mensagem sincronizada:", error)
+        );
       }
     };
 
@@ -919,6 +988,7 @@ export default function ConteinerRightWindowMenssage() {
       fileName, 
       fileSize, 
       fileUrl,      // ← Novo (principal)
+      blurHash,
       publicId,
       folder,
       resourceType,
@@ -988,9 +1058,11 @@ export default function ConteinerRightWindowMenssage() {
             cursor: "zoom-in"
           }}
         >
-          <img 
+          <CachedImage
             src={displaySrc} 
             alt={fileName || "Imagem"}
+            blurHash={blurHash}
+            persistent
             style={{
               width: "100%",
               borderRadius: "14px",
@@ -1188,6 +1260,7 @@ if (isAudio) {
             lida={msg.lida} 
             statusAmigo={statusAmigoAtual} 
             isAudio={true} 
+            pending={msg.pending || msg.deliveryState === "pending"}
           />
         </div>
       } 
@@ -1225,7 +1298,11 @@ if (isAudio) {
                 hora={
                   <div style={{display: 'flex', alignItems: 'center'}}>
                     {msg.data_envio} 
-                    <StatusVisualizacao lida={msg.lida} statusAmigo={statusAmigoAtual} />
+                    <StatusVisualizacao
+                      lida={msg.lida}
+                      statusAmigo={statusAmigoAtual}
+                      pending={msg.pending || msg.deliveryState === "pending"}
+                    />
                   </div>
                 } 
                 nome={msg.nome_remitente} 

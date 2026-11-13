@@ -9,7 +9,8 @@ def buscar_produto_usuario(id_usuario):
         # JOIN para trazer também a foto do vendedor
         resultados = db.session.query(
             Registrar_produto,
-            Usuario.foto_usuario
+            Usuario.foto_usuario,
+            Usuario.foto_usuario_blurhash
         ).join(
             Usuario, Registrar_produto.id_usuario == Usuario.id
         ).filter(
@@ -18,7 +19,7 @@ def buscar_produto_usuario(id_usuario):
 
         array_lista = []
 
-        for produto, foto_vendedor in resultados:
+        for produto, foto_vendedor, foto_vendedor_blurhash in resultados:
             item = {
                 "id": produto.id,
                 "nome_produto": produto.nome_produto,
@@ -26,9 +27,11 @@ def buscar_produto_usuario(id_usuario):
                 "tipo_produto": produto.tipo_produto,
                 "preco_produto": produto.preco_produto,
                 "url_imagem_produto": produto.url_imagem_produto,
+                "url_imagem_produto_blurhash": produto.url_imagem_produto_blurhash,
                 "id_usuario": produto.id_usuario,
                 "nome_vendedor": produto.nome_vendedor,
                 "foto_vendedor": foto_vendedor,
+                "foto_vendedor_blurhash": foto_vendedor_blurhash,
                 "avalicao_produto_estrela": produto.avalicao_produto_estrela,
                 "visualizacao_produto": produto.visualizacao_produto,
                 "quantidade_encomenda_produto": produto.quantidade_encomenda_produto,

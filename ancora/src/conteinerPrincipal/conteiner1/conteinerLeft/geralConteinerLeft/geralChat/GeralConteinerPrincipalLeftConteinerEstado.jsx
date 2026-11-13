@@ -3,6 +3,7 @@ import "../css/GeralConteinerPrincipalLeftConteinerEstado.css";
 import { useUserStore } from "../../../../../useUseSotore";
 import Perfil from "../../../../../assets/img_fundo_vazio/perfil.png";
 import LogoAncora from "../../../../../assets/logo_preto1.png";
+import CachedImage from "../../../../../components/CachedImage";
 import { GeralChatMenuButtomBuscarDadosEstado } from "../js/geralChatMenuBoxButtom";
 
 const STATUS_FILTERS = [
@@ -155,7 +156,7 @@ export default function GeralConteinerPrincipalLeftConteinerEstado({ setViewChat
     function renderStoryMedia(status) {
         const mediaUrl = getMediaUrl(status.dados_estado, urlBancoDeDados);
         if (selectedType === "imagem") {
-            return <img className="ancoraStatusStoryImage" src={mediaUrl} alt={status.descricao_dados || "Estado de um amigo"} />;
+            return <CachedImage className="ancoraStatusStoryImage" src={mediaUrl} blurHash={status.media_blurhash} persistent alt={status.descricao_dados || "Estado de um amigo"} />;
         }
         if (selectedType === "video") {
             return (

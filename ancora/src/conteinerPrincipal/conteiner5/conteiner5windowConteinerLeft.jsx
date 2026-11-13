@@ -6,10 +6,19 @@ import Logo from "../../assets/logo2.png"
 import Perfil from "../../assets/img_fundo_vazio/perfil.png"
 import { Actualizar_foto_Perfil } from "./js/Conteiner5WindowConteinerRegistrarFoto";
 import { Imagem_em_tempo_real } from "./js/imagem_tempo_real";
+import { getInitialTheme, saveTheme } from "../../utils/theme";
+import { ClicarButtom } from "../components/conteinerComponentsJs/buttonAction";
+import Orders from "../components/conteinerSvg/orders";
 export default function Conteiner5WindowConteinerLeft () {
-        const {setMostrarContRightWindow5 , dadosUsuario , urlBancoDeDados, logout} = useUserStore()
+        const {setMostrarContRightWindow5 , dadosUsuario , urlBancoDeDados, logout, setAtivar} = useUserStore()
         const [estadoFoto , setEstadoFoto] = useState("texto")
         const [valorFoto , setValorFoto] = useState("CA")
+        const [darkMode, setDarkMode] = useState(() => getInitialTheme() === "dark")
+        const alternarTema = () => {
+            const theme = darkMode ? "light" : "dark"
+            saveTheme(theme)
+            setDarkMode(theme === "dark")
+        }
         const getUrlVideo = (url) => {
         if (!url) return "";
             // Verifica se a URL já começa com http ou https
@@ -89,6 +98,48 @@ export default function Conteiner5WindowConteinerLeft () {
                         Terminar sessão
                     </button>
                 </div>
+
+                <div className="Conteiner5WindowConteinerLeftTema">
+                    <div>
+                        <strong>Aparência</strong>
+                        <small>{darkMode ? "Tema escuro" : "Tema claro"}</small>
+                    </div>
+                    <button
+                        type="button"
+                        className="Conteiner5WindowConteinerLeftTemaToggle"
+                        onClick={alternarTema}
+                        aria-label={darkMode ? "Ativar tema claro" : "Ativar tema escuro"}
+                        aria-pressed={darkMode}
+                        title={darkMode ? "Ativar tema claro" : "Ativar tema escuro"}
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            {darkMode ? (
+                                <>
+                                    <circle cx="12" cy="12" r="4" />
+                                    <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" />
+                                </>
+                            ) : (
+                                <path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z" />
+                            )}
+                        </svg>
+                    </button>
+                </div>
+
+                <button
+                    type="button"
+                    className="btn3 Conteiner5WindowConteinerLeftCRM"
+                    onClick={(event) => void ClicarButtom(event, setAtivar, "conteiner3")}
+                    aria-label="Abrir CRM"
+                >
+                    <span className="Conteiner5WindowConteinerLeftCRMIcon">
+                        <Orders />
+                    </span>
+                    <span className="Conteiner5WindowConteinerLeftCRMTexto">
+                        <strong>CRM</strong>
+                        <small>Gerir clientes, vendas e anúncios</small>
+                    </span>
+                    <span className="Conteiner5WindowConteinerLeftCRMSeta" aria-hidden="true">›</span>
+                </button>
 
                 <div className="Conteiner5WindowConteinerLeftInformacapContacto">
                     <h6>INFORMAÇÕES DE CONTACTO</h6>

@@ -30,6 +30,7 @@ def buscar_dados_perfil_usuario():
                 todos_dados_user = {
                     "nome_usuario":x.nome,
                     "foto_usuario":x.foto_usuario,
+                    "foto_usuario_blurhash":x.foto_usuario_blurhash,
                     "pais_usuario":x.pais,
                     "provincia_usuario":x.provincia,
                     "capital_usuario":x.capital,

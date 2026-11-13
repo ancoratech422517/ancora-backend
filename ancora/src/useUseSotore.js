@@ -2,11 +2,50 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { io } from 'socket.io-client'
 import { fetchComAuth } from './utils/api'
+import { saveChatHistory, saveChatMessage } from './utils/offlineStorage'
 
-const defaultBackendUrl = "https://ancora-backend-09zc.onrender.com"
 const CHAT_THEME_STORAGE_KEY = "ancora-chat-theme"
-const local = "http://127.0.0.1:5000"
-const url = defaultBackendUrl
+const url = "https://ancora-backend-09zc.onrender.com" || "https://ancora-backend-09zc.onrender.com"
+function messageKey(message) {
+  if (message.client_message_id) return `client:${message.client_message_id}`
+  if (message.id != null) return `id:${message.id}`
+  return null
+}
+
+function mergeMessages(messages = []) {
+  const merged = new Map()
+  messages.forEach((message) => {
+    const key = messageKey(message)
+    if (!key) {
+      merged.set(`anonymous:${merged.size}`, message)
+      return
+    }
+    const previous = merged.get(key)
+    const mergedMessage = { ...previous, ...message }
+    if (previous?.blobUrl && message.id != null && !String(message.id).startsWith("pending:")) {
+      URL.revokeObjectURL(previous.blobUrl)
+      delete mergedMessage.blobUrl
+    }
+    if (message.id != null && !String(message.id).startsWith("pending:")) {
+      mergedMessage.pending = false
+      mergedMessage.deliveryState = "sent"
+    }
+    merged.set(key, mergedMessage)
+  })
+  return Array.from(merged.values())
+}
+
+function cacheCurrentChat(state, messages, updatedMessage = null) {
+  if (!state.dadosUsuario?.id || !state.ChatAtivo?.nossa_sala) return
+  const roomId = state.ChatAtivo.nossa_sala
+  const save = updatedMessage
+    ? saveChatMessage(state.dadosUsuario.id, roomId, updatedMessage, messages.length - 1)
+    : saveChatHistory(state.dadosUsuario.id, roomId, messages)
+  void save.catch((error) => {
+    console.error("Não foi possível guardar o histórico local da conversa:", error)
+  })
+}
+
 function getInitialChatThemeId() {
   try {
     return localStorage.getItem(CHAT_THEME_STORAGE_KEY) || "original"
@@ -22,7 +61,7 @@ export const useUserStore = create(
   
   persist( 
     (set, get) => ({
-      urlBancoDeDados: defaultBackendUrl,
+      urlBancoDeDados: url,
       chatThemeId: getInitialChatThemeId(),
       chatThemeMode: "static",
       chatAnimatedSceneId: "warp",
@@ -236,10 +275,50 @@ export const useUserStore = create(
       setProdutoUsuario: (produto) => set({ ProdutoUsuario: Array.isArray(produto) ? produto : [] }),
       setTodosProdutos: (todos) => set({ TodosProdutos: todos }),
       setDadosSombra: (sombra) => set({ DadosSombra: sombra }),
-      setMenssagem: (msg) => set((state) => ({ menssagens: [...state.menssagens, msg] })),
+      setMenssagem: (msg) => set((state) => {
+        if (
+          state.ChatAtivo?.nossa_sala
+          && String(msg?.nossa_sala) !== String(state.ChatAtivo.nossa_sala)
+        ) return state
+        const menssagens = mergeMessages([...state.menssagens, msg])
+        cacheCurrentChat(state, menssagens, msg)
+        return { menssagens }
+      }),
       limparMensagens: () => set({ menssagens: [] }),
-      setMenssagensAntigas: (novasMenssagens) => set({ menssagens: novasMenssagens }),
+      setMenssagensAntigas: (novasMenssagens) => set((state) => {
+        if (!Array.isArray(novasMenssagens) || !state.ChatAtivo?.nossa_sala) return state
+        const roomMessages = novasMenssagens.filter(
+          (message) => String(message.nossa_sala) === String(state.ChatAtivo.nossa_sala)
+        )
+        const menssagens = mergeMessages([...roomMessages, ...state.menssagens])
+        cacheCurrentChat(state, menssagens)
+        return { menssagens }
+      }),
       setChatAtivo: (dadosChatAtivo) => set({ ChatAtivo: dadosChatAtivo, menssagens: [] }),
+      confirmarMenssagemPendente: (clientMessageId, mensagemId, mensagemAtualizada = {}) => set((state) => {
+        const menssagens = state.menssagens.map((menssagem) =>
+          String(menssagem.client_message_id) === String(clientMessageId)
+            ? (() => {
+              const falhou = mensagemAtualizada.deliveryState === "failed"
+              if (menssagem.blobUrl && !falhou) URL.revokeObjectURL(menssagem.blobUrl)
+                return {
+                  ...menssagem,
+                  ...mensagemAtualizada,
+                  id: mensagemId,
+                blobUrl: falhou ? menssagem.blobUrl : undefined,
+                pending: !falhou,
+                deliveryState: mensagemAtualizada.deliveryState || "sent",
+                }
+              })()
+            : menssagem
+        )
+        cacheCurrentChat(
+          state,
+          menssagens,
+          menssagens.find((message) => String(message.client_message_id) === String(clientMessageId))
+        )
+        return { menssagens }
+      }),
       limparChat: () => set({ ChatAtivo: null, menssagens: [] }),
       setativarGrupo: (ativaGrupo) => set({ ativarGrupo: ativaGrupo }),
       setAtivarCont: (Ativar) => set({ AtivarCont: Ativar }),
@@ -325,11 +404,12 @@ export const useUserStore = create(
             String(msg.nossa_sala) === String(sala_menssagem)
           return !ehMensagemAlvo
         })
+        cacheCurrentChat(state, novasMensagens)
         return { menssagens: novasMensagens }
       }),
       // AQUI ESTAS A ACTUALIZAR A MENSSAGEM DO CHAT DE CONVERSA FOCA-TE NO PONTO CRUCIAL , PORUQE ESTOU A USAR MAPAEAMENTO 
-      editar_menssagem_no_array: (id, novoConteudo, sala_menssagem) => set((state) => ({
-        menssagens: state.menssagens.map((msg) => {
+      editar_menssagem_no_array: (id, novoConteudo, sala_menssagem) => set((state) => {
+        const menssagens = state.menssagens.map((msg) => {
           if (
             String(msg.id) === String(id) &&
             (!sala_menssagem || String(msg.nossa_sala) === String(sala_menssagem))
@@ -338,7 +418,9 @@ export const useUserStore = create(
           }
           return msg
         })
-      })),
+        cacheCurrentChat(state, menssagens)
+        return { menssagens }
+      }),
 
       buscarAmigosNoBanco: async (userId) => {
         if (!userId) return
@@ -770,6 +852,7 @@ export const useUserStore = create(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         dadosUsuario: state.dadosUsuario,
+        amigos: state.amigos,
         chatThemeId: state.chatThemeId,
         chatThemeMode: state.chatThemeMode,
         chatAnimatedSceneId: state.chatAnimatedSceneId,

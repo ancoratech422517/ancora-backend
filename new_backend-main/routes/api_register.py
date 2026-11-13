@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 import cloudinary.uploader
 import os
 from service.api_register import register_user
+from service.media_metadata import validate_blurhash
 
 registrar = Blueprint("registrar", __name__)
 caminho = "static/dados/usuario"
@@ -23,6 +24,10 @@ def registro():
         bairro = request.form.get("bairro")
 
         foto = request.files.get("foto")
+        try:
+            foto_blurhash = validate_blurhash(request.form.get("foto_blurhash"))
+        except ValueError as erro:
+            return jsonify({"status": "erro", "message": str(erro)}), 400
 
         # URL da foto (padrão caso não envie foto)
         foto_url = None
@@ -63,6 +68,7 @@ def registro():
             email=email,
             data_nascimento=data_nascimento,
             foto=foto_url,                    # ← Agora passa a URL do Cloudinary
+            foto_blurhash=foto_blurhash,
             continente=continente,
             pais=pais,
             provincia=provincia,

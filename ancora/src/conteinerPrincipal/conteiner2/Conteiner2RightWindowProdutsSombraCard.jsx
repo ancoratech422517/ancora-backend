@@ -4,6 +4,7 @@ import { CloseSombraCard } from "./js/Conteiner2SomraCard";
 import { useUserStore } from "../../useUseSotore";
 import ImageDefault from "../../assets/image_card.png"
 import { Enviar_menssagem } from "../../service/socket_service_enviar_menssagem";
+import CachedImage from "../../components/CachedImage";
 
 export default function Conteiner2RightWindowProdutsSombraCard ({setEstado}) {
 
@@ -40,9 +41,7 @@ export default function Conteiner2RightWindowProdutsSombraCard ({setEstado}) {
                 )
         }
     }
-    const urlImage = getUrlVideo(DadosSombra.url_imagem_produto )
-        ? `${DadosSombra.url_imagem_produto}` 
-        : ImageDefault
+    const urlImage = getUrlVideo(DadosSombra.url_imagem_produto) || ImageDefault
 
 
     // ===================== LÓGICA PARA CRIAR SALA + ENVIAR PRODUTO =====================
@@ -135,7 +134,11 @@ export default function Conteiner2RightWindowProdutsSombraCard ({setEstado}) {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
             <div className="ImageCardSombra">
-                <img src={urlImage} alt={DadosSombra.nome_produto} />
+                <CachedImage
+                    src={urlImage}
+                    blurHash={DadosSombra.url_imagem_produto_blurhash}
+                    alt={DadosSombra.nome_produto}
+                />
             </div>
             <div className="textCardSombra">
                 <div className="titleCardText">

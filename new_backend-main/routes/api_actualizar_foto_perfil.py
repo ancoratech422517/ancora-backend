@@ -2,6 +2,7 @@ import re
 from flask import Blueprint, jsonify, request
 from models.database import Usuario, db
 import cloudinary.uploader
+from service.media_metadata import validate_blurhash
 
 Actualizar_foto_perfil = Blueprint("Actualizar_foto_perfil", __name__)
 
@@ -11,6 +12,10 @@ def actualizar_foto_perfil_usuario():
     try:
         foto = request.files.get("foto")
         id_usuario = request.form.get("id_usuario")
+        try:
+            foto_blurhash = validate_blurhash(request.form.get("foto_blurhash"))
+        except ValueError as erro:
+            return jsonify({"status": "BlurHash inválido", "erro": str(erro)}), 400
 
         if not foto or not id_usuario:
             return jsonify({"status": "foto e id_usuario são obrigatórios"}), 400
@@ -55,6 +60,7 @@ def actualizar_foto_perfil_usuario():
 
         # Atualizar no banco
         usuario.foto_usuario = url_foto_actualizada
+        usuario.foto_usuario_blurhash = foto_blurhash
         db.session.commit()
 
         print(f"Imagem atualizada com sucesso: {url_foto_actualizada}")

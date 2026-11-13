@@ -20,6 +20,7 @@ def notificar_amigos_novo_estado(estado):
             "id": estado.id,
             "id_usuario": id_usuario,
             "dados_estado": estado.dados_estado,
+            "media_blurhash": estado.media_blurhash,
             "descricao_dados": estado.descricao_dados,
             "visualizacao_dados": estado.visualizacao_dados,
             "adoro_dados": estado.adoro_dados,

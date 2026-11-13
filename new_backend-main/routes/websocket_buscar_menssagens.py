@@ -65,7 +65,8 @@ def buscar_menssagens(data):
             "file_size":menssagem.file_size,
             "reply_to_id":menssagem.reply_to_id,
             "reply_to_menssagem":menssagem.reply_to_menssagem,
-            "reply_to_nome":menssagem.reply_to_nome
+            "reply_to_nome":menssagem.reply_to_nome,
+            "client_message_id":menssagem.client_message_id
             })
             dadosUsers["id_destinatario"] = menssagem.id_destinatario
             dadosUsers["id_remitente"] = menssagem.id_remitente

@@ -32,6 +32,7 @@ def get_me():
             "nome": usuario.nome,
             "telefone": usuario.telefone,
             "foto_usuario":usuario.foto_usuario,
+            "foto_usuario_blurhash":usuario.foto_usuario_blurhash,
             "email":usuario.email,
             "data_nascimento":usuario.data_nascimento,
             "continente":usuario.continente,

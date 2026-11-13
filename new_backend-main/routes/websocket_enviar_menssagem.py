@@ -4,6 +4,7 @@ from datetime import datetime
 import json
 from models.database import Menssagens , db , Amigo
 from service.pushy_service import enviar_notificacao_pushy
+from sqlalchemy.exc import IntegrityError
 
 @socketio.on("enviar_menssagem_na_sala")
 def enviar_menssagem_na_sala(data):
@@ -17,6 +18,22 @@ def enviar_menssagem_na_sala(data):
     foto_remitente = data.get("foto_usuario") or data.get("foto_remitente")
     id_amigo = data.get("id_amigo")
     nome_amigo = data.get("nome_amigo")
+    client_message_id = str(data.get("client_message_id") or "").strip()[:80] or None
+    if client_message_id:
+        existing_message = Menssagens.query.filter_by(
+            client_message_id=client_message_id
+        ).first()
+        if existing_message:
+            if (
+                str(existing_message.id_remitente) != str(id_remitente)
+                or str(existing_message.nossa_sala) != str(nossa_sala)
+            ):
+                return {"success": False, "error": "Identificador de mensagem já utilizado"}
+            return {
+                "success": True,
+                "mensagem_id": existing_message.id,
+                "client_message_id": client_message_id
+            }
     dados_resposta = data.get("reply_to") or {}
     mensagem_original = None
     reply_to_id = None
@@ -89,6 +106,7 @@ def enviar_menssagem_na_sala(data):
         "reply_to_id": mensagem_original.id if mensagem_original else None,
         "reply_to_menssagem": reply_to_texto,
         "reply_to_nome": reply_to_nome,
+        "client_message_id": client_message_id,
         **dados_arquivo
     }
     verificar_amizade = Amigo.query.all()
@@ -98,6 +116,24 @@ def enviar_menssagem_na_sala(data):
         armazenar_menssagem = Menssagens(**dados)
         db.session.add(armazenar_menssagem)
         db.session.commit()
+    except IntegrityError as err:
+        db.session.rollback()
+        if client_message_id:
+            existing_message = Menssagens.query.filter_by(
+                client_message_id=client_message_id
+            ).first()
+            if (
+                existing_message
+                and str(existing_message.id_remitente) == str(id_remitente)
+                and str(existing_message.nossa_sala) == str(nossa_sala)
+            ):
+                return {
+                    "success": True,
+                    "mensagem_id": existing_message.id,
+                    "client_message_id": client_message_id
+                }
+        print(f"erro ao armazenar a menssagem: {err}")
+        return {"success": False, "error": "Mensagem não foi armazenada no banco de dados"}
     except Exception as err:
         db.session.rollback()
         print(f"erro ao armazenar a menssagem: {err}")
@@ -151,4 +187,8 @@ def enviar_menssagem_na_sala(data):
 
     # 4. Envia a mensagem para a sala de chat aberta
     emit("receber_menssagem", dados, room = str(nossa_sala))
-    return {"success": True, "mensagem_id": armazenar_menssagem.id}
+    return {
+        "success": True,
+        "mensagem_id": armazenar_menssagem.id,
+        "client_message_id": client_message_id
+    }

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { fetchComAuth } from "../../utils/api";
 import { useUserStore } from "../../useUseSotore";
+import CachedImage from "../../components/CachedImage";
 import { api, useList } from "./api";
 import Ico from "./Icons";
 import "./css/Anuncios.css";
@@ -192,6 +193,9 @@ export default function AnunciosPage() {
   const image = form.origem_tipo === "produto"
     ? selectedSource?.url_imagem_produto || ""
     : selectedSource?.imagem_perfil_Turma || "";
+  const imageBlurHash = form.origem_tipo === "produto"
+    ? selectedSource?.url_imagem_produto_blurhash
+    : selectedSource?.imagem_perfil_Turma_blurhash;
   const price = form.origem_tipo === "produto"
     ? selectedSource?.preco_produto || ""
     : form.preco;
@@ -376,7 +380,7 @@ export default function AnunciosPage() {
             <div className="adsSelectedPreview adsFullWidth">
               <div className="adsSelectedImage">
                 {imageUrl
-                  ? <img src={imageUrl} alt={`Imagem de ${title}`} />
+                  ? <CachedImage src={imageUrl} blurHash={imageBlurHash} alt={`Imagem de ${title}`} />
                   : <span>A imagem do registo selecionado aparecerá aqui</span>}
               </div>
               <div>
@@ -479,7 +483,7 @@ export default function AnunciosPage() {
             <article className="adsPreviewCard">
               <div className="adsPreviewImage">
                 {imageUrl
-                  ? <img src={imageUrl} alt={title ? `Pré-visualização de ${title}` : ""} />
+                  ? <CachedImage src={imageUrl} blurHash={imageBlurHash} alt={title ? `Pré-visualização de ${title}` : ""} />
                   : <span>Selecione um produto ou curso para ver a imagem</span>}
                 <div className="adsImageShade" />
                 <div className="adsBadges">

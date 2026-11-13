@@ -1,4 +1,6 @@
 import { useUserStore } from "../../../useUseSotore";
+import { optimizeImage } from "../../../utils/imageOptimizer";
+import { fetchComAuth } from "../../../utils/api";
 export async function Registrar_produto(even, id_usuario , dadosUsuario_nome) {
     // 1. Pegar as referências dos elementos
     const URL_BACKEND_ANCORA = useUserStore.getState().urlBancoDeDados
@@ -14,12 +16,11 @@ export async function Registrar_produto(even, id_usuario , dadosUsuario_nome) {
         return;
     }
 
-    const arquivo = inputImagem.files[0];
+    const arquivoOriginal = inputImagem.files[0];
 
     
     // 3. Criar o FormData e preencher
     const formdata = new FormData();
-    formdata.append("imagem_produto", arquivo);
     formdata.append("nome_produto", nome);
     formdata.append("descricao_produto", descricao);
     formdata.append("preco_produto", preco);
@@ -29,7 +30,11 @@ export async function Registrar_produto(even, id_usuario , dadosUsuario_nome) {
 
     // 4. Enviar imediatamente
     try {
-        const registrar_produto_usuario = await fetch(`${URL_BACKEND_ANCORA}/registrar_produto`, {
+        const otimizado = await optimizeImage(arquivoOriginal, "feed");
+        const arquivo = otimizado.file;
+        formdata.append("imagem_produto", arquivo);
+        formdata.append("imagem_blurhash", otimizado.blurHash || "");
+        const registrar_produto_usuario = await fetchComAuth(`${URL_BACKEND_ANCORA}/registrar_produto`, {
             method: "POST", // Use maiúsculas por convenção
             body: formdata
             // Nota: NÃO defina 'Content-Type' manualmente ao usar FormData. 
@@ -37,8 +42,11 @@ export async function Registrar_produto(even, id_usuario , dadosUsuario_nome) {
         });
 
         const get_response = await registrar_produto_usuario.json();
+        if (!registrar_produto_usuario.ok) {
+            throw new Error(get_response.error || get_response.mensagem || "Não foi possível registar o produto.");
+        }
     } catch (erro) {
         console.error("Erro na requisição:", erro);
-        alert("Erro ao conectar com o servidor.");
+        alert(erro.message || "Não foi possível registar o produto.");
     }
 }

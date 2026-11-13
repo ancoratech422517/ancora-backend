@@ -1,4 +1,7 @@
 import { useUserStore } from "../../../../../useUseSotore"
+import { optimizeImage } from "../../../../../utils/imageOptimizer"
+import { fetchComAuth } from "../../../../../utils/api"
+import { queueSocketEvent } from "../../../../../service/chatOfflineSync"
 import { GeralChatMenuButtomBuscarDadosEstado } from "./geralChatMenuBoxButtom"
 export function AoDigitarSelecionarTexto (){
     
@@ -11,7 +14,6 @@ export function AdicionarNovaDescrção(setEstadoResposta , setMostrarLoadingAdi
     
     try{
         setMostrarLoadingAdicionarEstado(true)
-        let SOCKET = useUserStore.getState().socket 
         let dados_usuario = useUserStore.getState().dadosUsuario
         let GeralChatEstadoUserAddTextoGetIDTexto = document.getElementById("GeralChatEstadoUserAddTextoGetIDTexto")
         let TIPO_ESTADO = document.getElementById("tipo-estado")
@@ -24,7 +26,10 @@ export function AdicionarNovaDescrção(setEstadoResposta , setMostrarLoadingAdi
 
         }
 
-        SOCKET.emit("Adicionar_Nova_Descricao" , DADOS)
+        queueSocketEvent("Adicionar_Nova_Descricao", DADOS).catch((error) => {
+            setMostrarLoadingAdicionarEstado(false)
+            alert(error.message || "Não foi possível guardar o estado.")
+        })
         setTimeout(() => {
             setEstadoResposta(true)
             setMostrarLoadingAdicionarEstado(false)
@@ -74,7 +79,7 @@ export async function GeralChatEstadoUserAddMusicaSendEstado(setEstadoResposta ,
                 form_data.append("tipo_musica" , tipo_musica.innerHTML)
             }
 
-            const adicionarEstadoMusica = await fetch(`${URLBACKEND}/api/adicionar_estado_musica` , {
+            const adicionarEstadoMusica = await fetchComAuth(`${URLBACKEND}/api/adicionar_estado_musica` , {
                 method:"POST",
                 body: form_data
             })
@@ -114,19 +119,24 @@ export async function GeralChatEstadoUserAddImagemAoDigitarDate(setMostrarLoadin
         let GeralChatEstadoUserAddImagemDigitar = document.getElementById("GeralChatEstadoUserAddImagemDigitar")
         let imagem_estado = document.getElementById("imagem_estado")
         
-        if (imagem_estado.files.length<0){
+        if (imagem_estado.files.length < 1){
             alert("tens que selecionar uma imagem")
+            setMostrarLoadingAdicionarEstado(false)
             return
         }
+        const optimizedImage = await optimizeImage(imagem_estado.files[0], "feed")
         const my_formData = new FormData()
         my_formData.append("nome_usuario" , dados_usuario.nome)
         my_formData.append("foto_usuario" , dados_usuario.foto_usuario)
         my_formData.append("id_usuario" , dados_usuario.id)
         my_formData.append("descricao_imagem" ,GeralChatEstadoUserAddImagemDigitar.innerHTML)
-        my_formData.append("imagem_estado" , imagem_estado.files[0])
+        my_formData.append("imagem_estado" , optimizedImage.file)
+        if (optimizedImage.blurHash) {
+            my_formData.append("blurhash", optimizedImage.blurHash)
+        }
         my_formData.append("tipo_estado" , "imagem")
 
-        const enviar_estado_imagem = await fetch(`${URLBACKEND}/api/enviar_imagem_estado` , {
+        const enviar_estado_imagem = await fetchComAuth(`${URLBACKEND}/api/enviar_imagem_estado` , {
             method:"POST",
             body: my_formData
         })
@@ -178,7 +188,7 @@ export async function GeralChatUserAddTextoAoDigitarVideoSendVideo(setEstadoResp
         my_formData.append("video_estado" , video_estado.files[0])
         my_formData.append("tipo_estado" , "video")
 
-        const enviar_estado = await fetch(`${URLBACKEND}/api/enviar_video_estado` , {
+        const enviar_estado = await fetchComAuth(`${URLBACKEND}/api/enviar_video_estado` , {
             method:"POST",
             body:my_formData
         })

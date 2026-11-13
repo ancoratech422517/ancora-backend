@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from models.database import Registrar_produto, db
+from service.media_metadata import validate_blurhash
 from routes.websocket import socketio
 import os
 import cloudinary.uploader
@@ -42,6 +43,10 @@ def registrarProduto():
         preco_produto = request.form.get("preco_produto")
         id_usuario = request.form.get("id_usuario")
         nome_vendedor = request.form.get("nome_vendedor")
+        try:
+            imagem_blurhash = validate_blurhash(request.form.get("imagem_blurhash"))
+        except ValueError as erro:
+            return jsonify({"status": "BlurHash inválido", "erro": str(erro)}), 400
         produto_url = None
         if not imagem or imagem.filename == '':
             return jsonify({"status": "Erro: Nenhuma imagem selecionada!"}), 400
@@ -72,6 +77,7 @@ def registrarProduto():
             "tipo_produto": tipo_produto,
             "preco_produto": preco_produto,
             "url_imagem_produto": produto_url,
+            "url_imagem_produto_blurhash": imagem_blurhash,
             "id_usuario": id_usuario,
             "nome_vendedor":nome_vendedor
         }
@@ -87,6 +93,7 @@ def registrarProduto():
             "tipo": novo_produto.tipo_produto,
             "preco": novo_produto.preco_produto,
             "url_imagem_produto": novo_produto.url_imagem_produto,
+            "url_imagem_produto_blurhash": novo_produto.url_imagem_produto_blurhash,
             "id_usuario": novo_produto.id_usuario,
             "data_registro": str(getattr(novo_produto, 'data_registro', None))
         }

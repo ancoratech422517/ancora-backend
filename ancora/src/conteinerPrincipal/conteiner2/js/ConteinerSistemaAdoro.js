@@ -1,4 +1,5 @@
 import { useUserStore } from "../../../useUseSotore";
+import { fetchComAuth } from "../../../utils/api";
 
 export async function Sistema_de_adoro_dinamico(id_produto, setEstado_reacao_adoro_classe, estado_reacao_adoro_classe, setValor_quantidade_adoro, valor_atual_contador) {
     
@@ -27,7 +28,7 @@ export async function Sistema_de_adoro_dinamico(id_produto, setEstado_reacao_ado
             "id_produto": id_produto
         };
 
-        const response = await fetch(`${URLBACKEND_ANCORA}/sistema_adoro_ancora`, {
+        const response = await fetchComAuth(`${URLBACKEND_ANCORA}/sistema_adoro_ancora`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data_user)
@@ -37,6 +38,7 @@ export async function Sistema_de_adoro_dinamico(id_produto, setEstado_reacao_ado
             throw new Error("Erro ao salvar no banco");
         }
     } catch (error) {
+        if (error?.queued) return;
         console.error("Falha no adoro, fazendo rollback:", error);
         // Opcional: Reverter o estado se o fetch falhar
         const estadoInverso = novoEstado === "True" ? "False" : "True";

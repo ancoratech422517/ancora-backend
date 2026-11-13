@@ -58,6 +58,7 @@ def buscar_aluno_turma(nome_Turma=None, id_admin_Turma=None):
                 "telefone_aluno": dados_aluno.telefone,
                 "email_aluno": dados_aluno.email,
                 "foto_aluno": dados_aluno.foto_usuario,
+                "foto_aluno_blurhash": dados_aluno.foto_usuario_blurhash,
                 "id_aluno": dados_aluno.id,
                 "status": status,
                 "sala_Turma": aluno.sala_Turma,

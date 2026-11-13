@@ -1,4 +1,6 @@
 import { useUserStore } from "../../../useUseSotore"
+import { optimizeFormDataImage } from "../../../utils/imageOptimizer";
+import { fetchComAuth } from "../../../utils/api";
 export async function Actualizar_foto_Perfil (id_usuario , setEstadoFoto , setValorFoto){
     const URL_BACKEND_ANCORA = useUserStore.getState().urlBancoDeDados
     let foto = document.getElementById("foto")
@@ -17,7 +19,8 @@ export async function Actualizar_foto_Perfil (id_usuario , setEstadoFoto , setVa
         form_data.append("id_usuario" , id_usuario)
 
         try{
-            const actualizar_foto = await fetch(`${URL_BACKEND_ANCORA}/actualizar_foto_perfil` , {
+            await optimizeFormDataImage(form_data, "foto", "avatar")
+            const actualizar_foto = await fetchComAuth(`${URL_BACKEND_ANCORA}/actualizar_foto_perfil` , {
                 method: "POST" , 
                 body: form_data
             })

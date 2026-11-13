@@ -1,5 +1,5 @@
 
-import { useUserStore } from "../useUseSotore";
+import { queueChatMessage } from "./chatOfflineSync";
 export function Enviar_menssagem(
     event , 
     socket , 
@@ -14,7 +14,10 @@ export function Enviar_menssagem(
     replyTo
 )
 {
-    if (!socket || !nossa_sala) return;
+    if (!nossa_sala || !dadosUsuario?.id) {
+        onResult?.({ success: false, error: "Abre uma conversa e inicia sessão antes de enviar." });
+        return;
+    }
     const dados = {
         "nossa_sala":nossa_sala,
         "id_amigo":id_amigo,
@@ -30,14 +33,10 @@ export function Enviar_menssagem(
         } : null
     }
 
-    socket.emit("enviar_menssagem_na_sala" , dados, (result) => onResult?.(result))
-    socket.emit("nova_quantidade_de_menssagem" , dados)
-    const horaMensagem = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    useUserStore.getState().atualizarUltimaMensagemChat(
-        nossa_sala,
-        menssagem,
-        horaMensagem,
-        dadosUsuario.id,
-        false
-    );
+    void queueChatMessage(dados)
+        .then(() => onResult?.({ success: true, queued: !socket?.connected || !navigator.onLine }))
+        .catch((error) => {
+            console.error("Não foi possível guardar a mensagem na fila offline:", error);
+            onResult?.({ success: false, error: error.message || "Não foi possível guardar a mensagem." });
+        });
 }

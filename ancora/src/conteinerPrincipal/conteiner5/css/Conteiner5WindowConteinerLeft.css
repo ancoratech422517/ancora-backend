@@ -138,6 +138,126 @@
 .Conteiner5WindowConteinerLeftCenterCont .botaoTerminarSessao:hover{
     background-color: #912018;
 }
+.Conteiner5WindowConteinerLeftTema{
+    width: 95%;
+    min-height: 72px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background-color: var(--surface);
+    box-shadow: var(--shadow-sm);
+    text-align: left;
+}
+.Conteiner5WindowConteinerLeftTema > div{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.Conteiner5WindowConteinerLeftTema strong{
+    font-size: 14px;
+}
+.Conteiner5WindowConteinerLeftTema small{
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+.Conteiner5WindowConteinerLeftTemaToggle{
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface-3);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background-color .2s ease, transform .2s ease;
+}
+.Conteiner5WindowConteinerLeftTemaToggle:hover{
+    background: var(--teal-100);
+}
+.Conteiner5WindowConteinerLeftTemaToggle:active{
+    transform: scale(.94);
+}
+.Conteiner5WindowConteinerLeftTemaToggle:focus-visible{
+    outline: 2px solid var(--teal-500);
+    outline-offset: 3px;
+}
+.Conteiner5WindowConteinerLeftTemaToggle svg{
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.Conteiner5WindowConteinerLeftScrollDados .Conteiner5WindowConteinerLeftCRM{
+    width: 95%;
+    min-height: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: var(--surface);
+    color: var(--text-primary);
+    text-align: left;
+}
+.Conteiner5WindowConteinerLeftScrollDados .Conteiner5WindowConteinerLeftCRM:hover{
+    background: var(--surface-3);
+}
+.Conteiner5WindowConteinerLeftCRM:active{
+    transform: scale(.98);
+}
+.Conteiner5WindowConteinerLeftCRM:focus-visible{
+    outline: 2px solid var(--teal-500);
+    outline-offset: 3px;
+}
+.Conteiner5WindowConteinerLeftCRMIcon{
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: var(--teal-50);
+    color: var(--teal-700);
+}
+.Conteiner5WindowConteinerLeftCRMIcon p{
+    display: grid;
+    place-items: center;
+}
+.Conteiner5WindowConteinerLeftCRMIcon svg{
+    width: 22px;
+    height: 22px;
+}
+.Conteiner5WindowConteinerLeftCRMTexto{
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 4px;
+}
+.Conteiner5WindowConteinerLeftCRMTexto strong{
+    font-size: 14px;
+}
+.Conteiner5WindowConteinerLeftCRMTexto small{
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+.Conteiner5WindowConteinerLeftCRMSeta{
+    margin-left: auto;
+    color: var(--text-secondary);
+    font-size: 24px;
+}
 .Conteiner5WindowConteinerLeftInformacapContacto{
     width: 95%;
     height: 25vh;

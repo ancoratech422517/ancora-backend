@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from models.database import db, Turma_Aula
 import cloudinary.uploader
 from models.database import Amigo
+from service.media_metadata import validate_blurhash
 import os
 
 api_validar_registro_turma = Blueprint('api_validar_registro_turma', __name__)  
@@ -11,6 +12,10 @@ def validar_registro_turma():
     nome_turma = request.form.get("nome_turma")
     imagem_turma = request.files.get("img_turma")
     id_admin = request.form.get("id_admin")
+    try:
+        imagem_blurhash = validate_blurhash(request.form.get("imagem_blurhash"))
+    except ValueError as erro:
+        return jsonify({"error": str(erro)}), 400
     novo_nome_turma = nome_turma.replace(" " , "_")
     sala_turma = f"Turma_{id_admin}_admin_{novo_nome_turma}"
     if not nome_turma or not imagem_turma or not id_admin:
@@ -24,6 +29,7 @@ def validar_registro_turma():
         "tipo_usuario_Turma": "admin",
         "id_aluno_Turma": id_admin,
         "sala_Turma":sala_turma,
+        "imagem_perfil_Turma_blurhash": imagem_blurhash,
     }
     dados_sala = {
         "id_usuario":id_admin,

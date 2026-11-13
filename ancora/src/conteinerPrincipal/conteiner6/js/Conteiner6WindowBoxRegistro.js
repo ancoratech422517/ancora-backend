@@ -1,5 +1,7 @@
 import { useUserStore } from "../../../useUseSotore"
 import { SwitchTab } from "./Conteiner6WindowBoxLogin";
+import { optimizeFormDataImage } from "../../../utils/imageOptimizer";
+import { fetchComAuth } from "../../../utils/api";
 
 async function obterLocalizacaoExata() {
     return new Promise((resolve) => {
@@ -114,8 +116,9 @@ export async function Registro(setEstadoLoading) {
     // ====================================================
 
     try {
+        await optimizeFormDataImage(form__data, "foto", "avatar");
         console.log("🚀 Enviando formulário para o backend...");
-        const resposta = await fetch(`${URL_BACKEND_ANCORA}/api/Registrar`, {
+        const resposta = await fetchComAuth(`${URL_BACKEND_ANCORA}/api/Registrar`, {
             method: "POST",
             body: form__data
         });

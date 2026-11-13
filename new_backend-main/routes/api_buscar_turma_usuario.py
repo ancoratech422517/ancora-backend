@@ -22,11 +22,13 @@ def buscar_turma_usuario(userId):
                 "id": turma.id,
                 "nome_Turma": turma.nome_Turma,
                 "imagem_perfil_Turma": imagem_atual,
+                "imagem_perfil_Turma_blurhash": imagem_turma.imagem_perfil_Turma_blurhash if imagem_turma else None,
                 "id_admin_Turma": turma.id_admin_Turma,
                 "tipo_usuario_Turma": turma.tipo_usuario_Turma,
                 "id_aluno_Turma": turma.id_aluno_Turma,
                 "sala_Turma": turma.sala_Turma,
-                "foto_aluno_turma": turma.dados_usuario.foto_usuario
+                "foto_aluno_turma": turma.dados_usuario.foto_usuario,
+                "foto_aluno_turma_blurhash": turma.dados_usuario.foto_usuario_blurhash,
             })
         return jsonify(resultado), 200
     except Exception as e:

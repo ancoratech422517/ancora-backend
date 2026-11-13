@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Âncora · Mobile + PC</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<style>
+:root{--bg:#f1f5f9;--card:#fff;--text:#0f172a;--mut:#64748b;--line:#e2e8f0;--soft:#f1f5f9;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.dark{--bg:#0b1120;--card:#111a2e;--text:#e5e7eb;--mut:#94a3b8;--line:#1e2a44;--soft:#18233b;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgb(0 0 0/.04)}
+.mut{color:var(--mut)}.soft{background:var(--soft)}.bl{border-color:var(--line)}
+.hv:hover{background:var(--soft)}
+.noscroll::-webkit-scrollbar{display:none}.noscroll{scrollbar-width:none}
+.sr{padding:3px;border-radius:50%;background:linear-gradient(45deg,#f59e0b,#ec4899,#6366f1)}
+.sr.seen{background:var(--line)}
+.sr .in{background:var(--card);padding:2px;border-radius:50%;display:grid;place-items:center}
+.ph{aspect-ratio:4/3}.pc .ph{aspect-ratio:16/10}
+@keyframes fill{from{width:0}to{width:100%}}
+@keyframes pop{0%{opacity:0;transform:scale(.4)}30%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:scale(1)}}
+.pop.go{animation:pop .8s ease-out}
+</style>
+</head>
+<body>
+<header class="max-w-[1200px] mx-auto px-4 pt-5 flex flex-wrap items-center gap-3">
+  <div class="mr-auto"><h1 class="text-xl font-extrabold">Âncora · Mobile + PC</h1><p class="text-sm mut">Toca num story, dá duplo clique numa imagem e publica algo.</p></div>
+  <div id="seg" class="card flex p-1 gap-1 !rounded-full"></div>
+  <button id="th" class="card px-4 py-2 text-sm font-medium !rounded-full">Tema</button>
+</header>
+<main id="app" class="max-w-[1200px] mx-auto px-4 py-5"></main>
+<div id="sv" class="hidden fixed inset-0 z-50 bg-black/85 items-center justify-center"></div>
+<script>
+const $=s=>document.querySelector(s);
+const GR=['linear-gradient(135deg,#6366f1,#ec4899)','linear-gradient(135deg,#f59e0b,#ef4444)','linear-gradient(135deg,#10b981,#3b82f6)','linear-gradient(135deg,#8b5cf6,#06b6d4)','linear-gradient(135deg,#f43f5e,#f97316)','linear-gradient(135deg,#0ea5e9,#6366f1)'];
+const U=[['Ana Costa','@ana.costa'],['Bruno Neto','@bruno.neto'],['Carla Dias','@carla.dias'],['Dino Lopes','@dino.lopes'],['Eva Santos','@eva.santos'],['Filipe Matos','@filipe.matos']].map((u,i)=>({n:u[0],h:u[1],g:GR[i]}));
+const P=[
+{id:1,u:1,s:0,t:'Fim de tarde perfeito na Ilha de Luanda 🌅 Nada como terminar a semana assim.',loc:'Ilha de Luanda',tm:'2 h',l:248,c:18},
+{id:2,u:2,s:1,t:'Luanda de noite não perde o brilho. Quem mais adora esta vista?',loc:'Talatona',tm:'5 h',l:132,c:24},
+{id:3,u:3,s:2,t:'Escapadinha ao Planalto Central. Ar puro e paisagens de sonho ⛰️',loc:'Huambo',tm:'8 h',l:97,c:9},
+{id:4,u:4,s:3,t:'Novo projecto em React a sair do forno 🚀 Em breve partilho os detalhes!',loc:'Online',tm:'ontem',l:310,c:41},
+{id:5,u:5,s:4,t:'Fim de semana na natureza para recarregar baterias 🌿',loc:'Kissama',tm:'ontem',l:76,c:6}];
+let pid=5,mode=innerWidth>=1024?'pc':'mobile',cur=0;const L={},B={},SEEN={};
+
+const IC={home:'M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10',search:'M11 4a7 7 0 100 14 7 7 0 000-14zM21 21l-5-5',bell:'M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M10 21h4',mail:'M4 5h16v14H4zM4 7l8 6 8-6',user:'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c0-4 4-6 8-6s8 2 8 6',heart:'M12 21s-8-5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 6-8 11-8 11z',chat:'M21 12a8 8 0 01-11.5 7L3 21l2-5.5A8 8 0 1121 12z',share:'M4 12v7h16v-7M12 3v12M7 8l5-5 5 5',bookmark:'M6 3h12v18l-6-4-6 4z',plus:'M12 5v14M5 12h14',more:'M5 12h.01M12 12h.01M19 12h.01'};
+const ic=(n,c='w-5 h-5',f='none')=>`<svg class="${c}" viewBox="0 0 24 24" fill="${f}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${IC[n]}"/></svg>`;
+const av=(i,px)=>`<div class="rounded-full grid place-items-center text-white font-semibold shrink-0" style="width:${px}px;height:${px}px;font-size:${px*.4}px;background:${U[i].g}">${U[i].n[0]}</div>`;
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+let uid=0;
+const scene=k=>{const i=++uid,gd=(a,b,c)=>`<defs><linearGradient id="g${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="400" height="300" fill="url(#g${i})"/>`;
+const S=[
+gd('#312e81','#fdba74')+`<circle cx="200" cy="175" r="48" fill="#fff7ed"/><rect y="195" width="400" height="105" fill="#0e7490"/><path d="M0 218h400M0 242h400M0 270h400" stroke="#fff" stroke-opacity=".25" stroke-width="3"/><path d="M310 300c0-60 6-110 12-150M322 150c-30-10-50 0-60 20M322 150c30-14 52-6 64 14M322 150c-8-26-30-34-48-30" stroke="#0f172a" stroke-width="5" fill="none" stroke-linecap="round"/>`,
+gd('#0f172a','#1e3a8a')+`<circle cx="320" cy="60" r="24" fill="#fef9c3"/>`+[90,150,120,190,100,160,130,80].map((h,j)=>`<rect x="${j*50}" y="${300-h}" width="42" height="${h}" fill="#1e293b"/>`+[0,1,2].map(r=>`<rect x="${j*50+8}" y="${300-h+14+r*28}" width="8" height="10" fill="#fde68a" opacity="${(j+r)%3?.9:.25}"/><rect x="${j*50+26}" y="${300-h+14+r*28}" width="8" height="10" fill="#fde68a" opacity="${(j+r)%2?.3:.9}"/>`).join('')).join(''),
+gd('#60a5fa','#e0f2fe')+`<path d="M0 300V190l90-90 70 70 80-110 160 140v100z" fill="#475569"/><path d="M240 60l-30 40 20-8 12 14 14-12 18 12z" fill="#fff"/><path d="M0 300V245q100-40 200-10t200-20v85z" fill="#16a34a"/>`,
+`<defs><linearGradient id="g${i}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f46e5"/><stop offset="1" stop-color="#db2777"/></linearGradient></defs><rect width="400" height="300" fill="url(#g${i})"/><circle cx="330" cy="50" r="90" fill="#fff" opacity=".12"/><rect x="60" y="70" width="280" height="170" rx="14" fill="#0f172a" opacity=".85"/>`+[[80,100,90],[100,120,140],[100,140,70],[80,160,120],[100,180,100]].map(r=>`<rect x="${r[0]}" y="${r[1]}" width="${r[2]}" height="8" rx="4" fill="${r[1]%40?'#a5b4fc':'#f9a8d4'}"/>`).join(''),
+gd('#bbf7d0','#ecfccb')+`<rect y="200" width="400" height="100" fill="#3b82f6" opacity=".6"/>`+[20,90,160,250,320].map((x,j)=>`<path d="M${x} 200l${30+j*3} -${110+j*8}l${30+j*3} ${110+j*8}z" fill="${j%2?'#15803d':'#166534'}"/>`).join('')+`<rect y="230" width="400" height="70" fill="#14532d" opacity=".5"/>`];
+return `<svg class="w-full h-full block" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">${S[k%5]}</svg>`};
+
+const nb=(n,b)=>`<button class="relative p-2 rounded-full hv">${ic(n)}${b?`<span class="absolute top-0 right-0 min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[10px] grid place-items-center">${b}</span>`:''}</button>`;
+const logo=`<span class="w-8 h-8 rounded-xl grid place-items-center text-white font-bold" style="background:${GR[0]}">Â</span><b class="text-lg tracking-tight">Âncora</b>`;
+const fwc=on=>`text-xs font-semibold rounded-full px-3.5 py-1.5 ${on?'soft':'bg-indigo-600 text-white'}`;
+const fw=b=>{const on=b.dataset.on!=='1';b.dataset.on=on?'1':'0';b.textContent=on?'A seguir':'Seguir';b.className=fwc(on)};
+
+const post=p=>{const u=U[p.u];return `<article class="card overflow-hidden"><header class="flex items-center gap-3 p-3">${av(p.u,40)}<div class="flex-1 min-w-0"><b class="text-sm block leading-tight truncate">${u.n}</b><span class="text-xs mut">${p.loc} · ${p.tm}</span></div><button class="mut p-1">${ic('more')}</button></header>
+<div class="ph relative select-none bg-slate-200" ondblclick="lk(${p.id},1)">${scene(p.s)}<div id="pop${p.id}" class="pop absolute inset-0 grid place-items-center pointer-events-none text-white opacity-0">${ic('heart','w-24 h-24','currentColor')}</div></div>
+<div class="flex items-center gap-4 px-3 pt-3"><button data-lk="${p.id}" onclick="lk(${p.id})" class="flex items-center gap-1.5 text-sm font-medium">${ic('heart')}<span data-lc="${p.id}">${p.l}</span></button><button class="flex items-center gap-1.5 text-sm font-medium">${ic('chat')}${p.c}</button><button>${ic('share')}</button><button data-bk="${p.id}" onclick="bk(${p.id})" class="ml-auto">${ic('bookmark')}</button></div>
+<p class="px-3 pt-2 pb-3 text-sm"><b>${u.h.slice(1)}</b> ${p.t}</p></article>`};
+
+const pop=id=>{const e=$('#pop'+id);if(!e)return;e.classList.remove('go');void e.offsetWidth;e.classList.add('go')};
+const upd=id=>{const p=P.find(x=>x.id===id);if(!p)return;document.querySelectorAll(`[data-lk="${id}"]`).forEach(b=>{b.classList.toggle('text-rose-500',!!L[id]);b.querySelector('svg').setAttribute('fill',L[id]?'currentColor':'none');b.querySelector('[data-lc]').textContent=p.l+(L[id]?1:0)});document.querySelectorAll(`[data-bk="${id}"]`).forEach(b=>{b.classList.toggle('text-indigo-500',!!B[id]);b.querySelector('svg').setAttribute('fill',B[id]?'currentColor':'none')})};
+const lk=(id,only)=>{if(only&&L[id])return pop(id);L[id]=!L[id];upd(id);if(L[id])pop(id)};
+const bk=id=>{B[id]=!B[id];upd(id)};
+
+const stories=()=>`<div class="noscroll flex gap-3 overflow-x-auto px-3 py-3"><button class="shrink-0 w-[68px] text-center" onclick="$('#tx').focus()"><div class="relative w-16 h-16 mx-auto">${av(0,64)}<span class="absolute -right-0.5 -bottom-0.5 w-6 h-6 rounded-full bg-indigo-600 text-white grid place-items-center border-2" style="border-color:var(--card)">${ic('plus','w-3.5 h-3.5')}</span></div><span class="text-[11px] mut block mt-1">O teu story</span></button>${U.slice(1).map((u,i)=>`<button class="shrink-0 w-[68px] text-center" onclick="story(${i+1})"><div class="sr ${SEEN[i+1]?'seen':''} w-16 h-16 mx-auto"><div class="in">${av(i+1,56)}</div></div><span class="text-[11px] mut block mt-1 truncate">${u.n.split(' ')[0]}</span></button>`).join('')}</div>`;
+const composer=()=>`<div class="card p-3"><div class="flex gap-3">${av(0,40)}<textarea id="tx" rows="2" class="flex-1 soft rounded-xl px-3 py-2 text-sm outline-none resize-none" placeholder="Em que estás a pensar, Ana?"></textarea></div><div class="flex items-center mt-3"><span class="text-xs mut flex-1">Foto · Vídeo · Local</span><button onclick="pub()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-full px-5 py-1.5">Publicar</button></div></div>`;
+function pub(){const t=$('#tx').value.trim();if(!t){$('#tx').focus();return}P.unshift({id:++pid,u:0,s:pid,t:esc(t),loc:'Luanda',tm:'agora',l:0,c:0});$('#tx').value='';renderFeed()}
+function story(i){const sv=$('#sv');if(i<1||i>=U.length)return closeStory();cur=i;SEEN[i]=1;const u=U[i];sv.innerHTML=`<div class="relative w-[min(380px,100vw)] h-[min(680px,100dvh)] sm:rounded-2xl overflow-hidden bg-black"><div class="absolute inset-0">${scene(i+1)}</div><div class="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/50"></div><div class="absolute inset-0 flex"><div class="w-1/3" onclick="story(${i-1})"></div><div class="flex-1" onclick="story(${i+1})"></div></div><div class="absolute top-0 inset-x-0 p-3 pointer-events-none text-white"><div class="h-[3px] rounded bg-white/30 overflow-hidden"><div class="h-full bg-white" style="animation:fill 5s linear forwards" onanimationend="story(${i+1})"></div></div><div class="flex items-center gap-2 mt-3">${av(i,34)}<b class="text-sm">${u.n}</b><span class="text-xs opacity-70">há ${i} h</span></div></div><button class="absolute top-6 right-4 text-white text-2xl leading-none" onclick="closeStory()">×</button></div>`;sv.classList.remove('hidden');sv.classList.add('flex')}
+function closeStory(){const sv=$('#sv');sv.classList.add('hidden');sv.classList.remove('flex');sv.innerHTML='';const s=$('#stories');if(s)s.innerHTML=stories()}
+
+const wh=(t,a='Ver tudo')=>`<div class="flex items-center justify-between mb-3"><b class="text-sm">${t}</b><a class="text-xs text-indigo-500 cursor-pointer">${a}</a></div>`;
+const spark=()=>{const v=[12,18,15,24,22,30,38],w=240,h=56,m=Math.max(...v);const d=v.map((x,i)=>(i?'L':'M')+(i*w/6).toFixed(1)+' '+(h-4-x/m*(h-8)).toFixed(1)).join('');return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-14" preserveAspectRatio="none"><defs><linearGradient id="sp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6366f1" stop-opacity=".35"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient></defs><path d="${d}L${w} ${h}L0 ${h}Z" fill="url(#sp)"/><path d="${d}" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`};
+const widgets=()=>`
+<div class="card overflow-hidden"><div class="h-20" style="background:${GR[0]}"></div><div class="px-4 pb-4 -mt-8"><div class="inline-block rounded-full p-1" style="background:var(--card)">${av(0,64)}</div><b class="block mt-2">Ana Costa</b><span class="text-xs mut">@ana.costa · Designer em Luanda</span><div class="grid grid-cols-3 text-center mt-4 pt-3 border-t bl">${[['128','Posts'],['4,2 mil','Seguidores'],['310','A seguir']].map(s=>`<div><b class="block text-sm">${s[0]}</b><span class="text-[11px] mut">${s[1]}</span></div>`).join('')}</div></div></div>
+<div class="card p-4"><div class="flex items-start justify-between"><div><span class="text-xs mut">Alcance semanal</span><b class="block text-2xl leading-tight">18,4 mil</b></div><span class="text-xs font-semibold text-emerald-600 bg-emerald-500/10 rounded-full px-2 py-1">▲ 12%</span></div>${spark()}<div class="flex justify-between text-[10px] mut mt-1">${'SEG TER QUA QUI SEX SÁB DOM'.split(' ').map(d=>`<span>${d}</span>`).join('')}</div></div>
+<div class="card p-4">${wh('Tendências para ti')}${[['Tecnologia','#ReactAngola','2,4 mil posts'],['Música','#Kizomba','12 mil posts'],['Desporto','#Girabola','8,1 mil posts'],['Negócios','#StartupAO','1,3 mil posts']].map(t=>`<div class="py-2 hv rounded-lg px-2 -mx-2 cursor-pointer"><span class="text-[11px] mut">${t[0]} · Em alta</span><b class="block text-sm">${t[1]}</b><span class="text-[11px] mut">${t[2]}</span></div>`).join('')}</div>
+<div class="card p-4">${wh('Sugestões de amizade')}${[3,4,5].map(i=>`<div class="flex items-center gap-3 mb-3 last:mb-0">${av(i,40)}<div class="flex-1 min-w-0"><b class="text-sm block truncate">${U[i].n}</b><span class="text-[11px] mut">${8+i*2} amigos em comum</span></div><button onclick="fw(this)" class="${fwc(0)}">Seguir</button></div>`).join('')}</div>
+<div class="card p-4">${wh('Próximos eventos')}${[['15','NOV','Meetup de Programadores','Luanda · 18:30'],['22','NOV','Workshop de UI Design','Online · 15:00']].map(e=>`<div class="flex items-center gap-3 mb-3 last:mb-0"><div class="w-11 h-12 rounded-xl soft grid place-items-center text-center leading-none"><div><b class="text-base block">${e[0]}</b><span class="text-[10px] text-indigo-500 font-semibold">${e[1]}</span></div></div><div class="min-w-0"><b class="text-sm block truncate">${e[2]}</b><span class="text-[11px] mut">${e[3]}</span></div></div>`).join('')}</div>`;
+
+const NAV=[['home','Início'],['search','Explorar'],['bell','Notificações',3],['mail','Mensagens',5],['bookmark','Guardados'],['user','Perfil']];
+const pcView=()=>`<div class="card sticky top-2 z-20 flex items-center gap-4 px-4 py-2.5 !rounded-2xl mb-5"><div class="flex items-center gap-2">${logo}</div><div class="relative flex-1 max-w-md"><span class="absolute left-3 top-2.5 mut">${ic('search','w-4 h-4')}</span><input class="soft w-full rounded-full pl-10 pr-4 py-2 text-sm outline-none" placeholder="Pesquisar pessoas, #tags e locais"></div><div class="ml-auto flex items-center gap-1">${nb('bell',3)}${nb('mail',5)}<div class="ml-2">${av(0,34)}</div></div></div>
+<div class="grid lg:grid-cols-[230px_minmax(0,1fr)] xl:grid-cols-[230px_minmax(0,1fr)_320px] gap-5">
+<aside class="hidden lg:block sticky top-24 self-start space-y-3"><div class="card p-2">${NAV.map((n,i)=>`<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer ${i?'hv':'bg-indigo-600/10 text-indigo-500'}">${ic(n[0])}<span class="flex-1">${n[1]}</span>${n[2]?`<span class="text-[11px] bg-rose-500 text-white rounded-full px-1.5">${n[2]}</span>`:''}</a>`).join('')}</div><button onclick="$('#tx').focus()" class="w-full text-white font-semibold rounded-xl py-3" style="background:${GR[0]}">Nova publicação</button></aside>
+<section class="space-y-4 min-w-0 w-full max-w-[660px] mx-auto"><div id="stories" class="card"></div>${composer()}<div id="feed" class="space-y-4"></div></section>
+<aside class="hidden xl:block space-y-4">${widgets()}</aside></div>`;
+
+const mobileView=()=>`<div class="mx-auto w-[400px] max-w-full flex flex-col overflow-hidden sm:border-[10px] border-slate-900 sm:rounded-[2.5rem] h-[min(800px,84vh)]" style="background:var(--bg)">
+<div class="flex justify-between items-center px-7 pt-3 pb-1 text-[11px] font-semibold" style="background:var(--card)"><span>9:41</span><span class="flex items-center gap-1">5G<i class="inline-block w-5 h-2.5 rounded-sm border border-current"><i class="block h-full w-3/4 bg-current"></i></i></span></div>
+<header class="flex items-center gap-2 px-4 py-1.5 border-b bl" style="background:var(--card)">${logo}<div class="ml-auto flex">${nb('bell',3)}${nb('mail')}</div></header>
+<div class="flex-1 overflow-y-auto noscroll"><div id="stories" class="border-b bl" style="background:var(--card)"></div><div class="p-3 pb-0">${composer()}</div><div id="feed" class="space-y-3 p-3"></div></div>
+<nav class="grid grid-cols-5 items-center py-2 border-t bl text-center" style="background:var(--card)"><span class="text-indigo-500 grid place-items-center">${ic('home','w-6 h-6')}</span><span class="mut grid place-items-center">${ic('search','w-6 h-6')}</span><button class="mx-auto w-11 h-11 rounded-2xl text-white grid place-items-center shadow-lg" style="background:${GR[0]}">${ic('plus')}</button><span class="mut grid place-items-center">${ic('heart','w-6 h-6')}</span><span class="mut grid place-items-center">${ic('user','w-6 h-6')}</span></nav></div>`;
+
+function renderFeed(){$('#feed').innerHTML=P.map(post).join('');P.forEach(p=>upd(p.id))}
+function render(){const a=$('#app');a.className='max-w-[1200px] mx-auto px-4 py-5 '+mode;a.innerHTML=mode==='mobile'?mobileView():pcView();$('#stories').innerHTML=stories();renderFeed();
+  $('#seg').innerHTML=[['mobile','Mobile'],['pc','PC']].map(m=>`<button onclick="mode='${m[0]}';render()" class="px-4 py-1.5 text-sm font-medium rounded-full ${mode===m[0]?'bg-indigo-600 text-white':'mut'}">${m[1]}</button>`).join('')}
+$('#th').onclick=()=>document.documentElement.classList.toggle('dark');
+if(matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+render();
+</script>
+</body>
+</html>
