@@ -5,7 +5,7 @@ export async function Login(ativarConteiner, setDados , setEstadoLoading , setEr
     setEstadoLoading("True")
     setErro("False")
     const URL_BACKEND_ANCORA = useUserStore.getState().urlBancoDeDados
-    const telefone = document.getElementById("TerminalLogin").value 
+    const telefone = document.getElementById("TerminalLogin").value.replace(/\D/g, "")
     const senha = document.getElementById("SenhaLogin").value
     
     if (!telefone || !senha) {

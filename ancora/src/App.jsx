@@ -18,6 +18,7 @@ const PublicAdPage = lazy(() => import('./conteinerPrincipal/conteiner3/PublicAd
 import { getInitialTheme } from './utils/theme'
 import { preparePrivateMediaStorage } from './utils/privateMediaStorage'
 import OfflineSyncIndicator from './components/OfflineSyncIndicator'
+import ContainerLoading from './components/ContainerLoading'
 
 
 function App() {
@@ -230,20 +231,9 @@ function App() {
   }, [publicAdId, setAtivar, setDados, urlBancoDeDados])
 
   const renderizar_conteiner = () => {
-    if (carregandoSessao) return <div className='loading-page'>
-      
-      <div class="pyramid-loader">
-          <div class="wrapper">
-            <span class="side side1"></span>
-            <span class="side side2"></span>
-            <span class="side side3"></span>
-            <span class="side side4"></span>
-            <span class="shadow"></span>
-          </div>  
-          <h2 className='title-welcom'>Ancora E-commerce</h2>
-      </div>
-
-    </div>
+    if (carregandoSessao) {
+      return <ContainerLoading className="loading-page" label="A carregar a sessão" />
+    }
 
     switch(containerAtual) {
       case "conteiner1": return <Conteiner1 ativarConteiner={setAtivar} />
@@ -260,7 +250,7 @@ function App() {
 
   if (publicAdId) {
     return (
-      <Suspense fallback={<div className="loading-page">A carregar anúncio...</div>}>
+      <Suspense fallback={<ContainerLoading className="container-loading-page" label="A carregar anúncio" />}>
         <PublicAdPage adId={publicAdId} />
       </Suspense>
     )
@@ -275,12 +265,16 @@ function App() {
       {!carregandoSessao && containerAtual !== "conteiner6" && (
         <MenuConteinerLeft ativarConteiner={setAtivar} setDadosUsuario={setDados} />
       )}
-      <Suspense fallback={<div className="loading-page">A carregar Âncora...</div>}>
-        {renderizar_conteiner()}
+      <div className="conteinerPrincipalConteudo">
+        <Suspense fallback={<ContainerLoading overlay label="A carregar aba" />}>
+          {renderizar_conteiner()}
+        </Suspense>
+        <Suspense fallback={null}>
         {condicaoEstadoMenuLiveAncora()}
         {condicaoEstadoConteinerTurmaVideoExibir()}
         {condicaoEstadoChamadaGrupo()}
-      </Suspense>
+        </Suspense>
+      </div>
       <VoiceCallOverlay />
       <OfflineSyncIndicator />
 

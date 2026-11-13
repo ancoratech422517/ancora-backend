@@ -3,10 +3,15 @@ import datetime
 import os
 from werkzeug.security import check_password_hash
 from models.database import Usuario, db
+from service.phone_number import normalizar_telefone
 
 class AuthService:
     @staticmethod
     def validar_login(telefone, senha_pura):
+        telefone = normalizar_telefone(telefone)
+        if not telefone:
+            return None
+
         usuario = Usuario.query.filter_by(telefone=telefone).first()
         
         # Remove esses prints em produção. Vazam dados.

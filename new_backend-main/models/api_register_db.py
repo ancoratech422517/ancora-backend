@@ -36,7 +36,7 @@ class RegisterService:
                 telefone=telefone,
                 senha_hash=senha_protegida,
                 chave_publica=public_pem, # Guardamos a pública para validar saques
-                foto_usuario = foto_usuario,
+                foto_usuario = foto_usuario or "none",
                 foto_usuario_blurhash = foto_usuario_blurhash,
                 email = email,
                 data_nascimento = data_nascimento , 

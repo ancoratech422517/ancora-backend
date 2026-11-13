@@ -69,8 +69,9 @@ async function obterLocalizacaoExata() {
     });
 }
 
-export async function Registro(setEstadoLoading) {
+export async function Registro(setEstadoLoading, setErroCadastro) {
     setEstadoLoading("True");
+    setErroCadastro?.("");
 
     const URL_BACKEND_ANCORA = useUserStore.getState().urlBancoDeDados;
 
@@ -126,17 +127,19 @@ export async function Registro(setEstadoLoading) {
         const resultado = await resposta.json();
         console.log("📨 Resposta do servidor:", resultado);
 
-        if (resultado.status) {
+        if (resposta.ok && resultado.status === true) {
             console.log("🎉 Registro bem sucedido!");
             setEstadoLoading("False");
             SwitchTab("login");
         } else {
             console.error("❌ Falha no registro:", resultado);
+            setErroCadastro?.(resultado.message || "Não foi possível criar a conta.");
             setEstadoLoading("False");
         }
 
     } catch (err) {
         console.error("💥 Erro na requisição:", err);
+        setErroCadastro?.("Não foi possível concluir o cadastro. Verifique a ligação e tente novamente.");
         setEstadoLoading("False");
     }
 }

@@ -60,7 +60,7 @@ def registro():
 
         # Chamar o serviço de registro
         serviço = register_user()
-        resultado = serviço.registrar_usuario(
+        resultado, status_code = serviço.registrar_usuario(
             nome=nome,
             telefone=telefone,
             senha=senha,
@@ -76,7 +76,7 @@ def registro():
             bairro=bairro
         )
 
-        return jsonify({"status": resultado})
+        return jsonify(resultado), status_code
 
     except Exception as e:
         print("❌ Erro no registro:", str(e))

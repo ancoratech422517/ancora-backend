@@ -1,22 +1,6 @@
-import { useState } from "react";
+import ContainerLoading from "../../../components/ContainerLoading"
 import "./loading4.css"
-export default function Loading4(){
-    return(
-        <div className="Loading4"> 
-            <div class="spinner center">
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-                <div class="spinner-blade"></div>
-            </div>
-        </div>
-    )
+
+export default function Loading4() {
+  return <ContainerLoading className="Loading4" overlay />
 }

@@ -1,10 +1,8 @@
 from models.api_register_db import RegisterService
-from flask import json , jsonify
+from service.phone_number import normalizar_telefone
 models = RegisterService()
 
 class register_user():
-    def __init__(self):
-        self.registrar_usuario()
     def registrar_usuario(self , 
                           nome=None , 
                           telefone=None , 
@@ -20,16 +18,18 @@ class register_user():
                           capital = None,
                           bairro = None
                           ):
+        telefone = normalizar_telefone(telefone)
+
         if not senha:
-            return "senha invalida"
+            return {"status": False, "message": "Senha inválida."}, 400
         elif len(senha) < 6:
-            return "tens que digita acime de 5 caracteres"
+            return {"status": False, "message": "A senha deve ter pelo menos 6 caracteres."}, 400
         elif senha != confirmar_senha:
-            return "as senhas não coicidem"
+            return {"status": False, "message": "As senhas não coincidem."}, 400
         elif not nome:
-            return "campo do nome obrigatorio"
+            return {"status": False, "message": "O nome é obrigatório."}, 400
         elif not telefone:
-            return "campo do telefone obrigatorio"
+            return {"status": False, "message": "O telefone é obrigatório."}, 400
         else:
             dados = {
                 "nome":nome,
@@ -46,5 +46,14 @@ class register_user():
                 "capital":capital,
                 "bairro":bairro
             }
-            models.registrar_user_in_db(**dados)
-            return "usuario registrado com sucesso"
+            resultado, status_code = models.registrar_user_in_db(**dados)
+            if status_code != 201:
+                return {
+                    "status": False,
+                    "message": resultado.get("erro", "Não foi possível criar a conta."),
+                }, status_code
+
+            return {
+                "status": True,
+                "message": "Conta criada com sucesso.",
+            }, status_code

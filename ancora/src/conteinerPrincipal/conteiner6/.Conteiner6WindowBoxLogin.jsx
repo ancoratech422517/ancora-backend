@@ -12,6 +12,7 @@ export default function Conteiner6WindowBoxLogin ({ ativarConteiner, setConta}) 
     
     const [carregando, setCarregando] = useState(false)
     const [erro , setErro] = useState("False")
+    const [erroCadastro, setErroCadastro] = useState("")
     const condicaoErro  = ()=>{
         switch(erro){
             case "True":
@@ -161,7 +162,12 @@ export default function Conteiner6WindowBoxLogin ({ ativarConteiner, setConta}) 
                             </div>
                         </div>
 
-                        <button type="submit" className="btn-submit" onClick={()=>Registro(setEstadoLoading)}>Criar conta</button>
+                        <button type="submit" className="btn-submit" onClick={()=>Registro(setEstadoLoading, setErroCadastro)}>Criar conta</button>
+                        {erroCadastro && (
+                            <div className="Menssagem-log" role="alert">
+                                {erroCadastro}
+                            </div>
+                        )}
 
                         <p className="terms">
                             Ao criar uma conta, você concorda com nossos
