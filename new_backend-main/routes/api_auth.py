@@ -1,6 +1,5 @@
-from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, current_app, request, jsonify, make_response
 from service.auth_service import AuthService
-import os
 import jwt
 from datetime import datetime, timedelta
 
@@ -50,7 +49,7 @@ def Login():
 
         access_token = jwt.encode(
             access_payload,
-            os.getenv("SECRET_KEY"),
+            current_app.config["SECRET_KEY"],
             algorithm="HS256"
         )
 
@@ -72,7 +71,7 @@ def Login():
 
         refresh_token = jwt.encode(
             refresh_payload,
-            os.getenv("SECRET_KEY"),
+            current_app.config["SECRET_KEY"],
             algorithm="HS256"
         )
 
@@ -116,8 +115,8 @@ def Login():
 
         return resp
 
-    except Exception as erro:
-        print(f"Erro no login: {erro}")
+    except Exception:
+        current_app.logger.exception("Erro no login")
         return jsonify({
             "status": "False",
             "menssagem": "Erro interno"
@@ -137,7 +136,7 @@ def refresh():
 
         payload = jwt.decode(
             refresh_token,
-            os.getenv("SECRET_KEY"),
+            current_app.config["SECRET_KEY"],
             algorithms=["HS256"]
         )
 
@@ -157,7 +156,7 @@ def refresh():
             "bairro":payload.get("bairro"),
             "type": "access",
             "exp": datetime.utcnow() + timedelta(minutes=15)
-        }, os.getenv("SECRET_KEY"), algorithm="HS256")
+        }, current_app.config["SECRET_KEY"], algorithm="HS256")
 
         resp = jsonify({"mensagem": "Token renovado"})
 

@@ -71,7 +71,7 @@ export default function Conteiner6WindowBoxLogin ({ ativarConteiner, setConta}) 
                             <label for="login-email">Telefone</label>
                             <div className="input-wrapper">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 0 01-4.5 1.207"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 0 1 5 0V12a9 9 0 10-9 9m4.5-1.206a8.959 0 01-4.5 1.207"/>
                                 </svg>
                                 <input type="Tel" id="TerminalLogin" className="form-input" placeholder="Digite seu Terminal" required />
                             </div>

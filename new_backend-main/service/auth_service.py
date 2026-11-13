@@ -1,6 +1,3 @@
-import jwt
-import datetime
-import os
 from werkzeug.security import check_password_hash
 from models.database import Usuario, db
 from service.phone_number import normalizar_telefone
@@ -22,13 +19,6 @@ class AuthService:
         if not usuario or not check_password_hash(usuario.senha_hash, senha_pura):
             return None  # Falha: retorna None
 
-        # Gera o Token mas NÃO retorna ele direto pro cliente
-        token = jwt.encode({
-            'usuario_id': usuario.id,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
-        }, os.getenv('SECRET_KEY'), algorithm="HS256")
-       
-       
         usuario_dados = {
             "id":usuario.id,
             "nome":usuario.nome,
@@ -48,5 +38,4 @@ class AuthService:
         return {
             "success": True,
             "usuario": usuario_dados,
-            "token": token  # Só pra rota usar, não vai pro frontend
         }

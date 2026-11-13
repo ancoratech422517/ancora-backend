@@ -6,8 +6,8 @@ from gevent import monkey
 monkey.patch_all()
 from flask import Flask
 from flask_cors import CORS
-from sqlalchemy import inspect, text
 from models.database import db
+from service.database_schema import ensure_columns
 from flask_talisman import Talisman
 from flask_migrate import Migrate
 import cloudinary
@@ -233,18 +233,11 @@ def setup_database():
                 "mime_type": "TEXT",
                 "file_size": "INTEGER"
             }
-            inspector = inspect(db.engine)
-            if "menssagens" in inspector.get_table_names():
-                existentes = {
-                    coluna["name"] for coluna in inspector.get_columns("menssagens")
-                }
-                with db.engine.begin() as connection:
-                    for nome, tipo in colunas_anexo.items():
-                        if nome not in existentes:
-                            connection.execute(text(
-                                f"ALTER TABLE menssagens ADD COLUMN {nome} {tipo}"
-                            ))
-                            print(f"✅ Coluna menssagens.{nome} adicionada")
+            ensure_columns(db.engine, "menssagens", colunas_anexo)
+            ensure_columns(db.engine, "usuarios", {
+                "foto_usuario_blurhash": "VARCHAR(100)",
+                "id_app_usuario_pushy": "TEXT",
+            })
 
             print("✅ Banco de dados inicializado com sucesso!")
         except Exception as e:

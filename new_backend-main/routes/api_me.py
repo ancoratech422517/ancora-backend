@@ -1,7 +1,6 @@
 import jwt
-from flask import request , jsonify
+from flask import current_app, request, jsonify
 from models.database import Usuario
-import os
 from routes.api_auth import login_bp
 
 @login_bp.route("/api/me", methods=["GET"])
@@ -16,7 +15,11 @@ def get_me():
         print("❌ Sem token_sessao")
         return jsonify({"status": "False"}), 401
     try:
-        payload = jwt.decode(token, os.getenv('SECRET_KEY'), algorithms=["HS256"])
+        payload = jwt.decode(
+            token,
+            current_app.config["SECRET_KEY"],
+            algorithms=["HS256"],
+        )
         print("✅ Payload:", payload)
         
         usuario = Usuario.query.get(payload['id'])
