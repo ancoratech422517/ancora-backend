@@ -1,7 +1,7 @@
 
 .conteinerRight{
-    width: 72%;
-    flex: 0 0 72%;
+    width: auto;
+    flex: 1 1 0;
     box-sizing: border-box;
     min-width: 0;
     height: 100%;
@@ -12,8 +12,8 @@
 }
 
 .ConteinerRightInicial{
-    width: 72%;
-    flex: 0 0 72%;
+    width: auto;
+    flex: 1 1 0;
     box-sizing: border-box;
     min-width: 0;
     height: 100%;
