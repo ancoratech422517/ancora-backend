@@ -6,6 +6,7 @@ from gevent import monkey
 monkey.patch_all()
 from flask import Flask
 from flask_cors import CORS
+from sqlalchemy import text
 from models.database import db
 from service.database_schema import ensure_columns
 from flask_talisman import Talisman
@@ -137,6 +138,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {
     "origins": [
         "http://127.0.0.1:5000",
+        "http://127.0.0.1:5173",
         "http://localhost:5173",
         "https://localhost",
         "http://localhost",
@@ -152,20 +154,6 @@ CORS(app, resources={r"/*": {
     "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     "allow_headers": ["Content-Type", "Authorization"]
 }})
-
-
-@app.after_request
-def after_request(response):
-    origin = response.headers.get('Access-Control-Allow-Origin')
-    if not origin:
-  
-        response.headers.add('Access-Control-Allow-Origin', 'https://ancora-ecommerc-tawny.vercel.app')
-        #response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
-
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
-    response.headers.add('Access-Control-Allow-Credentials', 'true')
-    return response
 
 
 # teste
@@ -231,9 +219,16 @@ def setup_database():
                 "public_id": "TEXT",
                 "file_name": "TEXT",
                 "mime_type": "TEXT",
-                "file_size": "INTEGER"
+                "file_size": "INTEGER",
+                "client_message_id": "VARCHAR(80)",
             }
             ensure_columns(db.engine, "menssagens", colunas_anexo)
+            with db.engine.begin() as connection:
+                connection.execute(text(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS "
+                    "ix_menssagens_client_message_id "
+                    "ON menssagens (client_message_id)"
+                ))
             ensure_columns(db.engine, "usuarios", {
                 "foto_usuario_blurhash": "VARCHAR(100)",
                 "id_app_usuario_pushy": "TEXT",

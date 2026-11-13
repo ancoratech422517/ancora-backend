@@ -11,7 +11,6 @@ export default function MenuConteinerLeft({ ativarConteiner, setDadosUsuario }) 
         setNotificacoes, 
         setAmigos , 
         setMenssagemLida , 
-        amigos  , 
         setProdutoUsuario , 
         setTodosProdutos , 
         setPedidosProdutos , 
@@ -72,21 +71,46 @@ export default function MenuConteinerLeft({ ativarConteiner, setDadosUsuario }) 
     } , [dadosUsuario?.id, urlBancoDeDados])
     //FIM DA BUSCA DO ESTADO DO SEU AMIGO
     useEffect(() => {
-        if (dadosUsuario?.id && !jaBuscou) {
-            fetch(`${urlBancoDeDados}/api/get/meus_amigos/${dadosUsuario.id}`)
-                .then(res => res.json())
-                .then(dados => {
-                    if (Array.isArray(dados)) {
-                        setAmigos(dados);
-                        setJaBuscou(true); // Trava as buscas automáticas iniciais
-                    }
-                })
-                .catch(err => {
-                    console.error("Erro na busca de amigos", err);
+        if (!dadosUsuario?.id) return;
+
+        let ativo = true;
+        let temporizador;
+        let tentativas = 0;
+
+        const carregarAmigos = async () => {
+            try {
+                const resposta = await fetch(
+                    `${urlBancoDeDados}/api/get/meus_amigos/${dadosUsuario.id}`,
+                    { credentials: "include" }
+                );
+                if (!resposta.ok) {
+                    throw new Error(`Erro HTTP ao buscar amigos: ${resposta.status}`);
+                }
+
+                const dados = await resposta.json();
+                if (!Array.isArray(dados)) {
+                    throw new Error("Resposta inválida ao buscar amigos");
+                }
+
+                if (ativo) {
+                    setAmigos(dados);
                     setJaBuscou(true);
-                });
-        }
-    }, [dadosUsuario?.id, jaBuscou, setAmigos]);
+                }
+            } catch (erro) {
+                console.error("Erro na busca de amigos:", erro);
+                if (ativo && tentativas < 3) {
+                    tentativas += 1;
+                    temporizador = setTimeout(carregarAmigos, tentativas * 2000);
+                }
+            }
+        };
+
+        carregarAmigos();
+        return () => {
+            ativo = false;
+            clearTimeout(temporizador);
+        };
+    }, [dadosUsuario?.id, setAmigos, urlBancoDeDados]);
 
 
 

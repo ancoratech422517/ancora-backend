@@ -5,8 +5,9 @@ import { fetchComAuth } from './utils/api'
 import { saveChatHistory, saveChatMessage } from './utils/offlineStorage'
 
 const CHAT_THEME_STORAGE_KEY = "ancora-chat-theme"
-let url2 = "http://127.0.0.1:5000"
-let url = "https://ancora-backend-09zc.onrender.com"
+const url = (
+  "https://ancora-backend-09zc.onrender.com" || "https://ancora-backend-09zc.onrender.com"
+).replace(/\/+$/, "")
 function messageKey(message) {
   if (message.client_message_id) return `client:${message.client_message_id}`
   if (message.id != null) return `id:${message.id}`
@@ -531,9 +532,10 @@ export const useUserStore = create(
 
           try {
             console.log("🔄 Garantindo token válido...")
-            await fetchComAuth(`${url}/api/me`)
+            const backendUrl = get().urlBancoDeDados
+            await fetchComAuth(`${backendUrl}/api/me`)
 
-            const novoSocket = io(url, {
+            const novoSocket = io(backendUrl, {
               withCredentials: true,
               transports: ['websocket'],
               reconnection: true,
