@@ -18,7 +18,6 @@ const PublicAdPage = lazy(() => import('./conteinerPrincipal/conteiner3/PublicAd
 import { getInitialTheme } from './utils/theme'
 import { preparePrivateMediaStorage } from './utils/privateMediaStorage'
 import { useApiRequestLoading } from './utils/apiRequestTracker'
-import OfflineSyncIndicator from './components/OfflineSyncIndicator'
 import ContainerLoading from './components/ContainerLoading'
 
 
@@ -281,7 +280,6 @@ function App() {
         </Suspense>
       </div>
       <VoiceCallOverlay />
-      <OfflineSyncIndicator />
       {apiRequestLoading && !carregandoSessao && (
         <ContainerLoading global label="A processar pedido" />
       )}

@@ -30,9 +30,8 @@ export const onStatus = (subscriber) => {
 };
 
 function getApiBase() {
-  const configured = import.meta.env.VITE_API_URL;
   const backend = useUserStore.getState().urlBancoDeDados;
-  const base = String(configured || backend || "").trim().replace(/\/+$/, "");
+  const base = String(backend || "").trim().replace(/\/+$/, "");
   if (!base) throw new Error("O endereço do backend não está configurado.");
 
   if (base.endsWith("/api/crm")) return base;
