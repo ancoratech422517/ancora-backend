@@ -324,8 +324,15 @@
 }
 @media screen and (max-width: 700px) {
 
+    .GeralChatAmigo{
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
     .GeralChatAmigoMenu{
-        height: 22%;
+        height: auto;
+        flex: 0 0 22%;
+        min-height: 0;
     }
     .GeralChatAmigoMenuBox:nth-child(1){
         height: 60%;
@@ -337,7 +344,9 @@
         height: 7.4vh;
     }
     .GeralChatAmigoConteinerScroll{
-        height: 78%;
+        height: auto;
+        flex: 1;
+        min-height: 0;
     }
 
 
