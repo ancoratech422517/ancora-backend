@@ -1,16 +1,31 @@
+from flask import request
 from flask_socketio import emit
 import json
-from models.database import Menssagens , db , Registrar_produto
+from models.database import Menssagens, Registrar_produto, Amigo
 from routes.websocket import socketio
+from routes.websoket_conectUser import get_user_id_from_cookie
 
 @socketio.on("buscar_menssagens")
 def buscar_menssagens(data):
+    if not isinstance(data, dict):
+        return {"ok": False, "erro": "Dados da conversa inválidos"}
+    usuario_id = get_user_id_from_cookie()
     nossa_sala = data.get("nossa_sala")
+    if not usuario_id or not isinstance(nossa_sala, str):
+        return {"ok": False, "erro": "Conversa inválida"}
+    amizade = Amigo.query.filter_by(
+        id_usuario=int(usuario_id),
+        nossa_sala=nossa_sala,
+    ).first()
+    if not amizade:
+        return {"ok": False, "erro": "Sem acesso a esta conversa"}
 
     buscar_menssagem_na_sala = Menssagens.query.filter(Menssagens.nossa_sala == nossa_sala).all()
     lista_menssagem = []
-    dicionario = {}
-    dadosUsers = {}
+    dados_users = {
+        "id_remitente": usuario_id,
+        "id_destinatario": amizade.id_amigo,
+    }
     try:  
         for menssagem in buscar_menssagem_na_sala:
             conteudo_menssagem = menssagem.menssagem
@@ -68,18 +83,13 @@ def buscar_menssagens(data):
             "reply_to_nome":menssagem.reply_to_nome,
             "client_message_id":menssagem.client_message_id
             })
-            dadosUsers["id_destinatario"] = menssagem.id_destinatario
-            dadosUsers["id_remitente"] = menssagem.id_remitente
-        #buscar os produtos do usuario
-        print(f"este é o if do destinatario: {dadosUsers['id_destinatario']}")
+        # buscar os produtos dos participantes da conversa
         get_product_user_destinatario = Registrar_produto.query.filter(
-             Registrar_produto.id_usuario == dadosUsers["id_destinatario"]
+             Registrar_produto.id_usuario == dados_users["id_destinatario"]
          )
-        #buscar os produtos do remitente
         get_product_user_remitente = Registrar_produto.query.filter(
-             Registrar_produto.id_usuario == dadosUsers["id_remitente"]
+             Registrar_produto.id_usuario == dados_users["id_remitente"]
          )
-        #aqui estamos a tratar dos produtos do destinatario
         lista_produto_usuario_destinatario = []
         for lista_produto_user in get_product_user_destinatario:
             lista_produto_usuario_destinatario.append({
@@ -91,7 +101,6 @@ def buscar_menssagens(data):
                 "id_usuario":lista_produto_user.id_usuario
                 
             })
-        #e paramos aqui o tratamento 
         lista_produto_usuario_remitente = []
         for lista_produto_user_destinatario in get_product_user_remitente:
             lista_produto_usuario_remitente.append({
@@ -106,11 +115,17 @@ def buscar_menssagens(data):
 
           
 
-        if lista_menssagem:
-            emit("minhas_menssagens" , lista_menssagem , room = str(nossa_sala))
-            emit("lista_produto_usuario_chat" , lista_produto_usuario_destinatario , room = str(dadosUsers["id_remitente"]))
-            emit("lista_produto_usuario_chat" , lista_produto_usuario_remitente , room = str(dadosUsers["id_destinatario"]))
-            print("as menssagens foram buscadas com sucesso!")
+        emit("minhas_menssagens", lista_menssagem, to=request.sid)
+        emit(
+            "lista_produto_usuario_chat",
+            lista_produto_usuario_destinatario,
+            room=str(dados_users["id_remitente"]),
+        )
+        emit(
+            "lista_produto_usuario_chat",
+            lista_produto_usuario_remitente,
+            room=str(dados_users["id_destinatario"]),
+        )
     except Exception as erro:
         print(f"erro ao buscar as menssagens:{erro}")
 

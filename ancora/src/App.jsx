@@ -17,12 +17,14 @@ import VoiceCallOverlay from './conteinerPrincipal/conteiner1/conteinerRight/Voi
 const PublicAdPage = lazy(() => import('./conteinerPrincipal/conteiner3/PublicAdPage'))
 import { getInitialTheme } from './utils/theme'
 import { preparePrivateMediaStorage } from './utils/privateMediaStorage'
+import { useApiRequestLoading } from './utils/apiRequestTracker'
 import OfflineSyncIndicator from './components/OfflineSyncIndicator'
 import ContainerLoading from './components/ContainerLoading'
 
 
 function App() {
   const publicAdId = new URLSearchParams(window.location.search).get("ad")
+  const apiRequestLoading = useApiRequestLoading()
   useLayoutEffect(() => {
     document.documentElement.dataset.theme = getInitialTheme();
   }, []);
@@ -250,9 +252,12 @@ function App() {
 
   if (publicAdId) {
     return (
-      <Suspense fallback={<ContainerLoading className="container-loading-page" label="A carregar anúncio" />}>
-        <PublicAdPage adId={publicAdId} />
-      </Suspense>
+      <>
+        <Suspense fallback={<ContainerLoading className="container-loading-page" label="A carregar anúncio" />}>
+          <PublicAdPage adId={publicAdId} />
+        </Suspense>
+        {apiRequestLoading && <ContainerLoading global label="A processar pedido" />}
+      </>
     )
   }
 
@@ -277,6 +282,9 @@ function App() {
       </div>
       <VoiceCallOverlay />
       <OfflineSyncIndicator />
+      {apiRequestLoading && !carregandoSessao && (
+        <ContainerLoading global label="A processar pedido" />
+      )}
 
     </section>
   )

@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from flask import Flask
 
-from models.database import Amigo, Usuario, db
+from models.database import Amigo, Amizade, Usuario, db
 from routes.websocket_aceitar_pedido_amizade import Aceitar_pedido_amizade
 from service.api_meus_amigos_service import Meus_amigos
 
@@ -40,6 +40,12 @@ class FriendshipAcceptanceTests(unittest.TestCase):
                 foto_amigo="none",
                 nossa_sala="sala_1_2",
             ))
+            db.session.add(Amizade(
+                remetente_id=1,
+                destinatario_id=2,
+                tipo_notificacao="pedido_amizade",
+                status="pendente",
+            ))
             db.session.commit()
 
     def tearDown(self):
@@ -50,7 +56,7 @@ class FriendshipAcceptanceTests(unittest.TestCase):
     def test_acceptance_creates_missing_direction_for_accepting_user(self):
         payload = {
             "ID_destinatario": 1,
-            "ID_remitente": 2,
+            "ID_remitente": 1,
             "nome_remitente": "Pessoa que aceitou",
             "foto_remitente": "foto-2",
             "foto_destinatario": "foto-1",
@@ -58,6 +64,9 @@ class FriendshipAcceptanceTests(unittest.TestCase):
 
         with self.app.app_context(), patch(
             "routes.websocket_aceitar_pedido_amizade.emit"
+        ), patch(
+            "routes.websocket_aceitar_pedido_amizade.get_user_id_from_cookie",
+            return_value="2",
         ):
             Aceitar_pedido_amizade(payload)
 
@@ -71,6 +80,14 @@ class FriendshipAcceptanceTests(unittest.TestCase):
             self.assertEqual(
                 Amigo.query.filter_by(id_usuario=2, id_amigo=1).count(),
                 1,
+            )
+            self.assertEqual(
+                Amizade.query.filter_by(
+                    remetente_id=1,
+                    destinatario_id=2,
+                    tipo_notificacao="pedido_amizade",
+                ).count(),
+                0,
             )
 
 

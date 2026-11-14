@@ -4,6 +4,7 @@ export async function ConteinerComprarProduto (DadosCompraVendedor , dadosUsuari
     const terminal_multicaixa_cliente = document.getElementById("terminal_multicaixa").value 
     let resposta_pagamento = document.getElementById("resposta_pagamento")
     const dadosProduto = {
+        "id_produto": DadosCompraVendedor.id,
         "nome_produto":DadosCompraVendedor.nome_produto,
         "preco_produto":DadosCompraVendedor.preco_produto,
         "nome_cliente":dadosUsuario.nome,

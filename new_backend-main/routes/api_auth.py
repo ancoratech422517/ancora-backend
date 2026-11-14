@@ -1,7 +1,14 @@
 from flask import Blueprint, current_app, request, jsonify, make_response
 from service.auth_service import AuthService
-import jwt
-from datetime import datetime, timedelta
+from ancorashield.exceptions import AuthenticationError
+from models.database import Usuario, db
+from service.security_audit import record_security_event
+from service.security_tokens import (
+    issue_access_token,
+    issue_refresh_token,
+    refresh_token_manager,
+    request_origin_is_allowed,
+)
 
 login_bp = Blueprint("login", __name__)
 
@@ -14,13 +21,19 @@ FRONTEND_URL = "https://ancora-oficial-ao.netlify.app"
 @login_bp.route("/Login", methods=["POST"])
 def Login():
     try:
-        dados = request.get_json()
+        dados = request.get_json(silent=True)
+        if not isinstance(dados, dict):
+            return jsonify({
+                "status": "False",
+                "menssagem": "Dados de login inválidos",
+            }), 400
         telefone = dados.get("telefone")
         senha = dados.get("senha")
 
         resultado = AuthService.validar_login(telefone, senha)
 
         if not resultado:
+            record_security_event("auth.login.failed", {})
             return jsonify({
                 "menssagem": "Telefone ou senha inválidos",
                 "status": "False"
@@ -28,56 +41,17 @@ def Login():
 
         usuario = resultado["usuario"]
         user_id = usuario["id"]
+        record_security_event("auth.login.succeeded", {"user_id": user_id})
         
 
-        # ACCESS TOKEN
-        access_payload = {
-            "id": user_id,
-            "nome": usuario["nome"],
-            "telefone": usuario["telefone"],
-            "foto_usuario":usuario["foto_usuario"],
-            "foto_usuario_blurhash":usuario["foto_usuario_blurhash"],
-            "email":usuario["email"],
-            "pais":usuario["pais"],
-            "provincia":usuario["provincia"],
-            "capital":usuario["capital"],
-            "bairro":usuario["bairro"],
-
-            "type": "access",
-            "exp": datetime.utcnow() + timedelta(minutes=15)
-        }
-
-        access_token = jwt.encode(
-            access_payload,
-            current_app.config["SECRET_KEY"],
-            algorithm="HS256"
-        )
-
-        # REFRESH TOKEN
-        refresh_payload = {
-            "id": user_id,
-            "nome": usuario["nome"],
-            "telefone": usuario["telefone"],
-            "foto_usuario":usuario["foto_usuario"],
-            "foto_usuario_blurhash":usuario["foto_usuario_blurhash"],
-            "email":usuario["email"],
-            "pais":usuario["pais"],
-            "provincia":usuario["provincia"],
-            "capital":usuario["capital"],
-            "bairro":usuario["bairro"],
-            "type": "refresh",
-            "exp": datetime.utcnow() + timedelta(days=7)
-        }
-
-        refresh_token = jwt.encode(
-            refresh_payload,
-            current_app.config["SECRET_KEY"],
-            algorithm="HS256"
-        )
+        access_token = issue_access_token(user_id)
+        refresh_token = issue_refresh_token(user_id)
 
         resp = make_response(jsonify({
             "status": "True",
             "menssagem": "usuario logado!",
+            "access_token": access_token,
+            "expires_in": 900,
             "id": user_id,
             "nome": usuario["nome"],
             "telefone": usuario["telefone"],
@@ -90,19 +64,16 @@ def Login():
             "bairro":usuario["bairro"],
 
         }))
-
-        # COOKIE ACCESS
-        resp.set_cookie(
+        resp.delete_cookie(
             "token_sessao",
-            access_token,
-            max_age=60 * 15,
-            httponly=True,
             secure=True,
+            httponly=True,
             samesite="None",
-            path="/"
+            path="/",
         )
+        resp.headers["Cache-Control"] = "no-store"
+        resp.headers["Pragma"] = "no-cache"
 
-        # COOKIE REFRESH
         resp.set_cookie(
             "refresh_token",
             refresh_token,
@@ -128,53 +99,35 @@ def Login():
 # =========================
 @login_bp.route("/refresh", methods=["POST"])
 def refresh():
+    if not request_origin_is_allowed():
+        return jsonify({"erro": "Origem não autorizada"}), 403
+
+    refresh_token = request.cookies.get("refresh_token")
+    if not refresh_token:
+        return jsonify({"erro": "Sem refresh token"}), 401
+
     try:
-        refresh_token = request.cookies.get("refresh_token")
+        payload = refresh_token_manager().verify(refresh_token)
+    except AuthenticationError:
+        return jsonify({"erro": "Token inválido ou expirado"}), 401
 
-        if not refresh_token:
-            return jsonify({"erro": "Sem refresh token"}), 401
-
-        payload = jwt.decode(
-            refresh_token,
-            current_app.config["SECRET_KEY"],
-            algorithms=["HS256"]
-        )
-
-        if payload.get("type") != "refresh":
-            return jsonify({"erro": "Token inválido"}), 401
-
-        novo_access = jwt.encode({
-            "id": payload["id"],
-            "nome": payload["nome"],
-            "telefone": payload["telefone"],
-            "foto_usuario":payload.get("foto_usuario"),
-            "foto_usuario_blurhash":payload.get("foto_usuario_blurhash"),
-            "email":payload.get("email"),
-            "pais":payload.get("pais"),
-            "provincia":payload.get("provincia"),
-            "capital":payload.get("capital"),
-            "bairro":payload.get("bairro"),
-            "type": "access",
-            "exp": datetime.utcnow() + timedelta(minutes=15)
-        }, current_app.config["SECRET_KEY"], algorithm="HS256")
-
-        resp = jsonify({"mensagem": "Token renovado"})
-
-        resp.set_cookie(
-            "token_sessao",
-            novo_access,
-            httponly=True,
-            secure=True,
-            samesite="None",
-            max_age=15 * 60,
-            path="/"
-        )
-
-        return resp, 200
-
-    except jwt.ExpiredSignatureError:
-        return jsonify({"erro": "Refresh expirado"}), 401
-
-    except Exception as e:
-        print(f"Erro refresh: {e}")
+    if payload.get("token_type") != "refresh" or "refresh" not in payload["roles"]:
         return jsonify({"erro": "Token inválido"}), 401
+
+    try:
+        user_id = int(payload["sub"])
+    except (KeyError, TypeError, ValueError):
+        return jsonify({"erro": "Token inválido"}), 401
+
+    usuario = db.session.get(Usuario, user_id)
+    if not usuario:
+        return jsonify({"erro": "Utilizador não encontrado"}), 401
+
+    record_security_event("auth.token.refreshed", {"user_id": user_id})
+    response = jsonify({
+        "access_token": issue_access_token(usuario.id),
+        "expires_in": 900,
+    })
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
+    return response, 200

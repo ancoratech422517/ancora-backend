@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 from models.database import Registrar_produto, db
 from service.media_metadata import validate_blurhash
 from routes.websocket import socketio
@@ -101,7 +101,10 @@ def registrarProduto():
         # Forma correta e compatível com todas as versões recentes:
         socketio.emit("produto_registrado", produto_data, namespace="/")
 
-        print(f"✅ Produto emitido via socket: {novo_produto.nome_produto}")
+        current_app.logger.info(
+            "Produto emitido via socket: %s",
+            novo_produto.nome_produto,
+        )
         # ===========================================================================
 
         return jsonify({

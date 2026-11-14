@@ -1,13 +1,17 @@
+import time
+
 from flask import request
 from flask_socketio import join_room, emit, disconnect
 from routes.websocket import socketio
-from models.database import Amizade, db, Amigo
+from models.database import Amizade, db, Amigo, Usuario
 from service.pushy_service import enviar_notificacao_pushy
-import jwt
-import os
+from ancorashield.exceptions import AuthenticationError
+from service.security_audit import record_security_event
+from service.security_tokens import access_token_manager
 
 # Dicionário global: { usuario_id: socket_sid }
 usuarios_online = {}
+usuarios_por_sid = {}
 
 
 def usuario_esta_na_sala(usuario_id, sala):
@@ -19,100 +23,70 @@ def usuario_esta_na_sala(usuario_id, sala):
 
 
 def get_user_id_from_cookie():
-    token = request.cookies.get('token_sessao')
-    if not token:
-        print("❌ Cookie token_sessao não encontrado")
-        return None
-    try:
-        payload = jwt.decode(token, os.getenv('SECRET_KEY'), algorithms=["HS256"])
-        
-        if payload.get("type") != "access":
-            print("❌ Token não é do tipo 'access'")
-            return None
-            
-        user_id = payload.get('id')
-        print(f"✅ Token decodificado. User ID: {user_id}")
-        return user_id
-    except jwt.ExpiredSignatureError:
-        print("❌ Access token expirado")
-        return None
-    except jwt.InvalidTokenError as e:
-        print(f"❌ Token inválido: {e}")
-        return None
-    except Exception as e:
-        print(f"❌ Erro ao decodificar token: {e}")
-        return None
+    return usuarios_por_sid.get(request.sid)
+
+
+def disconnect_expired_socket(sid, expires_at):
+    socketio.sleep(max(0, expires_at - time.time()))
+    socketio.server.disconnect(sid, namespace="/")
 
 @socketio.on('connect')
-def handle_connect():
-    print(f"\n=== SOCKET CONNECT ===")
-    print(f"🔍 Nova tentativa de conexão. SID: {request.sid}")
-    print(f"🔍 Origin: {request.headers.get('Origin')}")
-    print(f"🔍 Cookies recebidos: {list(request.cookies.keys())}")
-    
-    usuario_id = get_user_id_from_cookie()
-    
-    # CORRIGIDO: aceita a ligação mesmo sem token
-    # O utilizador pode conectar antes de fazer login
-    if not usuario_id:
-        print("⚠️ Socket conectado SEM token — aguarda autenticação")
-        return True  # ← aceita sempre, não rejeita
-    
+def handle_connect(auth=None):
+    token = auth.get("token") if isinstance(auth, dict) else None
+    try:
+        claims = access_token_manager().verify(token)
+        usuario_id = int(claims["sub"])
+        if claims.get("token_type") != "access" or "user" not in claims["roles"]:
+            raise AuthenticationError("Token não autorizado para sockets.")
+    except (AuthenticationError, KeyError, TypeError, ValueError):
+        record_security_event("socket.access_denied", {})
+        return False
+
+    usuario = db.session.get(Usuario, usuario_id)
+    if not usuario:
+        record_security_event("socket.access_denied", {"user_id": usuario_id})
+        return False
+
     usuario_id_str = str(usuario_id)
+    usuarios_por_sid[request.sid] = usuario_id_str
     usuarios_online[usuario_id_str] = request.sid
     join_room(usuario_id_str)
-
-    
-    print(f"✅ Usuário {usuario_id_str} conectado e ONLINE.")
-    
+    record_security_event("socket.connected", {"user_id": usuario_id})
     emit("usuario_status_alterado", {
-        "usuario_id": usuario_id_str, 
+        "usuario_id": usuario_id_str,
         "status": "online"
     }, broadcast=True)
-    
+
+    socketio.start_background_task(
+        disconnect_expired_socket,
+        request.sid,
+        claims["exp"],
+    )
     return True
 
-# ADICIONADO: evento para autenticar após login
-# O frontend chama isto depois de fazer login com sucesso
 @socketio.on('autenticar')
 def handle_autenticar():
     usuario_id = get_user_id_from_cookie()
-    
     if not usuario_id:
-        emit("erro_auth", {"msg": "Token inválido ou expirado"}, room=request.sid)
-        return {"ok": False, "erro": "Token inválido ou expirado"}
-    
-    usuario_id_str = str(usuario_id)
-    usuarios_online[usuario_id_str] = request.sid
-    join_room(usuario_id_str)
-    
-    print(f"✅ Usuário {usuario_id_str} autenticado via socket.")
-    
-    emit("usuario_status_alterado", {
-        "usuario_id": usuario_id_str, 
-        "status": "online"
-    }, broadcast=True)
-    
-    emit("autenticado", {"status": "ok", "usuario_id": usuario_id_str}, room=request.sid)
-    return {"ok": True, "usuario_id": usuario_id_str}
+        return {"ok": False, "erro": "Sessão não autenticada"}
+    return {"ok": True, "usuario_id": usuario_id}
 
 @socketio.on('disconnect')
 def handle_disconnect():
-    usuario_id_desconectado = None
-    
-    for uid, sid in list(usuarios_online.items()):
-        if sid == request.sid:
-            usuario_id_desconectado = uid
-            break
-            
+    usuario_id_desconectado = usuarios_por_sid.pop(request.sid, None)
     if usuario_id_desconectado:
-        del usuarios_online[usuario_id_desconectado]
-        print(f"❌ Usuário {usuario_id_desconectado} desconectado e OFFLINE.")
-        
-        emit("usuario_status_alterado", {
-            "usuario_id": usuario_id_desconectado, 
-            "status": "offline"
-        }, broadcast=True)
+        era_ultima_sessao = usuarios_online.get(usuario_id_desconectado) == request.sid
+        if era_ultima_sessao:
+            del usuarios_online[usuario_id_desconectado]
+        record_security_event(
+            "socket.disconnected",
+            {"user_id": int(usuario_id_desconectado)},
+        )
+        if era_ultima_sessao:
+            emit("usuario_status_alterado", {
+                "usuario_id": usuario_id_desconectado,
+                "status": "offline",
+            }, broadcast=True)
 
 @socketio.on("enviar_pedido_de_amizade")
 def enviar_pedido_de_amizade(data):

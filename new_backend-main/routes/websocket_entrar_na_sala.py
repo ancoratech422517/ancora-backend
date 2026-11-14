@@ -1,22 +1,34 @@
-from flask_socketio import join_room , emit , leave_room
+from flask_socketio import join_room, emit, leave_room
 from routes.websocket import socketio
+from routes.websoket_conectUser import get_user_id_from_cookie
+from models.database import Amigo
 
 @socketio.on("Entrar_na_sala")
 def Entrar_na_sala(data):
+    if not isinstance(data, dict):
+        return {"ok": False, "erro": "Dados da conversa inválidos"}
+
+    usuario_id = get_user_id_from_cookie()
     sala = data.get("nossa_sala")
-    id_remitente = data.get("id_remitente")
+    if not usuario_id or not isinstance(sala, str):
+        return {"ok": False, "erro": "Conversa inválida"}
+
+    amizade = Amigo.query.filter_by(
+        id_usuario=int(usuario_id),
+        nossa_sala=sala,
+    ).first()
+    if not amizade:
+        return {"ok": False, "erro": "Sem acesso a esta conversa"}
+
     sala_antiga = data.get("sala_antiga")
+    if isinstance(sala_antiga, str) and sala_antiga and sala_antiga != sala:
+        antiga_autorizada = Amigo.query.filter_by(
+            id_usuario=int(usuario_id),
+            nossa_sala=sala_antiga,
+        ).first()
+        if antiga_autorizada:
+            leave_room(sala_antiga)
 
-    if sala_antiga:
-        leave_room(sala_antiga)
-        print(f"usuario saiu da sala antiga:{sala_antiga}")
-    if sala and id_remitente:
-        join_room(sala)
-    else:
-        print("o react náo enviou nenhum dados velino!")
-
-    dados = {
-        "estado":"Online"
-    }
-    print(f"usuario conectado na sala: {sala}")
-    emit("usuario_conectado_na_sala" , room = str(sala))
+    join_room(sala)
+    emit("usuario_conectado_na_sala", room=sala)
+    return {"ok": True}

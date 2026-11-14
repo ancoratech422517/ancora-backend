@@ -13,6 +13,7 @@ requests
 flask-talisman
 flask-migrate
 cryptography
+./vendor/ancorashield
 PyJWT
 livekit-api
 packaging

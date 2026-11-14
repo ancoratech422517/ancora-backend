@@ -311,3 +311,38 @@
       border-radius: 0px 0px 0px 0px;
     }
 }
+
+@media screen and (min-width: 701px) and (max-width: 1024px) {
+    .conteinerPrincipal > .menuConteinerLeft {
+      width: 64px;
+      flex: 0 0 64px;
+    }
+    .conteinerPrincipalConteudo {
+      min-width: 0;
+      min-height: 0;
+    }
+    .conteinerPrincipalConteudo > :is(
+      .conteiner1,
+      .Conteiner2,
+      .Conteiner3,
+      .Conteiner,
+      .Conteiner5,
+      .Conteiner6,
+      .Conteiner8
+    ) {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+}
+
+@media screen and (max-width: 700px) and (max-height: 500px) {
+    .menuConteinerLeft {
+      min-height: 56px;
+      flex-basis: 56px;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .conteinerPrincipalConteudo {
+      min-height: 0;
+    }
+}

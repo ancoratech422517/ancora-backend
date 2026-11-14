@@ -1,5 +1,6 @@
 import { useUserStore } from "../../../useUseSotore"
 import { salvarTokenPushy, solicitarTokenPushy } from "../../../utils/pushy_my.js"
+import { setAccessToken } from "../../../utils/api"
 
 export async function Login(ativarConteiner, setDados , setEstadoLoading , setErro) { 
     setEstadoLoading("True")
@@ -28,7 +29,7 @@ export async function Login(ativarConteiner, setDados , setEstadoLoading , setEr
             headers: {
                 "Content-Type": "application/json"
             },
-            credentials: "include", // CRÍTICO: recebe e guarda o cookie HttpOnly
+            credentials: "include",
             body: JSON.stringify(dados)
         })
         
@@ -40,10 +41,11 @@ export async function Login(ativarConteiner, setDados , setEstadoLoading , setEr
             setErro("True")
             return
         }
-        
-        // REMOVIDO: localStorage.setItem("token_sessao", get_response_logar.token)
-        // O cookie já foi setado pelo backend. JS não vê o token.
-        console.log("Login OK. Cookie setado pelo servidor")
+        setAccessToken(get_response_logar.access_token, get_response_logar.expires_in)
+        const dadosUsuario = { ...get_response_logar }
+        delete dadosUsuario.access_token
+        delete dadosUsuario.expires_in
+        console.log("Login concluído.")
 
         try {
             const pushToken = await pushTokenPromise
@@ -58,7 +60,7 @@ export async function Login(ativarConteiner, setDados , setEstadoLoading , setEr
         setEstadoLoading("False")
 
         if (setDados) {
-            setDados(get_response_logar) // vem só: id, nome, telefone
+            setDados(dadosUsuario)
         }
         
         if (ativarConteiner) {

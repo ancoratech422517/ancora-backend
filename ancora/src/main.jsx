@@ -2,9 +2,14 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
-import { fetchComAuth, startOfflineRequestSync } from './utils/api'
+import {
+  fetchComAuth,
+  installBearerTokenFetch,
+  startOfflineRequestSync,
+} from './utils/api'
 import { startChatOutboxSync } from './service/chatOfflineSync'
 import { AuthProvider } from './contextApi.jsx'
+installBearerTokenFetch()
 createRoot(document.getElementById('root')).render(
   <AuthProvider>
     <App />

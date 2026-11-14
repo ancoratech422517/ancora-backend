@@ -8,7 +8,7 @@ from sqlalchemy import create_engine, inspect
 from alembic.migration import MigrationContext
 from alembic.operations import Operations
 
-from models.database import Menssagens, Usuario, db
+from models.database import Amigo, Menssagens, Usuario, db
 from routes.websocket_enviar_menssagem import enviar_menssagem_na_sala
 
 MIGRATION_PATH = Path(__file__).resolve().parents[1] / "migrations" / "versions" / "47b19d2a6f03_add_client_message_id.py"
@@ -43,6 +43,11 @@ class OfflineChatTests(unittest.TestCase):
                     data_nascimento="1990-01-01",
                 ),
             ])
+            db.session.add(Amigo(
+                id_usuario=1,
+                id_amigo=2,
+                nossa_sala="room-1",
+            ))
             db.session.commit()
 
     def tearDown(self):
@@ -54,7 +59,7 @@ class OfflineChatTests(unittest.TestCase):
         payload = {
             "client_message_id": "offline-client-message-1",
             "nossa_sala": "room-1",
-            "id_remitente": 1,
+            "id_remitente": 2,
             "id_amigo": 2,
             "nome_remitente": "Remetente",
             "nome_amigo": "Destinatário",
@@ -62,13 +67,19 @@ class OfflineChatTests(unittest.TestCase):
         }
         with self.app.app_context(), \
              patch("routes.websocket_enviar_menssagem.emit"), \
-             patch("routes.websocket_enviar_menssagem.enviar_notificacao_pushy"):
+             patch("routes.websocket_enviar_menssagem.enviar_notificacao_pushy"), \
+             patch(
+                 "routes.websocket_enviar_menssagem.get_user_id_from_cookie",
+                 return_value="1",
+             ):
             first = enviar_menssagem_na_sala(payload)
             replay = enviar_menssagem_na_sala(payload)
 
             self.assertTrue(first["success"])
             self.assertTrue(replay["success"])
             self.assertEqual(first["mensagem_id"], replay["mensagem_id"])
+            stored_message = db.session.get(Menssagens, first["mensagem_id"])
+            self.assertEqual(stored_message.id_remitente, 1)
             self.assertEqual(
                 Menssagens.query.filter_by(client_message_id=payload["client_message_id"]).count(),
                 1,

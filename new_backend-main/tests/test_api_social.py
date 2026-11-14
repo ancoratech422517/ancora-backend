@@ -1,27 +1,34 @@
-from datetime import datetime, timedelta, timezone
+import tempfile
 import unittest
-
-import jwt
 from flask import Flask
 
 from models.database import Registrar_produto, Turma_Aula, Usuario, db
 from routes.api_buscar_turma_usuario import turma_usuario
 from routes.api_todos_produtos import Todos_produtos
 from routes.api_social import social_bp
+from service.security_tokens import ACCESS_TOKEN_MANAGER_KEY, protect_private_routes
+from tests.security_test_utils import configure_test_security
 
 
 class SocialApiTests(unittest.TestCase):
     def setUp(self):
+        self.audit_directory = tempfile.TemporaryDirectory()
         self.app = Flask(__name__)
         self.app.config.update(
             SQLALCHEMY_DATABASE_URI="sqlite://",
             SQLALCHEMY_TRACK_MODIFICATIONS=False,
             SECRET_KEY="social-test-secret-with-at-least-32-bytes",
+            TESTING=True,
+        )
+        configure_test_security(
+            self.app,
+            f"{self.audit_directory.name}/audit.jsonl",
         )
         db.init_app(self.app)
         self.app.register_blueprint(social_bp)
         self.app.register_blueprint(turma_usuario)
         self.app.register_blueprint(Todos_produtos)
+        protect_private_routes(self.app)
         with self.app.app_context():
             db.create_all()
             db.session.add_all([
@@ -48,18 +55,15 @@ class SocialApiTests(unittest.TestCase):
         with self.app.app_context():
             db.session.remove()
             db.drop_all()
+        self.audit_directory.cleanup()
 
     def authenticate(self, user_id):
-        token = jwt.encode(
-            {
-                "id": user_id,
-                "type": "access",
-                "exp": datetime.now(timezone.utc) + timedelta(minutes=5),
-            },
-            self.app.config["SECRET_KEY"],
-            algorithm="HS256",
+        token = self.app.extensions[ACCESS_TOKEN_MANAGER_KEY].issue(
+            str(user_id),
+            roles=("user",),
+            claims={"token_type": "access"},
         )
-        self.client.set_cookie("token_sessao", token)
+        self.client.environ_base["HTTP_AUTHORIZATION"] = f"Bearer {token}"
 
     def test_social_interactions_are_persisted(self):
         self.authenticate(1)
@@ -131,6 +135,7 @@ class SocialApiTests(unittest.TestCase):
                 blurhash,
             )
 
+        self.authenticate(1)
         products = self.client.get("/buscar_todos_produtos/1").get_json()
         self.assertEqual(products[0]["url_imagem_produto_blurhash"], blurhash)
         self.assertEqual(products[0]["foto_vendedor_blurhash"], blurhash)

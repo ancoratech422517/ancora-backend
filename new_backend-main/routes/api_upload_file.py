@@ -1,5 +1,5 @@
 # routes/upload.py
-from flask import Blueprint, request, jsonify, current_app, Response, stream_with_context
+from flask import Blueprint, g, request, jsonify, current_app, Response, stream_with_context
 import uuid
 import cloudinary.api
 import cloudinary.uploader
@@ -7,10 +7,11 @@ import cloudinary.utils
 import requests
 import re
 import os
-import jwt
 import time
 from urllib.parse import quote, urlsplit
 from werkzeug.utils import secure_filename
+from ancorashield.exceptions import AuthenticationError
+from service.security_tokens import access_token_manager, issue_upload_token
 
 upload_bp = Blueprint('upload', __name__, url_prefix='/api')
 
@@ -56,13 +57,9 @@ def get_file_type(filename):
 
 @upload_bp.route('/create-upload-signature', methods=['POST'])
 def create_upload_signature():
-    token = request.cookies.get('token_sessao')
-    if not token:
-        return jsonify({"success": False, "error": "Sessão expirada"}), 401
-
     try:
-        user_claims = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
-    except jwt.InvalidTokenError:
+        user_id = int(g.principal["sub"])
+    except (KeyError, TypeError, ValueError):
         return jsonify({"success": False, "error": "Sessão expirada"}), 401
 
     data = request.get_json(silent=True) or {}
@@ -97,13 +94,11 @@ def create_upload_signature():
         'public_id': public_id,
         'timestamp': timestamp
     }
-    upload_ticket = jwt.encode({
-        'user_id': user_claims.get('id'),
+    upload_ticket = issue_upload_token(user_id, {
         'public_id': public_id,
         'resource_type': resource_type,
         'folder': folder,
-        'exp': timestamp + 3600
-    }, current_app.config['SECRET_KEY'], algorithm='HS256')
+    })
 
     return jsonify({
         "success": True,
@@ -123,26 +118,20 @@ def create_upload_signature():
 
 @upload_bp.route('/finalize-chunked-upload', methods=['POST'])
 def finalize_chunked_upload():
-    session_token = request.cookies.get('token_sessao')
-    if not session_token:
-        return jsonify({"success": False, "error": "Sessão expirada"}), 401
-
-    data = request.get_json(silent=True) or {}
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"success": False, "error": "Dados do upload inválidos"}), 400
     try:
-        user_claims = jwt.decode(
-            session_token,
-            current_app.config['SECRET_KEY'],
-            algorithms=['HS256']
-        )
-        ticket = jwt.decode(
-            data.get('upload_ticket', ''),
-            current_app.config['SECRET_KEY'],
-            algorithms=['HS256']
-        )
-    except jwt.InvalidTokenError:
+        user_id = int(g.principal["sub"])
+        ticket = access_token_manager().verify(data.get('upload_ticket', ''))
+    except (AuthenticationError, KeyError, TypeError, ValueError):
         return jsonify({"success": False, "error": "Assinatura de upload inválida ou expirada"}), 401
 
-    if str(ticket.get('user_id')) != str(user_claims.get('id')):
+    if (
+        ticket.get("token_type") != "upload"
+        or "upload" not in ticket["roles"]
+        or ticket.get("sub") != str(user_id)
+    ):
         return jsonify({"success": False, "error": "Este upload pertence a outra sessão"}), 403
 
     requested_public_id = ticket.get('public_id')

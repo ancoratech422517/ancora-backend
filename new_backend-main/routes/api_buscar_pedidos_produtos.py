@@ -1,8 +1,10 @@
-from flask import Blueprint , json , jsonify
+from flask import Blueprint, g, jsonify
 from models.database import db , Pedidos_Produto
 buscar_pedidos = Blueprint("buscar_pedidos" , __name__)
 @buscar_pedidos.route("/buscar_pedidos_produtos/meus_pedidos/<int:dadosUsuario_id>" , methods = ["GET"])
 def BuscarPedidos(dadosUsuario_id):
+    if str(dadosUsuario_id) != g.principal["sub"]:
+        return jsonify({"error": "Sem permissão para consultar estes pedidos"}), 403
     todos_pedidos = Pedidos_Produto.query.filter_by(
         id_cliente = dadosUsuario_id ,
         pedido = "meus_pedidos"

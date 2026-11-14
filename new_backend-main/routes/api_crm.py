@@ -7,8 +7,7 @@ import math
 import re
 from urllib.parse import urljoin, urlparse, urlunparse
 
-import jwt
-from flask import Blueprint, current_app, jsonify, make_response, request
+from flask import Blueprint, current_app, g, jsonify, make_response, request
 
 from models.database import CRMRegistro, Registrar_produto, Turma_Aula, Usuario, db
 
@@ -59,19 +58,9 @@ MONTHS_PT = ("jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out
 
 
 def _user_id_from_session():
-    token = request.cookies.get("token_sessao")
-    if not token:
-        return None
     try:
-        claims = jwt.decode(
-            token,
-            current_app.config["SECRET_KEY"],
-            algorithms=["HS256"],
-        )
-        if claims.get("type") != "access":
-            return None
-        user_id = int(claims.get("id"))
-    except (jwt.InvalidTokenError, TypeError, ValueError):
+        user_id = int(g.principal["sub"])
+    except (AttributeError, KeyError, TypeError, ValueError):
         return None
 
     return user_id if db.session.get(Usuario, user_id) else None

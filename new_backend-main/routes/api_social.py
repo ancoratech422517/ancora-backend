@@ -1,8 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse
 
-import jwt
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, g, jsonify, request
 from sqlalchemy import func, or_
 
 from models.database import (
@@ -27,20 +26,9 @@ def _utcnow_naive():
 
 
 def _current_user_id():
-    token = request.cookies.get("token_sessao")
-    if not token:
-        return None
-
     try:
-        payload = jwt.decode(
-            token,
-            current_app.config["SECRET_KEY"],
-            algorithms=["HS256"],
-        )
-        if payload.get("type") != "access":
-            return None
-        user_id = int(payload.get("id"))
-    except (jwt.InvalidTokenError, TypeError, ValueError):
+        user_id = int(g.principal["sub"])
+    except (AttributeError, KeyError, TypeError, ValueError):
         return None
 
     return user_id if db.session.get(Usuario, user_id) else None

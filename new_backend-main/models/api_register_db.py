@@ -1,7 +1,7 @@
 from models.database import Usuario , db
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
-from werkzeug.security import generate_password_hash
+from service.password_security import hash_password
 
 class RegisterService:
     def registrar_user_in_db(self, nome, telefone, senha , email , data_nascimento , foto_usuario , foto_usuario_blurhash=None , continente=None , pais=None , provincia=None , capital=None , bairro=None):
@@ -27,7 +27,7 @@ class RegisterService:
         ).decode('utf-8')
 
         # 3. Criar o Hash da Senha (Criptografia Simétrica de via única)
-        senha_protegida = generate_password_hash(senha)
+        senha_protegida = hash_password(senha)
 
         # 4. Salvar no SQLAlchemy
         try:

@@ -1,4 +1,4 @@
-from flask import Blueprint , request , jsonify
+from flask import Blueprint, current_app, g, request, jsonify
 from models.database import Tabel_Reacao_Produto , db
 from models.database import Registrar_produto
 visto_usuario = Blueprint("visto_usuario" , __name__)
@@ -6,10 +6,11 @@ visto_usuario = Blueprint("visto_usuario" , __name__)
 @visto_usuario.route("/visto_usuario" , methods = ["post"])
 def VistoUsuario():
     try:
-        dados_usuario = request.get_json()
-        id_usuario = dados_usuario.get("id_usuario")
-        id_produto = dados_usuario.get("id_produto")
-        print(f"este é o id do usuario: {id_usuario}")
+        dados_usuario = request.get_json(silent=True)
+        if not isinstance(dados_usuario, dict):
+            return jsonify({"status": "Dados inválidos"}), 400
+        id_usuario = int(g.principal["sub"])
+        id_produto = int(dados_usuario.get("id_produto"))
 
         get_data_table_reacao_product = Tabel_Reacao_Produto.query.filter(
             Tabel_Reacao_Produto.id_usuario == id_usuario,
@@ -17,28 +18,24 @@ def VistoUsuario():
         ).first()
         
         if get_data_table_reacao_product:
-            print(f"existe sim um usuario com este e esta aqui o seu valor:{get_data_table_reacao_product}")
+            return jsonify({"status": "Visualização registada"})
         else:
-            print(f"não existe nenhum usuario com este id: {get_data_table_reacao_product}")
-            Produto = Registrar_produto.query.filter(
-                Registrar_produto.id == id_produto
-            ).first()
-            novo_usuario = {
-                "id_usuario":id_usuario,
-                "estado_visualizacao":1,
-                "estado_adoro":0,
-                "id_produto":id_produto
-            }
-            adicionar = Tabel_Reacao_Produto(**novo_usuario)
-            db.session.add(adicionar)
-            db.session.commit()
-            #------------------------------------------------------------------
-            Produto.visualizacao_produto = int(Produto.visualizacao_produto) + 1 
+            produto = db.session.get(Registrar_produto, id_produto)
+            if not produto:
+                return jsonify({"status": "Produto não encontrado"}), 404
+            db.session.add(Tabel_Reacao_Produto(
+                id_usuario=id_usuario,
+                estado_visualizacao="1",
+                estado_adoro="0",
+                id_produto=str(id_produto),
+            ))
+            produto.visualizacao_produto = int(produto.visualizacao_produto) + 1
             db.session.commit()
 
-
-        return jsonify({"status":f"boas , id do usuario foi servido com sucesso:{id_produto}"})
-    
-    except Exception as erro:
-        print(f"erro no servidor:{erro}")
-        return jsonify({"status":f"erro ao pegar o id do usuario: {erro}"})
+        return jsonify({"status": "Visualização registada"})
+    except (TypeError, ValueError):
+        return jsonify({"status": "Identificadores inválidos"}), 400
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao registar visualização do produto")
+        return jsonify({"status": "Não foi possível registar a visualização"}), 500

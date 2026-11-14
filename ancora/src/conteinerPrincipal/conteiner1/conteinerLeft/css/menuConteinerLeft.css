@@ -1,5 +1,6 @@
 .menuConteinerLeft{
-    width: 5%;
+    width: clamp(58px, 5vw, 88px);
+    flex: 0 0 clamp(58px, 5vw, 88px);
     height: 100%;
     display: flex;
     flex-direction: column;

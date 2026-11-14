@@ -4,11 +4,13 @@ from dotenv import load_dotenv
 load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 from gevent import monkey
 monkey.patch_all()
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 from sqlalchemy import text
 from models.database import db
 from service.database_schema import ensure_columns
+from service.security_audit import initialize_security_audit
+from service.security_tokens import initialize_api_security, protect_private_routes
 from flask_talisman import Talisman
 from flask_migrate import Migrate
 import cloudinary
@@ -54,7 +56,10 @@ print("✅ Cloudinary configurado (HTTPS forçado)")
 
 
 PORT = int(os.environ.get("PORT", 5000))
-DEBUG = os.environ.get("DEBUG", "True") == "True"
+DEBUG = os.environ.get("DEBUG", "False").strip().lower() in {"1", "true", "yes"}
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY or len(SECRET_KEY) < 32:
+    raise RuntimeError("SECRET_KEY must contain at least 32 characters.")
 
 from routes.websocket import socketio
 
@@ -135,25 +140,34 @@ import routes.websocket_notificar_usuario_solicirante
 app = Flask(__name__)
 
 # ===================== CORS =====================
+CORS_ORIGINS = [
+    "http://127.0.0.1:5000",
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
+    "https://localhost",
+    "http://localhost",
+    "capacitor://localhost",
+    "http://192.168.11.1",
+    "http://192.168.11.1:5173",
+    "http://10.140.176.115:5173",
+    "https://ancora-oficial-ao.netlify.app",
+    "https://ancora-ecommerc-tawny.vercel.app",
+]
 CORS(app, resources={r"/*": {
-    "origins": [
-        "http://127.0.0.1:5000",
-        "http://127.0.0.1:5173",
-        "http://localhost:5173",
-        "https://localhost",
-        "http://localhost",
-        "capacitor://localhost",
-        "http://192.168.11.1",
-        "http://192.168.11.1:5173",
-        "http://10.140.176.115:5173",
-        "https://ancora-oficial-ao.netlify.app",
-        "https://ancora-ecommerc-tawny.vercel.app"
-
-    ],
+    "origins": CORS_ORIGINS,
     "supports_credentials": True,
     "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     "allow_headers": ["Content-Type", "Authorization"]
 }})
+
+app.config["CORS_ORIGINS"] = CORS_ORIGINS
+
+
+@app.before_request
+def handle_cors_preflight():
+    if request.method == "OPTIONS":
+        return app.make_default_options_response()
+    return None
 
 
 # teste
@@ -197,11 +211,36 @@ else:
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'chave-secreta-desenvolvimento')
+app.config['SECRET_KEY'] = SECRET_KEY
 app.config['FRONTEND_URL'] = os.getenv('FRONTEND_URL') or 'https://ancora-ecommerc-tawny.vercel.app'
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'files')
 app.config['MAX_CONTENT_LENGTH'] = 1024 ** 3
+app.config['ANCORASHIELD_AUDIT_SIGNING_KEY'] = os.getenv(
+    'ANCORASHIELD_AUDIT_SIGNING_KEY'
+)
+app.config['ANCORASHIELD_AUDIT_LOG'] = os.getenv(
+    'ANCORASHIELD_AUDIT_LOG',
+    os.path.join(app.instance_path, 'security-audit.jsonl'),
+)
+app.config['ANCORASHIELD_TOKEN_ISSUER'] = os.getenv(
+    'ANCORASHIELD_TOKEN_ISSUER'
+)
+app.config['ANCORASHIELD_TOKEN_AUDIENCE'] = os.getenv(
+    'ANCORASHIELD_TOKEN_AUDIENCE'
+)
+app.config['ANCORASHIELD_TOKEN_KEY_PASSWORD'] = os.getenv(
+    'ANCORASHIELD_TOKEN_KEY_PASSWORD'
+)
+for token_key_setting in (
+    'ANCORASHIELD_TOKEN_SIGNING_PRIVATE_PEM',
+    'ANCORASHIELD_TOKEN_VERIFY_PUBLIC_PEM',
+    'ANCORASHIELD_TOKEN_ENCRYPT_PUBLIC_PEM',
+    'ANCORASHIELD_TOKEN_DECRYPT_PRIVATE_PEM',
+):
+    app.config[token_key_setting] = os.getenv(token_key_setting)
 
+initialize_security_audit(app)
+initialize_api_security(app)
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
@@ -289,6 +328,7 @@ app.register_blueprint(api_mensagem_privado_autentificacao)
 app.register_blueprint(TrancarConversa)
 app.register_blueprint(Bloquear_Usuario)
 app.register_blueprint(Excluir_amigo)
+protect_private_routes(app)
 
 if __name__ == '__main__':
     print("=" * 70)

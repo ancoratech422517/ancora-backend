@@ -1,10 +1,12 @@
-from flask import Blueprint , jsonify
+from flask import Blueprint, g, jsonify
 from models.database import Amizade , db
 
 notificacao_visualizada = Blueprint("notificacao_vizualizada" , __name__)
 
 @notificacao_visualizada.route('/notificacoes/marcar_lidas/<int:usuario_id>' , methods=["get"])
 def marcar_notificacoes_lidas(usuario_id):
+    if str(usuario_id) != g.principal["sub"]:
+        return jsonify({"message": "Sem permissão para alterar estas notificações"}), 403
     try:
         # 1. Filtramos apenas as notificações do destinatário que ainda não foram visualizadas
         notificacoes_pendentes = Amizade.query.filter_by(

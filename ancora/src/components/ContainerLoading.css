@@ -10,21 +10,72 @@
   overflow: hidden;
 }
 
+.container-loading-bars {
+  --loading-speed: 0.9s;
+  --loading-color-1: var(--teal-700, #0f766e);
+  --loading-color-2: var(--teal-600, #0d9488);
+  --loading-color-3: var(--teal-500, #14b8a6);
+  --loading-color-4: var(--teal-400, #2dd4bf);
+  --loading-color-5: var(--teal-600, #0d9488);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  gap: 6px;
+}
+
+.container-loading-bars span {
+  width: 4px;
+  height: 50px;
+  border-radius: 999px;
+  background: var(--loading-color-1);
+  animation: container-loading-scale var(--loading-speed) ease-in-out infinite;
+}
+
+.container-loading-bars span:nth-child(2) {
+  background: var(--loading-color-2);
+  animation-delay: -0.8s;
+}
+
+.container-loading-bars span:nth-child(3) {
+  background: var(--loading-color-3);
+  animation-delay: -0.7s;
+}
+
+.container-loading-bars span:nth-child(4) {
+  background: var(--loading-color-4);
+  animation-delay: -0.6s;
+}
+
+.container-loading-bars span:nth-child(5) {
+  background: var(--loading-color-5);
+  animation-delay: -0.5s;
+}
+
+@keyframes container-loading-scale {
+  0%, 40%, 100% {
+    transform: scaleY(0.05);
+  }
+
+  20% {
+    transform: scaleY(1);
+  }
+}
+
 .container-loading-overlay {
   position: absolute;
   inset: 0;
   z-index: 20;
-  background: var(--surface, #fff);
-  background: color-mix(in srgb, var(--surface, #fff) 88%, transparent);
 }
 
-.container-loading-frame {
-  display: block;
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  min-height: 100%;
-  border: 0;
+.container-loading-global {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100dvh;
   background: transparent;
   pointer-events: none;
 }
@@ -33,4 +84,11 @@
   width: 100vw;
   height: 100vh;
   min-height: 100dvh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .container-loading-bars span {
+    animation: none;
+    transform: scaleY(0.3);
+  }
 }

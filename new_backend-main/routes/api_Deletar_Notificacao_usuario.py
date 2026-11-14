@@ -1,25 +1,33 @@
-from flask import Blueprint , jsonify , request
+from flask import Blueprint, current_app, g, jsonify, request
 from models.database import Amizade , db
 Deletar_notificacao = Blueprint("Deletar_notificacao", __name__)
 
 @Deletar_notificacao.route("/Deletar_Notificacao_usuario" , methods = ["post"])
 def Deletar_Notificacao_usuario():
     try:
-        dados = request.get_json()
-        id_notificacao = dados.get("id_notificacao")
-        id_usuario = dados.get("id_usuario")
+        dados = request.get_json(silent=True)
+        if not isinstance(dados, dict):
+            return jsonify({"status": "Dados inválidos"}), 400
+        id_notificacao = int(dados.get("id_notificacao"))
+        id_usuario = int(g.principal["sub"])
         tipo_notificacao = dados.get("tipo_notificacao")
 
-        Amizade.query.filter(
+        notificacao = Amizade.query.filter(
             Amizade.id == id_notificacao,
-            Amizade.tipo_notificacao == tipo_notificacao
-        ).delete()
+            Amizade.destinatario_id == id_usuario,
+            Amizade.tipo_notificacao == tipo_notificacao,
+        ).first()
+        if not notificacao:
+            return jsonify({"status": "Notificação não encontrada"}), 404
+        db.session.delete(notificacao)
         db.session.commit()
-        print("dados eliminado com sucesso claudio avelino")
-        return jsonify({"status":"notificacao eliminada om sucesso!"})
+        return jsonify({"status": "Notificação eliminada com sucesso"})
     
-    except Exception as erro:
-        print(f"erro ao deletar a notificacao:{erro}")
-        return jsonify({"status":f"erro ao eliminar a notificacao:{erro}"})
+    except (TypeError, ValueError):
+        return jsonify({"status": "Identificadores inválidos"}), 400
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao eliminar notificação")
+        return jsonify({"status": "Não foi possível eliminar a notificação"}), 500
 
 

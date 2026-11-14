@@ -1,29 +1,13 @@
-import os
-
-import jwt
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, g, request, jsonify
 from models.database import db, Usuario
 
 PushTokenAPI = Blueprint('push_token_api', __name__)
 
 @PushTokenAPI.route('/api/salvar_push_token', methods=['POST'])
 def salvar_push_token():
-    token_sessao = request.cookies.get('token_sessao')
-    if not token_sessao:
-        return jsonify({"error": "Autenticação necessária"}), 401
-
     try:
-        payload = jwt.decode(
-            token_sessao,
-            os.getenv('SECRET_KEY'),
-            algorithms=["HS256"]
-        )
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Sessão expirada"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Sessão inválida"}), 401
-
-    if payload.get("type") != "access":
+        usuario_id = int(g.principal["sub"])
+    except (KeyError, TypeError, ValueError):
         return jsonify({"error": "Sessão inválida"}), 401
 
     data = request.get_json(silent=True)
@@ -31,7 +15,7 @@ def salvar_push_token():
     if not isinstance(push_token, str) or not push_token.strip():
         return jsonify({"error": "push_token é obrigatório"}), 400
 
-    usuario = db.session.get(Usuario, payload.get("id"))
+    usuario = db.session.get(Usuario, usuario_id)
     if not usuario:
         return jsonify({"error": "Usuário não encontrado"}), 404
 

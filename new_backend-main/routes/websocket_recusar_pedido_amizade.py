@@ -1,37 +1,34 @@
-from flask_socketio import  emit , join_room
+from flask_socketio import emit
 from routes.websocket import socketio
-from models.database import db , Amigo , Amizade
+from models.database import db, Amizade
+from routes.websoket_conectUser import get_user_id_from_cookie
 
 @socketio.on("recusar_pedido_amizade")
 def Recusar_pedido_amizade(data):
-    id_destinatario = data.get("id_destinatario")
-    id_remitente = data.get("id_remitente")
-    print(f"este é o id do destinatario:{id_remitente}")
-    
-    #remover  usuario da tabela de notificação
-    # Nota: No pedido original, o id_amigo era o destinatário e o id_usuario o remetente
+    if not isinstance(data, dict):
+        return {"ok": False, "erro": "Pedido inválido"}
+    usuario_id = get_user_id_from_cookie()
+    try:
+        usuario_id = int(usuario_id)
+        id_remetente = int(data.get("id_destinatario"))
+    except (TypeError, ValueError):
+        return {"ok": False, "erro": "Identificadores inválidos"}
+
     notificacao = Amizade.query.filter_by(
-        remetente_id=id_remitente, 
-        destinatario_id=id_destinatario
+        remetente_id=id_remetente,
+        destinatario_id=usuario_id,
+        tipo_notificacao="pedido_amizade",
+        status="pendente",
     ).first()
+    if not notificacao:
+        return {"ok": False, "erro": "Pedido de amizade não encontrado"}
 
-    if notificacao:
-        db.session.delete(notificacao)
-        db.session.commit()
-        print("Notificação removida com sucesso!")
-
-    else:
-        print("não tem nenhuma notificaã")
-        # Tenta o inverso, caso a lógica de envio tenha sido trocada
-        notificacao_inversa = Amizade.query.filter_by(
-            remetente_id=id_destinatario, 
-            destinatario_id=id_remitente
-        ).first()
-        if notificacao_inversa:
-            db.session.delete(notificacao_inversa)
-            db.session.commit()
-            print("Notificação inversa removida!")
-    #fim da remoão do banco de dados do usuario
-
-    emit("response_aceitar_pedido_amizade" , {"menssagem":"usuario regeitado"} , room = str(id_remitente))
+    db.session.delete(notificacao)
+    db.session.commit()
+    emit(
+        "response_aceitar_pedido_amizade",
+        {"menssagem": "usuario regeitado"},
+        room=str(id_remetente),
+    )
+    return {"ok": True}
 

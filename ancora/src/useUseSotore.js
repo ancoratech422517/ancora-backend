@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { io } from 'socket.io-client'
-import { fetchComAuth } from './utils/api'
+import { clearAccessToken, fetchComAuth, getAccessToken } from './utils/api'
 import { saveChatHistory, saveChatMessage } from './utils/offlineStorage'
 
 const CHAT_THEME_STORAGE_KEY = "ancora-chat-theme"
@@ -538,6 +538,14 @@ export const useUserStore = create(
             const novoSocket = io(backendUrl, {
               withCredentials: true,
               transports: ['websocket'],
+              auth: (callback) => {
+                getAccessToken()
+                  .then((token) => callback({ token }))
+                  .catch((error) => {
+                    console.error("Não foi possível obter o token do socket:", error)
+                    callback({})
+                  })
+              },
               reconnection: true,
               reconnectionAttempts: 3,
               reconnectionDelay: 2000,
@@ -556,6 +564,17 @@ export const useUserStore = create(
                 socketAuthenticatedUserId: null,
                 socketAuthPendingUserId: null,
               })
+              if (reason === "io server disconnect" && get().socket === novoSocket) {
+                fetchComAuth(`${backendUrl}/api/me`)
+                  .then((response) => {
+                    if (response.ok && get().socket === novoSocket) {
+                      novoSocket.connect()
+                    }
+                  })
+                  .catch((error) => {
+                    console.error("Não foi possível renovar a sessão do socket:", error)
+                  })
+              }
             })
 
             // novoSocket.on("Resposta_Solicitacao_entrada_turma" , (dados)=>{
@@ -825,6 +844,7 @@ export const useUserStore = create(
         } catch (err) {
           console.error("Erro logout:", err)
         } finally {
+          clearAccessToken()
           const s = get().socket
           if (s) s.disconnect()
 

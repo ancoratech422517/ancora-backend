@@ -1,10 +1,12 @@
-from flask import jsonify , Blueprint
-from models.database import db, Amizade , Usuario
+from flask import Blueprint, current_app, g, jsonify
+from models.database import Amizade, Usuario, db
 
 # Rota para buscar notificações (pedidos de amizade pendentes)
 notificacao = Blueprint("notificacao" , __name__)
 @notificacao.route('/notificacoes/<int:usuario_id>', methods=['GET'])
 def buscar_notificacoes(usuario_id):
+    if str(usuario_id) != g.principal["sub"]:
+        return jsonify({"erro": "Sem permissão para consultar estas notificações"}), 403
     try:
         # Pega TODAS, não só pendente
         notificacoes = Amizade.query.filter_by(
@@ -59,13 +61,7 @@ def buscar_notificacoes(usuario_id):
 
         resultado = []
         for notif in notificacoes:
-            print(f"este é o tipo da notificação:{notif.tipo_notificacao}")
-            # BUSCAR A IMAGEM ACTUAL DO VENDEDOR
-            Imagem_actual_vendedor = Usuario.query.filter(
-                Usuario.id == notif.remetente_id
-            ).first()
-            # FIM BUSCA DA IMAGEM ACTUAL DO VENDEDOR
-            remetente = Usuario.query.get(notif.remetente_id)
+            remetente = db.session.get(Usuario, notif.remetente_id)
             if not remetente: continue  # pula se user deletado
 
             resultado.append({
@@ -85,17 +81,14 @@ def buscar_notificacoes(usuario_id):
                 "preco_produto": notif.preco_produto,
                 "imagem_produto": notif.imagem_produto,
                 "status": notif.status,
-                "foto_vendedor": Imagem_actual_vendedor.foto_usuario,
+                "foto_vendedor": remetente.foto_usuario,
                 "nome_produto":notif.nome_produto,
                 "valor_deposito":notif.valor_deposito,
                 "id_turma_convite":notif.id_turma_convite,
                 "nome_Turma":notif.nome_Turma
             })
-            print(f"este é o tipo da notificação:{notif.tipo_notificacao}")
-
-
         return jsonify(resultado), 200
 
-    except Exception as e:
-        print(f"Erro ao buscar notificações: {e}")
+    except Exception:
+        current_app.logger.exception("Falha ao buscar notificações")
         return jsonify({"erro": "Erro interno no servidor"}), 500

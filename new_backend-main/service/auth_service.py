@@ -1,6 +1,6 @@
-from werkzeug.security import check_password_hash
 from models.database import Usuario, db
 from service.phone_number import normalizar_telefone
+from service.password_security import verify_password_and_upgrade
 
 class AuthService:
     @staticmethod
@@ -16,7 +16,7 @@ class AuthService:
         # for x in usuario.query.all():
         #     print(x.nome)
         
-        if not usuario or not check_password_hash(usuario.senha_hash, senha_pura):
+        if not usuario or not verify_password_and_upgrade(usuario, senha_pura):
             return None  # Falha: retorna None
 
         usuario_dados = {

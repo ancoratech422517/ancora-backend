@@ -2,22 +2,44 @@ from flask_socketio import join_room, leave_room, emit
 from routes.websocket import socketio
 from datetime import datetime 
 import json
-from models.database import Menssagens , db , Amigo
+from models.database import Menssagens, db, Amigo, Usuario
 from service.pushy_service import enviar_notificacao_pushy
 from sqlalchemy.exc import IntegrityError
+from routes.websoket_conectUser import get_user_id_from_cookie
 
 @socketio.on("enviar_menssagem_na_sala")
 def enviar_menssagem_na_sala(data):
+    if not isinstance(data, dict):
+        return {"success": False, "error": "Dados da mensagem inválidos"}
+
+    authenticated_user_id = get_user_id_from_cookie()
+    if not authenticated_user_id:
+        return {"success": False, "error": "Sessão expirada"}
+
     agora = datetime.now()
     horario_formatado = agora.strftime("%H:%M") 
 
     nossa_sala = data.get("nossa_sala")
+    if not isinstance(nossa_sala, str) or not nossa_sala:
+        return {"success": False, "error": "Conversa inválida"}
+    amizade = Amigo.query.filter_by(
+        id_usuario=int(authenticated_user_id),
+        nossa_sala=nossa_sala,
+    ).first()
+    if not amizade:
+        return {"success": False, "error": "Sem acesso a esta conversa"}
+
+    usuario = db.session.get(Usuario, int(authenticated_user_id))
+    amigo = db.session.get(Usuario, amizade.id_amigo)
+    if not usuario or not amigo:
+        return {"success": False, "error": "Utilizador da conversa não encontrado"}
+
     menssagem = data.get("menssagem")
-    id_remitente = data.get("id_remitente")
-    nome_remitente = data.get("nome_remitente")
-    foto_remitente = data.get("foto_usuario") or data.get("foto_remitente")
-    id_amigo = data.get("id_amigo")
-    nome_amigo = data.get("nome_amigo")
+    id_remitente = usuario.id
+    nome_remitente = usuario.nome
+    foto_remitente = usuario.foto_usuario
+    id_amigo = amigo.id
+    nome_amigo = amigo.nome
     client_message_id = str(data.get("client_message_id") or "").strip()[:80] or None
     if client_message_id:
         existing_message = Menssagens.query.filter_by(
@@ -34,7 +56,9 @@ def enviar_menssagem_na_sala(data):
                 "mensagem_id": existing_message.id,
                 "client_message_id": client_message_id
             }
-    dados_resposta = data.get("reply_to") or {}
+    dados_resposta = data.get("reply_to")
+    if not isinstance(dados_resposta, dict):
+        dados_resposta = {}
     mensagem_original = None
     reply_to_id = None
     reply_to_texto = None
@@ -109,9 +133,6 @@ def enviar_menssagem_na_sala(data):
         "client_message_id": client_message_id,
         **dados_arquivo
     }
-    verificar_amizade = Amigo.query.all()
-
-
     try:
         armazenar_menssagem = Menssagens(**dados)
         db.session.add(armazenar_menssagem)

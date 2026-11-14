@@ -1,17 +1,32 @@
 from routes.websocket import socketio 
 from flask_socketio import emit
+from models.database import Amigo
+from routes.websoket_conectUser import get_user_id_from_cookie
 
 @socketio.on("digitando")
 def handle_digitando(data):
+    if not isinstance(data, dict):
+        return
+    usuario_id = get_user_id_from_cookie()
     id_destinatario = data.get("id_destinatario")
-    id_remitente = data.get("id_remitente")
+    if not usuario_id:
+        return
+    try:
+        id_remitente = int(usuario_id)
+        id_destinatario = int(id_destinatario)
+    except (TypeError, ValueError):
+        return
+    amizade = Amigo.query.filter_by(
+        id_usuario=id_remitente,
+        id_amigo=id_destinatario,
+    ).first()
+    if not amizade:
+        return
     esta_digitando = data.get("digitando") # True ou False
     ultima_menssagem = data.get("ultima_menssagem")
 
-    ordenar_sala = sorted([int(id_remitente) , int(id_destinatario)])
-    nossa_sala = f"sala_{ordenar_sala[0]}_{ordenar_sala[1]}"
+    nossa_sala = amizade.nossa_sala
 
-    # Enviamos para a sala do destinatário
     emit("usuario_digitando", {
         "id_remitente": id_remitente,
         "digitando": esta_digitando,

@@ -1,27 +1,43 @@
-from flask_socketio import emit, join_room
+from flask_socketio import emit
 from routes.websocket import socketio
 from models.database import db, Amigo, Amizade , Usuario
+from routes.websoket_conectUser import get_user_id_from_cookie
 
 
 @socketio.on("aceitar_pedido_amizade")
 def Aceitar_pedido_amizade(data):
+    if not isinstance(data, dict):
+        return
+    usuario_autenticado = get_user_id_from_cookie()
     id_amigo = data.get("ID_destinatario")
-    id_usuario = data.get("ID_remitente")
-    nome_remitente = data.get("nome_remitente")
-    foto_remitente = data.get("foto_remitente")
-    foto_destinatario = data.get("foto_destinatario")
-
-
-    if not id_amigo or not id_usuario:
+    if not usuario_autenticado or not id_amigo:
         print("Erro: IDs inválidos recebidos")
         return
 
     try:
-        id_usuario = int(id_usuario)
+        id_usuario = int(usuario_autenticado)
         id_amigo = int(id_amigo)
     except (TypeError, ValueError):
         print("Erro: IDs inválidos recebidos")
         return
+    if id_usuario == id_amigo:
+        return
+
+    usuario = db.session.get(Usuario, id_usuario)
+    amigo = db.session.get(Usuario, id_amigo)
+    if not usuario or not amigo:
+        return
+    pedido_pendente = Amizade.query.filter_by(
+        remetente_id=id_amigo,
+        destinatario_id=id_usuario,
+        tipo_notificacao="pedido_amizade",
+        status="pendente",
+    ).first()
+    if not pedido_pendente:
+        return {"ok": False, "erro": "Pedido de amizade não encontrado"}
+    nome_remitente = usuario.nome
+    foto_remitente = usuario.foto_usuario
+    foto_destinatario = amigo.foto_usuario
 
     # Ordenar para criar sala única
     ordernar_sala = sorted([id_usuario, id_amigo])
@@ -60,25 +76,8 @@ def Aceitar_pedido_amizade(data):
         print(f"Amizade registada com sucesso na sala: {nossa_sala}")
 
     # Remover notificação da tabela Amizade (pedido de amizade)
-    notificacao = Amizade.query.filter_by(
-        remetente_id=id_usuario,
-        destinatario_id=id_amigo
-    ).first()
-
-    if notificacao:
-        db.session.delete(notificacao)
-        db.session.commit()
-        print("Notificação removida com sucesso!")
-    else:
-        # Tenta o inverso caso a ordem esteja trocada
-        notificacao_inversa = Amizade.query.filter_by(
-            remetente_id=id_amigo,
-            destinatario_id=id_usuario
-        ).first()
-        if notificacao_inversa:
-            db.session.delete(notificacao_inversa)
-            db.session.commit()
-            print("Notificação inversa removida!")
+    db.session.delete(pedido_pendente)
+    db.session.commit()
 
     # Emitir respostas para ambos
     emit("response_aceitar_pedido_amizade", {

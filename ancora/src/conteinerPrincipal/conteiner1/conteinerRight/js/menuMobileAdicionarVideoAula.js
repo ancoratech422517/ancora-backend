@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useUserStore } from "../../../../useUseSotore";
+import { fetchComAuth } from "../../../../utils/api";
 
 export async function MenuMobileAdicionarVideoAula(nome_turma, id_admin_turma, setProgresso, setEstadoProgresso, setTextoProgresso, setOutroSvg, setEstadoConteinerAdicionarVideo) {
     const URLBACKEND = useUserStore.getState().urlBancoDeDados;
@@ -44,12 +45,24 @@ export async function MenuMobileAdicionarVideoAula(nome_turma, id_admin_turma, s
 
         // 3. Registrar apenas a URL no seu backend
         setTextoProgresso("Registrando aula...");
-        await axios.post(`${URLBACKEND}/registrar_aula`, {
-            nome_turma,
-            id_admin_turma,
-            tema_video,
-            video_url: videoUrl
+        const respostaAula = await fetchComAuth(`${URLBACKEND}/registrar_aula`, {
+            method: "POST",
+            body: JSON.stringify({
+                nome_turma,
+                id_admin_turma,
+                tema_video,
+                video_url: videoUrl
+            }),
         });
+        if (!respostaAula.ok) {
+            const erroAula = await respostaAula.json();
+            throw new Error(
+                erroAula?.error?.message
+                    || erroAula?.error
+                    || erroAula?.mensagem
+                    || "Não foi possível registar a aula.",
+            );
+        }
 
         // 4. Finalização visual
         setTextoProgresso("Aula adicionada com sucesso!");
@@ -68,7 +81,9 @@ export async function MenuMobileAdicionarVideoAula(nome_turma, id_admin_turma, s
 
     } catch (error) {
         console.error("Erro no fluxo de upload:", error);
-        const mensagemErro = error.response?.data?.error?.message || "Erro de conexão";
+        const mensagemErro = error.response?.data?.error?.message
+            || error.message
+            || "Erro de conexão";
         alert("Falha no envio: " + mensagemErro);
         setEstadoProgresso(false);
     }
