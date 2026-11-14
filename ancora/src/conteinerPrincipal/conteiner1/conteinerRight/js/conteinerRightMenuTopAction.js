@@ -6,7 +6,6 @@ export function Back_home (socket , nossa_sala , setMostrarChat){
         document.querySelector(".menuConteinerLeft").style.display = "flex"
         let conteiner_left = document.querySelector(".conteiner1")
         conteiner_left.style.width = "100%"
-        conteiner_left.style.height = "90%"
         socket.emit("sair_da_sala" , {"nossa_sala":nossa_sala})
 
         const dados = document.querySelectorAll(".GeralChatDados")

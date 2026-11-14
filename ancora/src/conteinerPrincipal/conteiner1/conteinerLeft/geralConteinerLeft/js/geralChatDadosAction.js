@@ -5,7 +5,6 @@ export function DadosActive (event , nome_amigo , id_amigo, nossa_sala , foto_am
         document.querySelector(".conteinerLeft").style.display = "none"
         document.querySelector(".menuConteinerLeft").style.display = "none"
         setMostrarChat(true)
-        document.querySelector(".conteiner1").style.height = "100%"
         
         conteiner_left.style.width = "100%"
         
