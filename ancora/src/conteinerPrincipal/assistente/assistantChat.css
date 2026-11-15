@@ -1,0 +1,815 @@
+.assistantWorkspace{
+    --assistant-accent: var(--chat-theme-reply-accent, var(--chat-message-own-bg, var(--primary)));
+    --assistant-accent-light: var(--chat-theme-muted, var(--text-secondary));
+    --assistant-accent-strong: var(--primary-dark, var(--assistant-accent));
+    --assistant-accent-soft: var(--primary-overlay-soft, var(--surface-2));
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--chat-wallpaper);
+    color: var(--chat-theme-foreground, var(--text-primary));
+    font-family: inherit;
+}
+.assistantThemeBackdrop{
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+.assistantThemeBackdrop .animated-chat-background{
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+.assistantContent{
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+.assistantStyles{
+    width: 100%;
+    display: flex;
+    align-self: stretch;
+    gap: 8px;
+    padding: 8px 14px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--chat-theme-muted, var(--border)) transparent;
+    border-bottom: 1px solid var(--border);
+    background: var(--chat-theme-bar, var(--surface));
+}
+.assistantStyleButton{
+    min-height: 34px;
+    flex: 0 0 auto;
+    padding: 7px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background var(--transition), border-color var(--transition), color var(--transition);
+}
+.assistantStyleButton:hover:not([aria-pressed="true"]){
+    border-color: var(--assistant-accent);
+    color: var(--assistant-accent-strong);
+}
+.assistantStyleButton[aria-pressed="true"]{
+    border-color: var(--assistant-accent);
+    background: var(--assistant-accent);
+    color: var(--chat-message-own-text, var(--text-on-primary));
+}
+.assistantChatPanel{
+    width: 100%;
+    max-width: none;
+    min-height: 0;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    overflow: hidden;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+.assistantHeader{
+    position: relative;
+    z-index: 2;
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--chat-theme-bar, var(--surface));
+}
+.assistantIdentity{
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.assistantAvatar{
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--chat-message-own-bg, var(--assistant-accent));
+    color: var(--chat-message-own-text, var(--text-on-primary));
+    font-size: 19px;
+    font-weight: 700;
+}
+.assistantWho{
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.assistantWho strong{
+    overflow: hidden;
+    color: var(--chat-theme-foreground, var(--text-primary));
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.assistantWho small{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--chat-theme-muted, var(--text-secondary));
+    font-size: 11px;
+}
+.assistantHeaderActions{
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex: 0 0 auto;
+}
+.assistantVoicePicker{
+    position: relative;
+    flex: 0 0 auto;
+}
+.assistantVoiceButton{
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 9px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--chat-theme-input-bg, var(--surface-2));
+    color: var(--chat-theme-input-text, var(--text-primary));
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+.assistantVoiceButton:hover{
+    border-color: var(--assistant-accent);
+}
+.assistantVoiceButton svg{
+    width: 17px;
+    height: 17px;
+    flex: 0 0 auto;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.assistantVoiceButton strong{
+    color: var(--chat-message-own-bg, var(--assistant-accent-strong));
+    font-size: 12px;
+}
+.assistantVoiceMenu{
+    position: absolute;
+    top: auto;
+    bottom: calc(100% + 7px);
+    right: 0;
+    z-index: 1000;
+    width: min(270px, calc(100vw - 32px));
+    max-height: min(350px, 60vh);
+    padding: 8px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: var(--chat-theme-bar, var(--surface));
+    color: var(--chat-theme-foreground, var(--text-primary));
+    box-shadow: var(--shadow-md);
+}
+.assistantVoiceMenu > p{
+    padding: 5px 8px 8px;
+    color: var(--chat-theme-muted, var(--text-secondary));
+    font-size: 11px;
+    font-weight: 600;
+}
+.assistantVoiceMenu > button{
+    width: 100%;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 7px 9px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--chat-theme-foreground, var(--text-primary));
+    text-align: left;
+    cursor: pointer;
+}
+.assistantVoiceMenu > button:hover,
+.assistantVoiceMenu > button.selected{
+    background: var(--assistant-accent-soft);
+}
+.assistantVoiceMenu > button > span{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.assistantVoiceMenu > button strong{
+    font-size: 12px;
+    font-weight: 600;
+}
+.assistantVoiceMenu > button small{
+    color: var(--chat-theme-muted, var(--text-secondary));
+    font-size: 10px;
+}
+.assistantVoiceMenu > button > i{
+    color: var(--assistant-accent-strong);
+    font-style: normal;
+    font-weight: 700;
+}
+.assistantStatusDot{
+    width: 7px;
+    height: 7px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: var(--status-online);
+}
+.assistantStatusDot.active{
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--chat-theme-online, var(--status-online)) 18%, transparent);
+}
+.assistantStatusDot.error{
+    background: var(--status-danger);
+}
+.assistantModeSwitch{
+    flex: 0 0 auto;
+    display: flex;
+    gap: 3px;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--chat-theme-input-bg, var(--surface-2));
+}
+.assistantModeSwitch button{
+    min-height: 32px;
+    padding: 6px 10px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--chat-theme-muted, var(--text-secondary));
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.assistantModeSwitch button[aria-pressed="true"]{
+    background: var(--chat-message-own-bg, var(--assistant-accent));
+    color: var(--chat-message-own-text, var(--text-on-primary));
+}
+.assistantCenter{
+    min-height: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: transparent;
+}
+.assistantMessages{
+    min-height: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px 13px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+.assistantMessage{
+    max-width: 88%;
+    display: flex;
+}
+.assistantMessage.assistant{
+    align-self: flex-start;
+}
+.assistantMessage.user{
+    align-self: flex-end;
+}
+.assistantMessageBubble{
+    position: relative;
+    padding: 10px 12px 7px;
+    border: 1px solid var(--border);
+    border-radius: 0 7px 7px 10px;
+    background: var(--chat-message-other-bg, var(--surface-2));
+    color: var(--chat-message-other-text, var(--text-primary));
+    overflow-wrap: anywhere;
+}
+.assistantMessage.user .assistantMessageBubble{
+    border-color: var(--chat-message-own-bg, var(--assistant-accent));
+    border-radius: 8px 0 8px 8px;
+    background: var(--chat-message-own-bg, var(--assistant-accent));
+    color: var(--chat-message-own-text, var(--text-on-primary));
+}
+.assistantMessage.user .assistantMessageBubble::after{
+    position: absolute;
+    top: 0;
+    right: -9px;
+    width: 0;
+    height: 0;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid var(--chat-message-own-tail, var(--chat-message-own-bg, var(--assistant-accent)));
+    content: "";
+}
+.assistantMessage.assistant .assistantMessageBubble{
+    border-bottom: 1px solid var(--border);
+}
+.assistantMessage.assistant .assistantMessageBubble::after{
+    position: absolute;
+    top: 0;
+    left: -9px;
+    width: 0;
+    height: 0;
+    border-bottom: 10px solid transparent;
+    border-right: 10px solid var(--chat-message-other-bg, var(--surface-2));
+    content: "";
+}
+.assistantMessageBubble p{
+    font-size: 13px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+}
+.assistantMessageBubble time{
+    display: block;
+    margin-top: 5px;
+    color: var(--text-muted);
+    text-align: right;
+    font-size: 10px;
+}
+.assistantMessage.user .assistantMessageBubble time{
+    color: var(--chat-message-own-muted, var(--chat-message-own-text, var(--text-on-primary)));
+    opacity: .78;
+}
+.assistantTyping{
+    width: fit-content;
+    display: flex;
+    gap: 5px;
+    padding: 11px 13px;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: var(--chat-message-other-bg, var(--surface-2));
+}
+.assistantTyping i{
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--assistant-accent);
+    animation: assistantTyping 1s ease-in-out infinite;
+}
+.assistantTyping i:nth-child(2){animation-delay:.15s}
+.assistantTyping i:nth-child(3){animation-delay:.3s}
+@keyframes assistantTyping{
+    50%{transform:translateY(-4px);opacity:.45}
+}
+.assistantQuickPrompts{
+    display: flex;
+    gap: 7px;
+    padding: 0 12px 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.assistantQuickPrompts::-webkit-scrollbar{display:none}
+.assistantQuickPrompts button{
+    min-height: 32px;
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--chat-theme-bar, var(--surface));
+    color: var(--chat-message-own-bg, var(--assistant-accent-strong));
+    font: inherit;
+    font-size: 11px;
+    cursor: pointer;
+}
+.assistantQuickPrompts button:hover:not(:disabled){
+    border-color: var(--assistant-accent);
+    background: var(--assistant-accent-soft);
+}
+.assistantQuickPrompts button:disabled{
+    opacity: .55;
+    cursor: not-allowed;
+}
+.assistantVoiceCanvas{
+    width: 100%;
+    min-height: 0;
+    flex: 1 1 auto;
+    display: block;
+}
+.assistantChatPanel.audio .assistantCenter{
+    align-items: stretch;
+    justify-content: stretch;
+    padding: 0;
+}
+.assistantChatPanel.audio .assistantMessages,
+.assistantChatPanel.audio .assistantQuickPrompts{
+    display: none;
+}
+.assistantError{
+    margin: 0;
+    padding: 9px 13px;
+    border-top: 1px solid color-mix(in srgb, var(--status-danger) 35%, var(--border));
+    background: color-mix(in srgb, var(--status-danger) 8%, var(--surface));
+    color: var(--status-danger);
+    font-size: 12px;
+    line-height: 1.45;
+}
+.assistantComposer{
+    min-height: 66px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border-top: 1px solid var(--border);
+    background: var(--chat-theme-composer-bg, var(--chat-theme-bar, var(--surface)));
+}
+.assistantComposer input{
+    min-width: 0;
+    min-height: 42px;
+    flex: 1 1 auto;
+    padding: 9px 13px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    outline: none;
+    background: var(--chat-theme-input-bg, var(--surface-2));
+    color: var(--chat-theme-input-text, var(--text-primary));
+    font: inherit;
+    font-size: 13px;
+}
+.assistantComposer input:focus{
+    border-color: var(--assistant-accent);
+    box-shadow: 0 0 0 3px var(--primary-overlay-soft);
+}
+.assistantComposer input::placeholder{
+    color: var(--chat-theme-muted, var(--text-muted));
+}
+.assistantMicButton,
+.assistantSendButton{
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: var(--chat-theme-input-bg, var(--surface-3));
+    color: var(--chat-theme-input-text, var(--text-primary));
+    cursor: pointer;
+    transition: transform var(--transition), background var(--transition);
+}
+.assistantMicButton:hover,
+.assistantSendButton:hover:not(:disabled){
+    transform: scale(1.05);
+}
+.assistantMicButton.listening{
+    background: var(--status-danger);
+    color: var(--text-on-primary);
+    animation: assistantMicPulse 1.2s ease-out infinite;
+}
+.assistantSendButton{
+    background: var(--chat-message-own-bg, var(--assistant-accent));
+    color: var(--chat-message-own-text, var(--text-on-primary));
+}
+.assistantSendButton:disabled{
+    cursor: not-allowed;
+    opacity: .5;
+}
+.assistantMicButton svg,
+.assistantSendButton svg{
+    width: 19px;
+    height: 19px;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+@keyframes assistantMicPulse{
+    100%{box-shadow:0 0 0 12px transparent}
+}
+.assistantAudioStage{
+    --assistant-accent:var(--chat-theme-reply-accent, var(--chat-message-own-bg, var(--primary)));
+    --assistant-accent-light:var(--chat-theme-muted, var(--text-secondary));
+    width:100%;
+    height:100%;
+    min-height:0;
+    flex:1 1 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+.assistantAudioStage .assistantVoiceCanvas{
+    width:100%;
+    height:100%;
+    flex:none;
+}
+.ConteinerRightMenuBottom.assistantMainComposer{
+    position:relative;
+    inset:auto;
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    gap:0;
+    width:100%;
+    min-height:0;
+    flex:0 0 auto;
+    box-sizing:border-box;
+    margin:0;
+    padding:8px 10px max(10px, env(safe-area-inset-bottom, 0px));
+    border:0;
+    border-top:1px solid var(--border);
+    border-radius:0;
+    background:var(--chat-theme-composer-bg, var(--chat-theme-bar, var(--surface)));
+    box-shadow:none;
+    z-index:2;
+}
+.assistantActionPreview{
+    width:100%;
+    max-height:min(42vh, 360px);
+    flex:0 1 auto;
+    overflow:auto;
+    padding:10px;
+    border:1px solid var(--assistant-accent);
+    border-radius:12px;
+    background:var(--chat-theme-bar, var(--surface));
+    color:var(--chat-theme-foreground, var(--text-primary));
+    text-align:left;
+    box-shadow:var(--shadow-md);
+}
+.assistantActionPreviewHeading,
+.assistantActionButtons{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+}
+.assistantActionPreviewHeading strong{
+    font-size:13px;
+}
+.assistantActionSummary{
+    max-height:110px;
+    margin:6px 0 8px;
+    overflow:auto;
+    color:var(--chat-theme-muted, var(--text-secondary));
+    font-size:11px;
+    line-height:1.45;
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+}
+.assistantActionPreviewImage{
+    display:block;
+    max-width:100%;
+    max-height:100px;
+    margin:0 0 8px;
+    border-radius:8px;
+    object-fit:cover;
+}
+.assistantActionImages{
+    display:flex;
+    gap:8px;
+    margin:0 0 9px;
+    overflow-x:auto;
+}
+.assistantActionImageOption{
+    width:140px;
+    flex:0 0 140px;
+    padding:5px;
+    border:1px solid var(--border);
+    border-radius:9px;
+}
+.assistantActionImageOption.selected{
+    border-color:var(--assistant-accent);
+    box-shadow:0 0 0 2px var(--primary-overlay-soft);
+}
+.assistantActionImageOption button{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    padding:0;
+    border:0;
+    background:transparent;
+    color:inherit;
+    text-align:left;
+    cursor:pointer;
+}
+.assistantActionImageOption img{
+    width:100%;
+    height:68px;
+    border-radius:6px;
+    object-fit:cover;
+}
+.assistantActionImageOption span,
+.assistantActionImageOption small{
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+.assistantActionImageOption span{
+    font-size:10px;
+}
+.assistantActionImageOption small{
+    color:var(--chat-theme-muted, var(--text-secondary));
+    font-size:9px;
+}
+.assistantActionImageOption a{
+    display:block;
+    margin-top:5px;
+    color:var(--assistant-accent-strong);
+    font-size:10px;
+}
+.assistantActionButtons{
+    justify-content:flex-start;
+}
+.assistantActionConfirm,
+.assistantActionCancel,
+.assistantActionCancelText{
+    border:0;
+    border-radius:8px;
+    font:inherit;
+    cursor:pointer;
+}
+.assistantActionConfirm{
+    min-height:34px;
+    padding:7px 11px;
+    background:var(--assistant-accent);
+    color:var(--chat-message-own-text, var(--text-on-primary));
+    font-size:11px;
+    font-weight:700;
+}
+.assistantActionCancelText{
+    min-height:34px;
+    padding:7px 9px;
+    background:transparent;
+    color:var(--chat-theme-muted, var(--text-secondary));
+    font-size:11px;
+}
+.assistantActionCancel{
+    width:26px;
+    height:26px;
+    flex:0 0 auto;
+    background:var(--assistant-accent-soft);
+    color:var(--chat-theme-foreground, var(--text-primary));
+    font-size:19px;
+    line-height:1;
+}
+.assistantActionPreview button:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+}
+.assistantMainComposer .assistantQuickPrompts{
+    padding:0 2px 8px;
+}
+.assistantMainComposer .assistantStyles{
+    padding:0 0 8px;
+    border:0;
+    background:transparent;
+}
+.assistantControls{
+    min-height:34px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:0 2px 7px;
+    color:var(--chat-theme-muted, var(--text-secondary));
+    font-size:11px;
+}
+.assistantStatus{
+    display:flex;
+    flex:0 0 auto;
+    align-items:center;
+    gap:6px;
+}
+.assistantControls .assistantVoicePicker{
+    margin-left:auto;
+}
+.assistantControls .assistantVoiceButton{
+    min-height:32px;
+    padding:4px 7px;
+}
+.assistantControls .assistantVoiceButton svg{
+    width:15px;
+    height:15px;
+}
+.assistantComposer{
+    min-height:44px;
+    padding:0;
+    border:0;
+    background:transparent;
+}
+.assistantComposer textarea{
+    min-width:0;
+    min-height:38px;
+    max-height:96px;
+    flex:1 1 auto;
+    padding:9px 13px;
+    border:1px solid var(--border);
+    border-radius:20px;
+    outline:none;
+    background:var(--chat-theme-input-bg, var(--surface-2));
+    color:var(--chat-theme-input-text, var(--text-primary));
+    font:inherit;
+    font-size:13px;
+    line-height:20px;
+    resize:vertical;
+}
+.assistantComposer textarea:focus{
+    border-color:var(--assistant-accent);
+    box-shadow:0 0 0 3px var(--primary-overlay-soft);
+}
+.assistantComposer textarea::placeholder{
+    color:var(--chat-theme-muted, var(--text-muted));
+}
+.assistantComposer textarea:disabled{
+    opacity:.7;
+}
+.assistantMainComposer .assistantError{
+    margin:0 0 8px;
+    padding:7px 10px;
+    border:1px solid color-mix(in srgb, var(--status-danger) 35%, var(--border));
+    border-radius:9px;
+}
+.assistantComposerVisualizer{
+    width:80px;
+    height:30px;
+    flex:0 1 80px;
+}
+.assistantComposerVisualizer .assistantVoiceCanvas{
+    height:30px;
+}
+.assistantMainComposer[data-audio-mode="true"] .assistantStyles,
+.assistantMainComposer[data-audio-mode="true"] .assistantStatus,
+.assistantMainComposer[data-audio-mode="true"] .assistantVoicePicker,
+.assistantMainComposer[data-audio-mode="true"] .assistantComposer textarea,
+.assistantMainComposer[data-audio-mode="true"] .assistantSendButton{
+    display:none;
+}
+.assistantMainComposer[data-audio-mode="true"] .assistantControls{
+    justify-content:flex-end;
+    padding-bottom:8px;
+}
+.assistantMainComposer[data-audio-mode="true"] .assistantModeSwitch{
+    margin-left:auto;
+}
+.assistantMainComposer[data-audio-mode="true"] .assistantComposer{
+    min-height:42px;
+    justify-content:center;
+}
+.assistantWorkspace button:focus-visible,
+.assistantWorkspace input:focus-visible{
+    outline: 2px solid var(--assistant-accent);
+    outline-offset: 2px;
+}
+.assistantMainComposer button:focus-visible,
+.assistantMainComposer textarea:focus-visible{
+    outline:2px solid var(--assistant-accent);
+    outline-offset:2px;
+}
+@media(max-width: 760px){
+    .assistantStyles{gap:6px}
+    .assistantStyleButton{min-height:32px;padding:6px 10px}
+    .assistantHeader{min-height:64px;padding:10px}
+    .assistantMessages{padding:12px 10px;gap:10px}
+}
+@media(max-width: 420px){
+    .assistantHeader{flex-wrap:wrap;gap:7px;padding:8px}
+    .assistantHeaderActions{width:100%;justify-content:space-between}
+    .assistantVoiceButton{min-height:32px;padding:5px 8px}
+    .assistantVoiceButton strong{max-width:88px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .assistantVoiceMenu{right:auto;left:0}
+    .assistantAvatar{width:37px;height:37px}
+    .assistantWho strong{font-size:12px}
+    .assistantModeSwitch{gap:1px;padding:2px}
+    .assistantModeSwitch button{min-height:30px;padding:5px 7px;font-size:11px}
+    .assistantComposer{min-height:58px;gap:5px;padding:7px}
+    .assistantMicButton,.assistantSendButton{width:38px;height:38px}
+    .assistantComposer input{min-height:39px;padding:8px 11px;font-size:12px}
+}
+@media(prefers-reduced-motion: reduce){
+    .assistantWorkspace *,
+    .assistantWorkspace *::before,
+    .assistantWorkspace *::after{
+        animation-duration:.01ms!important;
+        transition-duration:.01ms!important;
+    }
+}

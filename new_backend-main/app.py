@@ -76,6 +76,7 @@ from routes.api_registrar_produto import registrar_produto
 from routes.api_buscar_produtos_usuario import buscar_produto_Usuario
 from routes.api_upload_file import upload_bp
 from routes.api_crm import crm_bp
+from routes.api_assistente_ia import assistant_bp
 from routes.api_social import social_bp
 from routes.api_todos_produtos import Todos_produtos
 from routes.api_me import login_bp as me_bp
@@ -178,7 +179,7 @@ def handle_cors_preflight():
 Talisman(app,
     content_security_policy={
         'default-src': "'self'",
-        'img-src': ["'self'", "data:", "blob:", "*.cloudinary.com"],
+        'img-src': ["'self'", "data:", "blob:", "*.cloudinary.com", "https://upload.wikimedia.org"],
         'media-src': ["'self'", "blob:", "*.cloudinary.com"]
     },
     force_https=False,
@@ -293,6 +294,7 @@ app.register_blueprint(registrar_produto)
 app.register_blueprint(buscar_produto_Usuario)
 app.register_blueprint(upload_bp)
 app.register_blueprint(crm_bp)
+app.register_blueprint(assistant_bp)
 app.register_blueprint(social_bp)
 app.register_blueprint(Todos_produtos)
 app.register_blueprint(me_bp)

@@ -6,7 +6,9 @@ import { saveChatHistory, saveChatMessage } from './utils/offlineStorage'
 
 const CHAT_THEME_STORAGE_KEY = "ancora-chat-theme"
 const url = (
-  "https://ancora-backend-09zc.onrender.com" || "https://ancora-backend-09zc.onrender.com"
+  import.meta.env.DEV
+    ? "https://ancora-backend-09zc.onrender.com" || "https://ancora-backend-09zc.onrender.com"
+    : "https://ancora-backend-09zc.onrender.com"
 ).replace(/\/+$/, "")
 function messageKey(message) {
   if (message.client_message_id) return `client:${message.client_message_id}`
@@ -87,6 +89,11 @@ export const useUserStore = create(
       MostrarChat: false,
       digitandoStatus: {},
       ChatAtivo: null,
+      assistantReturnState: null,
+      assistantAudioMode: false,
+      assistantIsSpeaking: false,
+      assistantVoicePulse: 0,
+      assistantVoiceStyle: 0,
       ativarGrupo: false,
       pingIntervalId: null,
       AtivarCont: "geral",
@@ -274,6 +281,12 @@ export const useUserStore = create(
       setMostrar: (mostra) => set({ Mostrar: mostra }),
       setProdutoUsuarioChat: (lista) => set({ ProdutoUsuarioChat: lista }),
       setMostrarChat: (valor) => set({ MostrarChat: valor }),
+      setAssistantAudioMode: (enabled) => set({ assistantAudioMode: enabled === true }),
+      setAssistantAudioActivity: (activity) => set((state) => ({
+        assistantIsSpeaking: activity.speaking ?? state.assistantIsSpeaking,
+        assistantVoicePulse: activity.pulse ?? state.assistantVoicePulse,
+        assistantVoiceStyle: activity.styleIndex ?? state.assistantVoiceStyle,
+      })),
       setProdutoUsuario: (produto) => set({ ProdutoUsuario: Array.isArray(produto) ? produto : [] }),
       setTodosProdutos: (todos) => set({ TodosProdutos: todos }),
       setDadosSombra: (sombra) => set({ DadosSombra: sombra }),
@@ -296,7 +309,29 @@ export const useUserStore = create(
         cacheCurrentChat(state, menssagens)
         return { menssagens }
       }),
-      setChatAtivo: (dadosChatAtivo) => set({ ChatAtivo: dadosChatAtivo, menssagens: [] }),
+      setChatAtivo: (dadosChatAtivo) => set((state) => ({
+        ChatAtivo: dadosChatAtivo,
+        menssagens: [],
+        assistantReturnState: dadosChatAtivo?.tipo_chat === "assistant"
+          ? state.assistantReturnState
+          : null,
+      })),
+      openAssistantChat: (assistantChat) => set((state) => ({
+        assistantReturnState: state.assistantReturnState || {
+          chat: state.ChatAtivo,
+          menssagens: state.menssagens,
+          mostrarChat: state.MostrarChat,
+        },
+        ChatAtivo: assistantChat,
+        menssagens: [],
+        MostrarChat: true,
+      })),
+      returnFromAssistantChat: () => set((state) => ({
+        ChatAtivo: state.assistantReturnState?.chat ?? null,
+        menssagens: state.assistantReturnState?.menssagens ?? [],
+        MostrarChat: state.assistantReturnState?.mostrarChat ?? false,
+        assistantReturnState: null,
+      })),
       confirmarMenssagemPendente: (clientMessageId, mensagemId, mensagemAtualizada = {}) => set((state) => {
         const menssagens = state.menssagens.map((menssagem) =>
           String(menssagem.client_message_id) === String(clientMessageId)

@@ -11,6 +11,7 @@ export const CFG = {
   financeiro: { t: "Financeiro", n: "Novo Movimento", f: [["descricao", "Descrição"], ["tipo", "Tipo", "sel", ["Receita", "Despesa"]], ["categoria", "Categoria", "sel", ["Vendas", "Parede", "Afiliados", "Ferramentas", "Tráfego Pago"]], ["valor", "Valor", "number", "kz"], ["data", "Data", "date"]] },
   faturas: { t: "Faturas", n: "Nova Fatura", f: [["numero", "Nº"], ["cliente", "Cliente"], ["valor", "Valor", "number", "kz"], ["emissao", "Emissão", "date"], ["vencimento", "Vencimento", "date"], ["estado", "Estado", "sel", ["Pendente", "Paga", "Atrasada"]]] },
   turmas: { t: "Turmas", n: "Nova Turma", f: [["nome", "Nome"], ["formador", "Formador"], ["alunos", "Alunos", "number"], ["horario", "Horário"], ["inicio", "Início", "date"], ["estado", "Estado", "sel", ["Planeada", "Em curso", "Concluída"]]] },
+  relatorios: { t: "Relatórios", n: "Novo Relatório", f: [["titulo", "Título"], ["tipo", "Tipo"], ["periodo", "Período"], ["conteudo", "Conteúdo"]] },
   calendario: { t: "Calendário", n: "Novo Evento", f: [["titulo", "Título"], ["data", "Data", "date"], ["hora", "Hora", "time"], ["tipo", "Tipo", "sel", ["Reunião", "Aula", "Entrega", "Pagamento"]]] },
 };
 const slug = v => String(v).normalize("NFD").replace(/[^\w]/g, "").toLowerCase();
@@ -108,6 +109,7 @@ export function Calendario() {
 
 export function Relatorios() {
   const [d, setD] = useState(null), [error, setError] = useState(""), [attempt, setAttempt] = useState(0);
+  const { rows: savedReports, error: savedReportsError, reload: reloadSavedReports } = useList("relatorios");
   useEffect(() => {
     let active = true;
     loadDash()
@@ -131,6 +133,28 @@ export function Relatorios() {
       </div>
       <div className="crmCard"><h3>Exportar dados (CSV)</h3><br />
         <div className="crmRow">{["projectos", "clientes", "financeiro", "faturas", "turmas"].map(r => <button key={r} className="crmBtn ghost" onClick={() => csv(r)}><Ico n="download" />{CFG[r].t}</button>)}</div></div>
+      <div className="crmCard">
+        <div className="crmRow" style={{ justifyContent: "space-between", marginBottom: 8 }}>
+          <h3>Relatórios registados pelo assistente</h3>
+          <button className="crmBtn ghost" onClick={() => csv("relatorios")}><Ico n="download" />Exportar</button>
+        </div>
+        {savedReportsError && (
+          <p className="crmErr" role="alert">
+            {savedReportsError}{" "}
+            <button type="button" className="crmBtn ghost" onClick={() => void reloadSavedReports().catch(() => {})}>
+              Tentar novamente
+            </button>
+          </p>
+        )}
+        {savedReports.map(report => (
+          <article className="crmReportRecord" key={report.id}>
+            <h4>{report.titulo}</h4>
+            <p>{report.tipo} · {report.periodo}</p>
+            <div>{report.conteudo}</div>
+          </article>
+        ))}
+        {!savedReports.length && !savedReportsError && <p>Sem relatórios registados pelo assistente.</p>}
+      </div>
     </Shell>
   );
 }

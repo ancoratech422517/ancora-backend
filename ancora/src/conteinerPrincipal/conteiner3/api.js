@@ -8,6 +8,7 @@ const RESOURCES = new Set([
   "financeiro",
   "faturas",
   "turmas",
+  "relatorios",
   "calendario",
   "anuncios",
   "leads",

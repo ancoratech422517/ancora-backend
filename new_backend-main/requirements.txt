@@ -10,6 +10,8 @@ psycopg2-binary
 python-dotenv
 cloudinary
 requests
+edge-tts
+aiohttp
 flask-talisman
 flask-migrate
 cryptography

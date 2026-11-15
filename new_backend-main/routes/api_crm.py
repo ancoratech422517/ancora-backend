@@ -36,6 +36,9 @@ CRM_FIELDS = {
         "nome": "text", "formador": "text", "alunos": "count",
         "horario": "text", "inicio": "date", "estado": "estado_turma",
     },
+    "relatorios": {
+        "titulo": "text", "tipo": "text", "periodo": "text", "conteudo": "text",
+    },
     "calendario": {
         "titulo": "text", "data": "date", "hora": "time", "tipo": "tipo_evento",
     },
@@ -86,7 +89,7 @@ def _validate_data(resource, incoming):
             if not isinstance(value, str):
                 raise ValueError(f"O campo {field} é obrigatório")
             value = value.strip()
-            limit = 500 if field in {"descricao", "horario"} else 255
+            limit = 4000 if field == "conteudo" else 500 if field in {"descricao", "horario"} else 255
             if not value or len(value) > limit:
                 raise ValueError(f"O campo {field} deve ter entre 1 e {limit} caracteres")
             if kind == "email" and not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", value):

@@ -11,6 +11,7 @@ import Perfil from "../../../assets/img_fundo_vazio/perfil.png"
 import { CHAT_THEMES, DEFAULT_CHAT_THEME } from "./chatThemes";
 import { ANIMATED_CHAT_SCENES } from "./animatedChatScenes";
 import { iniciarChamadaVoz } from "./voiceCalls";
+import { ASSISTANT_CHAT_TYPE } from "../../assistente/assistantConfig";
 export default function ConteinerRightMenuTop({
     ativarConteiner,
     chatTheme,
@@ -29,17 +30,16 @@ export default function ConteinerRightMenuTop({
         digitandoStatus , 
         setMostrarChat , 
         urlBancoDeDados , 
-        setIsMobile,
         dadosUsuario,
         chamadaVozAtiva,
+        returnFromAssistantChat,
     } = useUserStore();
+    const isAssistantChat = ChatAtivo?.tipo_chat === ASSISTANT_CHAT_TYPE;
 
     // 2. Buscamos o status atualizado diretamente no array de amigos
     const amigoNoEstado = amigos.find(
         (a) => String(a.id_amigo) === String(ChatAtivo?.id_amigo)
     );
-    let valor = "none"
-    
     const retorno = ()=>{
         if (ChatAtivo?.foto_amigo !== "none"){
             return "ativo"
@@ -102,21 +102,33 @@ export default function ConteinerRightMenuTop({
             <div className="ConteinerRightMenuTopBoxLeft">
                 <div 
                     className="ConteinerRightMenuTopBoxLeftCaxa1" 
-                    onClick={() => Back_home(socket, ChatAtivo.nossa_sala, setMostrarChat , setIsMobile)}
+                    onClick={() => {
+                        if (isAssistantChat) {
+                            returnFromAssistantChat();
+                            return;
+                        }
+                        Back_home(socket, ChatAtivo.nossa_sala, setMostrarChat);
+                    }}
                 >
                     <SetaEsquerda ativarConteiner = {ativarConteiner} />
                 </div>
                 
                 <div className="ConteinerRightMenuTopBoxLeftCaxa2">
                     {/* Exibe as iniciais do nome */}
-                    {estadoFotoPerfilUser()}
+                    {isAssistantChat ? (
+                        <div className="assistantAvatar" aria-hidden="true">A</div>
+                    ) : estadoFotoPerfilUser()}
                 </div>
                 
                 <div className="ConteinerRightMenuTopBoxLeftCaxa3">
                     <b> {ChatAtivo.nome_amigo} </b>
                     
                     {/* LÓGICA DINÂMICA: Prioridade para 'Digitando', depois Status de conexão */}
-                    {estaDigitando ? (
+                    {isAssistantChat ? (
+                        <li style={{ color: "var(--chat-theme-online, var(--status-online))", listStyle: "none", fontSize: "12px", fontWeight: "600" }}>
+                            Assistente de IA
+                        </li>
+                    ) : estaDigitando ? (
                         <li style={{ 
                             color: 'var(--chat-theme-online, var(--status-online))',
                             listStyle: 'none', 
@@ -235,10 +247,10 @@ export default function ConteinerRightMenuTop({
                         </div>
                     )}
                 </div>
-                <div className="ConteinerRightMenuTopBoxRightCaxa" onClick={ ()=> MenuMobileRight(setMostrarChat)}>
+                {!isAssistantChat && <div className="ConteinerRightMenuTopBoxRightCaxa" onClick={ ()=> MenuMobileRight(setMostrarChat)}>
                     <Store />
-                </div>
-                <button
+                </div>}
+                {!isAssistantChat && <button
                     type="button"
                     className="ConteinerRightMenuTopBoxRightCaxa chat-call-button"
                     aria-label={`Ligar para ${ChatAtivo.nome_amigo}`}
@@ -252,8 +264,8 @@ export default function ConteinerRightMenuTop({
                     })}
                 >
                     <Telefone />
-                </button>
-                <button
+                </button>}
+                {!isAssistantChat && <button
                     type="button"
                     className="ConteinerRightMenuTopBoxRightCaxa chat-call-button"
                     aria-label={`Iniciar vídeo chamada com ${ChatAtivo.nome_amigo}`}
@@ -270,7 +282,7 @@ export default function ConteinerRightMenuTop({
                         <path d="M3 7.5A2.5 2.5 0 0 1 5.5 5h8A2.5 2.5 0 0 1 16 7.5v9A2.5 2.5 0 0 1 13.5 19h-8A2.5 2.5 0 0 1 3 16.5z" />
                         <path d="m16 10 5-3v10l-5-3" />
                     </svg>
-                </button>
+                </button>}
             </div>
         </div>
     );

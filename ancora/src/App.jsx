@@ -19,6 +19,7 @@ import { getInitialTheme } from './utils/theme'
 import { preparePrivateMediaStorage } from './utils/privateMediaStorage'
 import { useApiRequestLoading } from './utils/apiRequestTracker'
 import ContainerLoading from './components/ContainerLoading'
+import { ASSISTANT_CHAT_TYPE } from './conteinerPrincipal/assistente/assistantConfig'
 
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
     Dados_Video_Atual_Click,
     Dados_Biblioteca_Video_Turma,
     EstadoChamadaGrupo,
+    ChatAtivo,
     chatThemeId
   } = useUserStore()
   const [carregandoSessao, setCarregandoSessao] = useState(false)
@@ -126,6 +128,8 @@ function App() {
   const containerAtual = sessaoInicializada
     ? ativar
     : dadosUsuario?.id ? "conteiner1" : "conteiner6"
+  const assistantChatActive = containerAtual === "conteiner1"
+    && ChatAtivo?.tipo_chat === ASSISTANT_CHAT_TYPE
 
   useEffect(() => {
     preparePrivateMediaStorage().catch((error) => {
@@ -262,8 +266,12 @@ function App() {
 
   return (
     <section
-      className='conteinerPrincipal'
-      data-chat-theme-palette={chatThemeId !== DEFAULT_CHAT_THEME.id ? chatThemeId : undefined}
+      className={`conteinerPrincipal${assistantChatActive ? " assistantOpen" : ""}`}
+      data-chat-theme-palette={
+        chatThemeId !== DEFAULT_CHAT_THEME.id
+          ? chatThemeId
+          : undefined
+      }
       style={chatThemePalette?.style}
     >
       {!carregandoSessao && containerAtual !== "conteiner6" && (

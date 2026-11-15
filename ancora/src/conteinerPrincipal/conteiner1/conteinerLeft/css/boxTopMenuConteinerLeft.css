@@ -16,6 +16,46 @@
     gap: 5px;
 
 }
+.assistantNavButton{
+    width: 60px;
+    height: 60px;
+    display: grid;
+    place-items: center;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background var(--transition), border-color var(--transition), color var(--transition), transform var(--transition);
+}
+.assistantNavButton:hover:not([aria-pressed="true"]){
+    border-color: var(--border);
+    background: var(--surface-3);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+}
+.assistantNavButton[aria-pressed="true"]{
+    border-color: var(--teal-600);
+    background: var(--teal-700);
+    color: var(--text-on-primary);
+}
+.assistantNavButton[aria-pressed="true"]:hover{
+    background: var(--teal-600);
+    transform: translateY(-2px);
+}
+.assistantNavButton:focus-visible{
+    outline: 2px solid var(--teal-400);
+    outline-offset: 3px;
+}
+.assistantNavButton svg{
+    width: 25px;
+    height: 25px;
+    color: currentColor;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
 .boxTopMenuConteinerLeftBTN li{
     color: var(--gray-300);
     font-size: 16px;
@@ -47,10 +87,28 @@
 @media screen and (max-width: 700px) {
     .boxTopMenuConteinerLeft{
         flex-direction: row;
-        padding-left: 2%;
+        gap: 4px;
+        padding: 0 8px;
         width: 100%;
+        justify-content: space-between;
+    }
+    .boxTopMenuConteinerLeftBTN{
+        flex: 1 1 0;
+        min-width: 0;
+    }
+    .boxTopMenuConteinerLeftBTN > button{
+        width: min(60px, 100%);
+        height: auto;
+        aspect-ratio: 1;
+        border-radius: clamp(12px, 4vw, 20px);
+    }
+    .assistantNavButton{
+        width: min(60px, 100%);
     }
     .boxTopMenuConteinerLeft svg{
-    color: var(--gray-300);
-}
+        color: var(--gray-300);
+    }
+    .boxTopMenuConteinerLeft .assistantNavButton svg{
+        color: inherit;
+    }
 }

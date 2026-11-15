@@ -215,6 +215,26 @@ class CRMRegistro(db.Model):
     )
 
 
+class AssistantActionExecution(db.Model):
+    """Idempotency record for confirmed assistant actions."""
+    __tablename__ = "assistant_action_executions"
+
+    action_id = db.Column(db.String(32), primary_key=True)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("usuarios.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    result = db.Column(db.JSON, nullable=False)
+    created_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow,
+        server_default=db.func.current_timestamp(),
+    )
+
+
 class Turma_Aula (db.Model):
     __tablename__ = "Turma_Aula"
     id = db.Column(db.Integer , primary_key = True)

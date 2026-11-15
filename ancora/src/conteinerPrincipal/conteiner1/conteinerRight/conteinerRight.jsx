@@ -13,6 +13,8 @@ import { AdicionarFundoPontoAOChat } from "./js/ConeinerRightConteudo-fundo-po-m
 import { CHAT_THEMES, DEFAULT_CHAT_THEME } from "./chatThemes";
 import AnimatedChatBackground from "./AnimatedChatBackground";
 import { getAnimatedScene, getAnimatedSceneStyle } from "./animatedChatScenes";
+import AssistantChat from "../../assistente/AssistantChat";
+import { ASSISTANT_CHAT_TYPE } from "../../assistente/assistantConfig";
 
 export default function ConteinerRight({ ativarConteiner }) {
     const {
@@ -115,7 +117,9 @@ export default function ConteinerRight({ ativarConteiner }) {
                         onToggleAnimation={() => setAnimationPaused((paused) => !paused)}
                     />
                     <ConteinerRightWindowMenssage />
-                    <ConteinerRightMenuBottom />
+                    {ChatAtivo?.tipo_chat === ASSISTANT_CHAT_TYPE
+                        ? <AssistantChat />
+                        : <ConteinerRightMenuBottom />}
                 </div>
                 
             </div>

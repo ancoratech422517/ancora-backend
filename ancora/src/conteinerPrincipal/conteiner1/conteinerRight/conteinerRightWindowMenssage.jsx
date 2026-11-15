@@ -11,6 +11,8 @@ import CachedImage from "../../../components/CachedImage";
 import useCachedMedia from "../../../hooks/useCachedMedia";
 import { getOutboxEntries, loadChatHistory } from "../../../utils/offlineStorage";
 import { confirmQueuedChatMessage } from "../../../service/chatOfflineSync";
+import { ASSISTANT_CHAT_ID, ASSISTANT_CHAT_TYPE, ASSISTANT_CHAT_NAME } from "../../assistente/assistantConfig";
+import AssistantVoiceVisualizer from "../../assistente/AssistantVoiceVisualizer";
 // Função para gerar as iniciais
 
 
@@ -759,7 +761,11 @@ export default function ConteinerRightWindowMenssage() {
     gravandoAudioStatus,
     amigos,
     urlBancoDeDados,
-    setProdutoUsuarioChat
+    setProdutoUsuarioChat,
+    assistantAudioMode,
+    assistantIsSpeaking,
+    assistantVoicePulse,
+    assistantVoiceStyle,
   } = useUserStore();
   
   const scrollRef = useRef(null);
@@ -782,9 +788,12 @@ export default function ConteinerRightWindowMenssage() {
     setCurrentlyPlayingSrc(null);
   }, []);
 
-  const statusAmigoAtual = amigos.find(
-    (amigo) => String(amigo.id_amigo) === String(ChatAtivo?.id_amigo)
-  )?.status || "offline";
+  const isAssistantChat = ChatAtivo?.tipo_chat === ASSISTANT_CHAT_TYPE;
+  const statusAmigoAtual = isAssistantChat
+    ? "online"
+    : amigos.find(
+      (amigo) => String(amigo.id_amigo) === String(ChatAtivo?.id_amigo)
+    )?.status || "offline";
 
   useEffect(() => {
     const userId = dadosUsuario?.id;
@@ -795,24 +804,41 @@ export default function ConteinerRightWindowMenssage() {
     Promise.all([loadChatHistory(userId, roomId), getOutboxEntries(userId)])
       .then(([cachedMessages, queuedEntries]) => {
         const current = useUserStore.getState();
-        if (
-          active
-          && String(current.ChatAtivo?.nossa_sala) === String(roomId)
-          && cachedMessages.length
-        ) {
-          const attachments = new Map(
-            queuedEntries
-              .filter((entry) => entry.type === "chat-message" && entry.attachment?.blob)
-              .map((entry) => [entry.id, entry.attachment.blob])
-          );
-          const messagesWithPreviews = cachedMessages.map((message) => {
-            const fileBlob = attachments.get(message.client_message_id);
-            if (!fileBlob || message.blobUrl) return message;
-            const blobUrl = URL.createObjectURL(fileBlob);
-            previewUrls.push(blobUrl);
-            return { ...message, blobUrl };
-          });
-          current.setMenssagensAntigas(messagesWithPreviews);
+        if (active && String(current.ChatAtivo?.nossa_sala) === String(roomId)) {
+          if (cachedMessages.length) {
+            const attachments = new Map(
+              queuedEntries
+                .filter((entry) => entry.type === "chat-message" && entry.attachment?.blob)
+                .map((entry) => [entry.id, entry.attachment.blob])
+            );
+            const messagesWithPreviews = cachedMessages.map((message) => {
+              const fileBlob = attachments.get(message.client_message_id);
+              if (!fileBlob || message.blobUrl) return message;
+              const blobUrl = URL.createObjectURL(fileBlob);
+              previewUrls.push(blobUrl);
+              return { ...message, blobUrl };
+            });
+            current.setMenssagensAntigas(messagesWithPreviews);
+          } else if (
+            current.ChatAtivo?.tipo_chat === ASSISTANT_CHAT_TYPE
+            && current.menssagens.length === 0
+          ) {
+            current.setMenssagem({
+              id: `${roomId}-welcome`,
+              nossa_sala: roomId,
+              id_remitente: ASSISTANT_CHAT_ID,
+              id_destinatario: current.dadosUsuario?.id,
+              nome_remitente: ASSISTANT_CHAT_NAME,
+              foto_usuario: "none",
+              menssagem: "Olá! Sou a Ana, a tua assistente virtual. Podes falar comigo por texto ou por áudio. Como posso ajudar?",
+              data_envio: new Date().toLocaleTimeString("pt-PT", {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+              timestamp: Date.now(),
+              lida: true,
+            });
+          }
         }
       })
       .catch((error) => console.error("Não foi possível carregar o histórico offline:", error));
@@ -866,7 +892,7 @@ export default function ConteinerRightWindowMenssage() {
         msg => String(msg.id_destinatario) === String(dadosUsuario?.id) && !msg.lida
       );
 
-      if (temMensagemNaoLida) {
+      if (temMensagemNaoLida && ChatAtivo?.tipo_chat !== ASSISTANT_CHAT_TYPE) {
         socket.emit("menssagem_visualizada", {
           nossa_sala: ChatAtivo.nossa_sala,
           id_amigo: ChatAtivo.id_amigo,
@@ -877,7 +903,7 @@ export default function ConteinerRightWindowMenssage() {
   }, [ChatAtivo, menssagens, socket, dadosUsuario]);
 
   useEffect(() => {
-    if (socket && ChatAtivo?.nossa_sala) {
+    if (socket && ChatAtivo?.nossa_sala && ChatAtivo?.tipo_chat !== ASSISTANT_CHAT_TYPE) {
       socket.emit("buscar_menssagens", { nossa_sala: ChatAtivo.nossa_sala });
     }
   }, [socket, ChatAtivo]);
@@ -1226,7 +1252,15 @@ export default function ConteinerRightWindowMenssage() {
 
   return (
     <div className="ConteinerRightWindowMenssage" ref={scrollRef}>
-      {menssagens && menssagens.length > 0 ? (
+      {isAssistantChat && assistantAudioMode ? (
+        <div className="assistantAudioStage" role="img" aria-label="A esfera reage à voz do assistente">
+          <AssistantVoiceVisualizer
+            styleIndex={assistantVoiceStyle}
+            active={assistantIsSpeaking}
+            pulse={assistantVoicePulse}
+          />
+        </div>
+      ) : menssagens && menssagens.length > 0 ? (
         <>
           {menssagens.map((msg, index) => {
             const souEu = String(msg.id_remitente) === String(dadosUsuario?.id);
@@ -1298,11 +1332,13 @@ if (isAudio) {
                 hora={
                   <div style={{display: 'flex', alignItems: 'center'}}>
                     {msg.data_envio} 
-                    <StatusVisualizacao
-                      lida={msg.lida}
-                      statusAmigo={statusAmigoAtual}
-                      pending={msg.pending || msg.deliveryState === "pending"}
-                    />
+                    {!isAssistantChat && (
+                      <StatusVisualizacao
+                        lida={msg.lida}
+                        statusAmigo={statusAmigoAtual}
+                        pending={msg.pending || msg.deliveryState === "pending"}
+                      />
+                    )}
                   </div>
                 } 
                 nome={msg.nome_remitente} 
