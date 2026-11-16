@@ -18,7 +18,22 @@ def _sala_live(sala_turma):
     return f"live_turma:{sala_turma}"
 
 
+def _normalizar_id_usuario(valor):
+    if isinstance(valor, bool):
+        return None
+    try:
+        usuario_id = int(valor)
+    except (TypeError, ValueError, OverflowError):
+        return None
+    return usuario_id if usuario_id > 0 else None
+
+
 def _amizade_ativa(id_usuario, id_amigo):
+    id_usuario = _normalizar_id_usuario(id_usuario)
+    id_amigo = _normalizar_id_usuario(id_amigo)
+    if id_usuario is None or id_amigo is None or id_usuario == id_amigo:
+        return None
+
     amizade = Amigo.query.filter(
         ((Amigo.id_usuario == id_usuario) & (Amigo.id_amigo == id_amigo))
         | ((Amigo.id_usuario == id_amigo) & (Amigo.id_amigo == id_usuario))
@@ -185,13 +200,15 @@ def chamada_grupo(data):
 
 @socketio.on("chamada_voz_iniciar")
 def chamada_voz_iniciar(data):
-    id_remetente = get_user_id_from_cookie()
-    if not id_remetente:
+    id_remetente = _normalizar_id_usuario(get_user_id_from_cookie())
+    if id_remetente is None:
         return {"ok": False, "erro": "Sessão expirada"}
 
     call_id, room_name = _identificar_sala_chamada(data)
-    id_destinatario = data.get("recipient_id") if isinstance(data, dict) else None
-    if not call_id or id_destinatario is None or str(id_destinatario) == str(id_remetente):
+    id_destinatario = _normalizar_id_usuario(
+        data.get("recipient_id") if isinstance(data, dict) else None
+    )
+    if not call_id or id_destinatario is None or id_destinatario == id_remetente:
         return {"ok": False, "erro": "Destinatário ou chamada inválidos"}
 
     if not _amizade_ativa(id_remetente, id_destinatario):
@@ -246,12 +263,14 @@ def chamada_voz_iniciar(data):
 
 @socketio.on("responder_chamada_voz")
 def responder_chamada_voz(data):
-    id_destinatario = get_user_id_from_cookie()
-    if not id_destinatario:
+    id_destinatario = _normalizar_id_usuario(get_user_id_from_cookie())
+    if id_destinatario is None:
         return {"ok": False, "erro": "Sessão expirada"}
 
     call_id, room_name = _identificar_sala_chamada(data)
-    id_remetente = data.get("caller_id") if isinstance(data, dict) else None
+    id_remetente = _normalizar_id_usuario(
+        data.get("caller_id") if isinstance(data, dict) else None
+    )
     resposta = data.get("response") if isinstance(data, dict) else None
     if (
         not call_id
@@ -280,11 +299,13 @@ def responder_chamada_voz(data):
 
 @socketio.on("encerrar_chamada_voz")
 def encerrar_chamada_voz(data):
-    id_remetente = get_user_id_from_cookie()
+    id_remetente = _normalizar_id_usuario(get_user_id_from_cookie())
     call_id, room_name = _identificar_sala_chamada(data)
-    id_destinatario = data.get("peer_id") if isinstance(data, dict) else None
+    id_destinatario = _normalizar_id_usuario(
+        data.get("peer_id") if isinstance(data, dict) else None
+    )
     if (
-        not id_remetente
+        id_remetente is None
         or not call_id
         or id_destinatario is None
         or not _amizade_ativa(id_remetente, id_destinatario)
