@@ -5,6 +5,7 @@ const Conteiner2 = lazy(() => import('./conteinerPrincipal/conteiner2/conteiner2
 const Conteiner3 = lazy(() => import('./conteinerPrincipal/conteiner3/conteiner3'))
 const Conteiner4 = lazy(() => import('./conteinerPrincipal/conteiner4/conteiner4'))
 const Conteiner5 = lazy(() => import('./conteinerPrincipal/conteiner5/conteiner5'))
+const AncoraAcademy = lazy(() => import('./conteinerPrincipal/academy/AncoraAcademy'))
 const Conteiner6 = lazy(() => import("./conteinerPrincipal/conteiner6/conteiner6"))
 const Conteiner8 = lazy(() => import('./conteinerPrincipal/conteiner8/conteiner8'))
 import MenuConteinerLeft from './conteinerPrincipal/conteiner1/conteinerLeft/menuConteinerLeft'
@@ -120,7 +121,12 @@ function App() {
     switch(estado_conteiner_live){
       case true:
         return(
-          <ConteinerRightLive roomName={Dados_Live_Ancora.sala_Turma} nome_Turma={Dados_Live_Ancora.nome_Turma} />
+          <ConteinerRightLive
+            roomName={Dados_Live_Ancora.sala_Turma}
+            nome_Turma={Dados_Live_Ancora.nome_Turma}
+            id_admin_turma={Dados_Live_Ancora.id_admin_turma}
+            agendaId={Dados_Live_Ancora.id_agenda_live}
+          />
         )
     }
   }
@@ -130,6 +136,7 @@ function App() {
     : dadosUsuario?.id ? "conteiner1" : "conteiner6"
   const assistantChatActive = containerAtual === "conteiner1"
     && ChatAtivo?.tipo_chat === ASSISTANT_CHAT_TYPE
+  const academyActive = containerAtual === "academy"
 
   useEffect(() => {
     preparePrivateMediaStorage().catch((error) => {
@@ -247,6 +254,7 @@ function App() {
       case "conteiner4": return <Conteiner4 />
       case "conteiner8": return <Conteiner8 />
       case "conteiner5": return <Conteiner5 dadosUsuario={dadosUsuario} />
+      case "academy": return <AncoraAcademy />
       case "conteiner6": return <Conteiner6 ativarConteiner={setAtivar} setConta={setAtivar} />
       default:
         return <Conteiner2 ativarConteiner={setAtivar} setConta={setAtivar} />
@@ -266,7 +274,7 @@ function App() {
 
   return (
     <section
-      className={`conteinerPrincipal${assistantChatActive ? " assistantOpen" : ""}`}
+      className={`conteinerPrincipal${assistantChatActive ? " assistantOpen" : ""}${academyActive ? " academyOpen" : ""}`}
       data-chat-theme-palette={
         chatThemeId !== DEFAULT_CHAT_THEME.id
           ? chatThemeId
@@ -274,7 +282,7 @@ function App() {
       }
       style={chatThemePalette?.style}
     >
-      {!carregandoSessao && containerAtual !== "conteiner6" && (
+      {!carregandoSessao && containerAtual !== "conteiner6" && !academyActive && (
         <MenuConteinerLeft ativarConteiner={setAtivar} setDadosUsuario={setDados} />
       )}
       <div className="conteinerPrincipalConteudo">

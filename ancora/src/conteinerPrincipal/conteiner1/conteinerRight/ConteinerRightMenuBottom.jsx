@@ -468,10 +468,10 @@ export default function ConteinerRightMenuBottom() {
         if (!socket?.connected) return;
         const ultima_menssagem = document.getElementById(ChatAtivo?.nossa_sala)
         if (!ultima_menssagem) return;
-        socket.emit("digitando", { id_destinatario: ChatAtivo?.id_amigo, id_remitente: dadosUsuario?.id, digitando: true , ultima_menssagem:ultima_menssagem.innerHTML });
+        socket.emit("digitando", { id_destinatario: ChatAtivo?.id_amigo, id_remitente: dadosUsuario?.id, digitando: true , ultima_menssagem:ultima_menssagem.textContent });
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
         timeoutRef.current = setTimeout(() => {
-            socket.emit("digitando", { id_destinatario: ChatAtivo?.id_amigo, id_remitente: dadosUsuario?.id, digitando: false , ultima_menssagem:ultima_menssagem.innerHTML });
+            socket.emit("digitando", { id_destinatario: ChatAtivo?.id_amigo, id_remitente: dadosUsuario?.id, digitando: false , ultima_menssagem:ultima_menssagem.textContent });
         }, 3000);
     };
 

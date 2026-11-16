@@ -1,39 +1,34 @@
 import { useUserStore } from "../../../useUseSotore"
-export async function ConteinerDepositarDinheiroNaConta(setEstadoMenssageBaner , setEstadoConteinerDeposito , setEstadoCarteiraDeposito) {
-    const URLBACKEND_ANCORA = useUserStore.getState().urlBancoDeDados
-    const getNotificacaoes = useUserStore.getState().buscar_notificacao
-    const tocarSom = useUserStore.getState().tocarSomRecebido
-    const DadosUsuario = useUserStore.getState().dadosUsuario
-    const numero_conta = document.getElementById("numero_conta").value
-    const valorConta = document.getElementById("valorConta").value
 
-    const Dados = {
-        "numero_conta":numero_conta,
-        "valor_sacar_conta":valorConta,
-        "id_usuario":DadosUsuario.id
-
-    }
-    const depositar = await fetch(`${URLBACKEND_ANCORA}/depositar_pinheiro`,{
-        method:"post",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body:JSON.stringify(Dados)
-    })
-    const resposta = await depositar.json()
+export async function ConteinerDepositarDinheiroNaConta(setEstadoMenssageBaner, setEstadoConteinerDeposito, setEstadoCarteiraDeposito, setMensagemErroDeposito) {
+    const store = useUserStore.getState()
+    const numero_conta = document.getElementById("numero_conta")?.value
+    const valorConta = document.getElementById("valorConta")?.value
 
     setEstadoMenssageBaner("False")
-    if (depositar.ok){
-        setTimeout(() => {
-            setEstadoMenssageBaner("True")
-        }, 2000);
+    try {
+        const response = await fetch(`${store.urlBancoDeDados}/depositar_pinheiro`, {
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ numero_conta, valor_sacar_conta: valorConta })
+        })
+        const data = await response.json()
+        if (!response.ok) {
+            setMensagemErroDeposito(data.message || data.error || "Deposito nao confirmado.")
+            setEstadoMenssageBaner("Error")
+            return
+        }
+
+        setEstadoMenssageBaner("True")
         setTimeout(() => {
             setEstadoConteinerDeposito("False")
             setEstadoCarteiraDeposito("cont1")
             setEstadoMenssageBaner("none")
-            getNotificacaoes(DadosUsuario.id)
-            tocarSom()
-        }, 5000);
+            store.buscar_notificacao(store.dadosUsuario?.id)
+            store.tocarSomRecebido()
+        }, 3000)
+    } catch {
+        setMensagemErroDeposito("Servico indisponivel. Tenta novamente mais tarde.")
+        setEstadoMenssageBaner("Error")
     }
-    
 }

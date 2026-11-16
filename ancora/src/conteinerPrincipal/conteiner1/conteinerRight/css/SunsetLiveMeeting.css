@@ -145,6 +145,20 @@
   gap: 10px;
 }
 
+.sunset-audio-start {
+  position: relative;
+  z-index: 5;
+  flex: 0 0 auto;
+}
+
+.sunset-audio-start .lk-start-audio-button {
+  position: relative;
+  min-height: 36px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
 .sunset-brand > div {
   display: grid;
   gap: 1px;

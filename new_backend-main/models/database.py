@@ -271,6 +271,7 @@ class Agendar_Live_Turma(db.Model):
     id_aluno_turma_agenda_live = db.Column(db.Text  , default = "none")
     status_agenda_live = db.Column(db.Text ,  default = "pendente")
     tema_agenda_live = db.Column(db.Text , default = "none")
+    live_vazia_em = db.Column(db.DateTime, nullable=True, index=True)
 
 
 class Adicionar_Nova_Aula(db.Model):
@@ -295,6 +296,13 @@ class Adicionar_dados_estado(db.Model):
     nome_usuario_estado = db.Column(db.Text , default = "none")
     foto_usuario_estado = db.Column(db.Text , default = "none")
     media_blurhash = db.Column(db.String(100), nullable=True)
+    criado_em = db.Column(
+        db.DateTime,
+        nullable=True,
+        default=_utcnow_naive,
+        server_default=db.func.current_timestamp(),
+        index=True,
+    )
 
 
 class SocialPost(db.Model):
@@ -379,3 +387,22 @@ class SocialStoryView(db.Model):
 
     __table_args__ = (db.UniqueConstraint("story_id", "user_id", name="uq_social_story_view_user"),)
     
+
+class RefreshSession(db.Model):
+    __tablename__ = "refresh_sessions"
+
+    jti = db.Column(db.String(80), primary_key=True)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("usuarios.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    expires_at = db.Column(db.DateTime, nullable=False, index=True)
+    revoked_at = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=_utcnow_naive,
+        server_default=db.func.current_timestamp(),
+    )

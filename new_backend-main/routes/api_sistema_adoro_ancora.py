@@ -1,12 +1,14 @@
-from flask import Blueprint  , request , jsonify
+from flask import Blueprint, g, request, jsonify
 from models.database import Tabel_Reacao_Produto, Registrar_produto , db
 sistema_adoro_Ancora = Blueprint("sistema_adoro_ancora" , __name__)
 
 @sistema_adoro_Ancora.route("/sistema_adoro_ancora", methods=["POST"])
 def SistemaAdoroAncora():
     try:
-        dados = request.get_json()
-        id_usuario = dados.get("id_usuario")
+        dados = request.get_json(silent=True)
+        if not isinstance(dados, dict):
+            return jsonify({"status": "erro", "message": "Dados inválidos"}), 400
+        id_usuario = int(g.principal["sub"])
         id_produto = dados.get("id_produto")
 
         if not id_usuario or not id_produto:
@@ -55,7 +57,8 @@ def SistemaAdoroAncora():
             "message": "Adoro atualizado com sucesso"
         })
 
-    except Exception as e:
+    except (KeyError, TypeError, ValueError):
+        return jsonify({"status": "erro", "message": "Identificadores inválidos"}), 400
+    except Exception:
         db.session.rollback()
-        print(f"Erro no sistema adoro: {e}")
-        return jsonify({"status": "erro", "message": str(e)}), 500
+        return jsonify({"status": "erro", "message": "Não foi possível actualizar a reacção"}), 500

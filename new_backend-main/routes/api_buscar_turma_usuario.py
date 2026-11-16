@@ -1,9 +1,11 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, g, jsonify
 from models.database import db, Turma_Aula
 turma_usuario = Blueprint("turma_usuario", __name__)
 
 @turma_usuario.route("/buscar_turma_usuario/<int:userId>", methods=["GET"] )
 def buscar_turma_usuario(userId):
+    if str(userId) != g.principal["sub"]:
+        return jsonify({"error": "Sem permissão para consultar estas turmas"}), 403
     try:
         turmas = Turma_Aula.query.filter(
             Turma_Aula.id_aluno_Turma == str(userId)

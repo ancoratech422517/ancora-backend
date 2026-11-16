@@ -1,91 +1,90 @@
-from flask import Blueprint, current_app, jsonify, request
-from models.database import Registrar_produto, db
-from service.media_metadata import validate_blurhash
-from routes.websocket import socketio
-import os
+from decimal import Decimal, InvalidOperation
+
 import cloudinary.uploader
-import socket
+from flask import Blueprint, current_app, g, jsonify, request
 
+from models.database import Registrar_produto, Usuario, db
+from routes.websocket import socketio
+from service.media_metadata import validate_blurhash
+from service.upload_validation import upload_size, validate_extension
 
-def verificar_internet():
-    try:
-        # Conecte-se ao servidor
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect(('www.google.com', 80))
-        
-        # Verifica se há uma conexão
-        sock.sendall(b"GET / HTTP/1.0\r\n\r\n")
-        
-        # Recebe o código da resposta
-        response = sock.recv(1024)
-        print(response)
-        
-        # Fecha o socket
-        sock.close()
-        return True
-    except Exception as e:
-        print(e)
-        return False
 
 registrar_produto = Blueprint("registrar_produto", __name__)
-
-UPLOAD_FOLDER = os.path.join(os.getcwd(), 'static', 'uploads')
+MAX_PRODUCT_IMAGE_BYTES = 10 * 1024 * 1024
 
 
 @registrar_produto.route("/registrar_produto", methods=["POST"])
 def registrarProduto():
     try:
+        try:
+            user_id = int(g.principal["sub"])
+        except (KeyError, TypeError, ValueError):
+            return jsonify({"error": "Sessão inválida"}), 401
+
+        vendedor = db.session.get(Usuario, user_id)
+        if not vendedor:
+            return jsonify({"error": "Utilizador não encontrado"}), 404
 
         imagem = request.files.get("imagem_produto")
-        nome_produto = request.form.get("nome_produto")
-        descricao_produto = request.form.get("descricao_produto")
-        tipo_produto = request.form.get("tipo_produto")
-        preco_produto = request.form.get("preco_produto")
-        id_usuario = request.form.get("id_usuario")
-        nome_vendedor = request.form.get("nome_vendedor")
+        if not imagem or not imagem.filename:
+            return jsonify({"error": "Seleciona uma imagem para o produto."}), 400
+
         try:
+            validate_extension(imagem, {"jpg", "jpeg", "png", "webp", "gif"})
+            upload_size(imagem, MAX_PRODUCT_IMAGE_BYTES)
             imagem_blurhash = validate_blurhash(request.form.get("imagem_blurhash"))
-        except ValueError as erro:
-            return jsonify({"status": "BlurHash inválido", "erro": str(erro)}), 400
-        produto_url = None
-        if not imagem or imagem.filename == '':
-            return jsonify({"status": "Erro: Nenhuma imagem selecionada!"}), 400
+        except ValueError as error:
+            return jsonify({"error": str(error)}), 400
+
+        nome_produto = request.form.get("nome_produto", "").strip()
+        descricao_produto = request.form.get("descricao_produto", "").strip()
+        tipo_produto = request.form.get("tipo_produto", "").strip()
+        preco_input = request.form.get("preco_produto", "").strip()
+        if not nome_produto or len(nome_produto) > 100:
+            return jsonify({"error": "O nome deve ter entre 1 e 100 caracteres."}), 400
+        if not descricao_produto or len(descricao_produto) > 10_000:
+            return jsonify({"error": "A descrição do produto é inválida."}), 400
+        if not tipo_produto or len(tipo_produto) > 80:
+            return jsonify({"error": "O tipo do produto é inválido."}), 400
         try:
-            register_prosuto:cloudinary = cloudinary.uploader.upload(
+            preco = Decimal(preco_input)
+        except (InvalidOperation, TypeError, ValueError):
+            return jsonify({"error": "O preço do produto é inválido."}), 400
+        if not preco.is_finite() or preco <= 0 or preco > Decimal("1000000000000"):
+            return jsonify({"error": "O preço do produto é inválido."}), 400
+
+        try:
+            upload_result = cloudinary.uploader.upload(
                 imagem,
-                folder = "usuario/produto",
-                overwrite = True,
-                resource_type = "image"
+                folder="usuario/produto",
+                resource_type="image",
             )
+        except Exception as error:
+            current_app.logger.warning(
+                "Falha no upload da imagem do produto (%s)", type(error).__name__
+            )
+            return jsonify({
+                "error": "O serviço de imagens está temporariamente indisponível."
+            }), 503
 
-            produto_url = register_prosuto.get("secure_url")
-            print("arquivo enviado no cloudinary")
-        except Exception as erro:
-            print(f"erro ao enviar o arquivo no cloudinary:{erro}")
-            novo_caminho = "static/foto_produto"
-            novo_nome_produto = imagem.filename.replace(" ","_")
-            if not os.path.exists(novo_caminho):
-                os.makedirs(novo_caminho)
-            imagem.seek(0)
-            imagem.save(os.path.join(novo_caminho,novo_nome_produto))
-            produto_url = f"http://127.0.0.1:5000/{novo_caminho}/{novo_nome_produto}"
+        produto_url = upload_result.get("secure_url")
+        if not isinstance(produto_url, str) or not produto_url.startswith("https://"):
+            current_app.logger.error("Cloudinary não confirmou o URL HTTPS do produto")
+            return jsonify({"error": "Não foi possível confirmar a imagem do produto."}), 502
 
-        # Registrar no banco
-        dados = {
-            "nome_produto": nome_produto,
-            "descricao_produto": descricao_produto,
-            "tipo_produto": tipo_produto,
-            "preco_produto": preco_produto,
-            "url_imagem_produto": produto_url,
-            "url_imagem_produto_blurhash": imagem_blurhash,
-            "id_usuario": id_usuario,
-            "nome_vendedor":nome_vendedor
-        }
-        novo_produto = Registrar_produto(**dados)
+        novo_produto = Registrar_produto(
+            nome_produto=nome_produto,
+            descricao_produto=descricao_produto,
+            tipo_produto=tipo_produto,
+            preco_produto=str(preco.normalize()),
+            url_imagem_produto=produto_url,
+            url_imagem_produto_blurhash=imagem_blurhash,
+            id_usuario=user_id,
+            nome_vendedor=vendedor.nome,
+        )
         db.session.add(novo_produto)
         db.session.commit()
 
-        # ====================== EMIT CORRIGIDO (sem broadcast) ======================
         produto_data = {
             "id": novo_produto.id,
             "nome": novo_produto.nome_produto,
@@ -95,25 +94,15 @@ def registrarProduto():
             "url_imagem_produto": novo_produto.url_imagem_produto,
             "url_imagem_produto_blurhash": novo_produto.url_imagem_produto_blurhash,
             "id_usuario": novo_produto.id_usuario,
-            "data_registro": str(getattr(novo_produto, 'data_registro', None))
+            "data_registro": str(getattr(novo_produto, "data_registro", None)),
         }
-
-        # Forma correta e compatível com todas as versões recentes:
         socketio.emit("produto_registrado", produto_data, namespace="/")
-
-        current_app.logger.info(
-            "Produto emitido via socket: %s",
-            novo_produto.nome_produto,
-        )
-        # ===========================================================================
-
         return jsonify({
-            "status": "produto registrado com sucesso!", 
+            "status": "produto registrado com sucesso!",
             "url": produto_url,
-            "produto": produto_data
-        })
-    
-    except Exception as erro:
-        print(f"Erro ao registrar o produto caiu aqui: {erro}")
+            "produto": produto_data,
+        }), 200
+    except Exception:
         db.session.rollback()
-        return jsonify({"status": str(erro)}), 500
+        current_app.logger.exception("Falha ao registar produto")
+        return jsonify({"error": "Não foi possível registar o produto."}), 500

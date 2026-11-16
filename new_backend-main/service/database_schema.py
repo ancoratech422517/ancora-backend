@@ -17,8 +17,11 @@ def ensure_columns(engine, table_name, columns):
     if not missing_columns:
         return
 
+    preparer = engine.dialect.identifier_preparer
+    quoted_table = preparer.quote(table_name)
     with engine.begin() as connection:
         for name, sql_type in missing_columns.items():
+            quoted_column = preparer.quote(name)
             connection.execute(text(
-                f"ALTER TABLE {table_name} ADD COLUMN {name} {sql_type}"
+                f"ALTER TABLE {quoted_table} ADD COLUMN {quoted_column} {sql_type}"
             ))

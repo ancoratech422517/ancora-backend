@@ -2,10 +2,13 @@ from flask_socketio import join_room, leave_room, emit
 from routes.websocket import socketio
 from datetime import datetime 
 import json
+import os
+from urllib.parse import urlsplit
 from models.database import Menssagens, db, Amigo, Usuario
 from service.pushy_service import enviar_notificacao_pushy
 from sqlalchemy.exc import IntegrityError
 from routes.websoket_conectUser import get_user_id_from_cookie
+from service.friend_access import users_are_unblocked_friends
 
 @socketio.on("enviar_menssagem_na_sala")
 def enviar_menssagem_na_sala(data):
@@ -28,6 +31,8 @@ def enviar_menssagem_na_sala(data):
     ).first()
     if not amizade:
         return {"success": False, "error": "Sem acesso a esta conversa"}
+    if not users_are_unblocked_friends(int(authenticated_user_id), int(amizade.id_amigo)):
+        return {"success": False, "error": "Esta conversa está bloqueada"}
 
     usuario = db.session.get(Usuario, int(authenticated_user_id))
     amigo = db.session.get(Usuario, amizade.id_amigo)
@@ -35,6 +40,12 @@ def enviar_menssagem_na_sala(data):
         return {"success": False, "error": "Utilizador da conversa não encontrado"}
 
     menssagem = data.get("menssagem")
+    if (
+        not isinstance(menssagem, str)
+        or not menssagem.strip()
+        or len(menssagem) > 900_000
+    ):
+        return {"success": False, "error": "Mensagem vazia ou demasiado grande"}
     id_remitente = usuario.id
     nome_remitente = usuario.nome
     foto_remitente = usuario.foto_usuario
@@ -95,28 +106,53 @@ def enviar_menssagem_na_sala(data):
 
     dados_arquivo = {}
     try:
-        conteudo = json.loads(menssagem) if isinstance(menssagem, str) else {}
-        if isinstance(conteudo, dict) and conteudo.get("isFile"):
-            if not conteudo.get("fileUrl") or not conteudo.get("publicId"):
-                print("arquivo recebido sem fileUrl/publicId; mensagem não será persistida")
-                return {"success": False, "error": "Metadados do arquivo incompletos"}
-
-            try:
-                tamanho_arquivo = int(conteudo.get("fileSize") or 0)
-            except (TypeError, ValueError):
-                tamanho_arquivo = 0
-
-            dados_arquivo = {
-                "tipo": "arquivo",
-                "file_url": conteudo.get("fileUrl"),
-                "public_id": conteudo.get("publicId"),
-                "file_name": conteudo.get("fileName"),
-                "mime_type": conteudo.get("mimeType"),
-                "file_size": tamanho_arquivo
-            }
+        conteudo = json.loads(menssagem)
     except (TypeError, ValueError):
-        pass
+        conteudo = None
 
+    if isinstance(conteudo, dict) and conteudo.get("isFile"):
+        file_url = conteudo.get("fileUrl")
+        public_id = conteudo.get("publicId")
+        file_name = conteudo.get("fileName")
+        mime_type = conteudo.get("mimeType")
+        resource_type = conteudo.get("resourceType")
+        cloud_name = os.getenv("CLOUDINARY_CLOUD_NAME", "").strip()
+        parsed_url = urlsplit(file_url if isinstance(file_url, str) else "")
+        try:
+            tamanho_arquivo = int(conteudo.get("fileSize") or 0)
+        except (TypeError, ValueError):
+            tamanho_arquivo = 0
+        if (
+            not cloud_name
+            or parsed_url.scheme != "https"
+            or parsed_url.netloc != "res.cloudinary.com"
+            or parsed_url.query
+            or parsed_url.fragment
+            or (not isinstance(resource_type, str) or resource_type not in {"image", "video", "raw"})
+            or not parsed_url.path.startswith(f"/{cloud_name}/{resource_type}/upload/")
+            or not isinstance(public_id, str)
+            or not public_id.strip()
+            or len(public_id) > 255
+            or not isinstance(file_name, str)
+            or not file_name.strip()
+            or len(file_name) > 255
+            or not isinstance(mime_type, str)
+            or len(mime_type) > 255
+            or tamanho_arquivo <= 0
+            or tamanho_arquivo > 256 * 1024 * 1024
+        ):
+            return {"success": False, "error": "Anexo inválido"}
+
+        dados_arquivo = {
+            "tipo": "arquivo",
+            "file_url": file_url,
+            "public_id": public_id,
+            "file_name": file_name,
+            "mime_type": mime_type or "application/octet-stream",
+            "file_size": tamanho_arquivo,
+        }
+    elif not menssagem.startswith("data:audio") and len(menssagem) > 10_000:
+        return {"success": False, "error": "A mensagem excede o limite permitido"}
     dados = {
         "nossa_sala": nossa_sala,
         "menssagem": menssagem,

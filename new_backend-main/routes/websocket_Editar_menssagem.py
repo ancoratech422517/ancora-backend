@@ -1,6 +1,7 @@
-from models.database import Menssagens , db
+from models.database import Menssagens, db, Amigo
 from routes.websocket import socketio
 from routes.websoket_conectUser import get_user_id_from_cookie
+from service.friend_access import users_are_unblocked_friends
 
 
 @socketio.on("editar_menssagem")
@@ -16,6 +17,8 @@ def Editar_menssagem(data):
         return {"success": False, "error": "Sessão expirada. Inicie sessão novamente"}
     if not id_menssagem or not sala_menssagem:
         return {"success": False, "error": "Mensagem ou conversa inválida"}
+    if not isinstance(sala_menssagem, str):
+        return {"success": False, "error": "Mensagem ou conversa inválida"}
     if not isinstance(novo_conteudo, str) or not novo_conteudo.strip():
         return {"success": False, "error": "A mensagem não pode ficar vazia"}
     try:
@@ -23,6 +26,15 @@ def Editar_menssagem(data):
         usuario_id = int(usuario_id)
     except (TypeError, ValueError):
         return {"success": False, "error": "Identificador de mensagem inválido"}
+
+    amizade = Amigo.query.filter_by(
+        id_usuario=usuario_id,
+        nossa_sala=sala_menssagem,
+    ).first()
+    if not amizade or not users_are_unblocked_friends(usuario_id, int(amizade.id_amigo)):
+        return {"success": False, "error": "Sem acesso a esta conversa"}
+    if len(novo_conteudo) > 10_000:
+        return {"success": False, "error": "A mensagem excede o limite permitido"}
 
     editar_menssagem = Menssagens.query.filter(
         Menssagens.id == id_menssagem , 

@@ -21,7 +21,8 @@ export default function Conteiner_Animacao_Chamada_Grupo(){
 
         set_Dados_Live_Ancora({
             sala_Turma: DadosChamadaGrupo.sala_Turma,
-            nome_Turma: DadosChamadaGrupo.nome_turma
+            nome_Turma: DadosChamadaGrupo.nome_turma,
+            id_agenda_live: DadosChamadaGrupo.id_agenda_live
         })
         set_estado_conteiner_live(true)
     }

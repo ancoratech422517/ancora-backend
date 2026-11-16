@@ -14,7 +14,7 @@ def VistoUsuario():
 
         get_data_table_reacao_product = Tabel_Reacao_Produto.query.filter(
             Tabel_Reacao_Produto.id_usuario == id_usuario,
-            Tabel_Reacao_Produto.id_produto == id_produto
+            Tabel_Reacao_Produto.id_produto == str(id_produto)
         ).first()
         
         if get_data_table_reacao_product:

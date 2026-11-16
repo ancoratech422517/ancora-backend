@@ -13,6 +13,8 @@ def mensagem_privado_autentificacao():
         usuario_id = int(g.principal["sub"])
         telefone = normalizar_telefone(data.get('telefone_credencias'))
         senha = data.get('senha_credencias')
+        if not isinstance(senha, str) or not senha or len(senha) > 128:
+            return jsonify({"resposta": False, "message": "Credenciais inválidas"}), 401
         usuario = db.session.get(Usuario, usuario_id)
         if not usuario or usuario.telefone != telefone:
             return jsonify({"resposta": False, "message": "Credenciais inválidas"}), 401

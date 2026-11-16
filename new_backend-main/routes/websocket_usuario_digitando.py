@@ -2,6 +2,7 @@ from routes.websocket import socketio
 from flask_socketio import emit
 from models.database import Amigo
 from routes.websoket_conectUser import get_user_id_from_cookie
+from service.friend_access import users_are_unblocked_friends
 
 @socketio.on("digitando")
 def handle_digitando(data):
@@ -20,10 +21,13 @@ def handle_digitando(data):
         id_usuario=id_remitente,
         id_amigo=id_destinatario,
     ).first()
-    if not amizade:
+    if not amizade or not users_are_unblocked_friends(id_remitente, id_destinatario):
         return
-    esta_digitando = data.get("digitando") # True ou False
-    ultima_menssagem = data.get("ultima_menssagem")
+    esta_digitando = data.get("digitando") is True
+    ultima_menssagem = data.get("ultima_menssagem", "")
+    if not isinstance(ultima_menssagem, str):
+        ultima_menssagem = ""
+    ultima_menssagem = ultima_menssagem[:500]
 
     nossa_sala = amizade.nossa_sala
 

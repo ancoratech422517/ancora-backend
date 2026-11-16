@@ -1,6 +1,6 @@
 import { useUserStore } from "../../../useUseSotore";
 
-export async function Conteiner_Chamada_Grupo(sala) {
+export async function Conteiner_Chamada_Grupo(sala, agendaId) {
     const store = useUserStore.getState();
     let socket = store.socket;
 
@@ -34,7 +34,7 @@ export async function Conteiner_Chamada_Grupo(sala) {
                 reject(new Error("O servidor não confirmou o envio da chamada"));
             }, 10000);
 
-            socket.emit("chamada_grupo", { sala, id_remitente: idRemetente }, (resposta) => {
+            socket.emit("chamada_grupo", { sala, agenda_id: agendaId, id_remitente: idRemetente }, (resposta) => {
                 clearTimeout(timeout);
                 if (!resposta?.ok) {
                     reject(new Error(resposta?.erro || "O servidor recusou a chamada"));

@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, g, jsonify
 from models.database import db, Registrar_produto, Usuario, Tabel_Reacao_Produto
 from sqlalchemy import cast, Integer   # ← Adicionado
 
@@ -6,6 +6,8 @@ Todos_produtos = Blueprint("Todos_produtos", __name__)
 
 @Todos_produtos.route("/buscar_todos_produtos/<int:id_usuario>", methods=["GET"])
 def buscar_todos_produtos(id_usuario):
+    if str(id_usuario) != g.principal["sub"]:
+        return jsonify({"error": "Sem permissão para consultar estas reações"}), 403
     try:
         # Fazemos um JOIN para trazer os dados do vendedor 
         # e um OUTERJOIN para as reações (porque nem todo produto tem reação)

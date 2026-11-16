@@ -127,6 +127,25 @@ export default function Conteiner5WindowConteinerLeft () {
 
                 <button
                     type="button"
+                    className="btn3 Conteiner5WindowConteinerLeftCRM Conteiner5WindowConteinerLeftAcademy"
+                    onClick={() => setAtivar("academy")}
+                    aria-label="Abrir Âncora Academy"
+                >
+                    <span className="Conteiner5WindowConteinerLeftCRMIcon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="m2 8 10-5 10 5-10 5L2 8Z" />
+                            <path d="M6 10v5c3.5 3 8.5 3 12 0v-5M22 8v6" />
+                        </svg>
+                    </span>
+                    <span className="Conteiner5WindowConteinerLeftCRMTexto">
+                        <strong>Âncora Academy</strong>
+                        <small>Turmas, aulas e aprendizagem</small>
+                    </span>
+                    <span className="Conteiner5WindowConteinerLeftCRMSeta" aria-hidden="true">›</span>
+                </button>
+
+                <button
+                    type="button"
                     className="btn3 Conteiner5WindowConteinerLeftCRM"
                     onClick={(event) => void ClicarButtom(event, setAtivar, "conteiner3")}
                     aria-label="Abrir CRM"

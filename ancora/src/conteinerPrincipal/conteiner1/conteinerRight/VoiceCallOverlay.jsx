@@ -5,12 +5,13 @@ import {
   LiveKitRoom,
   RoomAudioRenderer,
   StartAudio,
-  VideoConference,
   useRoomContext,
 } from "@livekit/components-react";
+import { RoomEvent } from "livekit-client";
 import { useUserStore } from "../../../useUseSotore";
 import { fetchComAuth } from "../../../utils/api";
 import { chamadaRecebidaDePush } from "./voiceCalls";
+import SunsetLiveMeeting from "./SunsetLiveMeeting";
 import "./css/VoiceCallOverlay.css";
 
 function atualizarChamada(callId, atualizar) {
@@ -19,6 +20,53 @@ function atualizarChamada(callId, atualizar) {
       ? { chamadaVozAtiva: atualizar(state.chamadaVozAtiva) }
       : state
   ));
+}
+
+function CallRoomPresence({ callId }) {
+  const room = useRoomContext();
+
+  useEffect(() => {
+    const atualizarParticipantes = () => {
+      const participants = Array.from(room.remoteParticipants.values());
+      const identities = participants.map((participant) => participant.identity);
+      const connectedPeerIds = participants
+        .map((participant) => participant.identity.match(/^user-(\d+)$/)?.[1])
+        .filter(Boolean);
+      useUserStore.setState((state) => {
+        const chamada = state.chamadaVozAtiva;
+        if (!chamada || chamada.callId !== callId) return state;
+        const atuais = chamada.remoteParticipantIdentities || [];
+        if (
+          atuais.length === identities.length
+          && atuais.every((identity, index) => identity === identities[index])
+          && connectedPeerIds.every((peerId) => (chamada.acceptedPeerIds || []).includes(peerId))
+        ) return state;
+        return {
+          chamadaVozAtiva: {
+            ...chamada,
+            remoteParticipantIdentities: identities,
+            pendingPeerIds: (chamada.pendingPeerIds || []).filter(
+              (peerId) => !connectedPeerIds.includes(peerId),
+            ),
+            acceptedPeerIds: [...new Set([
+              ...(chamada.acceptedPeerIds || []),
+              ...connectedPeerIds,
+            ])],
+          },
+        };
+      });
+    };
+
+    atualizarParticipantes();
+    room.on(RoomEvent.ParticipantConnected, atualizarParticipantes);
+    room.on(RoomEvent.ParticipantDisconnected, atualizarParticipantes);
+    return () => {
+      room.off(RoomEvent.ParticipantConnected, atualizarParticipantes);
+      room.off(RoomEvent.ParticipantDisconnected, atualizarParticipantes);
+    };
+  }, [callId, room]);
+
+  return null;
 }
 
 function AudioCallControls({
@@ -45,7 +93,7 @@ function AudioCallControls({
 
   return (
     <>
-      <RoomAudioRenderer muted={!speakerEnabled} />
+      {tipoChamada !== "video" && <RoomAudioRenderer muted={!speakerEnabled} />}
       <div className="voice-call-connected-controls">
         <StartAudio label="Ativar áudio da chamada" />
         <div className="voice-call-controls">
@@ -62,19 +110,21 @@ function AudioCallControls({
                 : <><rect x="9" y="3" width="6" height="12" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></>}
             </svg>
           </button>
-          <button
-            type="button"
-            className={`voice-call-button${speakerEnabled ? " is-on" : ""}`}
-            aria-label={speakerEnabled ? "Desativar áudio" : "Ativar áudio"}
-            aria-pressed={speakerEnabled}
-            onClick={() => onSpeakerChange((enabled) => !enabled)}
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              {speakerEnabled
-                ? <path d="M4 9v6h4l5 4V5L8 9H4zm13-1a5 5 0 0 1 0 8" />
-                : <path d="M4 9v6h4l5 4V5L8 9H4zm14-1 4 8m0-8-4 8" />}
-            </svg>
-          </button>
+          {tipoChamada !== "video" && (
+            <button
+              type="button"
+              className={`voice-call-button${speakerEnabled ? " is-on" : ""}`}
+              aria-label={speakerEnabled ? "Desativar áudio" : "Ativar áudio"}
+              aria-pressed={speakerEnabled}
+              onClick={() => onSpeakerChange((enabled) => !enabled)}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                {speakerEnabled
+                  ? <path d="M4 9v6h4l5 4V5L8 9H4zm13-1a5 5 0 0 1 0 8" />
+                  : <path d="M4 9v6h4l5 4V5L8 9H4zm14-1 4 8m0-8-4 8" />}
+              </svg>
+            </button>
+          )}
           <button
             type="button"
             className="voice-call-button"
@@ -219,21 +269,55 @@ export default function VoiceCallOverlay() {
       chamadaRecebidaDePush({ ...convite, type: "voice_call" });
     };
     const receberEstado = (estado) => {
+      const chamadaAtual = useUserStore.getState().chamadaVozAtiva;
+      if (!chamadaAtual || chamadaAtual.callId !== estado?.call_id) return;
+
       atualizarChamada(estado?.call_id, (atual) => {
         if (estado.status === "accepted") {
+          const peerId = String(estado.peer_id || atual.peerId);
           return {
             ...atual,
-            status: "connecting",
+            status: atual.status === "connected" ? "connected" : "connecting",
             type: estado.call_type || atual?.type || "voice",
-            peerId: String(estado.peer_id || atual.peerId),
+            peerId,
+            authorizationPeerId: atual.authorizationPeerId || atual.peerId,
+            pendingPeerIds: (atual.pendingPeerIds || []).filter((id) => id !== peerId),
+            acceptedPeerIds: [...new Set([...(atual.acceptedPeerIds || []), peerId])],
             peerName: estado.peer_name || atual.peerName,
           };
         }
-        if (estado.status === "rejected") {
-          return { ...atual, status: "error", error: "A chamada foi recusada." };
-        }
-        if (estado.status === "ended") {
-          return { ...atual, status: "error", error: "A chamada foi encerrada." };
+        if (estado.status === "rejected" || estado.status === "ended") {
+          const peerId = estado.peer_id == null ? null : String(estado.peer_id);
+          const peerIdentity = peerId == null ? null : `user-${peerId}`;
+          const remoteParticipants = atual.remoteParticipantIdentities || [];
+          const remainingParticipants = peerIdentity
+            ? remoteParticipants.filter((identity) => identity !== peerIdentity)
+            : remoteParticipants;
+          const pendingPeerIds = (atual.pendingPeerIds || []).filter((id) => id !== peerId);
+          const acceptedPeerIds = (atual.acceptedPeerIds || []).filter((id) => id !== peerId);
+
+          if (
+            remainingParticipants.length > 0
+            || pendingPeerIds.length > 0
+            || acceptedPeerIds.length > 0
+          ) {
+            return {
+              ...atual,
+              pendingPeerIds,
+              acceptedPeerIds,
+              remoteParticipantIdentities: remainingParticipants,
+            };
+          }
+          return {
+            ...atual,
+            status: "error",
+            pendingPeerIds,
+            acceptedPeerIds,
+            remoteParticipantIdentities: remainingParticipants,
+            error: estado.status === "rejected"
+              ? "A chamada foi recusada."
+              : "A chamada foi encerrada.",
+          };
         }
         return atual;
       });
@@ -299,8 +383,15 @@ export default function VoiceCallOverlay() {
     );
   }, []);
 
+  const authorizationPeerId = chamada?.authorizationPeerId || chamada?.peerId;
+
   useEffect(() => {
-    if (!chamada?.callId || !usuario?.id || !["connecting", "connected"].includes(chamada.status)) return undefined;
+    if (
+      !chamada?.callId
+      || !authorizationPeerId
+      || !usuario?.id
+      || chamada.status !== "connecting"
+    ) return undefined;
     let cancelada = false;
 
     const conectar = async () => {
@@ -310,7 +401,7 @@ export default function VoiceCallOverlay() {
           body: JSON.stringify({
             callId: chamada.callId,
             roomName: chamada.roomName,
-            peerId: chamada.peerId,
+            peerId: authorizationPeerId,
             callType: chamada.type || "voice",
           }),
         });
@@ -334,7 +425,7 @@ export default function VoiceCallOverlay() {
     return () => {
       cancelada = true;
     };
-  }, [chamada?.callId, chamada?.status, chamada?.roomName, chamada?.peerId, chamada?.type, usuario?.id, urlBancoDeDados]);
+  }, [chamada?.callId, chamada?.status, chamada?.roomName, authorizationPeerId, chamada?.type, usuario?.id, urlBancoDeDados]);
 
   useEffect(() => {
     if (chamada?.status !== "connected") {
@@ -400,7 +491,12 @@ export default function VoiceCallOverlay() {
         return;
       }
       pararSomChamada();
-      atualizarChamada(chamada.callId, (atual) => ({ ...atual, status: "connecting" }));
+      atualizarChamada(chamada.callId, (atual) => ({
+        ...atual,
+        status: "connecting",
+        pendingPeerIds: (atual.pendingPeerIds || []).filter((id) => id !== String(atual.peerId)),
+        acceptedPeerIds: [...new Set([...(atual.acceptedPeerIds || []), String(atual.peerId)])],
+      }));
     });
   };
 
@@ -420,13 +516,23 @@ export default function VoiceCallOverlay() {
   const convidarAmigoParaChamada = () => {
     if (!chamada || !socket?.connected || !amigoSelecionado) return;
 
+    const peerId = String(amigoSelecionado);
+    atualizarChamada(chamada.callId, (atual) => ({
+      ...atual,
+      pendingPeerIds: [...new Set([...(atual.pendingPeerIds || []), peerId])],
+    }));
+
     socket.emit("chamada_voz_iniciar", {
       call_id: chamada.callId,
       room_name: chamada.roomName,
-      recipient_id: String(amigoSelecionado),
+      recipient_id: peerId,
       call_type: chamada.type || "voice",
     }, (resposta) => {
       if (!resposta?.ok) {
+        atualizarChamada(chamada.callId, (atual) => ({
+          ...atual,
+          pendingPeerIds: (atual.pendingPeerIds || []).filter((id) => id !== peerId),
+        }));
         console.error("Não foi possível convidar para a chamada:", resposta?.erro || "Erro desconhecido");
         return;
       }
@@ -464,9 +570,40 @@ export default function VoiceCallOverlay() {
     (amigo) => String(amigo?.id_amigo) !== String(chamada.peerId)
       && String(amigo?.id_amigo) !== String(usuario?.id),
   );
+  const painelConvites = mostrarConvites && (
+    <div className="voice-call-invite-panel">
+      <label htmlFor="voice-call-invite">Convidar para a chamada</label>
+      <select
+        id="voice-call-invite"
+        value={amigoSelecionado}
+        onChange={(evento) => setAmigoSelecionado(evento.target.value)}
+      >
+        <option value="">Selecione um amigo</option>
+        {amigosParaConvidar.map((amigo) => (
+          <option key={amigo.id_amigo} value={String(amigo.id_amigo)}>
+            {amigo.nome_amigo}
+          </option>
+        ))}
+      </select>
+      <div className="voice-call-controls voice-call-invite-actions">
+        <button type="button" className="voice-call-button voice-call-button--accept" onClick={convidarAmigoParaChamada}>
+          Convidar
+        </button>
+        <button type="button" className="voice-call-button" onClick={() => setMostrarConvites(false)}>
+          Fechar
+        </button>
+      </div>
+    </div>
+  );
+  const chamadaEmVideo = chamada.type === "video";
 
   return (
-    <div className="voice-call-overlay" role="dialog" aria-modal="true" aria-label="Chamada de voz">
+    <div
+      className={`voice-call-overlay${mostrarControles && chamadaEmVideo ? " voice-call-overlay--meeting" : ""}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label={chamadaEmVideo ? "Chamada de vídeo" : "Chamada de voz"}
+    >
       {mostrarControles ? (
         <LiveKitRoom
           token={token}
@@ -474,62 +611,73 @@ export default function VoiceCallOverlay() {
           connect
           audio
           video={chamada?.type === "video"}
+          style={chamadaEmVideo ? { width: "100%", height: "100%" } : undefined}
           onConnected={conectado}
           onDisconnected={encerrarPorDesconexao}
           onError={(erro) => {
             console.error("Erro na conexão LiveKit de voz:", erro);
-            atualizarChamada(chamada.callId, (atual) => ({
-              ...atual,
-              status: "error",
-              error: "A conexão de voz foi interrompida.",
-            }));
+            const chamadaAtual = useUserStore.getState().chamadaVozAtiva;
+            if (chamadaAtual?.callId === chamada.callId && chamadaAtual.status !== "connected") {
+              atualizarChamada(chamada.callId, (atual) => ({
+                ...atual,
+                status: "error",
+                error: "Não foi possível estabelecer a conexão de voz.",
+              }));
+            }
           }}
           data-lk-theme="default"
         >
-          {chamada?.type === "video" && <VideoConference />}
-          <VoiceCallCard
-            chamada={chamada}
-            statusTexto={statusTexto}
-            fecharChamada={fecharChamada}
-          >
-            <div className="voice-call-mobile-stack">
-              <AudioCallControls
-                muted={microfoneSilenciado}
-                onMutedChange={setMicrofoneSilenciado}
-                speakerEnabled={altoFalanteAtivo}
-                onSpeakerChange={setAltoFalanteAtivo}
-                onHangup={() => fecharChamada("ended")}
-                tipoChamada={chamada.type || "voice"}
-                onToggleTipo={alternarTipoChamada}
-                onInviteUser={() => setMostrarConvites((ativo) => !ativo)}
-              />
-              {mostrarConvites && (
-                <div className="voice-call-invite-panel">
-                  <label htmlFor="voice-call-invite">Convidar para a chamada</label>
-                  <select
-                    id="voice-call-invite"
-                    value={amigoSelecionado}
-                    onChange={(evento) => setAmigoSelecionado(evento.target.value)}
+          <CallRoomPresence callId={chamada.callId} />
+          {chamadaEmVideo ? (
+            <SunsetLiveMeeting
+              nomeTurma={`Chamada com ${chamada.peerName || "Participante"}`}
+              onLeave={() => fecharChamada("ended")}
+              toolbarActions={(
+                <>
+                  <button
+                    type="button"
+                    className="sunset-control"
+                    onClick={() => alternarTipoChamada("voice")}
+                    aria-label="Voltar para chamada de voz"
+                    title="Voltar para chamada de voz"
                   >
-                    <option value="">Selecione um amigo</option>
-                    {amigosParaConvidar.map((amigo) => (
-                      <option key={amigo.id_amigo} value={String(amigo.id_amigo)}>
-                        {amigo.nome_amigo}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="voice-call-controls voice-call-invite-actions">
-                    <button type="button" className="voice-call-button voice-call-button--accept" onClick={convidarAmigoParaChamada}>
-                      Convidar
-                    </button>
-                    <button type="button" className="voice-call-button" onClick={() => setMostrarConvites(false)}>
-                      Fechar
-                    </button>
-                  </div>
-                </div>
+                    🎙️
+                  </button>
+                  <button
+                    type="button"
+                    className="sunset-control"
+                    onClick={() => setMostrarConvites((ativo) => !ativo)}
+                    aria-label="Convidar amigo para a chamada"
+                    aria-expanded={mostrarConvites}
+                    title="Convidar amigo"
+                  >
+                    ＋
+                  </button>
+                </>
               )}
-            </div>
-          </VoiceCallCard>
+              floatingPanel={painelConvites}
+            />
+          ) : (
+            <VoiceCallCard
+              chamada={chamada}
+              statusTexto={statusTexto}
+              fecharChamada={fecharChamada}
+            >
+              <div className="voice-call-mobile-stack">
+                <AudioCallControls
+                  muted={microfoneSilenciado}
+                  onMutedChange={setMicrofoneSilenciado}
+                  speakerEnabled={altoFalanteAtivo}
+                  onSpeakerChange={setAltoFalanteAtivo}
+                  onHangup={() => fecharChamada("ended")}
+                  tipoChamada={chamada.type || "voice"}
+                  onToggleTipo={alternarTipoChamada}
+                  onInviteUser={() => setMostrarConvites((ativo) => !ativo)}
+                />
+                {painelConvites}
+              </div>
+            </VoiceCallCard>
+          )}
         </LiveKitRoom>
       ) : (
         <VoiceCallCard

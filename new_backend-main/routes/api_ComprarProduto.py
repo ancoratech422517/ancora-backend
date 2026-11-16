@@ -30,7 +30,7 @@ def Comprar_produto():
             return jsonify({"status": "Não pode comprar o seu próprio produto"}), 400
 
         telefone_conta_cliente = data.get("telefone_conta_cliente")
-        if not isinstance(telefone_conta_cliente, str) or not telefone_conta_cliente.strip():
+        if not isinstance(telefone_conta_cliente, str) or not telefone_conta_cliente.strip() or len(telefone_conta_cliente.strip()) > 100:
             return jsonify({"status": "A conta do cliente é obrigatória"}), 400
 
         nome_cliente = cliente.nome

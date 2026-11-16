@@ -1,6 +1,7 @@
 from urllib.parse import urlencode
 from uuid import UUID
 
+from flask import request
 from routes.websocket import socketio
 from flask_socketio import join_room, leave_room
 from routes.websoket_conectUser import (
@@ -8,8 +9,9 @@ from routes.websoket_conectUser import (
     usuario_esta_na_sala,
     usuarios_online,
 )
-from models.database import Amigo, Turma_Aula, Usuario, db
+from models.database import Agendar_Live_Turma, Amigo, Turma_Aula, Usuario, db
 from service.pushy_service import FRONTEND_PUBLIC_URL, enviar_notificacao_pushy
+from service.lifecycle_cleanup import registrar_entrada_live, registrar_saida_live
 
 
 def _sala_live(sala_turma):
@@ -68,7 +70,11 @@ def entrar_live_turma(data):
     if not eh_membro:
         return {"ok": False, "erro": "Utilizador não pertence a esta turma"}
 
+    agenda_id = data.get("agenda_id") if isinstance(data, dict) else None
     join_room(_sala_live(sala_turma))
+    if not registrar_entrada_live(request.sid, sala_turma, agenda_id):
+        leave_room(_sala_live(sala_turma))
+        return {"ok": False, "erro": "Agendamento da live inválido"}
     return {"ok": True}
 
 
@@ -78,7 +84,11 @@ def sair_live_turma(data):
     if not sala_turma or not get_user_id_from_cookie():
         return {"ok": False, "erro": "Sala ou utilizador não informado"}
 
-    leave_room(_sala_live(sala_turma))
+    sala_live = _sala_live(sala_turma)
+    was_member = sala_live in socketio.server.rooms(request.sid, namespace="/")
+    leave_room(sala_live)
+    agenda_id = data.get("agenda_id") if isinstance(data, dict) else None
+    registrar_saida_live(request.sid, sala_turma, was_member=was_member, agenda_id=agenda_id)
     return {"ok": True}
 
 
@@ -89,6 +99,20 @@ def chamada_grupo(data):
         idRemitente = get_user_id_from_cookie()
         if not salaTurma or not idRemitente:
             return {"ok": False, "erro": "Sala ou remetente não informado"}
+
+        agenda_id = data.get("agenda_id") if isinstance(data, dict) else None
+        if agenda_id is not None:
+            try:
+                agenda_id = int(agenda_id)
+            except (TypeError, ValueError):
+                return {"ok": False, "erro": "Agendamento inválido"}
+            agenda = Agendar_Live_Turma.query.filter_by(
+                id=agenda_id,
+                sala_turma_agenda=salaTurma,
+                id_aluno_turma_agenda_live=str(idRemitente),
+            ).first()
+            if agenda is None:
+                return {"ok": False, "erro": "Agendamento não pertence a esta live"}
 
         nossa_sala = Turma_Aula.query.filter(
             Turma_Aula.sala_Turma == salaTurma
@@ -124,7 +148,8 @@ def chamada_grupo(data):
             dados_sala = {
                 "nome_turma": aluno.nome_Turma,
                 "imagem_perfil_Turma": aluno.imagem_perfil_Turma,
-                "sala_Turma": aluno.sala_Turma
+                "sala_Turma": aluno.sala_Turma,
+                "id_agenda_live": agenda_id,
             }
             online = bool(usuarios_online.get(id_aluno))
             if online:
@@ -140,7 +165,8 @@ def chamada_grupo(data):
                     "notification_type": "live_turma",
                     "room": salaTurma,
                     "sala_Turma": salaTurma,
-                    "nome_turma": aluno.nome_Turma
+                    "nome_turma": aluno.nome_Turma,
+                    "id_agenda_live": agenda_id,
                 },
                 sala_ativa=sala_live
             )

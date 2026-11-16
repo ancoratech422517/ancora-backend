@@ -1,4 +1,4 @@
-from flask import Blueprint , request , jsonify
+from flask import Blueprint , current_app, request , jsonify
 from models.database import Usuario , Amigo , Registrar_produto , Turma_Aula
 
 Buscar_Dados_Perfil_Usuario = Blueprint("buscar_dados_perfil_usuario" , __name__)
@@ -43,9 +43,9 @@ def buscar_dados_perfil_usuario():
         else:
             return jsonify({"dados_usuario":[], "resposta":"infelizmente não tem nenhum usuario com este ID"})
 
-    except Exception as erro:
-        print(f"erro ao buscar os dados do perfil do usuario:{erro}")
-        return jsonify({"dados_usuario":{} , "resposta":f"ouve um erro aveçino:{erro}"})
+    except Exception:
+        current_app.logger.exception("Falha ao consultar perfil de utilizador")
+        return jsonify({"dados_usuario": {}, "resposta": "Não foi possível consultar o perfil."}), 500
     
 
 

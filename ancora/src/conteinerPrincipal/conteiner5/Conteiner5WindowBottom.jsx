@@ -23,6 +23,7 @@ export default function Conteiner5WindowBottom () {
     const [Estado , setEstado] = useState("none")
     const [estadoCarteiraDeposito , setEstadoCarteiraDeposito] = useState("cont1")
     const [estadoMenssageBaner , setEstadoMenssageBaner] = useState("none")
+    const [mensagemErroDeposito, setMensagemErroDeposito] = useState("")
     const getUrlVideo = (url) => {
       if (!url) return "";
         // Verifica se a URL já começa com http ou https
@@ -48,6 +49,12 @@ export default function Conteiner5WindowBottom () {
                             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
                             </svg>
                         </div>
+                    </div>
+                )
+            case "Error":
+                return (
+                    <div className="ConteinerLoadingDeposito" role="alert">
+                        <div className="BunnerTopMenssage">{mensagemErroDeposito}</div>
                     </div>
                 )
         }
@@ -98,7 +105,7 @@ export default function Conteiner5WindowBottom () {
                                         <option key={values} value={values}>{values}</option>
                                        ))}
                                     </select>
-                                    <button onClick={ ()=> {ConteinerDepositarDinheiroNaConta(setEstadoMenssageBaner , setEstadoConteinerDeposito , setEstadoCarteiraDeposito)}}>finalizar deposito</button>
+                                    <button onClick={ ()=> {setMensagemErroDeposito(""); ConteinerDepositarDinheiroNaConta(setEstadoMenssageBaner , setEstadoConteinerDeposito , setEstadoCarteiraDeposito, setMensagemErroDeposito)}}>finalizar deposito</button>
                                     
                                 </div>
 
@@ -148,6 +155,12 @@ export default function Conteiner5WindowBottom () {
                         <Loading3 />
                     </div>
                 )
+            case "Error":
+                return (
+                    <div className="ConteinerRespostaBackend" role="alert">
+                        {respostaTrafego}
+                    </div>
+                )
 
             
         }
@@ -171,7 +184,7 @@ export default function Conteiner5WindowBottom () {
                                     </div>
                                 </div>
                                 {condicaoEstadoConteinerTrafego()}
-                                <div onClick={()=> {setEstadoTrafegoConteiner("cont1") , setEstadoTrafegoAtivo("False")}} className="cancelarTrafego">
+                                <div onClick={()=> {setEstadoTrafegoConteiner("cont1") , setEstadoTrafegoAtivo("False"), setEstadoRespostaTrafego("False")}} className="cancelarTrafego">
                                     Cancelar
                                 </div>
                                 {condicaoEstadoRespostaTrafego()}

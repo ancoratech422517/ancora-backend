@@ -1,82 +1,71 @@
-from flask import Blueprint, request, jsonify
-from models.database import db, Turma_Aula
 import cloudinary.uploader
-from models.database import Amigo
+from flask import Blueprint, current_app, g, jsonify, request
+
+from models.database import Turma_Aula, db
 from service.media_metadata import validate_blurhash
-import os
+from service.upload_validation import upload_size, validate_extension
 
-api_validar_registro_turma = Blueprint('api_validar_registro_turma', __name__)  
 
-@api_validar_registro_turma.route('/validar-registro-turma', methods=['POST'])
+api_validar_registro_turma = Blueprint("api_validar_registro_turma", __name__)
+
+
+@api_validar_registro_turma.route("/validar-registro-turma", methods=["POST"])
 def validar_registro_turma():
-    nome_turma = request.form.get("nome_turma")
-    imagem_turma = request.files.get("img_turma")
-    id_admin = request.form.get("id_admin")
     try:
-        imagem_blurhash = validate_blurhash(request.form.get("imagem_blurhash"))
-    except ValueError as erro:
-        return jsonify({"error": str(erro)}), 400
-    novo_nome_turma = nome_turma.replace(" " , "_")
-    sala_turma = f"Turma_{id_admin}_admin_{novo_nome_turma}"
-    if not nome_turma or not imagem_turma or not id_admin:
-        return jsonify({"error": "Todos os campos são obrigatórios."}), 400
-    
-    novo_nome_imagem = imagem_turma.filename.replace(" ", "_")
-    
-    dados = {
-        "nome_Turma": nome_turma,
-        "id_admin_Turma": id_admin,
-        "tipo_usuario_Turma": "admin",
-        "id_aluno_Turma": id_admin,
-        "sala_Turma":sala_turma,
-        "imagem_perfil_Turma_blurhash": imagem_blurhash,
-    }
-    dados_sala = {
-        "id_usuario":id_admin,
-        "id_amigo":id_admin,
-        "nossa_sala":sala_turma
-    }
+        try:
+            user_id = int(g.principal["sub"])
+        except (KeyError, TypeError, ValueError):
+            return jsonify({"error": "Sessão inválida"}), 401
 
-    try:
-        # Passar o objeto imagem_turma direto (sem .read()) é mais seguro
-        upload_result = cloudinary.uploader.upload(                
-            imagem_turma,
-            folder="usuario/turmas",    
-            overwrite=True,
-            resource_type="image"
+        nome_turma = request.form.get("nome_turma", "").strip()
+        imagem_turma = request.files.get("img_turma")
+        if not nome_turma or len(nome_turma) > 100 or not imagem_turma or not imagem_turma.filename:
+            return jsonify({"error": "Nome e imagem da turma são obrigatórios."}), 400
+        try:
+            validate_extension(imagem_turma, {"jpg", "jpeg", "png", "webp", "gif"})
+            upload_size(imagem_turma, 10 * 1024 * 1024)
+            imagem_blurhash = validate_blurhash(request.form.get("imagem_blurhash"))
+        except ValueError as error:
+            return jsonify({"error": str(error)}), 400
+
+        nome_seguro_turma = nome_turma.replace(" ", "_")
+        sala_turma = f"Turma_{user_id}_admin_{nome_seguro_turma}"
+        if Turma_Aula.query.filter_by(
+            id_admin_Turma=user_id,
+            nome_Turma=nome_turma,
+            tipo_usuario_Turma="admin",
+        ).first():
+            return jsonify({"error": "Já existe uma turma com esse nome."}), 409
+
+        try:
+            uploaded = cloudinary.uploader.upload(
+                imagem_turma,
+                folder="usuario/turmas",
+                resource_type="image",
+            )
+        except Exception as error:
+            current_app.logger.warning(
+                "Falha no upload da imagem da turma (%s)", type(error).__name__
+            )
+            return jsonify({"error": "Serviço de imagens temporariamente indisponível."}), 503
+
+        image_url = uploaded.get("secure_url")
+        if not isinstance(image_url, str) or not image_url.startswith("https://"):
+            return jsonify({"error": "Não foi possível confirmar a imagem da turma."}), 502
+
+        nova_turma = Turma_Aula(
+            nome_Turma=nome_turma,
+            id_admin_Turma=user_id,
+            tipo_usuario_Turma="admin",
+            id_aluno_Turma=str(user_id),
+            sala_Turma=sala_turma,
+            imagem_perfil_Turma=image_url,
+            imagem_perfil_Turma_blurhash=imagem_blurhash,
         )
-        dados["imagem_perfil_Turma"] = upload_result.get("secure_url")
-        dados_sala["foto_amigo"] = upload_result.get("secure_url")
-
-        nova_turma = Turma_Aula(**dados)
         db.session.add(nova_turma)
         db.session.commit()
-        return jsonify({"message": "Turma criada com sucesso no Cloudinary."}), 200
-
-    except Exception as e:
-        print(f"Erro ao enviar imagem para Cloudinary: {e}")
-        
-        try:
-            # CORREÇÃO CRUCIAL: Reseta o ponteiro do arquivo para o início
-            imagem_turma.seek(0)
-            
-            caminho = "static/turmas/"
-            caminho_local = os.path.join(caminho, novo_nome_imagem)
-            
-            if not os.path.exists(caminho):
-                os.makedirs(caminho)
-
-            # Salva o arquivo localmente agora que o ponteiro foi resetado
-            imagem_turma.save(caminho_local)
-            
-            dados["imagem_perfil_Turma"] = f"http://127.0.0.1:5000/{caminho_local}"
-            dados_sala["foto_amigo"] = f"http://127.0.0.1:5000/{caminho_local}"
-            
-            nova_turma = Turma_Aula(**dados)
-            db.session.add(nova_turma)  
-            db.session.commit()
-            return jsonify({"message": "Turma criada com sucesso (Backup Local)."}), 200
-
-        except Exception as e_local:
-            print(f"Erro ao salvar imagem localmente: {e_local}")
-            return jsonify({"error": "Falha ao processar a imagem localmente."}), 500
+        return jsonify({"message": "Turma criada com sucesso."}), 201
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao criar turma")
+        return jsonify({"error": "Falha ao criar turma."}), 500

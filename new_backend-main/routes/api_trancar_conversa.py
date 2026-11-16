@@ -1,14 +1,17 @@
-from flask import Flask , Blueprint , request , jsonify
+from flask import Blueprint, g, request, jsonify
 from models.database import Amigo , db
 TrancarConversa = Blueprint("TrancarConversa" , __name__)
 
 @TrancarConversa.route("/api/trancar_conversa" , methods = ["POST"])
 def trancar_conversa():
     try:
-        dados = request.get_json()
-        id_usuario = dados.get("id_usuario")
-        id_amigo = dados.get("id_amigo")
-        estado_privado_usuario = dados.get("estado_privado_usuario")
+        dados = request.get_json(silent=True)
+        if not isinstance(dados, dict):
+            return jsonify({"resposta": "Dados inválidos"}), 400
+        id_usuario = int(g.principal["sub"])
+        id_amigo = int(dados.get("id_amigo"))
+        if id_usuario == id_amigo:
+            return jsonify({"resposta": "Identificadores inválidos"}), 400
 
         filtrar_amigo = Amigo.query.filter(
             Amigo.id_amigo == id_amigo , 
@@ -42,7 +45,9 @@ def trancar_conversa():
                     db.session.commit()
                     return jsonify({"resposta":"estado actualizado com sucesso" , "estado_privado":False})
                 
-    except Exception as erro:
-        print(f"erro ao trancar a conversa:{erro}")
-        return jsonify({"resposta":f"erro ao trancar a conversa:{erro}"})
+    except (KeyError, TypeError, ValueError):
+        return jsonify({"resposta": "Identificadores inválidos"}), 400
+    except Exception:
+        db.session.rollback()
+        return jsonify({"resposta": "Não foi possível actualizar a privacidade da conversa"}), 500
 

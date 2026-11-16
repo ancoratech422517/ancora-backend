@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import "@livekit/components-styles";
 import {
   RoomAudioRenderer,
+  StartAudio,
   VideoTrack,
   useChat,
   useIsSpeaking,
@@ -112,7 +114,7 @@ function formatarDuracao(segundos) {
   return `${String(minutos).padStart(2, "0")}:${String(restantes).padStart(2, "0")}`;
 }
 
-export default function SunsetLiveMeeting({ nomeTurma, onLeave }) {
+export default function SunsetLiveMeeting({ nomeTurma, onLeave, toolbarActions = null, floatingPanel = null }) {
   const room = useRoomContext();
   const participants = useParticipants();
   const cameraTracks = useTracks([{ source: Track.Source.Camera, withPlaceholder: true }]);
@@ -181,7 +183,11 @@ export default function SunsetLiveMeeting({ nomeTurma, onLeave }) {
 
   const toggleMicrophone = async () => {
     try {
+      const playbackPromise = room.startAudio().catch((error) => {
+        console.info("A reprodução do áudio da turma continua à espera de autorização:", error);
+      });
       await localParticipant.setMicrophoneEnabled(!isMicrophoneEnabled);
+      await playbackPromise;
     } catch (error) {
       console.error("Não foi possível alterar o microfone:", error);
       setNotice("Não foi possível aceder ao microfone.");
@@ -268,7 +274,7 @@ export default function SunsetLiveMeeting({ nomeTurma, onLeave }) {
 
   return (
     <div className={`sunset-meeting${chatOpen ? " has-chat" : ""}`} ref={meetingRef}>
-      <RoomAudioRenderer />
+      <RoomAudioRenderer volume={1} />
       <header className="sunset-header">
         <div className="sunset-brand">
           <span className="sunset-live-dot" />
@@ -278,6 +284,9 @@ export default function SunsetLiveMeeting({ nomeTurma, onLeave }) {
           </div>
         </div>
         <div className="sunset-meeting-status">
+          <span className="sunset-audio-start">
+            <StartAudio label="Ativar áudio da turma" />
+          </span>
           <span className="sunset-count">♧ {participants.length}</span>
           <span className="sunset-duration">{formatarDuracao(elapsedSeconds)}</span>
         </div>
@@ -313,6 +322,7 @@ export default function SunsetLiveMeeting({ nomeTurma, onLeave }) {
         {chatOpen && <ChatPanel participants={participants} onClose={() => setChatOpen(false)} />}
       </main>
 
+      {floatingPanel && <div className="sunset-floating-panel">{floatingPanel}</div>}
       <div className="sunset-reaction-layer" aria-live="polite">
         {reactions.map((reaction) => (
           <span className="sunset-floating-reaction" key={reaction.id}>
@@ -344,6 +354,7 @@ export default function SunsetLiveMeeting({ nomeTurma, onLeave }) {
           </div>
           <button type="button" className={`sunset-control${chatOpen ? " is-selected" : ""}`} onClick={() => setChatOpen((open) => !open)} aria-label={chatOpen ? "Fechar chat" : "Abrir chat"} aria-pressed={chatOpen} title={chatOpen ? "Fechar chat" : "Abrir chat"}>▤</button>
           <button type="button" className="sunset-control" onClick={() => void toggleFullscreen()} aria-label="Alternar ecrã inteiro" title="Ecrã inteiro">⛶</button>
+          {toolbarActions}
           <button type="button" className="sunset-control sunset-control-end" onClick={onLeave} aria-label="Sair da chamada" title="Sair da chamada">☎</button>
         </div>
       </footer>

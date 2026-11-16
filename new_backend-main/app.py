@@ -4,13 +4,15 @@ from dotenv import load_dotenv
 load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 from gevent import monkey
 monkey.patch_all()
-from flask import Flask, request
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from sqlalchemy import text
+from ancorashield.auth.rate_limit import RateLimiter
 from models.database import db
 from service.database_schema import ensure_columns
 from service.security_audit import initialize_security_audit
 from service.security_tokens import initialize_api_security, protect_private_routes
+from service.lifecycle_cleanup import iniciar_limpeza_periodica
 from flask_talisman import Talisman
 from flask_migrate import Migrate
 import cloudinary
@@ -19,9 +21,6 @@ import cloudinary.uploader
 # ===================== CLOUDINARY - FIX AGRESSIVO =====================
 import sys
 sys.setrecursionlimit(30000)
-
-import urllib3
-urllib3.disable_warnings()
 
 import cloudinary
 from urllib3 import HTTPSConnectionPool
@@ -76,6 +75,7 @@ from routes.api_registrar_produto import registrar_produto
 from routes.api_buscar_produtos_usuario import buscar_produto_Usuario
 from routes.api_upload_file import upload_bp
 from routes.api_crm import crm_bp
+from routes.api_academy import academy_bp
 from routes.api_assistente_ia import assistant_bp
 from routes.api_social import social_bp
 from routes.api_todos_produtos import Todos_produtos
@@ -142,18 +142,21 @@ app = Flask(__name__)
 
 # ===================== CORS =====================
 CORS_ORIGINS = [
-    "http://127.0.0.1:5000",
-    "http://127.0.0.1:5173",
-    "http://localhost:5173",
-    "https://localhost",
-    "http://localhost",
     "capacitor://localhost",
-    "http://192.168.11.1",
-    "http://192.168.11.1:5173",
-    "http://10.140.176.115:5173",
     "https://ancora-oficial-ao.netlify.app",
     "https://ancora-ecommerc-tawny.vercel.app",
 ]
+if DEBUG:
+    CORS_ORIGINS.extend([
+        "http://127.0.0.1:5000",
+        "http://127.0.0.1:5173",
+        "http://localhost:5173",
+        "https://localhost",
+        "http://localhost",
+        "http://192.168.11.1",
+        "http://192.168.11.1:5173",
+        "http://10.140.176.115:5173",
+    ])
 CORS(app, resources={r"/*": {
     "origins": CORS_ORIGINS,
     "supports_credentials": True,
@@ -163,6 +166,22 @@ CORS(app, resources={r"/*": {
 
 app.config["CORS_ORIGINS"] = CORS_ORIGINS
 
+auth_rate_limiter = RateLimiter(max_requests=10, window_seconds=300)
+
+
+@app.before_request
+def limit_authentication_attempts():
+    if request.method != "POST" or request.path.casefold() not in {"/login", "/refresh"}:
+        return None
+    client_key = request.remote_addr or "unknown"
+    allowed, retry_after = auth_rate_limiter.check(client_key)
+    if allowed:
+        return None
+    response = jsonify(error="too many authentication requests")
+    response.status_code = 429
+    response.headers["Retry-After"] = str(retry_after)
+    return response
+
 
 @app.before_request
 def handle_cors_preflight():
@@ -171,6 +190,13 @@ def handle_cors_preflight():
     return None
 
 
+@app.after_request
+def prevent_dynamic_response_caching(response):
+    if request.endpoint != "static":
+        response.headers["Cache-Control"] = "no-store"
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    return response
 # teste
 
 # ===================== CLOUDINARY =====================
@@ -183,7 +209,7 @@ Talisman(app,
         'media-src': ["'self'", "blob:", "*.cloudinary.com"]
     },
     force_https=False,
-    strict_transport_security=False
+    strict_transport_security=not DEBUG
 )
 
 # ===================== BASE DE DADOS (NEON) =====================
@@ -207,6 +233,8 @@ if DATABASE_URL:
 
     print("🔗 Usando Neon (PostgreSQL)")
 else:
+    if not DEBUG:
+        raise RuntimeError("DATABASE_URL must be configured outside DEBUG mode.")
     DATABASE_URL = "sqlite:///ecommerce.db"
     print("⚠️ DATABASE_URL não encontrada → Usando SQLite local")
 
@@ -215,7 +243,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['FRONTEND_URL'] = os.getenv('FRONTEND_URL') or 'https://ancora-ecommerc-tawny.vercel.app'
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'files')
-app.config['MAX_CONTENT_LENGTH'] = 1024 ** 3
+app.config['MAX_CONTENT_LENGTH'] = 128 * 1024 * 1024
 app.config['ANCORASHIELD_AUDIT_SIGNING_KEY'] = os.getenv(
     'ANCORASHIELD_AUDIT_SIGNING_KEY'
 )
@@ -273,6 +301,17 @@ def setup_database():
                 "foto_usuario_blurhash": "VARCHAR(100)",
                 "id_app_usuario_pushy": "TEXT",
             })
+            ensure_columns(db.engine, "Agendar_Live_Turma", {
+                "live_vazia_em": "TIMESTAMP",
+            })
+            ensure_columns(db.engine, "Dados_Estado", {
+                "criado_em": "TIMESTAMP",
+            })
+            with db.engine.begin() as connection:
+                connection.execute(text(
+                    'UPDATE "Dados_Estado" '
+                    "SET criado_em = CURRENT_TIMESTAMP WHERE criado_em IS NULL"
+                ))
 
             print("✅ Banco de dados inicializado com sucesso!")
         except Exception as e:
@@ -294,6 +333,7 @@ app.register_blueprint(registrar_produto)
 app.register_blueprint(buscar_produto_Usuario)
 app.register_blueprint(upload_bp)
 app.register_blueprint(crm_bp)
+app.register_blueprint(academy_bp)
 app.register_blueprint(assistant_bp)
 app.register_blueprint(social_bp)
 app.register_blueprint(Todos_produtos)
@@ -332,6 +372,11 @@ app.register_blueprint(Bloquear_Usuario)
 app.register_blueprint(Excluir_amigo)
 protect_private_routes(app)
 
+
+@app.before_request
+def iniciar_limpeza_de_expiracao():
+    iniciar_limpeza_periodica(app)
+
 if __name__ == '__main__':
     print("=" * 70)
     print("🚀 Servidor Flask + SocketIO iniciado!")
@@ -339,4 +384,4 @@ if __name__ == '__main__':
     print(f"🔗 Banco: Neon (PostgreSQL)")
     print("=" * 70)
 
-    socketio.run(app, host="0.0.0.0", port=PORT, debug=DEBUG, allow_unsafe_werkzeug=True)
+    socketio.run(app, host="0.0.0.0", port=PORT, debug=DEBUG, allow_unsafe_werkzeug=DEBUG)

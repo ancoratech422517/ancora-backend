@@ -18,14 +18,14 @@ export function AtualizarContadores() {
         const diferenca = dataLive - agora
 
         if (diferenca <= 0) {
-            el.innerHTML = 'Live finalizada'
+            el.textContent = 'Live finalizada'
             el.classList.add('piscar-animacao')
         } else {
             const horas = Math.floor(diferenca / (1000 * 60 * 60))
             const minutos = Math.floor((diferenca % (1000 * 60 * 60)) / (1000 * 60))
             const segundos = Math.floor((diferenca % (1000 * 60)) / 1000)
 
-            el.innerHTML = `⏳ Começa em: ${horas}h ${minutos}m ${segundos}s`
+            el.textContent = `⏳ Começa em: ${horas}h ${minutos}m ${segundos}s`
         }
     })
 }

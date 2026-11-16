@@ -1,28 +1,29 @@
-from flask import Blueprint , current_app , request , jsonify , url_for
-from models.database import Adicionar_dados_estado , db
+from flask import Blueprint, current_app, g, request, jsonify
+from models.database import Adicionar_dados_estado, Usuario, db
 from service.estado_realtime_service import notificar_amigos_novo_estado
 import cloudinary.uploader
-import os
-from uuid import uuid4
-from werkzeug.utils import secure_filename
+from service.upload_validation import upload_size, validate_extension
 
 EstadoMusicaUsuario = Blueprint("estadoMusicaUsuario" , __name__)
 
 @EstadoMusicaUsuario.route("/api/adicionar_estado_musica" , methods = ["POST"])
 def estado_musica_usuario():
-    caminho_local = None
     try:
-        id_usuario = request.form.get("id_usuario")
+        user_id = int(g.principal["sub"])
+        usuario = db.session.get(Usuario, user_id)
+        if not usuario:
+            return jsonify({"resposta": "Utilizador não encontrado"}), 404
         musica_estado = request.files.get("musica_estado")
         conteiner_descricao_musicaID = request.form.get("conteiner_descricao_musicaID")
         tipo_musica = request.form.get("tipo_musica")
-        nome_usuario = request.form.get("nome_usuario")
-        foto_usuario = request.form.get("foto_usuario")
         if not musica_estado or not musica_estado.filename:
             return jsonify({"resposta": "nenhuma música selecionada"}), 400
 
-        nome_seguro = secure_filename(musica_estado.filename) or "estado_musica"
-        nome_arquivo = f"ancora_{uuid4().hex}_{nome_seguro}"
+        try:
+            validate_extension(musica_estado, {"mp3", "m4a", "ogg", "wav", "aac", "flac"})
+            upload_size(musica_estado, 25 * 1024 * 1024)
+        except ValueError as error:
+            return jsonify({"resposta": str(error)}), 400
 
         try:
             resultado_upload = cloudinary.uploader.upload(
@@ -34,25 +35,18 @@ def estado_musica_usuario():
             if not url_musica:
                 raise RuntimeError("Cloudinary não retornou a URL segura da música")
         except Exception as erro_cloudinary:
-            print(f"Falha no Cloudinary; salvando o estado localmente: {erro_cloudinary}")
-            musica_estado.seek(0)
-            pasta_local = os.path.join(current_app.static_folder, "mucicas", "estado")
-            os.makedirs(pasta_local, exist_ok=True)
-            caminho_local = os.path.join(pasta_local, nome_arquivo)
-            musica_estado.save(caminho_local)
-            url_musica = url_for(
-                "static",
-                filename=f"mucicas/estado/{nome_arquivo}",
-                _external=True
+            current_app.logger.warning(
+                "Falha no upload de áudio de estado (%s)", type(erro_cloudinary).__name__
             )
+            return jsonify({"resposta": "Serviço de áudio temporariamente indisponível"}), 503
 
         dadosGeral = {
-            "id_usuario":id_usuario,
+            "id_usuario":user_id,
             "dados_estado":url_musica,
             "descricao_dados":conteiner_descricao_musicaID,
             "tipo_estado":tipo_musica,
-            "nome_usuario_estado":nome_usuario,
-            "foto_usuario_estado":foto_usuario
+            "nome_usuario_estado":usuario.nome,
+            "foto_usuario_estado":usuario.foto_usuario
         }
         adicionar_novo_estado = Adicionar_dados_estado(**dadosGeral)
         db.session.add(adicionar_novo_estado)
@@ -61,9 +55,7 @@ def estado_musica_usuario():
         return jsonify({"resposta":"boas"})
     except Exception as erro:
         db.session.rollback()
-        if caminho_local and os.path.exists(caminho_local):
-            os.remove(caminho_local)
-        print(f"parece que ouve um erro ao registrar o estado de musica deste usuario:{erro}")
+        current_app.logger.exception("Falha ao registar áudio de estado")
         return jsonify({"resposta":"erro ao registrar estado de música"}), 500
 
     

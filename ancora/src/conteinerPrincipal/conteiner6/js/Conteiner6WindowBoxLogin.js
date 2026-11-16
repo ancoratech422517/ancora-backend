@@ -98,7 +98,10 @@ export async function Login(ativarConteiner, setDados , setEstadoLoading , setEr
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const preview = document.getElementById('avatar-preview');
-                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    const image = document.createElement('img');
+                    image.alt = 'Preview';
+                    image.src = e.target.result;
+                    preview.replaceChildren(image);
                 }
                 reader.readAsDataURL(file);
             }

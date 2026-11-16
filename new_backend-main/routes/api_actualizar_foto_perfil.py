@@ -1,8 +1,13 @@
 import re
-from flask import Blueprint, jsonify, request
-from models.database import Usuario, db
+from urllib.parse import urlsplit
+
 import cloudinary.uploader
+from flask import Blueprint, current_app, g, jsonify, request
+
+from models.database import Usuario, db
 from service.media_metadata import validate_blurhash
+from service.upload_validation import upload_size, validate_extension
+
 
 Actualizar_foto_perfil = Blueprint("Actualizar_foto_perfil", __name__)
 
@@ -10,67 +15,56 @@ Actualizar_foto_perfil = Blueprint("Actualizar_foto_perfil", __name__)
 @Actualizar_foto_perfil.route("/actualizar_foto_perfil", methods=["POST"])
 def actualizar_foto_perfil_usuario():
     try:
-        foto = request.files.get("foto")
-        id_usuario = request.form.get("id_usuario")
         try:
-            foto_blurhash = validate_blurhash(request.form.get("foto_blurhash"))
-        except ValueError as erro:
-            return jsonify({"status": "BlurHash inválido", "erro": str(erro)}), 400
-
-        if not foto or not id_usuario:
-            return jsonify({"status": "foto e id_usuario são obrigatórios"}), 400
-
-        # Buscar o usuário
-        usuario = Usuario.query.filter_by(id=id_usuario).first()
+            user_id = int(g.principal["sub"])
+        except (KeyError, TypeError, ValueError):
+            return jsonify({"status": "Sessão inválida"}), 401
+        usuario = db.session.get(Usuario, user_id)
         if not usuario:
-            return jsonify({"status": "Usuário não encontrado"}), 404
+            return jsonify({"status": "Utilizador não encontrado"}), 404
 
-        url_antiga = usuario.foto_usuario
-        url_foto_actualizada = None
+        foto = request.files.get("foto")
+        if not foto or not foto.filename:
+            return jsonify({"status": "Seleciona uma foto"}), 400
+        try:
+            validate_extension(foto, {"jpg", "jpeg", "png", "webp", "gif"})
+            upload_size(foto, 5 * 1024 * 1024)
+            foto_blurhash = validate_blurhash(request.form.get("foto_blurhash"))
+        except ValueError as error:
+            return jsonify({"status": "Ficheiro inválido", "erro": str(error)}), 400
 
-        # === DELETAR FOTO ANTIGA ===
-        if url_antiga and "cloudinary" in url_antiga.lower():
-            # Extrair public_id corretamente (sem versão)
-            # Exemplo de URL: https://res.cloudinary.com/.../upload/v1234567890/usuarios/fotos_perfil/imagem.jpg
-            match = re.search(r'/upload/(?:v\d+/)?(.+?)(?:\.\w+)?$', url_antiga)
-            
-            if match:
-                public_id = match.group(1)
-                print(f"Public ID para deletar: {public_id}")
+        try:
+            uploaded = cloudinary.uploader.upload(
+                foto,
+                folder="usuarios/fotos_perfil",
+                resource_type="image",
+            )
+        except Exception as error:
+            current_app.logger.warning(
+                "Falha ao atualizar imagem de perfil (%s)", type(error).__name__
+            )
+            return jsonify({"status": "Serviço de imagens indisponível"}), 503
 
-                # Deletar com invalidate para limpar o CDN
-                response_delete = cloudinary.uploader.destroy(
-                    public_id, 
-                    resource_type='image',
-                    invalidate=True
-                )
-                print(f"Resposta da exclusão: {response_delete}")
-            else:
-                print("Não foi possível extrair o public_id da URL antiga.")
+        new_url = uploaded.get("secure_url")
+        if not isinstance(new_url, str) or not new_url.startswith("https://"):
+            return jsonify({"status": "Não foi possível confirmar a imagem"}), 502
 
-        # === FAZER UPLOAD DA NOVA FOTO ===
-        upload_resultado = cloudinary.uploader.upload(
-            foto,
-            folder="usuarios/fotos_perfil",
-            # overwrite=True não é necessário aqui pois estamos usando public_id único (timestamp por padrão)
-            resource_type="image"
-        )
-        
-        url_foto_actualizada = upload_resultado.get("secure_url")
-
-        # Atualizar no banco
-        usuario.foto_usuario = url_foto_actualizada
+        old_url = usuario.foto_usuario
+        usuario.foto_usuario = new_url
         usuario.foto_usuario_blurhash = foto_blurhash
         db.session.commit()
 
-        print(f"Imagem atualizada com sucesso: {url_foto_actualizada}")
+        if isinstance(old_url, str):
+            parts = urlsplit(old_url)
+            match = re.search(r"/image/upload/(?:v\d+/)?(.+?)(?:\.\w+)?$", parts.path)
+            if parts.scheme == "https" and parts.netloc == "res.cloudinary.com" and match:
+                try:
+                    cloudinary.uploader.destroy(match.group(1), resource_type="image", invalidate=True)
+                except Exception:
+                    current_app.logger.info("A foto antiga ficou pendente de limpeza no Cloudinary")
 
-        return jsonify({
-            "status": "foto atualizada com sucesso",
-            "imagem": url_foto_actualizada
-        })
-
-    except Exception as erro:
+        return jsonify({"status": "foto atualizada com sucesso", "imagem": new_url})
+    except Exception:
         db.session.rollback()
-        print(f"Erro ao atualizar foto: {str(erro)}")
-        return jsonify({"status": "Erro interno", "erro": str(erro)}), 500
+        current_app.logger.exception("Erro ao atualizar imagem de perfil")
+        return jsonify({"status": "Erro interno"}), 500

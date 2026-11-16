@@ -22,6 +22,10 @@ export async function iniciarChamadaVoz({ socket, dadosUsuario, destinatario, ti
     status: "ringing",
     type: tipo === "video" ? "video" : "voice",
     peerId: String(destinatario.id_amigo),
+    authorizationPeerId: String(destinatario.id_amigo),
+    pendingPeerIds: [String(destinatario.id_amigo)],
+    acceptedPeerIds: [],
+    remoteParticipantIdentities: [],
     peerName: destinatario.nome_amigo || "Usuário",
     peerPhoto: destinatario.foto_amigo,
   };
@@ -80,6 +84,10 @@ export function chamadaRecebidaDePush(notificacao) {
     status: "ringing",
     type: callType === "video" ? "video" : "voice",
     peerId: String(callerId),
+    authorizationPeerId: String(callerId),
+    pendingPeerIds: [String(callerId)],
+    acceptedPeerIds: [],
+    remoteParticipantIdentities: [],
     peerName: payload.caller_name || payload.voice_caller_name || "Usuário",
     peerPhoto: payload.caller_photo,
   });

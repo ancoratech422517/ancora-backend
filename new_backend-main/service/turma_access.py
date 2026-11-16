@@ -12,3 +12,14 @@ def user_is_turma_member(user_id: int, admin_id: int, turma_name: str) -> bool:
             Turma_Aula.id_aluno_Turma == str(user_id),
         ),
     ).first() is not None
+
+
+def user_is_turma_admin(user_id: int, admin_id: int, turma_name: str) -> bool:
+    if user_id != admin_id:
+        return False
+    return Turma_Aula.query.filter_by(
+        id_admin_Turma=admin_id,
+        id_aluno_Turma=str(user_id),
+        nome_Turma=turma_name,
+        tipo_usuario_Turma="admin",
+    ).first() is not None

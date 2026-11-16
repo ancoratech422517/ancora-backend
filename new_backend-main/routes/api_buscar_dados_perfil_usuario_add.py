@@ -1,4 +1,4 @@
-from flask import Flask , Blueprint , request , jsonify
+from flask import Flask , Blueprint , current_app, request , jsonify
 from models.database import Amigo ,Registrar_produto , Usuario , Turma_Aula
 
 
@@ -114,9 +114,9 @@ def GETDATEUSERADD():
             }
             )
 
-    except Exception as erro:
-        print(f"este é o erro avelino:{erro}")
-        return jsonify({"resposta":f"erro ao buscar os dados do perfil:{erro}"})
+    except Exception:
+        current_app.logger.exception("Falha ao consultar dados do perfil")
+        return jsonify({"resposta": "Não foi possível consultar o perfil."}), 500
 
 
 

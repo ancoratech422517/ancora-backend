@@ -1,20 +1,18 @@
-from flask import Blueprint , current_app , request , jsonify , url_for
-from models.database import Adicionar_dados_estado , db
+from flask import Blueprint, current_app, g, request, jsonify
+from models.database import Adicionar_dados_estado, Usuario, db
 from service.estado_realtime_service import notificar_amigos_novo_estado
 import cloudinary.uploader
-import os
-from uuid import uuid4
-from werkzeug.utils import secure_filename
+from service.upload_validation import upload_size, validate_extension
 
 EstadoVideo = Blueprint("estadoVideo",__name__)
 
 @EstadoVideo.route("/api/enviar_video_estado" , methods = ["POST"])
 def estado_video ():
-    caminho_local = None
     try:
-        nome_usuario = request.form.get("nome_usuario")
-        foto_usuario = request.form.get("foto_usuario")
-        id_usuario = request.form.get("id_usuario")
+        user_id = int(g.principal["sub"])
+        usuario = db.session.get(Usuario, user_id)
+        if not usuario:
+            return jsonify({"resposta": "Utilizador não encontrado"}), 404
         descricao_video = request.form.get("descricao_video")
         video_estado = request.files.get("video_estado")
         tipo_estado = request.form.get("tipo_estado")
@@ -22,8 +20,11 @@ def estado_video ():
         if not video_estado or not video_estado.filename:
             return jsonify({"resposta":"tens que selecionar uma video"}), 400
 
-        nome_seguro = secure_filename(video_estado.filename) or "estado_video"
-        nome_arquivo = f"ancora_{uuid4().hex}_{nome_seguro}"
+        try:
+            validate_extension(video_estado, {"mp4", "webm", "mov"})
+            upload_size(video_estado, 100 * 1024 * 1024)
+        except ValueError as error:
+            return jsonify({"resposta": str(error)}), 400
 
         try:
             resultado_upload = cloudinary.uploader.upload(
@@ -35,23 +36,16 @@ def estado_video ():
             if not URL_VIDEO:
                 raise RuntimeError("Cloudinary não retornou a URL segura do vídeo")
         except Exception as erro_cloudinary:
-            print(f"Falha no Cloudinary; salvando o estado localmente: {erro_cloudinary}")
-            video_estado.seek(0)
-            pasta_local = os.path.join(current_app.static_folder, "video", "estado")
-            os.makedirs(pasta_local, exist_ok=True)
-            caminho_local = os.path.join(pasta_local, nome_arquivo)
-            video_estado.save(caminho_local)
-            URL_VIDEO = url_for(
-                "static",
-                filename=f"video/estado/{nome_arquivo}",
-                _external=True
+            current_app.logger.warning(
+                "Falha no upload de vídeo de estado (%s)", type(erro_cloudinary).__name__
             )
+            return jsonify({"resposta": "Serviço de vídeo temporariamente indisponível"}), 503
 
 
         dados_geral = {
-            "nome_usuario_estado": nome_usuario,
-            "foto_usuario_estado" : foto_usuario,
-            "id_usuario": id_usuario,
+            "nome_usuario_estado": usuario.nome,
+            "foto_usuario_estado": usuario.foto_usuario,
+            "id_usuario": user_id,
             "dados_estado":URL_VIDEO,
             "descricao_dados":descricao_video,
             "tipo_estado":tipo_estado
@@ -66,8 +60,6 @@ def estado_video ():
 
     except Exception as erro:
         db.session.rollback()
-        if caminho_local and os.path.exists(caminho_local):
-            os.remove(caminho_local)
-        print(f"este é o tipo do erro:{erro}")
+        current_app.logger.exception("Falha ao guardar vídeo de estado")
         return jsonify({"resposta":"erro ao registrar estado de vídeo"}), 500
     

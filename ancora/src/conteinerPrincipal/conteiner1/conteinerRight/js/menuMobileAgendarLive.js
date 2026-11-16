@@ -25,8 +25,13 @@ export async function MenuMobileAgendarLive(sala_Turma , nome_Turma , setEstadoM
         alert("A data da live não pode ser no passado. Por favor, escolha uma data futura.");
         return;
     }
-    const data_hora_formatada = data_hora_agenda_live.replace('T', ' ');
-    const dataSelecionada = new Date(data_hora_formatada);
+    const dataSelecionada = new Date(data_hora_agenda_live);
+    if (Number.isNaN(dataSelecionada.getTime())) {
+        alert("Data inválida. Seleciona outra data e hora.");
+        setestadoLoadingAgendamentoLive(false);
+        return;
+    }
+    const data_hora_formatada = dataSelecionada.toISOString();
     const anoSelecionado = dataSelecionada.getFullYear();
     const anoAtual = new Date().getFullYear();
     
@@ -39,7 +44,7 @@ export async function MenuMobileAgendarLive(sala_Turma , nome_Turma , setEstadoM
     const dados = {
         "sala_Turma":sala_Turma,
         "nome_Turma":nome_Turma,
-        "data_hora_agenda_live":data_hora_agenda_live,
+        "data_hora_agenda_live":data_hora_formatada,
         "tema_agenda_live":tema_agenda_live,
         "id_usuario":id_usuario.id
     }

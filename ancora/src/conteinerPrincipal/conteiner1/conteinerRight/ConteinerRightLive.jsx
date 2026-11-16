@@ -3,16 +3,13 @@ import "./css/ConteinerRightLive.css";
 import { Conteiner_Chamada_Grupo } from "./ConteinerRightLive.js";
 import "@livekit/components-styles";
 
-import {
-  LiveKitRoom,
-  StartAudio,
-} from "@livekit/components-react";
-import { Room } from "livekit-client";
+import { LiveKitRoom } from "@livekit/components-react";
+import { ConnectionState, Room } from "livekit-client";
 import SunsetLiveMeeting from "./SunsetLiveMeeting";
 
 import { useUserStore } from "../../../useUseSotore";
 
-export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turma }) {
+export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turma, agendaId }) {
   
   const { urlBancoDeDados, dadosUsuario, socket, set_estado_conteiner_live } = useUserStore();
 
@@ -61,7 +58,7 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
       setServerUrl(data.serverUrl);
       setIsConnected(true);
 
-      void Conteiner_Chamada_Grupo(roomName).then((resultadoChamada) => {
+      void Conteiner_Chamada_Grupo(roomName, agendaId).then((resultadoChamada) => {
         if (!resultadoChamada?.ok) {
           console.error("A live iniciou, mas a chamada da turma não foi confirmada:", resultadoChamada?.erro);
         } else if (!resultadoChamada.ignorada) {
@@ -83,10 +80,24 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
     if (roomName) void joinLive();
   }, [roomName, retryCount]);
 
+  useEffect(() => {
+    if (!socket || !isConnected || !roomName) return undefined;
+    const registrarEntradaAposReconexao = () => {
+      if (room.state !== ConnectionState.Connected) return;
+      socket.emit("entrar_live_turma", { sala: roomName, agenda_id: agendaId }, (resultado) => {
+        if (!resultado?.ok) {
+          console.error("Não foi possível atualizar a presença na live:", resultado?.erro);
+        }
+      });
+    };
+    socket.on("connect", registrarEntradaAposReconexao);
+    return () => socket.off("connect", registrarEntradaAposReconexao);
+  }, [socket, isConnected, room, roomName, agendaId]);
+
   const leaveRoom = async () => {
     intentionalLeave.current = true;
     if (socket?.connected && roomName) {
-      socket.emit("sair_live_turma", { sala: roomName });
+      socket.emit("sair_live_turma", { sala: roomName, agenda_id: agendaId });
     }
     try {
       await room.disconnect(true);
@@ -104,7 +115,7 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
   const handleDisconnected = () => {
     if (intentionalLeave.current) return;
     if (socket?.connected && roomName) {
-      socket.emit("sair_live_turma", { sala: roomName });
+      socket.emit("sair_live_turma", { sala: roomName, agenda_id: agendaId });
     }
     setToken(null);
     setServerUrl(null);
@@ -195,7 +206,7 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
           audio={true}
           onConnected={() => {
             if (socket?.connected) {
-              socket.emit("entrar_live_turma", { sala: roomName }, (resultado) => {
+              socket.emit("entrar_live_turma", { sala: roomName, agenda_id: agendaId }, (resultado) => {
                 if (!resultado?.ok) {
                   console.error("Não foi possível registar a entrada na sala da live:", resultado?.erro);
                 }
@@ -208,7 +219,6 @@ export default function ConteinerRightLive({ roomName, nome_Turma, id_admin_turm
           style={{ height: "100%" }}
           data-lk-theme="default"
         >
-          <StartAudio label="Ativar áudio da turma" />
           <SunsetLiveMeeting nomeTurma={nome_Turma} onLeave={() => void leaveRoom()} />
         </LiveKitRoom>
       )}

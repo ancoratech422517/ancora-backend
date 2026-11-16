@@ -1,114 +1,130 @@
-# routes/messages_http.py
-from flask import Blueprint, request, jsonify
 import uuid
+from datetime import datetime, timezone
+
 import cloudinary.uploader
-from datetime import datetime
-from models.database import Menssagens, db
+from flask import Blueprint, current_app, g, jsonify, request
+
+from models.database import Amigo, Menssagens, Usuario, db
 from service.pushy_service import enviar_notificacao_pushy
+from service.friend_access import users_are_unblocked_friends
+from service.upload_validation import upload_size, validate_extension
 
-messages_http_bp = Blueprint('messages_http', __name__, url_prefix='/api')
 
-@messages_http_bp.route('/send-message-with-file', methods=['POST'])
+messages_http_bp = Blueprint("messages_http", __name__, url_prefix="/api")
+MAX_CHAT_ATTACHMENT_BYTES = 25 * 1024 * 1024
+ALLOWED_CHAT_EXTENSIONS = {
+    "jpg", "jpeg", "png", "webp", "gif", "mp4", "webm", "mp3", "wav",
+    "m4a", "ogg", "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx",
+    "txt", "csv",
+}
+
+
+@messages_http_bp.route("/send-message-with-file", methods=["POST"])
 def send_message_with_file():
     try:
-        # Dados do formulário
-        menssagem = request.form.get('menssagem', '')
-        id_remitente = request.form.get('id_remitente')
-        id_destinatario = request.form.get('id_destinatario')
-        nossa_sala = request.form.get('nossa_sala')
-        nome_remitente = request.form.get('nome_remitente')
-        nome_amigo = request.form.get('nome_amigo')
+        try:
+            sender_id = int(g.principal["sub"])
+            recipient_id = int(request.form.get("id_destinatario", ""))
+        except (KeyError, TypeError, ValueError):
+            return jsonify({"success": False, "error": "Conversa inválida"}), 400
 
-        file = request.files.get('file')
+        room = request.form.get("nossa_sala", "")
+        if not isinstance(room, str) or not room or len(room) > 100:
+            return jsonify({"success": False, "error": "Conversa inválida"}), 400
+        friendship = Amigo.query.filter_by(
+            id_usuario=sender_id,
+            id_amigo=recipient_id,
+            nossa_sala=room,
+        ).first()
+        if not friendship or not users_are_unblocked_friends(sender_id, recipient_id):
+            return jsonify({"success": False, "error": "Sem acesso a esta conversa"}), 403
 
-        if not id_remitente or not id_destinatario or not nossa_sala:
-            return jsonify({"success": False, "error": "Dados incompletos"}), 400
+        sender = db.session.get(Usuario, sender_id)
+        recipient = db.session.get(Usuario, recipient_id)
+        if not sender or not recipient:
+            return jsonify({"success": False, "error": "Utilizador não encontrado"}), 404
 
-        file_url = None
-        public_id = None
-        file_name = None
-        mime_type = None
+        message = request.form.get("menssagem", "")
+        if not isinstance(message, str) or len(message) > 10_000:
+            return jsonify({"success": False, "error": "Mensagem demasiado longa"}), 400
+        file = request.files.get("file")
+
+        file_url = public_id = file_name = mime_type = None
         file_size = 0
-
-        # === UPLOAD PARA CLOUDINARY ===
         if file and file.filename:
             try:
-                folder = "chat_files"
-                unique_id = str(uuid.uuid4())
-                public_id = f"{folder}/{unique_id}"
-
-                upload_result = cloudinary.uploader.upload(
+                extension = validate_extension(file, ALLOWED_CHAT_EXTENSIONS)
+                file_size = upload_size(file, MAX_CHAT_ATTACHMENT_BYTES)
+            except ValueError as error:
+                return jsonify({"success": False, "error": str(error)}), 400
+            try:
+                uploaded = cloudinary.uploader.upload(
                     file,
-                    public_id=public_id,
-                    folder=folder,
-                    resource_type="auto"
+                    public_id=f"{uuid.uuid4().hex}.{extension}",
+                    folder="chat_files",
+                    resource_type="auto",
+                    overwrite=False,
                 )
+            except Exception as error:
+                current_app.logger.warning(
+                    "Falha no upload de anexo do chat (%s)", type(error).__name__
+                )
+                return jsonify({"success": False, "error": "Upload temporariamente indisponível"}), 503
 
-                file_url = upload_result['secure_url']
-                public_id = upload_result['public_id']
-                file_name = file.filename
-                mime_type = file.content_type
-                file_size = upload_result['bytes']
+            file_url = uploaded.get("secure_url")
+            public_id = uploaded.get("public_id")
+            if not isinstance(file_url, str) or not file_url.startswith("https://") or not public_id:
+                return jsonify({"success": False, "error": "O armazenamento não confirmou o ficheiro"}), 502
+            file_name = file.filename.replace("\\", "/").rsplit("/", 1)[-1][:255]
+            mime_type = (file.content_type or "application/octet-stream")[:255]
+            file_size = int(uploaded.get("bytes") or file_size)
 
-            except Exception as e:
-                print(f"Erro Cloudinary: {e}")
-                return jsonify({"success": False, "error": "Erro no upload do arquivo"}), 500
+        if not message.strip() and not file_url:
+            return jsonify({"success": False, "error": "A mensagem não pode ficar vazia"}), 400
 
-        # === SALVAR NO BANCO ===
-        agora = datetime.now()
-        horario_formatado = agora.strftime("%H:%M")
-
-        dados = {
-            "nossa_sala": nossa_sala,
-            "menssagem": menssagem,
-            "id_remitente": id_remitente,
-            "nome_remitente": nome_remitente,
-            "id_destinatario": id_destinatario,
-            "nome_destinatario": nome_amigo,
-            "data_envio": horario_formatado,
-            "lida": False,
-            "tipo": "arquivo" if file_url else "texto",
-            "file_url": file_url,
-            "public_id": public_id,
-            "file_name": file_name,
-            "mime_type": mime_type,
-            "file_size": file_size
-        }
-        
-
-        armazenar_menssagem = Menssagens(**dados)
-        db.session.add(armazenar_menssagem)
+        now = datetime.now(timezone.utc).replace(tzinfo=None)
+        stored = Menssagens(
+            nossa_sala=room,
+            menssagem=message,
+            id_remitente=sender_id,
+            nome_remitente=sender.nome,
+            id_destinatario=recipient_id,
+            nome_destinatario=recipient.nome,
+            data_envio=now.strftime("%H:%M"),
+            lida=False,
+            tipo="arquivo" if file_url else "texto",
+            file_url=file_url,
+            public_id=public_id,
+            file_name=file_name,
+            mime_type=mime_type,
+            file_size=file_size,
+        )
+        db.session.add(stored)
         db.session.commit()
 
-        texto_notificacao = menssagem or (
-            f"{nome_remitente or 'Seu contato'} enviou um arquivo."
-            if file_url else "Você recebeu uma nova mensagem."
-        )
-        if len(texto_notificacao) > 160:
-            texto_notificacao = f"{texto_notificacao[:157]}..."
+        notification_text = message or f"{sender.nome} enviou um ficheiro."
+        notification_text = notification_text[:157] + "..." if len(notification_text) > 160 else notification_text
         enviar_notificacao_pushy(
-            id_destinatario,
-            nome_remitente or "Nova mensagem",
-            texto_notificacao,
+            recipient_id,
+            sender.nome,
+            notification_text,
             {
                 "type": "new_message",
-                "sender_id": id_remitente,
-                "room": nossa_sala,
-                "message_type": dados["tipo"],
+                "sender_id": sender_id,
+                "room": room,
+                "message_type": stored.tipo,
                 "file_name": file_name,
-                "mime_type": mime_type
+                "mime_type": mime_type,
             },
-            sala_ativa=nossa_sala
+            sala_ativa=room,
         )
-
         return jsonify({
             "success": True,
-            "mensagem_id": armazenar_menssagem.id,
+            "mensagem_id": stored.id,
             "file_url": file_url,
-            "tipo": dados["tipo"]
+            "tipo": stored.tipo,
         }), 201
-
-    except Exception as err:
+    except Exception:
         db.session.rollback()
-        print(f"Erro ao enviar mensagem com arquivo: {err}")
+        current_app.logger.exception("Falha ao enviar mensagem com ficheiro")
         return jsonify({"success": False, "error": "Erro interno"}), 500

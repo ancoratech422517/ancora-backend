@@ -22,8 +22,10 @@ class register_user():
 
         if not senha:
             return {"status": False, "message": "Senha inválida."}, 400
-        elif len(senha) < 6:
-            return {"status": False, "message": "A senha deve ter pelo menos 6 caracteres."}, 400
+        elif len(senha) < 12:
+            return {"status": False, "message": "A senha deve ter pelo menos 12 caracteres."}, 400
+        elif len(senha) > 128:
+            return {"status": False, "message": "A senha excede o tamanho permitido."}, 400
         elif senha != confirmar_senha:
             return {"status": False, "message": "As senhas não coincidem."}, 400
         elif not nome:

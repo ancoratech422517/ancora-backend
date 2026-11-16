@@ -4,14 +4,14 @@ import { fetchComAuth } from "../../../../../utils/api"
 import { queueSocketEvent } from "../../../../../service/chatOfflineSync"
 import { GeralChatMenuButtomBuscarDadosEstado } from "./geralChatMenuBoxButtom"
 export function AoDigitarSelecionarTexto (){
-    
+
     let GeralChatEstadoUserAddTextoGetIDTexto = document.getElementById("GeralChatEstadoUserAddTextoGetIDTexto")
-    let aodigitarSelecionar = document.getElementById("aodigitarSelecionar").value 
-    GeralChatEstadoUserAddTextoGetIDTexto.innerHTML = aodigitarSelecionar
+    let aodigitarSelecionar = document.getElementById("aodigitarSelecionar").value
+    GeralChatEstadoUserAddTextoGetIDTexto.textContent = aodigitarSelecionar
 }
 
 export function AdicionarNovaDescrção(setEstadoResposta , setMostrarLoadingAdicionarEstado , setEstadoViewAdd){
-    
+
     try{
         setMostrarLoadingAdicionarEstado(true)
         let dados_usuario = useUserStore.getState().dadosUsuario
@@ -21,8 +21,8 @@ export function AdicionarNovaDescrção(setEstadoResposta , setMostrarLoadingAdi
             "id_usuario":dados_usuario.id,
             "nome_usuario":dados_usuario.nome,
             "foto_usuario":dados_usuario.foto_usuario,
-            "descricao":GeralChatEstadoUserAddTextoGetIDTexto.innerHTML,
-            "tipo-estado":TIPO_ESTADO.innerHTML
+            "descricao":GeralChatEstadoUserAddTextoGetIDTexto.textContent,
+            "tipo-estado":TIPO_ESTADO.textContent
 
         }
 
@@ -37,7 +37,7 @@ export function AdicionarNovaDescrção(setEstadoResposta , setMostrarLoadingAdi
         }, 3000);
         setTimeout(() => {
             setEstadoResposta(false)
-            GeralChatEstadoUserAddTextoGetIDTexto.innerHTML = ""
+            GeralChatEstadoUserAddTextoGetIDTexto.textContent = ""
             let aodigitarSelecionar = document.getElementById("aodigitarSelecionar").value  = ""
             setEstadoViewAdd(false)
 
@@ -55,7 +55,7 @@ export function GeralChatEstadoUserAddMusicaAoDigitarDescricao () {
     let conteiner_descricao_musicaID = document.getElementById("conteiner_descricao_musicaID")
     let descricao_musica = document.getElementById("descricao_musica")
 
-    conteiner_descricao_musicaID.innerHTML = descricao_musica.value 
+    conteiner_descricao_musicaID.textContent = descricao_musica.value
 
 }
 
@@ -66,7 +66,7 @@ export async function GeralChatEstadoUserAddMusicaSendEstado(setEstadoResposta ,
             let tipo_musica = document.getElementById("tipo-musica")
             let dados_usuario = useUserStore.getState().dadosUsuario
             let URLBACKEND = useUserStore.getState().urlBancoDeDados
-            
+
 
             const form_data = new FormData()
 
@@ -75,8 +75,8 @@ export async function GeralChatEstadoUserAddMusicaSendEstado(setEstadoResposta ,
                 form_data.append("id_usuario" , dados_usuario.id)
                 form_data.append("nome_usuario" , dados_usuario.nome)
                 form_data.append("foto_usuario" , dados_usuario.foto_usuario)
-                form_data.append("conteiner_descricao_musicaID" , conteiner_descricao_musicaID.innerHTML)
-                form_data.append("tipo_musica" , tipo_musica.innerHTML)
+                form_data.append("conteiner_descricao_musicaID" , conteiner_descricao_musicaID.textContent)
+                form_data.append("tipo_musica" , tipo_musica.textContent)
             }
 
             const adicionarEstadoMusica = await fetchComAuth(`${URLBACKEND}/api/adicionar_estado_musica` , {
@@ -109,7 +109,7 @@ export async function GeralChatEstadoUserAddMusicaSendEstado(setEstadoResposta ,
 export function GeralChatEstadoUserAddImagemAoDigitar (){
     let GeralChatEstadoUserAddImagemDigitar = document.getElementById("GeralChatEstadoUserAddImagemDigitar")
     let texto_imagem_estado = document.getElementById("texto_imagem_estado")
-    GeralChatEstadoUserAddImagemDigitar.innerHTML = texto_imagem_estado.value
+    GeralChatEstadoUserAddImagemDigitar.textContent = texto_imagem_estado.value
 }
 
 export async function GeralChatEstadoUserAddImagemAoDigitarDate(setMostrarLoadingAdicionarEstado , setEstadoResposta , setEstadoViewAdd) {
@@ -118,7 +118,7 @@ export async function GeralChatEstadoUserAddImagemAoDigitarDate(setMostrarLoadin
         const dados_usuario = useUserStore.getState().dadosUsuario
         let GeralChatEstadoUserAddImagemDigitar = document.getElementById("GeralChatEstadoUserAddImagemDigitar")
         let imagem_estado = document.getElementById("imagem_estado")
-        
+
         if (imagem_estado.files.length < 1){
             alert("tens que selecionar uma imagem")
             setMostrarLoadingAdicionarEstado(false)
@@ -129,7 +129,7 @@ export async function GeralChatEstadoUserAddImagemAoDigitarDate(setMostrarLoadin
         my_formData.append("nome_usuario" , dados_usuario.nome)
         my_formData.append("foto_usuario" , dados_usuario.foto_usuario)
         my_formData.append("id_usuario" , dados_usuario.id)
-        my_formData.append("descricao_imagem" ,GeralChatEstadoUserAddImagemDigitar.innerHTML)
+        my_formData.append("descricao_imagem" ,GeralChatEstadoUserAddImagemDigitar.textContent)
         my_formData.append("imagem_estado" , optimizedImage.file)
         if (optimizedImage.blurHash) {
             my_formData.append("blurhash", optimizedImage.blurHash)
@@ -164,7 +164,7 @@ export function GeralCharUserAddTextoAoDigitarVideo () {
     let textoVideo = document.getElementById("textoVideo")
     let descricao_video = document.getElementById("descricao_video")
 
-    textoVideo.innerHTML = descricao_video.value
+    textoVideo.textContent = descricao_video.value
 }
 
 export async function GeralChatUserAddTextoAoDigitarVideoSendVideo(setEstadoResposta , setMostrarLoadingAdicionarEstado , setEstadoViewAdd) {
@@ -184,7 +184,7 @@ export async function GeralChatUserAddTextoAoDigitarVideoSendVideo(setEstadoResp
         my_formData.append("nome_usuario" , dados_usuario.nome)
         my_formData.append("id_usuario" , dados_usuario.id)
         my_formData.append("foto_usuario" , dados_usuario.foto_usuario)
-        my_formData.append("descricao_video" , descricao_video.innerHTML)
+        my_formData.append("descricao_video" , descricao_video.textContent)
         my_formData.append("video_estado" , video_estado.files[0])
         my_formData.append("tipo_estado" , "video")
 
@@ -210,6 +210,6 @@ export async function GeralChatUserAddTextoAoDigitarVideoSendVideo(setEstadoResp
         alert(erro)
         setEstadoViewAdd(false)
     }
-    
+
 
 }

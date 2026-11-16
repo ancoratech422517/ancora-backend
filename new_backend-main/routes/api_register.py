@@ -1,11 +1,10 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, current_app, request, jsonify
 import cloudinary.uploader
-import os
 from service.api_register import register_user
 from service.media_metadata import validate_blurhash
+from service.upload_validation import upload_size, validate_extension
 
 registrar = Blueprint("registrar", __name__)
-caminho = "static/dados/usuario"
 
 @registrar.route("/api/Registrar", methods=["POST"])
 def registro():
@@ -29,33 +28,43 @@ def registro():
         except ValueError as erro:
             return jsonify({"status": "erro", "message": str(erro)}), 400
 
+        if not isinstance(nome, str) or not nome.strip() or len(nome.strip()) > 100:
+            return jsonify({"status": "erro", "message": "O nome é obrigatório e deve ter até 100 caracteres."}), 400
+        if not isinstance(telefone, str) or not telefone.strip() or len(telefone) > 20:
+            return jsonify({"status": "erro", "message": "O telefone é obrigatório e inválido."}), 400
+        if not isinstance(senha, str) or len(senha) < 12 or len(senha) > 128:
+            return jsonify({"status": "erro", "message": "A senha deve ter entre 12 e 128 caracteres."}), 400
+        if senha != confirmar_senha:
+            return jsonify({"status": "erro", "message": "As senhas não coincidem."}), 400
+        if not isinstance(email, str) or len(email) > 254:
+            return jsonify({"status": "erro", "message": "O email é inválido."}), 400
+
         # URL da foto (padrão caso não envie foto)
         foto_url = None
 
         if foto and foto.filename != "":
             try:
-                # Upload para o Cloudinary
+                validate_extension(foto, {"jpg", "jpeg", "png", "webp", "gif"})
+                upload_size(foto, 5 * 1024 * 1024)
                 upload_result = cloudinary.uploader.upload(
                     foto,
-                    folder="usuarios/fotos_perfil",           # Organiza as fotos
-                    overwrite=True,
+                    folder="usuarios/fotos_perfil",
                     resource_type="image"
                 )
-                foto_url = upload_result.get("secure_url")    # URL HTTPS
-
-                print(f"✅ Foto enviada para Cloudinary: {foto_url}")
+                foto_url = upload_result.get("secure_url")
+                if not foto_url or not foto_url.startswith("https://"):
+                    raise RuntimeError("O armazenamento não confirmou a imagem.")
+            except ValueError as erro:
+                return jsonify({"status": "erro", "message": str(erro)}), 400
             except Exception as erro:
-                foto.seek(0)
-                print(f"erro ao armazenar o arquivo nas nuvens:{erro}")
-                print("-"*40)
-                print("Registrando o arquivo localmente...")
-                novo_nome = foto.filename.replace(" ","_")
-                urlFoto = f"http://127.0.0.1:5000/{caminho}/{novo_nome}"
-                if not os.path.exists(caminho):
-                    os.makedirs(caminho , exist_ok=True)
-                foto.save(os.path.join(caminho , novo_nome))
-                foto_url = urlFoto
-                print("Arquivo armazenado localmente")
+                current_app.logger.warning(
+                    "Falha ao guardar a imagem de registo (%s)",
+                    type(erro).__name__,
+                )
+                return jsonify({
+                    "status": "erro",
+                    "message": "O serviço de imagens está temporariamente indisponível.",
+                }), 503
                 
 
         # Chamar o serviço de registro
@@ -78,8 +87,6 @@ def registro():
 
         return jsonify(resultado), status_code
 
-    except Exception as e:
-        print("❌ Erro no registro:", str(e))
-        import traceback
-        traceback.print_exc()
-        return jsonify({"status": "erro", "message": str(e)}), 500
+    except Exception:
+        current_app.logger.exception("Falha inesperada no registo de utilizador")
+        return jsonify({"status": "erro", "message": "Não foi possível concluir o registo."}), 500

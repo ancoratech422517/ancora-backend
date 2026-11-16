@@ -4,6 +4,7 @@ import json
 from models.database import Menssagens, Registrar_produto, Amigo
 from routes.websocket import socketio
 from routes.websoket_conectUser import get_user_id_from_cookie
+from service.friend_access import users_are_unblocked_friends
 
 @socketio.on("buscar_menssagens")
 def buscar_menssagens(data):
@@ -19,6 +20,8 @@ def buscar_menssagens(data):
     ).first()
     if not amizade:
         return {"ok": False, "erro": "Sem acesso a esta conversa"}
+    if not users_are_unblocked_friends(int(usuario_id), int(amizade.id_amigo)):
+        return {"ok": False, "erro": "Esta conversa está bloqueada"}
 
     buscar_menssagem_na_sala = Menssagens.query.filter(Menssagens.nossa_sala == nossa_sala).all()
     lista_menssagem = []

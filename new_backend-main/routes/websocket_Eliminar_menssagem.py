@@ -3,6 +3,7 @@ from flask_socketio import emit
 from routes.websocket import socketio
 from models.database import Menssagens, db, Amigo
 from routes.websoket_conectUser import get_user_id_from_cookie
+from service.friend_access import users_are_unblocked_friends
 
 @socketio.on("Eliminar_menssagem")
 def Eliminar_menssagem (data):
@@ -24,6 +25,8 @@ def Eliminar_menssagem (data):
     ).first()
     if not amizade:
         return {"success": False, "error": "Sem acesso a esta conversa"}
+    if not users_are_unblocked_friends(sender_id, int(amizade.id_amigo)):
+        return {"success": False, "error": "Esta conversa está bloqueada"}
     mensagem = Menssagens.query.filter_by(
         nossa_sala=sala_menssagem,
         id=message_id,
@@ -45,4 +48,3 @@ def Eliminar_menssagem (data):
         room=sala_menssagem,
     )
     return {"success": True}
-    

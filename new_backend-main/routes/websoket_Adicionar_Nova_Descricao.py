@@ -1,22 +1,29 @@
 from routes.websocket import socketio
 from models.database import Adicionar_dados_estado , db , Amigo
 from service.estado_realtime_service import notificar_amigos_novo_estado
+from routes.websoket_conectUser import get_user_id_from_cookie
+from models.database import Usuario
 
 @socketio.on("Adicionar_Nova_Descricao")
 def AdicionarNovaDescricao(dados):
     try:
-        id_usuario = dados.get("id_usuario")
-        nome_usuario = dados.get("nome_usuario")
-        foto_usuario = dados.get("foto_usuario")
+        if not isinstance(dados, dict):
+            return {"success": False, "error": "Dados inválidos"}
+        user_id = get_user_id_from_cookie()
+        if not user_id:
+            return {"success": False, "error": "Sessão expirada"}
+        usuario = db.session.get(Usuario, int(user_id))
         descricao = dados.get("descricao")
         tipo_estado = dados.get("tipo-estado")
+        if not usuario or not isinstance(descricao, str) or len(descricao.strip()) > 1000:
+            return {"success": False, "error": "Descrição inválida"}
 
         dados_geral = {
-            "id_usuario": int(id_usuario),
+            "id_usuario": int(user_id),
             "dados_estado": descricao , 
             "tipo_estado" : tipo_estado,
-            "nome_usuario_estado":nome_usuario,
-            "foto_usuario_estado":foto_usuario
+            "nome_usuario_estado": usuario.nome,
+            "foto_usuario_estado": usuario.foto_usuario
         }
         if tipo_estado == "texto":
             novo_dados = Adicionar_dados_estado(**dados_geral)

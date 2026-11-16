@@ -3,9 +3,9 @@ from service.auth_service import AuthService
 from ancorashield.exceptions import AuthenticationError
 from models.database import Usuario, db
 from service.security_audit import record_security_event
+from service.refresh_sessions import issue_and_store_refresh_token, rotate_refresh_token
 from service.security_tokens import (
     issue_access_token,
-    issue_refresh_token,
     refresh_token_manager,
     request_origin_is_allowed,
 )
@@ -29,6 +29,18 @@ def Login():
             }), 400
         telefone = dados.get("telefone")
         senha = dados.get("senha")
+        if (
+            not isinstance(telefone, str)
+            or not telefone.strip()
+            or len(telefone) > 32
+            or not isinstance(senha, str)
+            or not senha
+            or len(senha) > 128
+        ):
+            return jsonify({
+                "status": "False",
+                "menssagem": "Telefone ou senha inválidos",
+            }), 400
 
         resultado = AuthService.validar_login(telefone, senha)
 
@@ -45,7 +57,7 @@ def Login():
         
 
         access_token = issue_access_token(user_id)
-        refresh_token = issue_refresh_token(user_id)
+        refresh_token = issue_and_store_refresh_token(user_id)
 
         resp = make_response(jsonify({
             "status": "True",
@@ -111,7 +123,12 @@ def refresh():
     except AuthenticationError:
         return jsonify({"erro": "Token inválido ou expirado"}), 401
 
-    if payload.get("token_type") != "refresh" or "refresh" not in payload["roles"]:
+    roles = payload.get("roles")
+    if (
+        payload.get("token_type") != "refresh"
+        or not isinstance(roles, (list, tuple, set, frozenset))
+        or "refresh" not in roles
+    ):
         return jsonify({"erro": "Token inválido"}), 401
 
     try:
@@ -123,11 +140,28 @@ def refresh():
     if not usuario:
         return jsonify({"erro": "Utilizador não encontrado"}), 401
 
+    try:
+        rotated_refresh_token = rotate_refresh_token(refresh_token, user_id)
+    except Exception:
+        current_app.logger.exception("Erro ao rodar refresh token")
+        return jsonify({"erro": "Erro interno"}), 500
+    if not rotated_refresh_token:
+        return jsonify({"erro": "Refresh token revogado ou já utilizado"}), 401
+
     record_security_event("auth.token.refreshed", {"user_id": user_id})
-    response = jsonify({
+    response = make_response(jsonify({
         "access_token": issue_access_token(usuario.id),
         "expires_in": 900,
-    })
+    }))
+    response.set_cookie(
+        "refresh_token",
+        rotated_refresh_token,
+        max_age=60 * 60 * 24 * 7,
+        httponly=True,
+        secure=True,
+        samesite="None",
+        path="/",
+    )
     response.headers["Cache-Control"] = "no-store"
     response.headers["Pragma"] = "no-cache"
     return response, 200

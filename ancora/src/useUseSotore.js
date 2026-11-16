@@ -722,7 +722,7 @@ export const useUserStore = create(
                   let id_escrevendo = document.getElementById(nossa_sala)
                   let classeSala = document.querySelector(`.${nossa_sala}`)
                   
-                  id_escrevendo.innerHTML = "Escrevendo..."
+                  if (id_escrevendo) id_escrevendo.textContent = "Escrevendo..."
                   classeSala.style.color = "teal"
                   classeSala.style.fontWeight = "bold"
                   menssagem_antiga = ultima_menssagem
@@ -750,7 +750,11 @@ export const useUserStore = create(
                     classeSala.style.fontWeight = "500"
                   }
                   let id_escrevendo = document.getElementById(nossa_sala)
-                  id_escrevendo.innerHTML = ultima_menssagem
+                  if (id_escrevendo) {
+                    id_escrevendo.textContent = typeof ultima_menssagem === "string"
+                      ? ultima_menssagem
+                      : ""
+                  }
                   
                  
 

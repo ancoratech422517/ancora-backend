@@ -1,10 +1,31 @@
 from models.database import Usuario , db
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
+from sqlalchemy.exc import IntegrityError
+import logging
 from service.password_security import hash_password
+
+logger = logging.getLogger(__name__)
+
+
+def _is_duplicate_phone_error(error):
+    original_error = getattr(error, "orig", error)
+    message = str(original_error).lower()
+    if "usuarios.telefone" in message or "usuarios_telefone" in message:
+        return True
+    constraint_name = getattr(getattr(original_error, "diag", None), "constraint_name", "")
+    return "telefone" in str(constraint_name).lower()
+
 
 class RegisterService:
     def registrar_user_in_db(self, nome, telefone, senha , email , data_nascimento , foto_usuario , foto_usuario_blurhash=None , continente=None , pais=None , provincia=None , capital=None , bairro=None):
+
+        if not isinstance(telefone, str) or not telefone or len(telefone) > 20:
+            return {"erro": "O telefone é inválido."}, 400
+        if Usuario.query.filter_by(telefone=telefone).first():
+            return {
+                "erro": "Este telefone já tem uma conta. Inicie sessão ou use outro número."
+            }, 409
 
         # 2. Gerar o Par de Chaves Assimétricas (Para Saques/Pagamentos)
         # O RSA de 2048 bits é o padrão de segurança atual
@@ -57,6 +78,21 @@ class RegisterService:
                 "chave_privada": private_pem 
             }, 201
             
-        except Exception as e:
+        except IntegrityError as error:
             db.session.rollback()
-            return {"erro": f"Erro ao salvar no banco: {str(e)}"}, 500
+            if _is_duplicate_phone_error(error):
+                return {
+                    "erro": "Este telefone já tem uma conta. Inicie sessão ou use outro número."
+                }, 409
+            logger.warning(
+                "Conflito de integridade ao registar utilizador (%s)",
+                type(getattr(error, "orig", error)).__name__,
+            )
+            return {"erro": "Os dados do cadastro são inválidos ou já estão registados."}, 400
+        except Exception as error:
+            db.session.rollback()
+            logger.error(
+                "Falha interna ao registar utilizador (%s)",
+                type(error).__name__,
+            )
+            return {"erro": "Não foi possível concluir o cadastro. Tente novamente."}, 500

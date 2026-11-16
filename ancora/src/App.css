@@ -11,6 +11,10 @@
   min-height: 0;
   height: 100%;
 }
+.conteinerPrincipal.academyOpen > .conteinerPrincipalConteudo{
+  width: 100%;
+  flex: 1 1 100%;
+}
 .loading-page{
   width: 100%;
   height: 100%;
@@ -288,6 +292,9 @@
       min-height: 0;
     }
     .conteinerPrincipal.assistantOpen{
+      flex-direction: column;
+    }
+    .conteinerPrincipal.academyOpen{
       flex-direction: column;
     }
     .conteinerPrincipal.assistantOpen > .menuConteinerLeft{

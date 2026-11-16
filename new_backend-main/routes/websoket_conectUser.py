@@ -8,6 +8,7 @@ from service.pushy_service import enviar_notificacao_pushy
 from ancorashield.exceptions import AuthenticationError
 from service.security_audit import record_security_event
 from service.security_tokens import access_token_manager
+from service.lifecycle_cleanup import registrar_saida_socket
 
 # Dicionário global: { usuario_id: socket_sid }
 usuarios_online = {}
@@ -73,6 +74,7 @@ def handle_autenticar():
 
 @socketio.on('disconnect')
 def handle_disconnect():
+    registrar_saida_socket(request.sid)
     usuario_id_desconectado = usuarios_por_sid.pop(request.sid, None)
     if usuario_id_desconectado:
         era_ultima_sessao = usuarios_online.get(usuario_id_desconectado) == request.sid
@@ -95,9 +97,20 @@ def enviar_pedido_de_amizade(data):
         emit("erro_operacao", {"msg": "Sessão expirada"}, room=request.sid)
         return disconnect()
     
-    id_destinatario = data.get("id_destinatario")
-    nome_remitente = data.get("nome_remitente")
-    foto_usuario = data.get("foto_usuario")
+    if not isinstance(data, dict):
+        return emit("erro_operacao", {"msg": "Dados inválidos"}, room=request.sid)
+    try:
+        id_destinatario = int(data.get("id_destinatario"))
+        id_remitente_int = int(id_remitente)
+    except (TypeError, ValueError):
+        return emit("erro_operacao", {"msg": "Destinatário inválido"}, room=request.sid)
+
+    remetente = db.session.get(Usuario, id_remitente_int)
+    destinatario = db.session.get(Usuario, id_destinatario)
+    if not remetente or not destinatario:
+        return emit("erro_operacao", {"msg": "Utilizador não encontrado"}, room=request.sid)
+    nome_remitente = remetente.nome
+    foto_usuario = remetente.foto_usuario
 
     if str(id_remitente) == str(id_destinatario):
         return emit("erro_operacao", {"msg": "Não pode add a si mesmo"}, room=request.sid)

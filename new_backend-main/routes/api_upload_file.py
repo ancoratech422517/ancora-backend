@@ -36,7 +36,7 @@ ALLOWED_EXTENSIONS = {
     # Modelos de IA
     'gguf', 'ggml', 'safetensors', 'onnx', 'pt', 'pth',
 }
-MAX_UPLOAD_BYTES = 1024 ** 3
+MAX_UPLOAD_BYTES = 256 * 1024 * 1024
 UPLOAD_CHUNK_BYTES = 20 * 1024 * 1024
 
 
@@ -73,7 +73,7 @@ def create_upload_signature():
     if not filename or extension not in ALLOWED_EXTENSIONS:
         return jsonify({"success": False, "error": "Tipo de arquivo não permitido"}), 400
     if file_size <= 0 or file_size > MAX_UPLOAD_BYTES:
-        return jsonify({"success": False, "error": "O limite máximo é 1 GB"}), 413
+        return jsonify({"success": False, "error": "O limite máximo é 256 MB"}), 413
 
     cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME', '').strip()
     api_key = os.getenv('CLOUDINARY_API_KEY', '').strip()
@@ -165,7 +165,7 @@ def finalize_chunked_upload():
             cloudinary.uploader.destroy(public_id, resource_type=resource_type)
         except Exception:
             current_app.logger.exception("Falha ao remover upload acima do limite permitido")
-        return jsonify({"success": False, "error": "O limite máximo é 1 GB"}), 413
+        return jsonify({"success": False, "error": "O limite máximo é 256 MB"}), 413
 
     file_name = str(data.get('filename') or 'arquivo').replace('\\', '/').rsplit('/', 1)[-1]
     mime_type = str(data.get('mime_type') or 'application/octet-stream')[:255]
