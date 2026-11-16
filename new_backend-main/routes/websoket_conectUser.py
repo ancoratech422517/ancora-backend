@@ -1,6 +1,6 @@
 import time
 
-from flask import request
+from flask import current_app, request
 from flask_socketio import join_room, emit, disconnect
 from routes.websocket import socketio
 from models.database import Amizade, db, Amigo, Usuario
@@ -112,36 +112,45 @@ def enviar_pedido_de_amizade(data):
     nome_remitente = remetente.nome
     foto_usuario = remetente.foto_usuario
 
-    if str(id_remitente) == str(id_destinatario):
+    if id_remitente_int == id_destinatario:
         return emit("erro_operacao", {"msg": "Não pode add a si mesmo"}, room=request.sid)
 
-    amigo_existente = Amigo.query.filter(
-        ((Amigo.id_amigo == id_destinatario) & (Amigo.id_usuario == id_remitente)) | 
-        ((Amigo.id_amigo == id_remitente) & (Amigo.id_usuario == id_destinatario))
-    ).first()
-    
-    if amigo_existente:
-        return emit("erro_operacao", {"msg": "Vocês já são amigos"}, room=request.sid)
+    try:
+        amigo_existente = Amigo.query.filter(
+            ((Amigo.id_amigo == id_destinatario) & (Amigo.id_usuario == id_remitente_int)) |
+            ((Amigo.id_amigo == id_remitente_int) & (Amigo.id_usuario == id_destinatario))
+        ).first()
 
-    existente = Amizade.query.filter(
-        ((Amizade.remetente_id == id_remitente) & (Amizade.destinatario_id == id_destinatario)) |
-        ((Amizade.remetente_id == id_destinatario) & (Amizade.destinatario_id == id_remitente)),
-        Amizade.tipo_notificacao == "pedido_amizade",
-        Amizade.status == "pendente"
-    ).first()
+        if amigo_existente:
+            return emit("erro_operacao", {"msg": "Vocês já são amigos"}, room=request.sid)
 
-    if existente:
-        return emit("erro_operacao", {"msg": "Já existe uma solicitação"}, room=request.sid)
+        existente = Amizade.query.filter(
+            ((Amizade.remetente_id == id_remitente_int) & (Amizade.destinatario_id == id_destinatario)) |
+            ((Amizade.remetente_id == id_destinatario) & (Amizade.destinatario_id == id_remitente_int)),
+            Amizade.tipo_notificacao == "pedido_amizade",
+            Amizade.status == "pendente"
+        ).first()
 
-    novo_pedido = Amizade(
-        remetente_id=id_remitente,
-        destinatario_id=id_destinatario,
-        status='pendente',
-        foto_usuario=foto_usuario,
-        tipo_notificacao="pedido_amizade"
-    )
-    db.session.add(novo_pedido)
-    db.session.commit()
+        if existente:
+            return emit("erro_operacao", {"msg": "Já existe uma solicitação"}, room=request.sid)
+
+        novo_pedido = Amizade(
+            remetente_id=id_remitente_int,
+            destinatario_id=id_destinatario,
+            status='pendente',
+            foto_usuario=foto_usuario,
+            tipo_notificacao="pedido_amizade"
+        )
+        db.session.add(novo_pedido)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("Falha ao processar pedido de amizade")
+        return emit(
+            "erro_operacao",
+            {"msg": "Não foi possível enviar o pedido de amizade. Tente novamente."},
+            room=request.sid,
+        )
 
     enviar_notificacao_pushy(
         id_destinatario,
@@ -150,14 +159,14 @@ def enviar_pedido_de_amizade(data):
         {
             "type": "notification",
             "notification_type": "pedido_amizade",
-            "sender_id": id_remitente
+            "sender_id": id_remitente_int
         },
         enviar_para_online=True
     )
 
     emit("receber_notificacao", {
         "id": novo_pedido.id,
-        "de_id": id_remitente,
+        "de_id": id_remitente_int,
         "nome_remetente": nome_remitente,
         "mensagem": f"{nome_remitente} quer ser seu amigo",
         "tipo_notificacao": "pedido_amizade",
