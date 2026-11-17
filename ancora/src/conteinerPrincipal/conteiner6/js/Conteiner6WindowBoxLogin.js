@@ -36,9 +36,14 @@ export async function Login(ativarConteiner, setDados , setEstadoLoading , setEr
         const get_response_logar = await logar.json()
         
         if (!logar.ok || get_response_logar.status === "False") {
-
             setEstadoLoading("False")
-            setErro("True")
+            if (logar.status === 429) {
+                setErro("Muitas tentativas de acesso a esta conta. Aguarde alguns minutos e tente novamente.")
+            } else if (logar.status === 401) {
+                setErro("Telefone ou senha inválidos.")
+            } else {
+                setErro(get_response_logar.menssagem || get_response_logar.error || "Não foi possível iniciar sessão. Tente novamente.")
+            }
             return
         }
         setAccessToken(get_response_logar.access_token, get_response_logar.expires_in)

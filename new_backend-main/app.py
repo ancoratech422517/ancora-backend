@@ -1,3 +1,4 @@
+import hashlib
 import os
 from dotenv import load_dotenv
 
@@ -171,13 +172,27 @@ auth_rate_limiter = RateLimiter(max_requests=10, window_seconds=300)
 
 @app.before_request
 def limit_authentication_attempts():
-    if request.method != "POST" or request.path.casefold() not in {"/login", "/refresh"}:
+    # Em produção, vários utilizadores podem chegar ao Flask pelo mesmo proxy.
+    # Limitar pelo remote_addr bloqueava todos depois de 10 logins/refreshes.
+    # O limite de login deve ser isolado por conta; refresh tem rotação de token.
+    if request.method != "POST" or request.path.casefold() != "/login":
         return None
-    client_key = request.remote_addr or "unknown"
+    payload = request.get_json(silent=True)
+    telefone = payload.get("telefone") if isinstance(payload, dict) else None
+    telefone = (
+        "".join(character for character in telefone if character in "0123456789")
+        if isinstance(telefone, str)
+        else ""
+    )
+    if telefone:
+        rate_limit_identity = f"account:{telefone}"
+    else:
+        rate_limit_identity = f"invalid:{request.remote_addr or 'unknown'}"
+    client_key = hashlib.sha256(rate_limit_identity.encode("utf-8")).hexdigest()
     allowed, retry_after = auth_rate_limiter.check(client_key)
     if allowed:
         return None
-    response = jsonify(error="too many authentication requests")
+    response = jsonify(error="too many authentication requests", retry_after=retry_after)
     response.status_code = 429
     response.headers["Retry-After"] = str(retry_after)
     return response

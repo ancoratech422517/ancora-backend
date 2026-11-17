@@ -10,7 +10,7 @@ export default function Conteiner6 ({ativarConteiner}) {
     const autentificaçã = () =>{
         switch(conta){
             case "Login":
-                return <Conteiner6WindowBoxLogin ativarConteiner={ativarConteiner} setConta={setConta} />
+                return <Conteiner6WindowBoxLogin ativarConteiner={ativarConteiner} />
             case "Registro":
                 return <Conteiner6WindowBoxRegistro setConta={setConta} />
             default: 

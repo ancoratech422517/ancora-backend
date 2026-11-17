@@ -21,6 +21,37 @@ import { preparePrivateMediaStorage } from './utils/privateMediaStorage'
 import { useApiRequestLoading } from './utils/apiRequestTracker'
 import ContainerLoading from './components/ContainerLoading'
 import { ASSISTANT_CHAT_TYPE } from './conteinerPrincipal/assistente/assistantConfig'
+import AssistantVoiceVisualizer from './conteinerPrincipal/assistente/AssistantVoiceVisualizer'
+
+function AssistantCommandOrb() {
+  const status = useUserStore((state) => state.assistantCommandStatus)
+  const pulse = useUserStore((state) => state.assistantVoicePulse)
+  const styleIndex = useUserStore((state) => state.assistantVoiceStyle)
+  if (!status || status === "idle") return null
+  const labels = {
+    listening: "A ouvir-te",
+    working: "A trabalhar na Âncora",
+    speaking: "A responder",
+    confirming: "À espera da tua confirmação",
+  }
+  return (
+    <aside className={`assistantCommandOrb assistantCommandOrb-${status}`} role="status" aria-live="polite">
+      <div className="assistantCommandOrbSphere">
+        <AssistantVoiceVisualizer styleIndex={styleIndex} active pulse={pulse} />
+      </div>
+      <div className="assistantCommandOrbText">
+        <strong>Assistente Âncora</strong>
+        <span>{labels[status]}</span>
+      </div>
+      <button
+        type="button"
+        className="assistantCommandOrbStop"
+        onClick={() => window.dispatchEvent(new Event("ancora:assistant-stop"))}
+        aria-label="Parar o assistente"
+      >Parar</button>
+    </aside>
+  )
+}
 
 
 function App() {
@@ -296,6 +327,7 @@ function App() {
         </Suspense>
       </div>
       <VoiceCallOverlay />
+      <AssistantCommandOrb />
       {apiRequestLoading && !carregandoSessao && (
         <ContainerLoading global label="A processar pedido" />
       )}

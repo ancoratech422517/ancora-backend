@@ -92,6 +92,7 @@ export const useUserStore = create(
       assistantReturnState: null,
       assistantAudioMode: false,
       assistantIsSpeaking: false,
+      assistantCommandStatus: "idle",
       assistantVoicePulse: 0,
       assistantVoiceStyle: 0,
       ativarGrupo: false,
@@ -287,6 +288,11 @@ export const useUserStore = create(
         assistantVoicePulse: activity.pulse ?? state.assistantVoicePulse,
         assistantVoiceStyle: activity.styleIndex ?? state.assistantVoiceStyle,
       })),
+      setAssistantCommandStatus: (status) => set({
+        assistantCommandStatus: ["listening", "working", "speaking", "confirming"].includes(status)
+          ? status
+          : "idle",
+      }),
       setProdutoUsuario: (produto) => set({ ProdutoUsuario: Array.isArray(produto) ? produto : [] }),
       setTodosProdutos: (todos) => set({ TodosProdutos: todos }),
       setDadosSombra: (sombra) => set({ DadosSombra: sombra }),

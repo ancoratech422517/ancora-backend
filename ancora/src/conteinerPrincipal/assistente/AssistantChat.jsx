@@ -31,6 +31,10 @@ function createMessageId() {
   return `assistant-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
+function releaseAssistantImage(url) {
+  if (typeof url === "string" && url.startsWith("blob:")) URL.revokeObjectURL(url);
+}
+
 function prepareSpeechText(text) {
   return String(text)
     .replace(/```[\s\S]*?```/g, " ")
@@ -157,11 +161,16 @@ export default function AssistantChat() {
   const user = useUserStore((state) => state.dadosUsuario);
   const messages = useUserStore((state) => state.menssagens);
   const setMenssagem = useUserStore((state) => state.setMenssagem);
+  const setProdutoUsuario = useUserStore((state) => state.setProdutoUsuario);
+  const setTodosProdutos = useUserStore((state) => state.setTodosProdutos);
   const assistantAudioMode = useUserStore((state) => state.assistantAudioMode);
   const setAssistantAudioMode = useUserStore((state) => state.setAssistantAudioMode);
   const setAssistantAudioActivity = useUserStore((state) => state.setAssistantAudioActivity);
+  const setAssistantCommandStatus = useUserStore((state) => state.setAssistantCommandStatus);
   const setChatThemeId = useUserStore((state) => state.setChatThemeId);
   const setChatAnimatedSceneId = useUserStore((state) => state.setChatAnimatedSceneId);
+  const setAtivar = useUserStore((state) => state.setAtivar);
+  const returnFromAssistantChat = useUserStore((state) => state.returnFromAssistantChat);
   const [draft, setDraft] = useState("");
   const mode = assistantAudioMode ? "audio" : "text";
   const [assistantVoiceId, setAssistantVoiceId] = useState(getSavedAssistantVoice);
@@ -172,8 +181,15 @@ export default function AssistantChat() {
   const [isListening, setIsListening] = useState(false);
   const [error, setError] = useState("");
   const [pendingAction, setPendingAction] = useState(null);
+  const pendingActionRef = useRef(pendingAction);
   const [isExecutingAction, setIsExecutingAction] = useState(false);
+  const [commandActive, setCommandActive] = useState(false);
   const recognitionRef = useRef(null);
+  const voiceSessionActiveRef = useRef(false);
+  const chatControllerRef = useRef(null);
+  const cancelledChatRequestRef = useRef(false);
+  const restartListeningTimeoutRef = useRef(null);
+  const imageFileInputRef = useRef(null);
   const audioRef = useRef(null);
   const audioUrlRef = useRef(null);
   const speechControllerRef = useRef(null);
@@ -194,6 +210,10 @@ export default function AssistantChat() {
     voicePulseRef.current += 1;
     setAssistantAudioActivity({ pulse: voicePulseRef.current });
   }, [setAssistantAudioActivity]);
+
+  useEffect(() => {
+    pendingActionRef.current = pendingAction;
+  }, [pendingAction]);
 
   useEffect(() => {
     try {
@@ -259,10 +279,69 @@ export default function AssistantChat() {
     }
   }, [setAssistantAudioActivity]);
 
+  const stopAssistantCommand = useCallback(() => {
+    voiceSessionActiveRef.current = false;
+    recognitionRef.current?.abort?.();
+    recognitionRef.current?.stop?.();
+    recognitionRef.current = null;
+    if (restartListeningTimeoutRef.current) {
+      window.clearTimeout(restartListeningTimeoutRef.current);
+      restartListeningTimeoutRef.current = null;
+    }
+    if (chatControllerRef.current) {
+      cancelledChatRequestRef.current = true;
+      chatControllerRef.current.abort();
+      chatControllerRef.current = null;
+    }
+    stopSpeech();
+    setIsListening(false);
+    setCommandActive(false);
+    setAssistantCommandStatus("idle");
+  }, [setAssistantCommandStatus, stopSpeech]);
+
   useEffect(() => () => {
-    recognitionRef.current?.stop();
+    voiceSessionActiveRef.current = false;
+    recognitionRef.current?.abort?.();
+    recognitionRef.current?.stop?.();
+    chatControllerRef.current?.abort();
+    releaseAssistantImage(pendingActionRef.current?.custom_image_url);
     stopSpeech(false);
-  }, [stopSpeech]);
+    setAssistantCommandStatus("idle");
+  }, [setAssistantCommandStatus, stopSpeech]);
+
+  useEffect(() => {
+    if (!commandActive) {
+      setAssistantCommandStatus("idle");
+    } else if (isListening) {
+      setAssistantCommandStatus("listening");
+    } else if (isSending || isExecutingAction) {
+      setAssistantCommandStatus("working");
+    } else if (isSpeaking) {
+      setAssistantCommandStatus("speaking");
+    } else if (pendingAction) {
+      setAssistantCommandStatus("confirming");
+    } else {
+      setAssistantCommandStatus("working");
+    }
+  }, [
+    commandActive, isExecutingAction, isListening, isSending, isSpeaking,
+    pendingAction, setAssistantCommandStatus,
+  ]);
+
+  useEffect(() => {
+    const handleStop = () => stopAssistantCommand();
+    const handleManualTakeover = (event) => {
+      if (!voiceSessionActiveRef.current && !commandActive) return;
+      if (event.target?.closest?.(".assistantMainComposer, .assistantCommandOrb")) return;
+      stopAssistantCommand();
+    };
+    window.addEventListener("ancora:assistant-stop", handleStop);
+    document.addEventListener("pointerdown", handleManualTakeover, true);
+    return () => {
+      window.removeEventListener("ancora:assistant-stop", handleStop);
+      document.removeEventListener("pointerdown", handleManualTakeover, true);
+    };
+  }, [commandActive, stopAssistantCommand]);
 
   const speak = useCallback(async (text) => {
     stopSpeech();
@@ -299,11 +378,13 @@ export default function AssistantChat() {
         browserSpeechRef.current = null;
         setIsSpeaking(false);
         setAssistantAudioActivity({ speaking: false });
+        if (!voiceSessionActiveRef.current && !pendingActionRef.current) setCommandActive(false);
       };
       utterance.onerror = (event) => {
         browserSpeechRef.current = null;
         setIsSpeaking(false);
         setAssistantAudioActivity({ speaking: false });
+        if (!voiceSessionActiveRef.current && !pendingActionRef.current) setCommandActive(false);
         if (event.error !== "canceled" && event.error !== "interrupted") {
           setError("Não foi possível reproduzir a resposta em áudio.");
         }
@@ -353,9 +434,13 @@ export default function AssistantChat() {
           160,
         );
       };
-      audio.onended = () => stopSpeech();
+      audio.onended = () => {
+        stopSpeech();
+        if (!voiceSessionActiveRef.current && !pendingActionRef.current) setCommandActive(false);
+      };
       audio.onerror = () => {
         stopSpeech();
+        if (!voiceSessionActiveRef.current && !pendingActionRef.current) setCommandActive(false);
         setError("Não foi possível reproduzir a resposta em áudio.");
       };
       const canStreamAudio = response.body
@@ -417,8 +502,20 @@ export default function AssistantChat() {
   }, [assistantVoiceId, backendUrl, pulseVoiceSphere, setAssistantAudioActivity, stopSpeech]);
 
   const applyClientAction = useCallback((action) => {
+    if (action?.type === "navigate_tab") {
+      const allowedDestinations = new Set([
+        "conteiner1", "conteiner2", "conteiner3", "conteiner4",
+        "conteiner5", "conteiner8", "academy",
+      ]);
+      if (!allowedDestinations.has(action.destination)) {
+        throw new Error("A aba escolhida já não está disponível.");
+      }
+      returnFromAssistantChat();
+      setAtivar(action.destination);
+      return;
+    }
     if (!action || action.type !== "change_theme") {
-      throw new Error("O assistente devolveu uma alteração de tema inválida.");
+      throw new Error("O assistente devolveu uma alteração não suportada.");
     }
     if (action.scope === "global" && ["light", "dark"].includes(action.theme_id)) {
       saveTheme(action.theme_id);
@@ -442,7 +539,7 @@ export default function AssistantChat() {
       return;
     }
     throw new Error("O tema escolhido já não está disponível.");
-  }, [setChatAnimatedSceneId, setChatThemeId]);
+  }, [returnFromAssistantChat, setAtivar, setChatAnimatedSceneId, setChatThemeId]);
 
   const sendMessage = useCallback(async (value) => {
     const content = value.trim();
@@ -471,10 +568,15 @@ export default function AssistantChat() {
     setMenssagem(userMessage);
     setDraft("");
     setError("");
+    releaseAssistantImage(pendingActionRef.current?.custom_image_url);
     setPendingAction(null);
     setIsSending(true);
+    setCommandActive(true);
+    cancelledChatRequestRef.current = false;
     const controller = new AbortController();
+    chatControllerRef.current = controller;
     const timeoutId = window.setTimeout(() => controller.abort(), 60000);
+    let requiresConfirmation = false;
 
     try {
       const base = String(backendUrl || "").replace(/\/+$/, "");
@@ -506,13 +608,21 @@ export default function AssistantChat() {
         throw new Error("O assistente não devolveu uma resposta válida.");
       }
 
-      if (data.client_action) applyClientAction(data.client_action);
       const assistantMessage = createChatMessage("assistant", data.reply.trim(), currentChat, user);
       setMenssagem(assistantMessage);
-      if (data.pending_action) {
+      const preparedAction = data.pending_action || (data.client_action
+        ? {
+          title: data.client_action.type === "navigate_tab" ? "Confirmar navegação" : "Confirmar alteração de tema",
+          summary: "Revê esta alteração e confirma antes de continuar.",
+          images: [],
+          client_action: data.client_action,
+        }
+        : null);
+      if (preparedAction) {
+        requiresConfirmation = true;
         setPendingAction({
-          ...data.pending_action,
-          selectedImageIndex: 0,
+          ...preparedAction,
+          selectedImageIndex: preparedAction.images?.length ? 0 : null,
         });
       }
       if (mode === "audio") {
@@ -520,6 +630,7 @@ export default function AssistantChat() {
         if (speechText) void speak(speechText);
       }
     } catch (requestError) {
+      if (cancelledChatRequestRef.current && requestError?.name === "AbortError") return;
       setError(
         requestError?.name === "TimeoutError" || requestError?.name === "AbortError"
           ? "O assistente demorou demasiado a responder. Tenta novamente."
@@ -529,30 +640,62 @@ export default function AssistantChat() {
       );
     } finally {
       window.clearTimeout(timeoutId);
+      if (chatControllerRef.current === controller) chatControllerRef.current = null;
       setIsSending(false);
+      if (!requiresConfirmation && !voiceSessionActiveRef.current && mode !== "audio") {
+        setCommandActive(false);
+      }
     }
-  }, [applyClientAction, backendUrl, isSending, mode, setMenssagem, speak, user]);
+  }, [backendUrl, isSending, mode, setMenssagem, speak, user]);
 
   const confirmPendingAction = async () => {
     if (!pendingAction || isExecutingAction) return;
     const currentChat = useUserStore.getState().ChatAtivo;
     if (currentChat?.tipo_chat !== ASSISTANT_CHAT_TYPE || !user?.id) return;
 
+    if (pendingAction.client_action) {
+      try {
+        applyClientAction(pendingAction.client_action);
+        setPendingAction(null);
+        setCommandActive(false);
+        if (pendingAction.client_action.type !== "navigate_tab") {
+          setMenssagem(createChatMessage(
+            "assistant",
+            "Alteração aplicada com sucesso.",
+            currentChat,
+            user,
+          ));
+        }
+      } catch (actionError) {
+        setError(actionError.message || "Não foi possível aplicar esta ação.");
+      }
+      return;
+    }
+
     setIsExecutingAction(true);
+    setCommandActive(true);
     setError("");
     const controller = new AbortController();
     const timeoutId = window.setTimeout(() => controller.abort(), 30000);
     try {
       const base = String(backendUrl || "").replace(/\/+$/, "");
       if (!base) throw new Error("O endereço do backend não está configurado.");
-      const response = await fetchComAuth(`${base}/api/assistente-ia/actions/execute`, {
-        method: "POST",
-        body: JSON.stringify({
+      const requestBody = pendingAction.custom_image_file
+        ? (() => {
+          const formData = new FormData();
+          formData.append("token", pendingAction.token);
+          formData.append("image", pendingAction.custom_image_file, pendingAction.custom_image_name || "imagem.png");
+          return formData;
+        })()
+        : JSON.stringify({
           token: pendingAction.token,
           ...(pendingAction.images?.length
             ? { image_index: pendingAction.selectedImageIndex }
             : {}),
-        }),
+        });
+      const response = await fetchComAuth(`${base}/api/assistente-ia/actions/execute`, {
+        method: "POST",
+        body: requestBody,
         signal: controller.signal,
         offlineQueue: false,
       });
@@ -569,6 +712,31 @@ export default function AssistantChat() {
       if (typeof data?.reply !== "string" || !data.reply.trim()) {
         throw new Error("O backend não confirmou o registo.");
       }
+      if (data.result?.resource === "produto") {
+        const refreshProductList = async (path, updateList) => {
+          const listResponse = await fetchComAuth(`${base}/${path}/${user.id}`, {
+            method: "GET",
+            signal: controller.signal,
+            offlineQueue: false,
+          });
+          if (!listResponse.ok) {
+            throw new Error(`Não foi possível atualizar ${path}.`);
+          }
+          const list = await listResponse.json();
+          if (!Array.isArray(list)) throw new Error(`A lista ${path} é inválida.`);
+          updateList(list);
+        };
+        const refreshResults = await Promise.allSettled([
+          refreshProductList("buscar_produto_usuario", setProdutoUsuario),
+          refreshProductList("buscar_todos_produtos", setTodosProdutos),
+        ]);
+        refreshResults.forEach((refreshResult) => {
+          if (refreshResult.status === "rejected") {
+            console.warn("Produto criado, mas uma lista da loja não foi atualizada:", refreshResult.reason);
+          }
+        });
+      }
+      releaseAssistantImage(pendingAction.custom_image_url);
       setPendingAction(null);
       const assistantMessage = createChatMessage("assistant", data.reply, currentChat, user);
       setMenssagem(assistantMessage);
@@ -576,6 +744,7 @@ export default function AssistantChat() {
         const speechText = prepareSpeechText(assistantMessage.menssagem);
         if (speechText) void speak(speechText);
       }
+      if (mode !== "audio" && !voiceSessionActiveRef.current) setCommandActive(false);
     } catch (requestError) {
       setError(
         requestError?.name === "TimeoutError" || requestError?.name === "AbortError"
@@ -590,25 +759,43 @@ export default function AssistantChat() {
     }
   };
 
+  const handleAssistantImageUpload = (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || !pendingAction) return;
+    const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+    if (!allowedTypes.has(file.type) || file.size <= 0 || file.size > 8 * 1024 * 1024) {
+      setError("Escolhe uma imagem JPG, PNG ou WebP até 8 MB.");
+      return;
+    }
+    releaseAssistantImage(pendingAction.custom_image_url);
+    const previewUrl = URL.createObjectURL(file);
+    setError("");
+    setPendingAction((current) => current
+      ? {
+        ...current,
+        custom_image_file: file,
+        custom_image_url: previewUrl,
+        custom_image_name: file.name,
+        selectedImageIndex: null,
+      }
+      : current);
+  };
+
   const changeMode = (nextMode) => {
     if (nextMode === mode) return;
+    voiceSessionActiveRef.current = false;
+    recognitionRef.current?.stop?.();
+    recognitionRef.current = null;
+    setIsListening(false);
+    if (!pendingAction && !isSending && !isSpeaking) setCommandActive(false);
     stopSpeech();
     setAssistantAudioMode(nextMode === "audio");
     setError("");
   };
 
-  const toggleListening = () => {
-    if (!SpeechRecognitionAPI) {
-      setError("O reconhecimento de voz não está disponível neste navegador. Podes escrever a mensagem.");
-      return;
-    }
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      return;
-    }
-
-    setError("");
-    stopSpeech();
+  const startListening = useCallback(() => {
+    if (!SpeechRecognitionAPI || recognitionRef.current || !voiceSessionActiveRef.current || pendingActionRef.current) return;
     const recognition = new SpeechRecognitionAPI();
     recognition.lang = "pt-PT";
     recognition.interimResults = true;
@@ -622,14 +809,18 @@ export default function AssistantChat() {
         void sendMessage(transcript);
       }
     };
-    recognition.onerror = () => {
-      setError("Não foi possível reconhecer a voz. Verifica a permissão do microfone.");
+    recognition.onerror = (event) => {
+      if (event.error !== "aborted" && voiceSessionActiveRef.current) {
+        setError("Não foi possível reconhecer a voz. Verifica a permissão do microfone.");
+        voiceSessionActiveRef.current = false;
+        setCommandActive(false);
+      }
       setIsListening(false);
       recognitionRef.current = null;
     };
     recognition.onend = () => {
       setIsListening(false);
-      recognitionRef.current = null;
+      if (recognitionRef.current === recognition) recognitionRef.current = null;
     };
     recognitionRef.current = recognition;
     setIsListening(true);
@@ -638,8 +829,46 @@ export default function AssistantChat() {
     } catch {
       recognitionRef.current = null;
       setIsListening(false);
+      voiceSessionActiveRef.current = false;
+      setCommandActive(false);
       setError("Não foi possível iniciar o microfone. Verifica a permissão do navegador.");
     }
+  }, [SpeechRecognitionAPI, sendMessage]);
+
+  useEffect(() => {
+    if (
+      !voiceSessionActiveRef.current || mode !== "audio" || pendingAction
+      || isListening || isSending || isSpeaking || isExecutingAction
+    ) return undefined;
+    restartListeningTimeoutRef.current = window.setTimeout(() => {
+      restartListeningTimeoutRef.current = null;
+      startListening();
+    }, 450);
+    return () => {
+      if (restartListeningTimeoutRef.current) {
+        window.clearTimeout(restartListeningTimeoutRef.current);
+        restartListeningTimeoutRef.current = null;
+      }
+    };
+  }, [
+    isExecutingAction, isListening, isSending, isSpeaking,
+    mode, pendingAction, startListening,
+  ]);
+
+  const toggleListening = () => {
+    if (!SpeechRecognitionAPI) {
+      setError("O reconhecimento de voz não está disponível neste navegador. Podes escrever a mensagem.");
+      return;
+    }
+    if (voiceSessionActiveRef.current) {
+      stopAssistantCommand();
+      return;
+    }
+    setError("");
+    setAssistantAudioMode(true);
+    voiceSessionActiveRef.current = true;
+    setCommandActive(true);
+    stopSpeech();
   };
 
   const handleSubmit = (event) => {
@@ -668,7 +897,11 @@ export default function AssistantChat() {
             <button
               type="button"
               className="assistantActionCancel"
-              onClick={() => setPendingAction(null)}
+              onClick={() => {
+                releaseAssistantImage(pendingAction.custom_image_url);
+                setPendingAction(null);
+                if (!voiceSessionActiveRef.current) setCommandActive(false);
+              }}
               disabled={isExecutingAction}
               aria-label="Cancelar ação"
             >
@@ -683,8 +916,14 @@ export default function AssistantChat() {
               alt="Imagem associada ao anúncio"
             />
           )}
+          {pendingAction.custom_image_url && (
+            <div className="assistantLocalImagePreview">
+              <img src={pendingAction.custom_image_url} alt="Pré-visualização da imagem escolhida" />
+              <span>{pendingAction.custom_image_name || "Imagem do dispositivo"}</span>
+            </div>
+          )}
           {pendingAction.images?.length > 0 && (
-            <div className="assistantActionImages" aria-label="Escolher imagem licenciada">
+            <div className="assistantActionImages" aria-label="Escolher imagem reutilizável">
               {pendingAction.images.map((image, index) => (
                 <div
                   className={`assistantActionImageOption${pendingAction.selectedImageIndex === index ? " selected" : ""}`}
@@ -693,9 +932,18 @@ export default function AssistantChat() {
                   <button
                     type="button"
                     aria-pressed={pendingAction.selectedImageIndex === index}
-                    onClick={() => setPendingAction((current) => current
-                      ? { ...current, selectedImageIndex: index }
-                      : current)}
+                    onClick={() => {
+                      releaseAssistantImage(pendingAction.custom_image_url);
+                      setPendingAction((current) => current
+                        ? {
+                          ...current,
+                          selectedImageIndex: index,
+                          custom_image_file: null,
+                          custom_image_url: null,
+                          custom_image_name: null,
+                        }
+                        : current);
+                    }}
                   >
                     <img src={image.preview_url} alt={image.title} loading="lazy" />
                     <span>{image.creator}</span>
@@ -708,19 +956,47 @@ export default function AssistantChat() {
               ))}
             </div>
           )}
+          {pendingAction.can_upload_image && (
+            <div className="assistantLocalImagePicker">
+              <input
+                ref={imageFileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleAssistantImageUpload}
+                hidden
+              />
+              <button
+                type="button"
+                onClick={() => imageFileInputRef.current?.click()}
+                disabled={isExecutingAction}
+              >
+                {pendingAction.custom_image_url ? "Escolher outra imagem" : "Escolher imagem no dispositivo"}
+              </button>
+              <small>JPG, PNG ou WebP · máximo 8 MB</small>
+            </div>
+          )}
           <div className="assistantActionButtons">
             <button
               type="button"
               className="assistantActionConfirm"
               onClick={() => void confirmPendingAction()}
-              disabled={isExecutingAction || isSending}
+              disabled={
+                isExecutingAction || isSending
+                || (pendingAction.requires_image
+                  && !pendingAction.custom_image_file
+                  && (!pendingAction.images?.length || pendingAction.selectedImageIndex == null))
+              }
             >
-              {isExecutingAction ? "A registar…" : "Confirmar e registar"}
+              {isExecutingAction ? "A registar…" : "Confirmar"}
             </button>
             <button
               type="button"
               className="assistantActionCancelText"
-              onClick={() => setPendingAction(null)}
+              onClick={() => {
+                releaseAssistantImage(pendingAction.custom_image_url);
+                setPendingAction(null);
+                if (!voiceSessionActiveRef.current) setCommandActive(false);
+              }}
               disabled={isExecutingAction}
             >
               Cancelar

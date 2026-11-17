@@ -250,48 +250,16 @@ export default function MenuConteinerLeft({ ativarConteiner, setDadosUsuario }) 
         }
     } , [dadosUsuario?.id , buscar_pedidos_produto])
 
-    // ==================== OUVINTE PARA PRODUTO REGISTRADO ====================
-    // ==================== OUVINTE PARA PRODUTO REGISTRADO (VERSÃO FORÇADA) ====================
+    const handleProdutoRegistrado = useCallback(() => {
+        buscar_produto_usuario();
+        buscar_todos_produtos_da_plantaforma();
+    }, [buscar_produto_usuario, buscar_todos_produtos_da_plantaforma]);
+
     useEffect(() => {
-        if (!socket) return;
-
-        const handleProdutoRegistrado = (novoProduto) => {
-            console.log("🟢 Novo produto recebido via socket:", novoProduto);
-
-            if (!novoProduto || !novoProduto.id) {
-                console.warn("Produto recebido inválido:", novoProduto);
-                return;
-            }
-
-            setProdutoUsuario((prev) => {
-                const anterior = Array.isArray(prev) ? prev : [];
-                
-                const jaExiste = anterior.some(p => String(p?.id) === String(novoProduto.id));
-                if (jaExiste) {
-                    console.log("Produto já existe, ignorando duplicado");
-                    return anterior;
-                }
-
-                // FORÇA NOVA REFERÊNCIA DE FORMA AGRESSIVA
-                const novaLista = [novoProduto, ...anterior];
-                console.log(`Adicionando produto. Total agora: ${novaLista.length}`);
-
-                // Esta linha é a mais importante para resolver o teu caso
-                return JSON.parse(JSON.stringify(novaLista)); 
-                // ou return [...novaLista];  (podes experimentar as duas)
-            });
-        };
-
-        socket.on("produto_registrado", (data)=> {
-            buscar_produto_usuario()
-            buscar_todos_produtos_da_plantaforma()
-        });
-
-        return () => {
-            socket.off("produto_registrado", handleProdutoRegistrado);
-        };
-    }, [socket, setProdutoUsuario]);
-    // ====================================================================================    // ====================================================================================
+        if (!socket) return undefined;
+        socket.on("produto_registrado", handleProdutoRegistrado);
+        return () => socket.off("produto_registrado", handleProdutoRegistrado);
+    }, [socket, handleProdutoRegistrado]);
 
 
     // 4. Ouvindo a notificação em tempo real

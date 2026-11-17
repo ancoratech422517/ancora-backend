@@ -190,7 +190,6 @@ export default function ConteinerRightMenuMobile () {
     const condicaoEstadoLiveTurmaCont = (dados)=>{
         switch(dados?.status_agenda_live || "vazio"){
             case "ativo":
-            case "pendente":
                 return(
                         <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersProximasDados">
                             <div className="ConteinerRightMenuMobileTurmaBox2DivConteinersProximasDadosDiv">

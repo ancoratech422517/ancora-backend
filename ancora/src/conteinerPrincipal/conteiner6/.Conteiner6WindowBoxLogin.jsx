@@ -7,24 +7,17 @@ import { SwitchTab } from "./js/Conteiner6WindowBoxLogin";
 import { Registro } from "./js/Conteiner6WindowBoxRegistro";
 import Loading3 from "../components/conteinerComponentesJsx/loading3";
 import Erro from "../components/conteinerSvg/erro";
-export default function Conteiner6WindowBoxLogin ({ ativarConteiner, setConta}) {
+export default function Conteiner6WindowBoxLogin ({ ativarConteiner }) {
     const setDados = useUserStore((state)=> state.setDados)
     
     const [carregando, setCarregando] = useState(false)
     const [erro , setErro] = useState("False")
     const [erroCadastro, setErroCadastro] = useState("")
-    const condicaoErro  = ()=>{
-        switch(erro){
-            case "True":
-                return (
-                         
-                        <div className="Menssagem-log">
-                            <Erro />  Erro. credencias invalidas
-                        </div>
-                    
-                )
-        }
-    }
+    const condicaoErro = () => erro && erro !== "False" ? (
+        <div className="Menssagem-log" role="alert">
+            <Erro /> {erro}
+        </div>
+    ) : null
     
     const handleLogin = async (event) => {
         event.preventDefault()

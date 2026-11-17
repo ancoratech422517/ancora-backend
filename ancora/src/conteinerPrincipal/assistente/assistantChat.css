@@ -639,7 +639,15 @@
     font-size:10px;
 }
 .assistantActionButtons{
+    display:flex;
+    flex-direction:row;
+    flex-wrap:nowrap;
     justify-content:flex-start;
+    position:sticky;
+    bottom:0;
+    z-index:2;
+    padding:8px 0 2px;
+    background:var(--chat-theme-bar, var(--surface));
 }
 .assistantActionConfirm,
 .assistantActionCancel,
@@ -650,19 +658,29 @@
     cursor:pointer;
 }
 .assistantActionConfirm{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:0;
+    flex:0 0 auto;
     min-height:34px;
+    border:1px solid var(--assistant-accent, #007f73);
     padding:7px 11px;
-    background:var(--assistant-accent);
-    color:var(--chat-message-own-text, var(--text-on-primary));
+    background:var(--assistant-accent, #007f73);
+    color:#fff;
     font-size:11px;
     font-weight:700;
+    white-space:nowrap;
 }
 .assistantActionCancelText{
+    flex:0 0 auto;
     min-height:34px;
     padding:7px 9px;
-    background:transparent;
+    border:1px solid var(--border);
+    background:var(--surface, #fff);
     color:var(--chat-theme-muted, var(--text-secondary));
     font-size:11px;
+    white-space:nowrap;
 }
 .assistantActionCancel{
     width:26px;
@@ -676,6 +694,130 @@
 .assistantActionPreview button:disabled{
     opacity:.55;
     cursor:not-allowed;
+}
+.assistantActionPreview .assistantActionConfirm:disabled{
+    opacity:.85;
+}
+.assistantLocalImagePicker{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:6px 9px;
+    margin:0 0 9px;
+}
+.assistantLocalImagePicker button{
+    min-height:31px;
+    padding:6px 9px;
+    border:1px solid var(--assistant-accent);
+    border-radius:8px;
+    background:var(--assistant-accent-soft);
+    color:var(--chat-theme-foreground, var(--text-primary));
+    font:inherit;
+    font-size:10px;
+    font-weight:700;
+    cursor:pointer;
+}
+.assistantLocalImagePicker small,
+.assistantLocalImagePreview span{
+    color:var(--chat-theme-muted, var(--text-secondary));
+    font-size:10px;
+}
+.assistantLocalImagePreview{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:0 0 8px;
+}
+.assistantLocalImagePreview img{
+    width:68px;
+    height:56px;
+    border-radius:7px;
+    object-fit:cover;
+}
+.assistantCommandOrb{
+    --assistant-orb-glow:var(--assistant-accent, #00e0d0);
+    position:fixed;
+    right:max(20px, env(safe-area-inset-right, 0px));
+    bottom:max(20px, env(safe-area-inset-bottom, 0px));
+    z-index:1200;
+    width:min(230px, calc(100vw - 24px));
+    min-height:96px;
+    display:grid;
+    grid-template-columns:76px 1fr;
+    align-items:center;
+    column-gap:8px;
+    padding:8px 11px 8px 5px;
+    border:1px solid color-mix(in srgb, var(--assistant-orb-glow) 68%, white);
+    border-radius:22px;
+    background:color-mix(in srgb, var(--surface, #071c20) 88%, transparent);
+    color:var(--text-primary, #fff);
+    box-shadow:0 0 16px color-mix(in srgb, var(--assistant-orb-glow) 72%, transparent),
+      0 0 42px color-mix(in srgb, var(--assistant-orb-glow) 40%, transparent),
+      0 12px 38px rgba(0,0,0,.32);
+    backdrop-filter:blur(16px);
+    animation:assistantOrbAppear .28s ease-out both;
+}
+.assistantCommandOrb::before{
+    content:"";
+    position:absolute;
+    inset:-5px;
+    z-index:-1;
+    border:1px solid color-mix(in srgb, var(--assistant-orb-glow) 48%, transparent);
+    border-radius:26px;
+    animation:assistantOrbPulse 1.8s ease-in-out infinite;
+    pointer-events:none;
+}
+.assistantCommandOrbSphere{
+    width:76px;
+    height:76px;
+    filter:drop-shadow(0 0 13px var(--assistant-orb-glow));
+}
+.assistantCommandOrbSphere .assistantVoiceCanvas{
+    width:100%;
+    height:100%;
+    min-height:0;
+}
+.assistantCommandOrbText{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+.assistantCommandOrbText strong{
+    font-size:12px;
+    letter-spacing:.02em;
+}
+.assistantCommandOrbText span{
+    color:var(--assistant-orb-glow);
+    font-size:10px;
+    line-height:1.35;
+    font-weight:700;
+}
+.assistantCommandOrbStop{
+    grid-column:2;
+    justify-self:start;
+    min-height:25px;
+    margin-top:2px;
+    padding:3px 10px;
+    border:1px solid color-mix(in srgb, var(--assistant-orb-glow) 50%, transparent);
+    border-radius:999px;
+    background:color-mix(in srgb, var(--assistant-orb-glow) 14%, transparent);
+    color:inherit;
+    font:inherit;
+    font-size:10px;
+    cursor:pointer;
+}
+.assistantCommandOrb-listening{--assistant-orb-glow:#42f5cf}
+.assistantCommandOrb-working{--assistant-orb-glow:#70baff}
+.assistantCommandOrb-speaking{--assistant-orb-glow:#e780ff}
+.assistantCommandOrb-confirming{--assistant-orb-glow:#ffd166}
+@keyframes assistantOrbPulse{
+    0%,100%{opacity:.3;transform:scale(.985)}
+    50%{opacity:.9;transform:scale(1.025)}
+}
+@keyframes assistantOrbAppear{
+    from{opacity:0;transform:translateY(9px) scale(.96)}
+    to{opacity:1;transform:translateY(0) scale(1)}
 }
 .assistantMainComposer .assistantQuickPrompts{
     padding:0 2px 8px;
@@ -804,6 +946,8 @@
     .assistantComposer{min-height:58px;gap:5px;padding:7px}
     .assistantMicButton,.assistantSendButton{width:38px;height:38px}
     .assistantComposer input{min-height:39px;padding:8px 11px;font-size:12px}
+    .assistantCommandOrb{right:10px;bottom:max(12px, env(safe-area-inset-bottom, 0px));width:min(215px, calc(100vw - 20px));min-height:86px;grid-template-columns:66px 1fr;padding-left:2px}
+    .assistantCommandOrbSphere{width:66px;height:66px}
 }
 @media(prefers-reduced-motion: reduce){
     .assistantWorkspace *,
@@ -812,4 +956,5 @@
         animation-duration:.01ms!important;
         transition-duration:.01ms!important;
     }
+    .assistantCommandOrb::before{animation:none}
 }
