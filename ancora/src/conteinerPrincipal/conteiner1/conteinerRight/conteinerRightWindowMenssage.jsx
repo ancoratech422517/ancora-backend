@@ -13,6 +13,7 @@ import { getOutboxEntries, loadChatHistory } from "../../../utils/offlineStorage
 import { confirmQueuedChatMessage } from "../../../service/chatOfflineSync";
 import { ASSISTANT_CHAT_ID, ASSISTANT_CHAT_TYPE, ASSISTANT_CHAT_NAME } from "../../assistente/assistantConfig";
 import AssistantVoiceVisualizer from "../../assistente/AssistantVoiceVisualizer";
+import AssistantMessageContent from "../../assistente/AssistantMessageContent";
 // Função para gerar as iniciais
 
 
@@ -1324,11 +1325,14 @@ if (isAudio) {
   );
 }           const meuGradiente = gerarGradienteElegante(msg.id_destinatario);
             const conteudoFinal = formatarConteudo(msg, souEu);
+            const conteudoRenderizado = isAssistantChat && !souEu && typeof conteudoFinal === "string"
+              ? <AssistantMessageContent text={conteudoFinal} />
+              : conteudoFinal;
 
             return souEu ? (
               <ConteinerRightDadosWindowMenssageMim 
                 key={index} 
-                texto={conteudoFinal} 
+                texto={conteudoRenderizado}
                 hora={
                   <div style={{display: 'flex', alignItems: 'center'}}>
                     {msg.data_envio} 
@@ -1353,7 +1357,7 @@ if (isAudio) {
             ) : (
               <ConteinerRightDadosWindowMenssageEle 
                 key={index} 
-                texto={conteudoFinal} 
+                texto={conteudoRenderizado}
                 hora={msg.data_envio} 
                 nome={msg.nome_remitente} 
                 fundo={meuGradiente} 

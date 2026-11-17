@@ -476,7 +476,7 @@
     cursor: pointer;
     transition: transform var(--transition), background var(--transition);
 }
-.assistantMicButton:hover,
+.assistantMicButton:hover:not(:disabled),
 .assistantSendButton:hover:not(:disabled){
     transform: scale(1.05);
 }
@@ -492,6 +492,10 @@
 .assistantSendButton:disabled{
     cursor: not-allowed;
     opacity: .5;
+}
+.assistantMicButton:disabled{
+    cursor:not-allowed;
+    opacity:.55;
 }
 .assistantMicButton svg,
 .assistantSendButton svg{
@@ -682,6 +686,23 @@
     font-size:11px;
     white-space:nowrap;
 }
+.assistantActionUploadLocal{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 auto;
+    min-height:34px;
+    padding:7px 9px;
+    border:1px solid var(--assistant-accent, #007f73);
+    border-radius:8px;
+    background:var(--assistant-accent-soft, #e6f8f5);
+    color:var(--chat-theme-foreground, var(--text-primary));
+    font:inherit;
+    font-size:11px;
+    font-weight:700;
+    white-space:nowrap;
+    cursor:pointer;
+}
 .assistantActionCancel{
     width:26px;
     height:26px;
@@ -748,91 +769,6 @@
     height:56px;
     border-radius:7px;
     object-fit:cover;
-}
-.assistantCommandOrb{
-    --assistant-orb-glow:var(--assistant-accent, #00e0d0);
-    position:fixed;
-    right:max(20px, env(safe-area-inset-right, 0px));
-    bottom:max(20px, env(safe-area-inset-bottom, 0px));
-    z-index:1200;
-    width:min(230px, calc(100vw - 24px));
-    min-height:96px;
-    display:grid;
-    grid-template-columns:76px 1fr;
-    align-items:center;
-    column-gap:8px;
-    padding:8px 11px 8px 5px;
-    border:1px solid color-mix(in srgb, var(--assistant-orb-glow) 68%, white);
-    border-radius:22px;
-    background:color-mix(in srgb, var(--surface, #071c20) 88%, transparent);
-    color:var(--text-primary, #fff);
-    box-shadow:0 0 16px color-mix(in srgb, var(--assistant-orb-glow) 72%, transparent),
-      0 0 42px color-mix(in srgb, var(--assistant-orb-glow) 40%, transparent),
-      0 12px 38px rgba(0,0,0,.32);
-    backdrop-filter:blur(16px);
-    animation:assistantOrbAppear .28s ease-out both;
-}
-.assistantCommandOrb::before{
-    content:"";
-    position:absolute;
-    inset:-5px;
-    z-index:-1;
-    border:1px solid color-mix(in srgb, var(--assistant-orb-glow) 48%, transparent);
-    border-radius:26px;
-    animation:assistantOrbPulse 1.8s ease-in-out infinite;
-    pointer-events:none;
-}
-.assistantCommandOrbSphere{
-    width:76px;
-    height:76px;
-    filter:drop-shadow(0 0 13px var(--assistant-orb-glow));
-}
-.assistantCommandOrbSphere .assistantVoiceCanvas{
-    width:100%;
-    height:100%;
-    min-height:0;
-}
-.assistantCommandOrbText{
-    min-width:0;
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-}
-.assistantCommandOrbText strong{
-    font-size:12px;
-    letter-spacing:.02em;
-}
-.assistantCommandOrbText span{
-    color:var(--assistant-orb-glow);
-    font-size:10px;
-    line-height:1.35;
-    font-weight:700;
-}
-.assistantCommandOrbStop{
-    grid-column:2;
-    justify-self:start;
-    min-height:25px;
-    margin-top:2px;
-    padding:3px 10px;
-    border:1px solid color-mix(in srgb, var(--assistant-orb-glow) 50%, transparent);
-    border-radius:999px;
-    background:color-mix(in srgb, var(--assistant-orb-glow) 14%, transparent);
-    color:inherit;
-    font:inherit;
-    font-size:10px;
-    cursor:pointer;
-}
-.assistantCommandOrb-listening{--assistant-orb-glow:#42f5cf}
-.assistantCommandOrb-working{--assistant-orb-glow:#70baff}
-.assistantCommandOrb-speaking{--assistant-orb-glow:#e780ff}
-.assistantCommandOrb-confirming{--assistant-orb-glow:#ffd166}
-@keyframes assistantOrbPulse{
-    0%,100%{opacity:.3;transform:scale(.985)}
-    50%{opacity:.9;transform:scale(1.025)}
-}
-@keyframes assistantOrbAppear{
-    from{opacity:0;transform:translateY(9px) scale(.96)}
-    to{opacity:1;transform:translateY(0) scale(1)}
 }
 .assistantMainComposer .assistantQuickPrompts{
     padding:0 2px 8px;
@@ -961,8 +897,6 @@
     .assistantComposer{min-height:58px;gap:5px;padding:7px}
     .assistantMicButton,.assistantSendButton{width:38px;height:38px}
     .assistantComposer input{min-height:39px;padding:8px 11px;font-size:12px}
-    .assistantCommandOrb{right:10px;bottom:max(12px, env(safe-area-inset-bottom, 0px));width:min(215px, calc(100vw - 20px));min-height:86px;grid-template-columns:66px 1fr;padding-left:2px}
-    .assistantCommandOrbSphere{width:66px;height:66px}
 }
 @media(prefers-reduced-motion: reduce){
     .assistantWorkspace *,
@@ -971,5 +905,4 @@
         animation-duration:.01ms!important;
         transition-duration:.01ms!important;
     }
-    .assistantCommandOrb::before{animation:none}
 }

@@ -1,0 +1,34 @@
+const LINK_PATTERN = /\[([^\]]+)\]\((https:\/\/[^\s)]+)\)|(https:\/\/[^\s<>"']+)/g;
+
+function splitTrailingPunctuation(url) {
+  let cleanUrl = url;
+  let trailing = "";
+  while (/[.,!?;:)\]}]$/.test(cleanUrl)) {
+    trailing = cleanUrl.slice(-1) + trailing;
+    cleanUrl = cleanUrl.slice(0, -1);
+  }
+  return { cleanUrl, trailing };
+}
+
+export default function AssistantMessageContent({ text }) {
+  const parts = [];
+  let lastIndex = 0;
+
+  for (const match of text.matchAll(LINK_PATTERN)) {
+    const [matchedText, markdownLabel, markdownUrl, plainUrl] = match;
+    const { cleanUrl, trailing } = splitTrailingPunctuation(markdownUrl || plainUrl);
+    if (!cleanUrl) continue;
+
+    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
+    parts.push(
+      <a key={`source-${match.index}`} href={cleanUrl} target="_blank" rel="noreferrer">
+        {markdownLabel || cleanUrl}
+      </a>,
+    );
+    if (trailing) parts.push(trailing);
+    lastIndex = match.index + matchedText.length;
+  }
+
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  return <span className="assistantMessageContent">{parts}</span>;
+}

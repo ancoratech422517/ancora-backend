@@ -90,6 +90,16 @@
 .textoUserEle li{
         padding: 8px 10px;
 }
+.assistantMessageContent {
+    font-size: 14px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+.assistantMessageContent a {
+    color: var(--primary-dark, #1686e8);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
 /* --- O RESTO CONTINUA IGUAL --- */
 
 .IconePerfilElePadrao img{

@@ -179,12 +179,18 @@ export default function AssistantChat() {
   const [isSending, setIsSending] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
   const [error, setError] = useState("");
   const [pendingAction, setPendingAction] = useState(null);
   const pendingActionRef = useRef(pendingAction);
   const [isExecutingAction, setIsExecutingAction] = useState(false);
   const [commandActive, setCommandActive] = useState(false);
   const recognitionRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const mediaRecordingStartRef = useRef(false);
+  const mediaStreamRef = useRef(null);
+  const recordedAudioChunksRef = useRef([]);
+  const discardRecordedAudioRef = useRef(false);
   const voiceSessionActiveRef = useRef(false);
   const chatControllerRef = useRef(null);
   const cancelledChatRequestRef = useRef(false);
@@ -284,6 +290,13 @@ export default function AssistantChat() {
     recognitionRef.current?.abort?.();
     recognitionRef.current?.stop?.();
     recognitionRef.current = null;
+    if (mediaRecorderRef.current?.state === "recording") {
+      discardRecordedAudioRef.current = true;
+      mediaRecorderRef.current.stop();
+    } else {
+      mediaStreamRef.current?.getTracks?.().forEach((track) => track.stop());
+      mediaStreamRef.current = null;
+    }
     if (restartListeningTimeoutRef.current) {
       window.clearTimeout(restartListeningTimeoutRef.current);
       restartListeningTimeoutRef.current = null;
@@ -303,6 +316,12 @@ export default function AssistantChat() {
     voiceSessionActiveRef.current = false;
     recognitionRef.current?.abort?.();
     recognitionRef.current?.stop?.();
+    if (mediaRecorderRef.current?.state === "recording") {
+      discardRecordedAudioRef.current = true;
+      mediaRecorderRef.current.stop();
+    }
+    mediaStreamRef.current?.getTracks?.().forEach((track) => track.stop());
+    mediaStreamRef.current = null;
     chatControllerRef.current?.abort();
     releaseAssistantImage(pendingActionRef.current?.custom_image_url);
     stopSpeech(false);
@@ -332,7 +351,7 @@ export default function AssistantChat() {
     const handleStop = () => stopAssistantCommand();
     const handleManualTakeover = (event) => {
       if (!voiceSessionActiveRef.current && !commandActive) return;
-      if (event.target?.closest?.(".assistantMainComposer, .assistantCommandOrb")) return;
+      if (event.target?.closest?.(".assistantMainComposer")) return;
       stopAssistantCommand();
     };
     window.addEventListener("ancora:assistant-stop", handleStop);
@@ -575,7 +594,7 @@ export default function AssistantChat() {
     cancelledChatRequestRef.current = false;
     const controller = new AbortController();
     chatControllerRef.current = controller;
-    const timeoutId = window.setTimeout(() => controller.abort(), 60000);
+    const timeoutId = window.setTimeout(() => controller.abort(), 70000);
     let requiresConfirmation = false;
 
     try {
@@ -647,6 +666,74 @@ export default function AssistantChat() {
       }
     }
   }, [backendUrl, isSending, mode, setMenssagem, speak, user]);
+
+  const transcribeRecordedAudio = useCallback(async (audioBlob, mimeType) => {
+    if (!audioBlob?.size) {
+      setError("Não foi captado áudio. Tenta falar mais perto do microfone.");
+      return;
+    }
+    if (audioBlob.size > 24 * 1024 * 1024) {
+      setError("A gravação ficou demasiado grande. Envia uma mensagem mais curta.");
+      return;
+    }
+
+    const contentType = String(mimeType || audioBlob.type || "audio/webm").split(";", 1)[0];
+    const extension = contentType.includes("mp4") || contentType.includes("m4a")
+      ? "mp4"
+      : contentType.includes("ogg")
+        ? "ogg"
+        : contentType.includes("wav")
+          ? "wav"
+          : "webm";
+    const formData = new FormData();
+    formData.append("audio", audioBlob, `mensagem.${extension}`);
+    const controller = new AbortController();
+    chatControllerRef.current = controller;
+    const timeoutId = window.setTimeout(() => controller.abort(), 45000);
+    setError("");
+    setIsSending(true);
+    setIsTranscribing(true);
+
+    try {
+      const base = String(backendUrl || "").replace(/\/+$/, "");
+      if (!base) throw new Error("O endereço do backend não está configurado.");
+      const response = await fetchComAuth(`${base}/api/assistente-ia/transcribe`, {
+        method: "POST",
+        body: formData,
+        signal: controller.signal,
+        offlineQueue: false,
+      });
+      const responseText = await response.text();
+      let data = null;
+      try {
+        data = responseText ? JSON.parse(responseText) : null;
+      } catch {
+        data = null;
+      }
+      if (!response.ok) {
+        throw new Error(data?.error || `Não foi possível transcrever o áudio (${response.status}).`);
+      }
+      if (typeof data?.text !== "string" || !data.text.trim()) {
+        throw new Error("Não consegui reconhecer palavras nesse áudio. Tenta novamente.");
+      }
+      setIsTranscribing(false);
+      await sendMessage(data.text.trim());
+    } catch (requestError) {
+      if (cancelledChatRequestRef.current && requestError?.name === "AbortError") return;
+      setError(
+        requestError?.name === "AbortError"
+          ? "A transcrição demorou demasiado. Tenta gravar novamente."
+          : requestError?.name === "TypeError"
+            ? "Não foi possível ligar ao backend para transcrever o áudio."
+            : requestError.message || "Não foi possível enviar o áudio.",
+      );
+    } finally {
+      window.clearTimeout(timeoutId);
+      if (chatControllerRef.current === controller) chatControllerRef.current = null;
+      setIsTranscribing(false);
+      setIsSending(false);
+    }
+  }, [backendUrl, sendMessage]);
 
   const confirmPendingAction = async () => {
     if (!pendingAction || isExecutingAction) return;
@@ -792,6 +879,13 @@ export default function AssistantChat() {
     voiceSessionActiveRef.current = false;
     recognitionRef.current?.stop?.();
     recognitionRef.current = null;
+    if (mediaRecorderRef.current?.state === "recording") {
+      discardRecordedAudioRef.current = true;
+      mediaRecorderRef.current.stop();
+    } else {
+      mediaStreamRef.current?.getTracks?.().forEach((track) => track.stop());
+      mediaStreamRef.current = null;
+    }
     setIsListening(false);
     if (!pendingAction && !isSending && !isSpeaking) setCommandActive(false);
     stopSpeech();
@@ -799,8 +893,102 @@ export default function AssistantChat() {
     setError("");
   };
 
+  const startMediaRecording = useCallback(async () => {
+    if (!navigator.mediaDevices?.getUserMedia || typeof window.MediaRecorder !== "function") {
+      return false;
+    }
+    if (mediaRecordingStartRef.current) return true;
+    mediaRecordingStartRef.current = true;
+
+    let stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+      });
+      if (!voiceSessionActiveRef.current || pendingActionRef.current) {
+        stream.getTracks().forEach((track) => track.stop());
+        mediaRecordingStartRef.current = false;
+        return true;
+      }
+
+      const supportedTypes = [
+        "audio/webm;codecs=opus",
+        "audio/webm",
+        "audio/mp4",
+        "audio/ogg;codecs=opus",
+        "audio/ogg",
+      ];
+      const mimeType = supportedTypes.find((type) => window.MediaRecorder.isTypeSupported?.(type));
+      const recorder = mimeType
+        ? new window.MediaRecorder(stream, { mimeType })
+        : new window.MediaRecorder(stream);
+      recordedAudioChunksRef.current = [];
+      discardRecordedAudioRef.current = false;
+      mediaStreamRef.current = stream;
+      mediaRecorderRef.current = recorder;
+      recorder.ondataavailable = (event) => {
+        if (event.data?.size) recordedAudioChunksRef.current.push(event.data);
+      };
+      recorder.onerror = () => {
+        discardRecordedAudioRef.current = true;
+        voiceSessionActiveRef.current = false;
+        setCommandActive(false);
+        setIsListening(false);
+        setError("O microfone falhou durante a gravação. Verifica a permissão e tenta novamente.");
+        if (recorder.state === "recording") recorder.stop();
+      };
+      recorder.onstop = () => {
+        mediaRecordingStartRef.current = false;
+        const shouldDiscard = discardRecordedAudioRef.current;
+        discardRecordedAudioRef.current = false;
+        if (mediaRecorderRef.current === recorder) mediaRecorderRef.current = null;
+        if (mediaStreamRef.current === stream) mediaStreamRef.current = null;
+        stream.getTracks().forEach((track) => track.stop());
+        setIsListening(false);
+        const audioBlob = new Blob(recordedAudioChunksRef.current, {
+          type: recorder.mimeType || mimeType || "audio/webm",
+        });
+        recordedAudioChunksRef.current = [];
+        if (!shouldDiscard) void transcribeRecordedAudio(audioBlob, recorder.mimeType || mimeType);
+      };
+      recorder.start(250);
+      setIsListening(true);
+      return true;
+    } catch (recordError) {
+      mediaRecordingStartRef.current = false;
+      stream?.getTracks?.().forEach((track) => track.stop());
+      mediaStreamRef.current = null;
+      mediaRecorderRef.current = null;
+      if (voiceSessionActiveRef.current) {
+        voiceSessionActiveRef.current = false;
+        setCommandActive(false);
+        setIsListening(false);
+        setError(
+          recordError?.name === "NotAllowedError" || recordError?.name === "PermissionDeniedError"
+            ? "Permite o acesso ao microfone nas definições do navegador e tenta novamente."
+            : "Não foi possível iniciar a gravação. Confirma que o microfone está disponível.",
+        );
+      }
+      return true;
+    }
+  }, [transcribeRecordedAudio]);
+
   const startListening = useCallback(() => {
-    if (!SpeechRecognitionAPI || recognitionRef.current || !voiceSessionActiveRef.current || pendingActionRef.current) return;
+    if (
+      recognitionRef.current || mediaRecorderRef.current || mediaRecordingStartRef.current
+      || !voiceSessionActiveRef.current || pendingActionRef.current
+    ) return;
+    if (navigator.mediaDevices?.getUserMedia && typeof window.MediaRecorder === "function") {
+      void startMediaRecording();
+      return;
+    }
+    if (!SpeechRecognitionAPI) {
+      setError("A gravação de voz não está disponível. Atualiza o navegador ou ativa a permissão do microfone.");
+      voiceSessionActiveRef.current = false;
+      setCommandActive(false);
+      return;
+    }
+
     const recognition = new SpeechRecognitionAPI();
     recognition.lang = "pt-PT";
     recognition.interimResults = true;
@@ -838,7 +1026,7 @@ export default function AssistantChat() {
       setCommandActive(false);
       setError("Não foi possível iniciar o microfone. Verifica a permissão do navegador.");
     }
-  }, [SpeechRecognitionAPI, sendMessage]);
+  }, [SpeechRecognitionAPI, sendMessage, startMediaRecording]);
 
   useEffect(() => {
     if (
@@ -861,12 +1049,20 @@ export default function AssistantChat() {
   ]);
 
   const toggleListening = () => {
-    if (!SpeechRecognitionAPI) {
-      setError("O reconhecimento de voz não está disponível neste navegador. Podes escrever a mensagem.");
+    if (voiceSessionActiveRef.current) {
+      if (mediaRecorderRef.current?.state === "recording") {
+        discardRecordedAudioRef.current = false;
+        mediaRecorderRef.current.stop();
+        return;
+      }
+      stopAssistantCommand();
       return;
     }
-    if (voiceSessionActiveRef.current) {
-      stopAssistantCommand();
+    if (
+      !SpeechRecognitionAPI
+      && !(navigator.mediaDevices?.getUserMedia && typeof window.MediaRecorder === "function")
+    ) {
+      setError("A gravação de voz não está disponível neste navegador. Tenta num navegador atualizado.");
       return;
     }
     setError("");
@@ -874,6 +1070,9 @@ export default function AssistantChat() {
     voiceSessionActiveRef.current = true;
     setCommandActive(true);
     stopSpeech();
+    // Start inside the click handler so the browser still recognizes the user's
+    // gesture when requesting microphone permission.
+    startListening();
   };
 
   const handleSubmit = (event) => {
@@ -887,9 +1086,11 @@ export default function AssistantChat() {
       ? "A falar…"
       : isListening
         ? "A ouvir…"
-        : isSending
-          ? "A responder…"
-          : "Online";
+        : isTranscribing
+          ? "A transcrever…"
+          : isSending
+            ? "A responder…"
+            : "Online";
   const selectedAssistantVoice = ASSISTANT_VOICES.find((voice) => voice.id === assistantVoiceId)
     || ASSISTANT_VOICES[0];
   const selectedImage = pendingAction?.images?.[pendingAction.selectedImageIndex];
@@ -975,23 +1176,13 @@ export default function AssistantChat() {
             </div>
           )}
           {pendingAction.can_upload_image && (
-            <div className="assistantLocalImagePicker">
-              <input
-                ref={imageFileInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={handleAssistantImageUpload}
-                hidden
-              />
-              <button
-                type="button"
-                onClick={() => imageFileInputRef.current?.click()}
-                disabled={isExecutingAction}
-              >
-                {pendingAction.custom_image_url ? "Escolher outra imagem" : "Escolher imagem no dispositivo"}
-              </button>
-              <small>JPG, PNG ou WebP · máximo 8 MB</small>
-            </div>
+            <input
+              ref={imageFileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleAssistantImageUpload}
+              hidden
+            />
           )}
           {requiresImageRightsConfirmation && (
             <label className="assistantImageRightsConfirmation">
@@ -1037,6 +1228,18 @@ export default function AssistantChat() {
             >
               Cancelar
             </button>
+            {pendingAction.can_upload_image && (
+              <button
+                type="button"
+                className="assistantActionUploadLocal"
+                onClick={() => imageFileInputRef.current?.click()}
+                disabled={isExecutingAction || isSending}
+                aria-label={pendingAction.custom_image_url ? "Trocar pela imagem do dispositivo" : "Carregar imagem do dispositivo"}
+                title="Escolher uma imagem do dispositivo (JPG, PNG ou WebP, até 8 MB)"
+              >
+                {pendingAction.custom_image_url ? "Trocar imagem" : "Imagem local"}
+              </button>
+            )}
           </div>
         </section>
       )}
@@ -1125,8 +1328,10 @@ export default function AssistantChat() {
           type="button"
           className={`assistantMicButton${isListening ? " listening" : ""}`}
           onClick={toggleListening}
-          aria-label={isListening ? "Parar de ouvir" : "Falar ao microfone"}
-          title={SpeechRecognitionAPI ? "Falar ao microfone" : "Reconhecimento de voz indisponível"}
+          aria-label={isListening ? "Parar e enviar mensagem de áudio" : "Falar ao microfone"}
+          title={isListening ? "Parar e enviar mensagem de áudio" : "Iniciar gravação de voz"}
+          aria-pressed={isListening}
+          disabled={isSending || isExecutingAction || isTranscribing}
         >
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <rect x="9" y="3" width="6" height="12" rx="3" />

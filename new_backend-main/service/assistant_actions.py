@@ -1,6 +1,8 @@
 from datetime import datetime
 from html import unescape
+import json
 import os
+import random
 import re
 import uuid
 from urllib.parse import urlparse
@@ -34,6 +36,7 @@ from service.friend_access import users_are_unblocked_friends
 ACTION_TOKEN_MAX_AGE = 600
 WIKIMEDIA_API_URL = "https://commons.wikimedia.org/w/api.php"
 OPENVERSE_API_URL = "https://api.openverse.org/v1/images/"
+GROQ_CHAT_COMPLETIONS_URL = "https://api.groq.com/openai/v1/chat/completions"
 STATIC_CHAT_THEMES = {
     "original": "Original",
     "aurora": "Aurora",
@@ -93,7 +96,7 @@ def _function_tool(name, description, properties, required):
 ASSISTANT_ACTION_TOOLS = [
     _function_tool(
         "create_product",
-        "Preparar um produto para registo. O nome deve ter no máximo 65 caracteres. Não inventes dados em falta; pergunta primeiro e pesquisa uma imagem no Openverse ou Commons. Mostra sempre a licença e pede ao utilizador para confirmar que tem autorização de uso comercial.",
+        "Preparar um produto para registo. O nome deve ter no máximo 65 caracteres. Não inventes dados em falta; pergunta primeiro. Pesquisa uma imagem no Openverse/Commons; se não houver resultado, usa a pesquisa web para encontrar um URL HTTPS direto e mostra a origem. Não marques uma licença web como verificada; pede confirmação de autorização comercial.",
         {
             "nome_produto": {"type": "string", "maxLength": 65},
             "descricao_produto": {"type": "string"},
@@ -105,7 +108,7 @@ ASSISTANT_ACTION_TOOLS = [
     ),
     _function_tool(
         "create_publication",
-        "Preparar uma publicação social. Usa image_query apenas se o utilizador pedir ou se a publicação precisar de imagem; pesquisa no Openverse/Commons e não inventes factos pessoais.",
+        "Preparar uma publicação social. Usa image_query apenas se o utilizador pedir ou se a publicação precisar de imagem; pesquisa no Openverse/Commons e, sem resultados, procura uma imagem pública na web. Mostra a origem e não inventes licença nem factos pessoais.",
         {
             "texto": {"type": "string"},
             "localizacao": {"type": "string"},
@@ -115,7 +118,7 @@ ASSISTANT_ACTION_TOOLS = [
     ),
     _function_tool(
         "create_story",
-        "Preparar um estado para o chat principal da Âncora. Usa image_query apenas se pedirem ou se for necessário; pesquisa no Openverse/Commons e não inventes dados pessoais.",
+        "Preparar um estado para o chat principal da Âncora. Usa image_query apenas se pedirem ou se for necessário; pesquisa no Openverse/Commons e, sem resultados, procura uma imagem pública na web. Mostra a origem e não inventes licença nem dados pessoais.",
         {
             "texto": {"type": "string"},
             "image_query": {"type": "string"},
@@ -397,13 +400,104 @@ def _safe_image_candidate(candidate, provider):
     }
 
 
+def _select_diverse_images(candidates, limit=3):
+    unique_candidates = []
+    seen_urls = set()
+    for candidate in candidates:
+        image_url = candidate.get("url")
+        if image_url and image_url not in seen_urls:
+            seen_urls.add(image_url)
+            unique_candidates.append(candidate)
+    return random.SystemRandom().sample(
+        unique_candidates,
+        k=min(limit, len(unique_candidates)),
+    )
+
+
+def _search_web_image(query):
+    api_key = os.getenv("SECRETY_KEY_IA_GROQ", "").strip()
+    if not api_key:
+        return []
+
+    instructions = (
+        "Pesquisa na internet uma imagem pública que represente exatamente o assunto. "
+        "Devolve apenas um objeto JSON com title, image_url e source_url. image_url tem "
+        "de ser um URL HTTPS direto para o ficheiro da imagem, não uma página HTML; "
+        "source_url deve ser a página onde a imagem foi encontrada. Usa URLs observados "
+        "nos resultados da pesquisa, nunca inventes nem transformes endereços. Se não "
+        "encontrares um URL direto verificável, devolve {}."
+    )
+    try:
+        response = requests.post(
+            GROQ_CHAT_COMPLETIONS_URL,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": "openai/gpt-oss-120b",
+                "messages": [
+                    {"role": "system", "content": instructions},
+                    {"role": "user", "content": f"Encontra uma imagem para: {query}"},
+                ],
+                "tools": [{"type": "browser_search"}],
+                "tool_choice": "required",
+                "temperature": 0.1,
+                "max_completion_tokens": 300,
+                "reasoning_effort": "low",
+                "citation_options": "enabled",
+            },
+            timeout=(5, 25),
+        )
+        response.raise_for_status()
+        payload = response.json()
+    except (requests.RequestException, ValueError) as error:
+        current_app.logger.info(
+            "Pesquisa web de imagem indisponível (%s).",
+            type(error).__name__,
+        )
+        return []
+
+    choices = payload.get("choices") if isinstance(payload, dict) else None
+    message = choices[0].get("message") if isinstance(choices, list) and choices else None
+    content = message.get("content") if isinstance(message, dict) else None
+    if not isinstance(content, str):
+        return []
+
+    decoder = json.JSONDecoder()
+    web_result = None
+    for index, character in enumerate(content):
+        if character != "{":
+            continue
+        try:
+            web_result, _ = decoder.raw_decode(content[index:])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(web_result, dict):
+            break
+        web_result = None
+    if not isinstance(web_result, dict):
+        return []
+
+    candidate = _safe_image_candidate({
+        "title": web_result.get("title", "Imagem encontrada na internet"),
+        "url": web_result.get("image_url"),
+        "preview_url": web_result.get("image_url"),
+        "source_url": web_result.get("source_url") or web_result.get("image_url"),
+        "creator": "Autor não verificado",
+        "license": "Não verificada",
+    }, "Pesquisa web")
+    return [candidate] if candidate else []
+
+
 def search_public_images(query):
     query = _string_value({"query": query}, "query", "pesquisa de imagem", 120)
     errors = []
+    candidates = []
     try:
         response = requests.get(
             OPENVERSE_API_URL,
-            params={"q": query, "page_size": 12, "filter_dead": "true"},
+            params={"q": query, "page_size": 20, "filter_dead": "true"},
             headers={"User-Agent": "AncoraAssistant/1.0 (open image search)"},
             timeout=(3.05, 8),
         )
@@ -425,10 +519,8 @@ def search_public_images(query):
             }, "Openverse")
             if candidate:
                 candidates.append(candidate)
-            if len(candidates) == 3:
-                break
-        if candidates:
-            return candidates
+        if len(candidates) >= 3:
+            return _select_diverse_images(candidates)
     except (requests.RequestException, ValueError) as error:
         errors.append(error)
 
@@ -437,7 +529,7 @@ def search_public_images(query):
             WIKIMEDIA_API_URL,
             params={
                 "action": "query", "generator": "search", "gsrsearch": f"filetype:bitmap {query}",
-                "gsrnamespace": 6, "gsrlimit": 8, "prop": "imageinfo",
+                "gsrnamespace": 6, "gsrlimit": 20, "prop": "imageinfo",
                 "iiprop": "url|extmetadata", "iiurlwidth": 640, "format": "json", "formatversion": 2,
             },
             headers={"User-Agent": "AncoraAssistant/1.0 (Wikimedia Commons image selection)"},
@@ -447,7 +539,7 @@ def search_public_images(query):
         payload = response.json()
         query_data = payload.get("query", {}) if isinstance(payload, dict) else {}
         pages = query_data.get("pages", []) if isinstance(query_data, dict) else []
-        candidates = []
+        commons_candidates = []
         for page in pages if isinstance(pages, list) else []:
             image_info = page.get("imageinfo") if isinstance(page, dict) else None
             image_info = image_info[0] if isinstance(image_info, list) and image_info else {}
@@ -461,15 +553,19 @@ def search_public_images(query):
                 "license": _commons_text(metadata.get("LicenseShortName", {}).get("value") if isinstance(metadata, dict) else ""),
             }, "Wikimedia Commons")
             if candidate:
-                candidates.append(candidate)
-            if len(candidates) == 3:
-                break
+                commons_candidates.append(candidate)
+        candidates.extend(commons_candidates)
     except (requests.RequestException, ValueError) as error:
         errors.append(error)
-        candidates = []
-    if not candidates and len(errors) == 2:
+    if candidates:
+        return _select_diverse_images(candidates)
+
+    web_candidates = _search_web_image(query)
+    if web_candidates:
+        return web_candidates
+    if len(errors) == 2:
         raise AssistantImageSearchError("Não foi possível pesquisar imagens agora. Podes escolher uma imagem do teu dispositivo.") from errors[-1]
-    return candidates
+    return []
 
 
 def _try_search_public_images(query):
