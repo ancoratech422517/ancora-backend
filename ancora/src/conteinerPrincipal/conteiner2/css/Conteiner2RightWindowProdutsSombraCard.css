@@ -73,6 +73,20 @@
     color: var(--gray-500);
     font-size: 13px;
 }
+.productImageAttribution{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:4px 10px;
+    margin:6px 0 10px;
+    color:var(--text-secondary);
+    font-size:11px;
+}
+.productImageAttribution a{
+    color:var(--primary-dark, var(--primary));
+    font-size:11px;
+    text-decoration:underline;
+}
 .textCardSombraBox1{
     display: flex;
     text-align: center;

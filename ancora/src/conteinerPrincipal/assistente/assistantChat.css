@@ -695,6 +695,21 @@
     opacity:.55;
     cursor:not-allowed;
 }
+.assistantImageRightsConfirmation{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    margin:0 0 8px;
+    color:var(--chat-theme-muted, var(--text-secondary));
+    font-size:11px;
+    line-height:1.4;
+    cursor:pointer;
+}
+.assistantImageRightsConfirmation input{
+    flex:0 0 auto;
+    margin:1px 0 0;
+    accent-color:var(--assistant-accent);
+}
 .assistantActionPreview .assistantActionConfirm:disabled{
     opacity:.85;
 }

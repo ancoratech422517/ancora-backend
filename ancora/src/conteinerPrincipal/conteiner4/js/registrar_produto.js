@@ -10,6 +10,11 @@ export async function Registrar_produto(even, id_usuario , dadosUsuario_nome) {
     const preco = document.getElementById("preco").value;
     const inputImagem = document.getElementById("imagem");
 
+    if (!nome.trim() || nome.trim().length > 65) {
+        alert("O nome do produto deve ter entre 1 e 65 caracteres.");
+        return;
+    }
+
     // 2. Verificar se existe um arquivo selecionado
     if (!inputImagem || inputImagem.files.length === 0) {
         alert("Por favor, selecione uma imagem.");

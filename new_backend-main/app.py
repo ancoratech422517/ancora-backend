@@ -316,6 +316,11 @@ def setup_database():
                 "foto_usuario_blurhash": "VARCHAR(100)",
                 "id_app_usuario_pushy": "TEXT",
             })
+            ensure_columns(db.engine, "Produto_usuario", {
+                "image_source_url": "TEXT",
+                "image_creator": "VARCHAR(200)",
+                "image_license": "VARCHAR(120)",
+            })
             ensure_columns(db.engine, "Agendar_Live_Turma", {
                 "live_vazia_em": "TIMESTAMP",
             })

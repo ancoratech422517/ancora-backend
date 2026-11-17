@@ -43,6 +43,9 @@ def buscar_todos_produtos(id_usuario):
                 "preco_produto": produto.preco_produto,
                 "url_imagem_produto": produto.url_imagem_produto,
                 "url_imagem_produto_blurhash": produto.url_imagem_produto_blurhash,
+                "image_source_url": produto.image_source_url,
+                "image_creator": produto.image_creator,
+                "image_license": produto.image_license,
                 "id_usuario": produto.id_usuario,
                 "nome_vendedor": produto.nome_vendedor,
                 "foto_vendedor": foto_vendedor, # Vem direto da query otimizada

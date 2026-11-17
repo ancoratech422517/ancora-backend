@@ -427,6 +427,8 @@ def assistant_execute_action():
             payload.get("token"),
             image_index,
             custom_image_token,
+            payload.get("rights_confirmed") is True
+            or payload.get("rights_confirmed") == "true",
         )
     except AssistantActionError as error:
         if isinstance(uploaded_public_id, str) and uploaded_public_id.startswith("ancora/assistant/"):

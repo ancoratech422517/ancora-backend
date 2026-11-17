@@ -93,9 +93,9 @@ def _function_tool(name, description, properties, required):
 ASSISTANT_ACTION_TOOLS = [
     _function_tool(
         "create_product",
-        "Preparar um produto para registo. Não inventes dados em falta; pergunta primeiro e pesquisa uma imagem reutilizável no Openverse ou Commons.",
+        "Preparar um produto para registo. O nome deve ter no máximo 65 caracteres. Não inventes dados em falta; pergunta primeiro e pesquisa uma imagem no Openverse ou Commons. Mostra sempre a licença e pede ao utilizador para confirmar que tem autorização de uso comercial.",
         {
-            "nome_produto": {"type": "string"},
+            "nome_produto": {"type": "string", "maxLength": 65},
             "descricao_produto": {"type": "string"},
             "tipo_produto": {"type": "string"},
             "preco_produto": {"type": "string"},
@@ -364,8 +364,6 @@ def _safe_image_candidate(candidate, provider):
     if any(not part or part.scheme != "https" or not part.hostname for part in parts):
         return None
     license_code = str(candidate.get("license") or "").strip()
-    if provider == "Openverse" and not _allowed_openverse_license(license_code):
-        return None
     license_name = license_code
     if provider == "Openverse":
         license_labels = {
@@ -380,15 +378,21 @@ def _safe_image_candidate(candidate, provider):
     if provider == "Wikimedia Commons":
         if parts[0].hostname != "upload.wikimedia.org" or parts[2].hostname != "commons.wikimedia.org":
             return None
-        if parts[1].hostname != "upload.wikimedia.org" or not _allowed_commons_license(license_name):
+        if parts[1].hostname != "upload.wikimedia.org":
             return None
+    licence_allows_commercial_use = (
+        _allowed_openverse_license(license_code)
+        if provider == "Openverse"
+        else _allowed_commons_license(license_name)
+    )
     return {
         "title": _commons_text(candidate.get("title", "Imagem"))[:180],
         "url": image_url,
         "preview_url": preview_url,
         "source_url": source_url,
         "creator": _commons_text(candidate.get("creator", "Autor não identificado"))[:200],
-        "license": license_name[:80],
+        "license": (license_name or "Sem licença informada")[:80],
+        "license_allows_commercial_use": licence_allows_commercial_use,
         "provider": provider,
     }
 
@@ -399,7 +403,7 @@ def search_public_images(query):
     try:
         response = requests.get(
             OPENVERSE_API_URL,
-            params={"q": query, "page_size": 12, "license_type": "commercial", "filter_dead": "true"},
+            params={"q": query, "page_size": 12, "filter_dead": "true"},
             headers={"User-Agent": "AncoraAssistant/1.0 (open image search)"},
             timeout=(3.05, 8),
         )
@@ -480,10 +484,7 @@ def _image_credit(image):
     if image.get("custom"):
         return ""
     provider = image.get("provider") or "Wikimedia Commons"
-    return (
-        f"Imagem: {image['creator']}, {provider}, licença {image['license']}. "
-        f"Fonte: {image['source_url']}"
-    )
+    return f"Imagem: {image['creator']}, {provider}, licença {image['license']}."
 
 
 def _images_that_fit(images, text, maximum):
@@ -906,7 +907,7 @@ def prepare_assistant_action(user_id, tool_name, raw_arguments):
         images = []
         if action_type == "produto":
             data = {
-                "nome_produto": _string_value(raw_arguments, "nome_produto", "nome do produto", 100),
+                "nome_produto": _string_value(raw_arguments, "nome_produto", "nome do produto", 65),
                 "descricao_produto": _string_value(raw_arguments, "descricao_produto", "descrição do produto", 4000),
                 "tipo_produto": _string_value(raw_arguments, "tipo_produto", "categoria", 255),
                 "preco_produto": _string_value(raw_arguments, "preco_produto", "preço", 100),
@@ -914,7 +915,6 @@ def prepare_assistant_action(user_id, tool_name, raw_arguments):
             }
             images = _try_search_public_images(data.pop("image_query"))
             requires_image = True
-            images = _images_that_fit(images, data["descricao_produto"], 6000)
         elif action_type == "publicacao":
             data = {
                 "texto": _string_value(
@@ -1109,14 +1109,15 @@ def _execute_record(user_id, action_type, data, image):
         }
     if action_type == "produto":
         description = data["descricao_produto"]
-        if image:
-            description = _append_image_credit(description, image, 6000)
         product = Registrar_produto(
             nome_produto=data["nome_produto"],
             descricao_produto=description,
             tipo_produto=data["tipo_produto"],
             preco_produto=data["preco_produto"],
             url_imagem_produto=image["url"],
+            image_source_url=None if image.get("custom") else image.get("source_url"),
+            image_creator=None if image.get("custom") else image.get("creator"),
+            image_license=None if image.get("custom") else image.get("license"),
             nome_vendedor=db.session.get(Usuario, user_id).nome,
             id_usuario=user_id,
         )
@@ -1203,7 +1204,13 @@ def _execute_record(user_id, action_type, data, image):
     }
 
 
-def execute_assistant_action(user_id, token, image_index=None, custom_image_token=None):
+def execute_assistant_action(
+    user_id,
+    token,
+    image_index=None,
+    custom_image_token=None,
+    rights_confirmed=False,
+):
     if not isinstance(token, str) or not token or len(token) > 16000:
         raise AssistantActionError("A confirmação da ação é inválida.")
     try:
@@ -1234,6 +1241,17 @@ def execute_assistant_action(user_id, token, image_index=None, custom_image_toke
     image = _resolve_image(user_id, images, image_index, custom_image_token, action_id)
     if payload.get("requires_image") and image is None:
         raise AssistantActionError("Escolhe uma imagem da pesquisa ou envia uma imagem do teu dispositivo antes de confirmar.")
+    image_needs_rights_confirmation = bool(
+        image and (
+            action_type == "produto"
+            or image.get("custom")
+            or not image.get("license_allows_commercial_use")
+        )
+    )
+    if image_needs_rights_confirmation and rights_confirmed is not True:
+        raise AssistantActionError(
+            "Confirma que és titular ou tens autorização para utilizar a imagem escolhida."
+        )
     try:
         result = _execute_record(user_id, action_type, data, image)
         db.session.add(AssistantActionExecution(

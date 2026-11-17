@@ -50,7 +50,7 @@ export default function Conteiner4RightWindow () {
 
                         </div>
                         
-                        <input id="nome" type="text" placeholder="Nome do produto" />
+                        <input id="nome" type="text" placeholder="Nome do produto" maxLength={65} />
                         <input id="descricao" type="text" placeholder="Descrição do produto" />
                         <select id="tipo">
                             <option id="moda" value="Moda">Moda</option>

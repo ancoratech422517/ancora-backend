@@ -685,10 +685,14 @@ export default function AssistantChat() {
           const formData = new FormData();
           formData.append("token", pendingAction.token);
           formData.append("image", pendingAction.custom_image_file, pendingAction.custom_image_name || "imagem.png");
+          if (pendingAction.rightsConfirmed === true) formData.append("rights_confirmed", "true");
           return formData;
         })()
         : JSON.stringify({
           token: pendingAction.token,
+          ...(requiresImageRightsConfirmation
+            ? { rights_confirmed: pendingAction.rightsConfirmed === true }
+            : {}),
           ...(pendingAction.images?.length
             ? { image_index: pendingAction.selectedImageIndex }
             : {}),
@@ -778,6 +782,7 @@ export default function AssistantChat() {
         custom_image_url: previewUrl,
         custom_image_name: file.name,
         selectedImageIndex: null,
+          rightsConfirmed: false,
       }
       : current);
   };
@@ -887,6 +892,14 @@ export default function AssistantChat() {
           : "Online";
   const selectedAssistantVoice = ASSISTANT_VOICES.find((voice) => voice.id === assistantVoiceId)
     || ASSISTANT_VOICES[0];
+  const selectedImage = pendingAction?.images?.[pendingAction.selectedImageIndex];
+  const requiresImageRightsConfirmation = Boolean(
+    pendingAction && (
+      pendingAction.action_type === "produto"
+      || pendingAction.custom_image_file
+      || (selectedImage && !selectedImage.license_allows_commercial_use)
+    ),
+  );
 
   return (
     <div className="ConteinerRightMenuBottom assistantMainComposer" data-audio-mode={mode === "audio"}>
@@ -919,7 +932,7 @@ export default function AssistantChat() {
           {pendingAction.custom_image_url && (
             <div className="assistantLocalImagePreview">
               <img src={pendingAction.custom_image_url} alt="Pré-visualização da imagem escolhida" />
-              <span>{pendingAction.custom_image_name || "Imagem do dispositivo"}</span>
+              <span>Imagem escolhida do dispositivo</span>
             </div>
           )}
           {pendingAction.images?.length > 0 && (
@@ -941,13 +954,18 @@ export default function AssistantChat() {
                           custom_image_file: null,
                           custom_image_url: null,
                           custom_image_name: null,
+                          rightsConfirmed: false,
                         }
                         : current);
                     }}
                   >
                     <img src={image.preview_url} alt={image.title} loading="lazy" />
                     <span>{image.creator}</span>
-                    <small>{image.license}</small>
+                    <small>
+                      {image.license_allows_commercial_use
+                        ? image.license
+                        : `${image.license} · confirma autorização de uso`}
+                    </small>
                   </button>
                   <a href={image.source_url} target="_blank" rel="noreferrer">
                     Ver origem e licença
@@ -975,6 +993,23 @@ export default function AssistantChat() {
               <small>JPG, PNG ou WebP · máximo 8 MB</small>
             </div>
           )}
+          {requiresImageRightsConfirmation && (
+            <label className="assistantImageRightsConfirmation">
+              <input
+                type="checkbox"
+                checked={pendingAction.rightsConfirmed === true}
+                onChange={(event) => setPendingAction((current) => current
+                  ? { ...current, rightsConfirmed: event.target.checked }
+                  : current)}
+                disabled={isExecutingAction}
+              />
+              <span>
+                {pendingAction.action_type === "produto"
+                  ? "Confirmo que sou titular ou tenho autorização para usar comercialmente esta imagem."
+                  : "Confirmo que sou titular ou tenho autorização para utilizar esta imagem."}
+              </span>
+            </label>
+          )}
           <div className="assistantActionButtons">
             <button
               type="button"
@@ -985,6 +1020,7 @@ export default function AssistantChat() {
                 || (pendingAction.requires_image
                   && !pendingAction.custom_image_file
                   && (!pendingAction.images?.length || pendingAction.selectedImageIndex == null))
+                || (requiresImageRightsConfirmation && pendingAction.rightsConfirmed !== true)
               }
             >
               {isExecutingAction ? "A registar…" : "Confirmar"}

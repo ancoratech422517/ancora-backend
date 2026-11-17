@@ -8,12 +8,12 @@ import CachedImage from "../../components/CachedImage";
 
 export default function Conteiner2RightWindowProdutsSombraCard ({setEstado}) {
 
-    const { DadosSombra, dadosUsuario, socket  , setEstadoCompra , setDadosCompraVendedor , DadosCompraVendedor , urlBancoDeDados , setAtivar} = useUserStore()
+    const { DadosSombra, dadosUsuario, socket, setDadosCompraVendedor, urlBancoDeDados } = useUserStore()
     let valor = "none"
     if (DadosSombra.foto_vendedor !== "none"){
         valor = "ativo"
     }
-    const [estadoFotoPerfil , setEstadoFotoPerfil] = useState(valor)
+    const [estadoFotoPerfil] = useState(valor)
     const getUrlVideo = (url) => {
       if (!url) return "";
         // Verifica se a URL já começa com http ou https
@@ -33,12 +33,14 @@ export default function Conteiner2RightWindowProdutsSombraCard ({setEstado}) {
                     </p>
                 )
             case "ativo":
+                {
                 const URLIMAGE = `${getUrlVideo(DadosSombra.foto_vendedor)}`
                 return (
                     <div className="dados_vendedorIconeIcone">
                         <img src={URLIMAGE} alt="" />
                     </div>
                 )
+                }
         }
     }
     const urlImage = getUrlVideo(DadosSombra.url_imagem_produto) || ImageDefault
@@ -148,6 +150,16 @@ export default function Conteiner2RightWindowProdutsSombraCard ({setEstado}) {
                 <li className="comentarioCard">
                      {DadosSombra.descricao_produto}
                 </li>
+                {DadosSombra.image_creator && DadosSombra.image_license && (
+                    <div className="productImageAttribution">
+                        <small>Imagem de {DadosSombra.image_creator} · {DadosSombra.image_license}</small>
+                        {DadosSombra.image_source_url?.startsWith("https://") && (
+                            <a href={DadosSombra.image_source_url} target="_blank" rel="noopener noreferrer">
+                                Ver origem e licença
+                            </a>
+                        )}
+                    </div>
+                )}
                 <div className="textCardSombraBox1">
                     <h3>{DadosSombra.preco_produto}</h3>
                     <div className="boxBox1CardText">

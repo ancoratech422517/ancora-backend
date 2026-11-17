@@ -40,8 +40,8 @@ def registrarProduto():
         descricao_produto = request.form.get("descricao_produto", "").strip()
         tipo_produto = request.form.get("tipo_produto", "").strip()
         preco_input = request.form.get("preco_produto", "").strip()
-        if not nome_produto or len(nome_produto) > 100:
-            return jsonify({"error": "O nome deve ter entre 1 e 100 caracteres."}), 400
+        if not nome_produto or len(nome_produto) > 65:
+            return jsonify({"error": "O nome deve ter entre 1 e 65 caracteres."}), 400
         if not descricao_produto or len(descricao_produto) > 10_000:
             return jsonify({"error": "A descrição do produto é inválida."}), 400
         if not tipo_produto or len(tipo_produto) > 80:
@@ -93,6 +93,9 @@ def registrarProduto():
             "preco": novo_produto.preco_produto,
             "url_imagem_produto": novo_produto.url_imagem_produto,
             "url_imagem_produto_blurhash": novo_produto.url_imagem_produto_blurhash,
+            "image_source_url": novo_produto.image_source_url,
+            "image_creator": novo_produto.image_creator,
+            "image_license": novo_produto.image_license,
             "id_usuario": novo_produto.id_usuario,
             "data_registro": str(getattr(novo_produto, "data_registro", None)),
         }
