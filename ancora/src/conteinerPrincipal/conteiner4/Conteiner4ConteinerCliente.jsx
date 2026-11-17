@@ -1,41 +1,40 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./css/Conteiner4ConteinerCliente.css";
-import DataCliente from "./data/DataCliente.json";
 import Conteiner4ConteinerClienteDados from "./Conteiner4ConteinerClienteDados";
+import useLojaDashboard from "./useLojaDashboard";
 
 const X0 = 44;
 const X1 = 690;
 const Y0 = 30;
 const Y1 = 490;
-const MIN_VALUE = 20;
-const MAX_VALUE = 180;
 const PADDING = 34;
-const CLIENTES = Array.from({ length: 5 }, (_, index) => ({
-    id: index,
-    nome: "Cláudio Avelino",
-    descricao: "Cliente dos aparelho eletronico",
-}));
+const CHART_MAX = (value) => Math.max(5, Math.ceil(value / 5) * 5);
+const formatarQuantidade = (value) => new Intl.NumberFormat("pt-AO").format(Number(value) || 0);
+const EMPTY_SERIES = [];
 
 export default function Conteiner4CoteinerCliente() {
     const [animado, setAnimado] = useState(false);
-    const [valores, setValores] = useState(() => DataCliente.map(() => 0));
     const [indiceAtivo, setIndiceAtivo] = useState(null);
     const [posicaoTooltip, setPosicaoTooltip] = useState(null);
     const [toast, setToast] = useState("");
     const [toastVisivel, setToastVisivel] = useState(false);
     const graficoRef = useRef(null);
     const toastTimer = useRef(null);
+    const { dashboard, loading, error, refresh } = useLojaDashboard();
+    const dados = dashboard?.clientes_serie || EMPTY_SERIES;
+    const clientes = dashboard?.clientes_detalhe || [];
+    const maxValue = CHART_MAX(Math.max(0, ...dados.map((item) => Number(item.value) || 0)));
 
     const pontos = useMemo(() => {
-        const step = DataCliente.length > 1
-            ? (X1 - X0 - PADDING * 2) / (DataCliente.length - 1)
+        const step = dados.length > 1
+            ? (X1 - X0 - PADDING * 2) / (dados.length - 1)
             : 0;
-        return DataCliente.map((item, index) => ({
+        return dados.map((item, index) => ({
             ...item,
             x: X0 + PADDING + step * index,
-            y: Y1 - ((item.value - MIN_VALUE) / (MAX_VALUE - MIN_VALUE)) * (Y1 - Y0),
+            y: Y1 - ((Number(item.value) || 0) / maxValue) * (Y1 - Y0),
         }));
-    }, []);
+    }, [dados, maxValue]);
 
     const caminho = pontos.map(({ x, y }, index) => {
         if (index === 0) return `M${x},${y}`;
@@ -48,25 +47,11 @@ export default function Conteiner4CoteinerCliente() {
         : "";
 
     useEffect(() => {
-        let frame;
-        const inicio = performance.now();
-        const animar = (agora) => {
-            const decorrido = agora - inicio;
-            setAnimado(decorrido > 50);
-            setValores(DataCliente.map((item, index) => {
-                const progresso = Math.max(0, Math.min(1, (decorrido - index * 400) / 1000));
-                return Math.round(item.value * (1 - (1 - progresso) ** 4));
-            }));
-            if (decorrido < (DataCliente.length - 1) * 400 + 1000) {
-                frame = requestAnimationFrame(animar);
-            }
-        };
-        frame = requestAnimationFrame(animar);
-        return () => {
-            cancelAnimationFrame(frame);
-            clearTimeout(toastTimer.current);
-        };
-    }, []);
+        const frame = requestAnimationFrame(() => setAnimado(true));
+        return () => cancelAnimationFrame(frame);
+    }, [dados]);
+
+    useEffect(() => () => clearTimeout(toastTimer.current), []);
 
     const exibirTooltip = (event) => {
         if (!pontos.length || !graficoRef.current) return;
@@ -100,12 +85,12 @@ export default function Conteiner4CoteinerCliente() {
     return (
         <div className="Conteiner4ConteinerCliente">
             <section className="clientes-grafico" ref={graficoRef}>
-                <div className="clientes-grafico-legenda"><i aria-hidden="true" />Clientes Óbtidos</div>
+                <div className="clientes-grafico-legenda"><i aria-hidden="true" />Novos clientes por mês</div>
                 <svg
                     className="clientes-grafico-svg"
                     viewBox="0 0 700 540"
                     role="img"
-                    aria-label="Clientes obtidos por mês"
+                    aria-label="Novos clientes da conta por mês"
                     onPointerMove={exibirTooltip}
                     onPointerLeave={() => {
                         setIndiceAtivo(null);
@@ -125,12 +110,12 @@ export default function Conteiner4CoteinerCliente() {
                             <rect className={`clientes-grafico-revelar${animado ? " is-active" : ""}`} x="0" y="0" width={animado ? 700 : 0} height="560" />
                         </clipPath>
                     </defs>
-                    {Array.from({ length: 9 }, (_, index) => MIN_VALUE + index * 20).map((value) => {
-                        const y = Y1 - ((value - MIN_VALUE) / (MAX_VALUE - MIN_VALUE)) * (Y1 - Y0);
+                    {Array.from({ length: 6 }, (_, index) => maxValue * (5 - index) / 5).map((value, index) => {
+                        const y = Y1 - (value / maxValue) * (Y1 - Y0);
                         return (
-                            <g key={value}>
-                                <line className="clientes-grafico-grade" x1={X0} x2={X1} y1={y} y2={y} strokeDasharray={value > MIN_VALUE ? "3 6" : "0"} />
-                                <text className="clientes-grafico-y-label" x={X0 - 9} y={y + 4}>{value}</text>
+                            <g key={`${value}-${index}`}>
+                                <line className="clientes-grafico-grade" x1={X0} x2={X1} y1={y} y2={y} strokeDasharray={value > 0 ? "3 6" : "0"} />
+                                <text className="clientes-grafico-y-label" x={X0 - 9} y={y + 4}>{formatarQuantidade(value)}</text>
                             </g>
                         );
                     })}
@@ -161,7 +146,7 @@ export default function Conteiner4CoteinerCliente() {
                                 y={point.y - (index === pontos.length - 1 ? -4 : 16)}
                                 opacity={animado ? 1 : 0}
                             >
-                                {valores[index] ?? point.value}
+                                {formatarQuantidade(point.value)}
                             </text>
                         </g>
                     ))}
@@ -180,20 +165,28 @@ export default function Conteiner4CoteinerCliente() {
                     <div className="clientes-grafico-tooltip" style={{ left: posicaoTooltip?.left, top: posicaoTooltip?.top }}>
                         <strong>{pontoAtivo.label}</strong>
                         <br />
-                        {pontoAtivo.value} clientes
+                        {formatarQuantidade(pontoAtivo.value)} novos clientes
+                    </div>
+                )}
+                {!dashboard && (
+                    <div className="clientes-grafico-estado" role={error ? "alert" : "status"}>
+                        <span>{loading ? "A carregar clientes…" : error || "Não foi possível carregar os clientes."}</span>
+                        {!loading && <button type="button" onClick={() => void refresh()}>Tentar novamente</button>}
                     </div>
                 )}
             </section>
             <section className="clientes-lista" aria-label="Clientes">
-                {CLIENTES.map((cliente, index) => (
+                {clientes.map((cliente, index) => (
                     <Conteiner4ConteinerClienteDados
                         key={cliente.id}
                         nome={cliente.nome}
-                        descricao={cliente.descricao}
+                        foto={cliente.foto}
+                        descricao={`${formatarQuantidade(cliente.pedidos)} pedido(s) · Mais comprado: ${cliente.produto_mais_comprado || "Sem produto"}`}
                         atraso={index}
                         onConversar={() => conversar(cliente.nome)}
                     />
                 ))}
+                {dashboard && clientes.length === 0 && <p className="clientes-lista-vazia">Ainda não há clientes com pedidos registados nesta conta.</p>}
             </section>
             <div className={`clientes-toast${toastVisivel ? " is-visible" : ""}`} role="status" aria-live="polite">
                 {toast}

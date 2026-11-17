@@ -6,6 +6,43 @@
     flex-direction: column;
     overflow: hidden;
 }
+.dashboard-data-state{
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--text-secondary);
+    text-align: center;
+}
+.dashboard-data-state p{
+    margin: 0;
+}
+.dashboard-data-state button,
+.dashboard-refresh-error button{
+    min-height: 36px;
+    padding: 7px 13px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--surface);
+    color: var(--text-primary);
+    cursor: pointer;
+}
+.dashboard-refresh-error{
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--status-danger);
+    font-size: 12px;
+}
+.dashboard-refresh-error button{
+    min-height: 30px;
+    padding: 4px 9px;
+    flex: 0 0 auto;
+    font-size: 12px;
+}
 @media screen and (min-width: 701px) {
     .Conteiner3ConteinerDashboard > .Conteiner4RightWindowBoxCenter {
         flex: 0 0 30%;

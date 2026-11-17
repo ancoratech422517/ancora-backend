@@ -61,17 +61,41 @@
     color: rgb(32, 218, 94);
     font-size: 14px;
 }
+.dashboard-stat-heading{
+    justify-content: flex-start;
+    gap: 10px;
+}
+.dashboard-stat-heading h3{
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.dashboard-stat-row b{
+    text-align: left;
+}
+.dashboard-stat-value{
+    max-width: 58%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 @media screen and (max-width: 700px) {
     .Conteiner4RightWindowBoxCenter{
         display: flex;
-        flex-wrap: wrap;
-        height: 50%;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        height: auto;
         gap: 10px;
         padding-top: 2%;
     }
     .Conteiner4RightWindowBoxCenterBoxGrafico{
-        width: 95%;
-        padding: 5%;
+        width: min(95%, 430px);
+        min-height: 145px;
+        height: auto;
+        padding: 16px;
         border: none;
     }
 }

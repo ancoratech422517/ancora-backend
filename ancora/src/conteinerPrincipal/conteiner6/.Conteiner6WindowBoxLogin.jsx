@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUserStore } from "../../useUseSotore";
 import "./css/Conteiner6WindowBoxLogin.css"
 import Logo from "../../assets/logo2.png"
@@ -9,10 +9,14 @@ import Loading3 from "../components/conteinerComponentesJsx/loading3";
 import Erro from "../components/conteinerSvg/erro";
 export default function Conteiner6WindowBoxLogin ({ ativarConteiner }) {
     const setDados = useUserStore((state)=> state.setDados)
+    const codigoConviteInicial = new URLSearchParams(window.location.search).get("convite") || ""
     
     const [carregando, setCarregando] = useState(false)
     const [erro , setErro] = useState("False")
     const [erroCadastro, setErroCadastro] = useState("")
+    useEffect(() => {
+        if (codigoConviteInicial) SwitchTab("register")
+    }, [codigoConviteInicial])
     const condicaoErro = () => erro && erro !== "False" ? (
         <div className="Menssagem-log" role="alert">
             <Erro /> {erro}
@@ -28,6 +32,11 @@ export default function Conteiner6WindowBoxLogin ({ ativarConteiner }) {
     }
 
     const [estadoLoading , setEstadoLoading] = useState("False")
+    const handleRegister = (event) => {
+        event.preventDefault()
+        if (estadoLoading === "True") return
+        Registro(setEstadoLoading, setErroCadastro)
+    }
     const condicaoEstadoLoading = ()=>{
         switch(estadoLoading){
             case "True":
@@ -92,7 +101,7 @@ export default function Conteiner6WindowBoxLogin ({ ativarConteiner }) {
                     </form>
 
                     {/* <!-- FORM REGISTRO --> */}
-                    <form className="form" id="register-form">
+                    <form className="form" id="register-form" onSubmit={handleRegister}>
                         <div className="avatar-upload">
                             <div className="avatar-wrapper">
                                 <label for="avatar-input" className="avatar-preview" id="avatar-preview">
@@ -130,6 +139,22 @@ export default function Conteiner6WindowBoxLogin ({ ativarConteiner }) {
                             </div>
                         
 
+                        <div className="input-group">
+                            <label for="register-invite-code">Código de convite (opcional)</label>
+                            <div className="input-wrapper">
+                                <input
+                                    type="text"
+                                    id="register-invite-code"
+                                    className="form-input"
+                                    placeholder="Código recebido de um utilizador"
+                                    maxLength={16}
+                                    defaultValue={codigoConviteInicial}
+                                    autoComplete="off"
+                                    style={{ paddingLeft: 14 }}
+                                />
+                            </div>
+                        </div>
+
                         <div className="input-row">
                             <div className="input-group">
                                 <label for="register-password">Senha</label>
@@ -155,7 +180,7 @@ export default function Conteiner6WindowBoxLogin ({ ativarConteiner }) {
                             </div>
                         </div>
 
-                        <button type="submit" className="btn-submit" onClick={()=>Registro(setEstadoLoading, setErroCadastro)}>Criar conta</button>
+                        <button type="submit" className="btn-submit" disabled={estadoLoading === "True"}>Criar conta</button>
                         {erroCadastro && (
                             <div className="Menssagem-log" role="alert">
                                 {erroCadastro}

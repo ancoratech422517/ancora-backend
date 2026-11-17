@@ -22,6 +22,12 @@
     font-size: 20px;
     font-weight: 700;
 }
+.cliente-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    object-fit: cover;
+}
 
 .cliente-avatar::after {
     position: absolute;

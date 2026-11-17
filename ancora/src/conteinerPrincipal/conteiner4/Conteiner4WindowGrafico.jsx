@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./css/Conteiner4WindowGrafico.css";
-import DadosGraficoJson from "./data/DataGrafico.json";
 
 const CORES = [
     "var(--chat-chart-1, #36d9db)",
@@ -13,9 +12,10 @@ const X0 = 44;
 const X1 = 610;
 const Y0 = 20;
 const Y1 = 272;
-const MAX_VALUE = 90;
+const CHART_MAX_VALUE = (value) => Math.max(4, Math.ceil(value / 4) * 4);
 const DONUT_RADIUS = 104;
 const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS;
+const formatarQuantidade = (value) => new Intl.NumberFormat("pt-AO").format(Number(value) || 0);
 
 function useTooltip() {
     const containerRef = useRef(null);
@@ -26,9 +26,9 @@ function useTooltip() {
         if (!bounds) return;
 
         setTooltip({
-            name: item.labe,
+            name: item.label,
             value: item.value,
-            percentage: Math.round((item.value / total) * 100),
+            percentage: total ? Math.round((item.value / total) * 100) : 0,
             left: Math.min(event.clientX - bounds.left + 12, bounds.width - 130),
             top: event.clientY - bounds.top - 38,
         });
@@ -44,23 +44,32 @@ function Tooltip({ tooltip }) {
         <div className="dashboard-chart-tooltip" style={{ left: tooltip.left, top: tooltip.top }}>
             <strong>{tooltip.name}</strong>
             <br />
-            {tooltip.value} Kz · {tooltip.percentage}%
+            {formatarQuantidade(tooltip.value)} · {tooltip.percentage}%
         </div>
     );
 }
 
-export default function Conteiner4WindowGrafico() {
-    const [visiveis, setVisiveis] = useState(() => DadosGraficoJson.map(() => true));
+export default function Conteiner4WindowGrafico({ dashboard }) {
+    const dadosGrafico = useMemo(() => [
+        { label: "Produtos", value: Number(dashboard?.produtos) || 0 },
+        { label: "Pedidos", value: Number(dashboard?.pedidos) || 0 },
+        { label: "Clientes", value: Number(dashboard?.clientes) || 0 },
+        { label: "Visualizações", value: Number(dashboard?.visualizacoes) || 0 },
+        { label: "Favoritos", value: Number(dashboard?.favoritos) || 0 },
+    ], [dashboard]);
+    const [visiveis, setVisiveis] = useState([]);
     const [chaveAnimada, setChaveAnimada] = useState(null);
     const [itemAtivo, setItemAtivo] = useState(null);
     const indicesVisiveis = useMemo(
-        () => DadosGraficoJson.map((_, index) => index).filter((index) => visiveis[index]),
-        [visiveis],
+        () => dadosGrafico.map((_, index) => index).filter((index) => visiveis[index] !== false),
+        [dadosGrafico, visiveis],
     );
     const chaveVisivel = indicesVisiveis.join(",");
     const animado = chaveAnimada === chaveVisivel;
-    const dadosVisiveis = indicesVisiveis.map((index) => DadosGraficoJson[index]);
+    const dadosVisiveis = indicesVisiveis.map((index) => dadosGrafico[index]);
     const total = dadosVisiveis.reduce((sum, item) => sum + item.value, 0);
+    const maxValue = Math.max(1, ...dadosVisiveis.map((item) => item.value));
+    const chartMaxValue = CHART_MAX_VALUE(maxValue);
     const { containerRef: barrasRef, tooltip: tooltipBarras, showTooltip: mostrarTooltipBarras, hideTooltip: ocultarTooltipBarras } = useTooltip();
     const { containerRef: roscaRef, tooltip: tooltipRosca, showTooltip: mostrarTooltipRosca, hideTooltip: ocultarTooltipRosca } = useTooltip();
 
@@ -70,15 +79,19 @@ export default function Conteiner4WindowGrafico() {
     }, [chaveVisivel]);
 
     const alternarItem = (index) => {
-        if (visiveis[index] && indicesVisiveis.length === 1) return;
+        if (visiveis[index] !== false && indicesVisiveis.length === 1) return;
         setItemAtivo(null);
-        setVisiveis((current) => current.map((isVisible, itemIndex) => itemIndex === index ? !isVisible : isVisible));
+        setVisiveis((current) => {
+            const next = [...current];
+            next[index] = current[index] === false;
+            return next;
+        });
     };
 
     const pontos = dadosVisiveis.map((item, index) => {
         const step = (X1 - X0) / dadosVisiveis.length;
         const centerX = X0 + step * (index + 0.5);
-        const centerY = Y1 - (item.value / MAX_VALUE) * (Y1 - Y0);
+        const centerY = Y1 - (item.value / chartMaxValue) * (Y1 - Y0);
         return { item, index: indicesVisiveis[index], x: centerX, y: centerY };
     });
 
@@ -93,26 +106,28 @@ export default function Conteiner4WindowGrafico() {
         }
     }
 
-    const segmentosRosca = dadosVisiveis.map((item, index) => {
-        const length = (item.value / total) * DONUT_CIRCUMFERENCE;
-        const visibleLength = Math.max(length - 4, 1);
-        const offset = dadosVisiveis
-            .slice(0, index)
-            .reduce((sum, previous) => sum + (previous.value / total) * DONUT_CIRCUMFERENCE, 0);
-        return { item, index, visibleLength, offset };
-    });
+    const segmentosRosca = total > 0
+        ? dadosVisiveis.map((item, index) => {
+            const length = (item.value / total) * DONUT_CIRCUMFERENCE;
+            const visibleLength = Math.max(length - 4, 1);
+            const offset = dadosVisiveis
+                .slice(0, index)
+                .reduce((sum, previous) => sum + (previous.value / total) * DONUT_CIRCUMFERENCE, 0);
+            return { item, index: indicesVisiveis[index], visibleLength, offset };
+        })
+        : [];
     const valorCentral = itemAtivo
         ? `${Math.round((itemAtivo.value / total) * 100)}%`
-        : total;
+        : formatarQuantidade(total);
 
     return (
         <section className="Conteiner4WindowGrafico" aria-label="Gráficos do dashboard">
             <article className="dashboard-chart dashboard-chart-bar-card" ref={barrasRef}>
-                <h4><i aria-hidden="true" />Receita (Kz)</h4>
-                <svg viewBox="0 0 620 330" role="img" aria-label="Receita por categoria">
+                <h4><i aria-hidden="true" />Actividade da loja</h4>
+                <svg viewBox="0 0 620 330" role="img" aria-label="Indicadores reais da loja">
                     <defs>
-                        {DadosGraficoJson.map((item, index) => (
-                            <linearGradient key={item.labe} id={`dashboard-gradient-${index}`} x1="0" y1="0" x2="0" y2="1">
+                        {dadosGrafico.map((item, index) => (
+                            <linearGradient key={item.label} id={`dashboard-gradient-${index}`} x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="0" stopColor={CORES[index]} stopOpacity="0.9" />
                                 <stop offset="1" stopColor={CORES[index]} stopOpacity="0.55" />
                             </linearGradient>
@@ -121,10 +136,10 @@ export default function Conteiner4WindowGrafico() {
                             <rect x="0" y="0" width="620" height={Y1} />
                         </clipPath>
                     </defs>
-                    {Array.from({ length: 10 }, (_, index) => index * 10).map((value) => {
-                        const y = Y1 - (value / MAX_VALUE) * (Y1 - Y0);
+                    {Array.from({ length: 5 }, (_, index) => chartMaxValue * (4 - index) / 4).map((value, index) => {
+                        const y = Y1 - (value / chartMaxValue) * (Y1 - Y0);
                         return (
-                            <g key={value}>
+                            <g key={`${value}-${index}`}>
                                 <line
                                     className="dashboard-chart-grid"
                                     x1={X0}
@@ -133,7 +148,7 @@ export default function Conteiner4WindowGrafico() {
                                     y2={y}
                                     strokeDasharray={value ? "3 5" : "0"}
                                 />
-                                <text className="dashboard-chart-y-label" x={X0 - 8} y={y + 4}>{value}</text>
+                                <text className="dashboard-chart-y-label" x={X0 - 8} y={y + 4}>{formatarQuantidade(value)}</text>
                             </g>
                         );
                     })}
@@ -141,10 +156,10 @@ export default function Conteiner4WindowGrafico() {
                         {pontos.map(({ item, index, x }) => {
                             const step = (X1 - X0) / dadosVisiveis.length;
                             const barWidth = Math.min(84, step * 0.62);
-                            const height = (item.value / MAX_VALUE) * (Y1 - Y0);
+                            const height = (item.value / chartMaxValue) * (Y1 - Y0);
                             const y = animado ? Y1 - height : Y1;
                             return (
-                                <g key={item.labe}>
+                                <g key={item.label}>
                                     <rect
                                         className="dashboard-chart-bar"
                                         x={x - barWidth / 2}
@@ -162,9 +177,9 @@ export default function Conteiner4WindowGrafico() {
                                         y={animado ? Y1 - height - 26 : Y1 - 8}
                                         opacity={animado ? 1 : 0}
                                     >
-                                        {item.value}
+                                        {formatarQuantidade(item.value)}
                                     </text>
-                                    <text className="dashboard-chart-x-label" x={x} y={Y1 + 24}>{item.labe}</text>
+                                    <text className="dashboard-chart-x-label" x={x} y={Y1 + 24}>{item.label}</text>
                                 </g>
                             );
                         })}
@@ -178,7 +193,7 @@ export default function Conteiner4WindowGrafico() {
                             />
                             {pontos.map(({ item, x, y }) => (
                                 <circle
-                                    key={item.labe}
+                                    key={item.label}
                                     className={`dashboard-chart-dot${animado ? " is-animated" : ""}`}
                                     cx={x}
                                     cy={y - 14}
@@ -192,7 +207,7 @@ export default function Conteiner4WindowGrafico() {
             </article>
 
             <article className="dashboard-chart dashboard-chart-donut" ref={roscaRef}>
-                <svg viewBox="0 0 360 330" role="img" aria-label="Distribuição da receita">
+                <svg viewBox="0 0 360 330" role="img" aria-label="Distribuição da actividade da loja">
                     <circle
                         cx="180"
                         cy="165"
@@ -205,7 +220,7 @@ export default function Conteiner4WindowGrafico() {
                     <g className="dashboard-chart-ring" transform="rotate(-90 180 165)">
                         {segmentosRosca.map(({ item, index, visibleLength, offset }) => (
                             <circle
-                                key={item.labe}
+                                key={item.label}
                                 className="dashboard-chart-segment"
                                 cx="180"
                                 cy="165"
@@ -224,22 +239,22 @@ export default function Conteiner4WindowGrafico() {
                         ))}
                     </g>
                     <text className="dashboard-chart-center-label" x="180" y="157">
-                        {itemAtivo ? itemAtivo.labe : "Receita total"}
+                        {itemAtivo ? itemAtivo.label : "Total"}
                     </text>
                     <text className="dashboard-chart-center-value" x="180" y="193">{valorCentral}</text>
                 </svg>
                 <div className="dashboard-chart-legend">
-                    {DadosGraficoJson.map((item, index) => (
+                    {dadosGrafico.map((item, index) => (
                         <button
-                            key={item.labe}
+                            key={item.label}
                             type="button"
-                            className={`dashboard-chart-chip${visiveis[index] ? "" : " is-off"}`}
+                            className={`dashboard-chart-chip${visiveis[index] === false ? " is-off" : ""}`}
                             style={{ "--chip-color": CORES[index] }}
-                            aria-pressed={visiveis[index]}
+                            aria-pressed={visiveis[index] !== false}
                             onClick={() => alternarItem(index)}
                         >
                             <i aria-hidden="true" />
-                            {item.labe}
+                            {item.label}
                         </button>
                     ))}
                 </div>

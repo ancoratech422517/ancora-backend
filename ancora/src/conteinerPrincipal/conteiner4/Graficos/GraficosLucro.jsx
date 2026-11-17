@@ -1,7 +1,29 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { Line } from "react-chartjs-2";
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    Filler,
+    Legend,
+    LineController,
+    LineElement,
+    LinearScale,
+    PointElement,
+    Tooltip,
+} from "chart.js";
 import { useUserStore } from "../../../useUseSotore";
 import DataLucro from "../data/DataLucro.json"
+
+ChartJS.register(
+    CategoryScale,
+    Filler,
+    Legend,
+    LineController,
+    LineElement,
+    LinearScale,
+    PointElement,
+    Tooltip,
+);
 
 const DEFAULT_COLORS = {
     accent: "#3b82f6",

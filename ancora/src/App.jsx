@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useEffect, useLayoutEffect, useRef } from 'react'
+import { Component, lazy, Suspense, useState, useEffect, useLayoutEffect, useRef } from 'react'
 import './App.css'
 const Conteiner1 = lazy(() => import("./conteinerPrincipal/conteiner1/conteiner1"))
 const Conteiner2 = lazy(() => import('./conteinerPrincipal/conteiner2/conteiner2'))
@@ -21,6 +21,34 @@ import { preparePrivateMediaStorage } from './utils/privateMediaStorage'
 import { useApiRequestLoading } from './utils/apiRequestTracker'
 import ContainerLoading from './components/ContainerLoading'
 import { ASSISTANT_CHAT_TYPE } from './conteinerPrincipal/assistente/assistantConfig'
+
+class ConteinerRenderErrorBoundary extends Component {
+  state = { error: null }
+
+  static getDerivedStateFromError(error) {
+    return { error }
+  }
+
+  componentDidCatch(error, info) {
+    console.error("Erro ao abrir o conteiner da Âncora:", error, info.componentStack)
+  }
+
+  render() {
+    if (!this.state.error) return this.props.children
+
+    return (
+      <div className="conteiner-render-error" role="alert">
+        <h2>Não foi possível abrir esta área</h2>
+        <p>O erro foi registado no navegador. Volta ao início ou recarrega a plataforma.</p>
+        <div className="conteiner-render-error-actions">
+          <button type="button" onClick={() => this.props.onExit?.()}>Voltar ao início</button>
+          <button type="button" onClick={() => window.location.reload()}>Recarregar</button>
+        </div>
+      </div>
+    )
+  }
+}
+
 function App() {
   const publicAdId = new URLSearchParams(window.location.search).get("ad")
   const apiRequestLoading = useApiRequestLoading()
@@ -285,7 +313,9 @@ function App() {
       )}
       <div className="conteinerPrincipalConteudo">
         <Suspense fallback={<ContainerLoading overlay label="A carregar aba" />}>
-          {renderizar_conteiner()}
+          <ConteinerRenderErrorBoundary key={containerAtual} onExit={() => setAtivar("conteiner1")}>
+            {renderizar_conteiner()}
+          </ConteinerRenderErrorBoundary>
         </Suspense>
         <Suspense fallback={null}>
         {condicaoEstadoMenuLiveAncora()}

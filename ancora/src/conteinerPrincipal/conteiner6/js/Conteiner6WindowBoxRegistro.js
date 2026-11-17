@@ -80,6 +80,7 @@ export async function Registro(setEstadoLoading, setErroCadastro) {
     const senha = document.getElementById("register-password").value;
     const confirmar_senha = document.getElementById("register-confirm").value;
     const foto = document.getElementById("avatar-input");
+    const codigoConvite = document.getElementById("register-invite-code")?.value.trim();
 
     
     const telefone_limpo = telefone.replace(/\D/g, '');
@@ -94,6 +95,9 @@ export async function Registro(setEstadoLoading, setErroCadastro) {
     form__data.append("telefone", telefone_limpo);
     form__data.append("senha", senha);
     form__data.append("confirmar_senha", confirmar_senha);
+    if (codigoConvite) {
+        form__data.append("codigo_convite", codigoConvite.toUpperCase());
+    }
     form__data.append("data_nascimento", "inativo temporiamente");
     form__data.append("email", "inativo temporiamente");
 

@@ -3,6 +3,8 @@ import cloudinary.uploader
 from service.api_register import register_user
 from service.media_metadata import validate_blurhash
 from service.upload_validation import upload_size, validate_extension
+from models.database import Usuario
+from routes.websocket import socketio
 
 registrar = Blueprint("registrar", __name__)
 
@@ -21,6 +23,7 @@ def registro():
         provincia = request.form.get("provincia")
         capital = request.form.get("capital")
         bairro = request.form.get("bairro")
+        codigo_convite = request.form.get("codigo_convite")
 
         foto = request.files.get("foto")
         try:
@@ -82,8 +85,27 @@ def registro():
             pais=pais,
             provincia=provincia,
             capital=capital,
-            bairro=bairro
+            bairro=bairro,
+            codigo_convite=codigo_convite,
         )
+
+        if status_code == 201 and codigo_convite:
+            convidador = Usuario.query.filter_by(
+                codigo_convite=codigo_convite.strip().upper()
+            ).first()
+            if convidador:
+                try:
+                    socketio.emit(
+                        "afiliado_registado",
+                        {"id_usuario": convidador.id},
+                        room=str(convidador.id),
+                        namespace="/",
+                    )
+                except Exception:
+                    current_app.logger.warning(
+                        "Não foi possível emitir atualização do convite para a conta %s",
+                        convidador.id,
+                    )
 
         return jsonify(resultado), status_code
 

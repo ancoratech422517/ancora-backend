@@ -13,6 +13,10 @@ def _utcnow_naive():
 
 class Usuario(db.Model):
     __tablename__ = 'usuarios'
+    __table_args__ = (
+        db.Index("uq_usuarios_codigo_convite", "codigo_convite", unique=True),
+        db.Index("ix_usuarios_convidado_por_id", "convidado_por_id"),
+    )
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     telefone = db.Column(db.String(20), unique=True, nullable=False)
@@ -27,6 +31,12 @@ class Usuario(db.Model):
     capital = db.Column(db.Text, nullable=False, default="none")
     bairro = db.Column(db.Text, nullable=False, default="none")
     id_app_usuario_pushy = db.Column(db.Text, nullable=True)
+    codigo_convite = db.Column(db.String(16), nullable=False)
+    convidado_por_id = db.Column(
+        db.Integer,
+        db.ForeignKey("usuarios.id", name="fk_usuarios_convidado_por_id", ondelete="SET NULL"),
+        nullable=True,
+    )
 
     # Criptografia assimétrica
     chave_publica = db.Column(db.Text, nullable=True) 

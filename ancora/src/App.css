@@ -23,6 +23,43 @@
   align-items: center;
   justify-content: center;
 }
+.conteiner-render-error{
+  width: min(100%, 560px);
+  min-height: 50%;
+  margin: auto;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text-primary, #1c2733);
+  text-align: center;
+}
+.conteiner-render-error h2,
+.conteiner-render-error p{
+  margin: 0;
+}
+.conteiner-render-error p{
+  color: var(--text-secondary, #667085);
+}
+.conteiner-render-error-actions{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.conteiner-render-error-actions button{
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid var(--border, #d0d5dd);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #1c2733);
+  font: inherit;
+  cursor: pointer;
+}
 /* From Uiverse.io by andrew-demchenk0 */ 
 .pyramid-loader {
   position: relative;

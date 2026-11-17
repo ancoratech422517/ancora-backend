@@ -16,7 +16,8 @@ class register_user():
                           pais = None , 
                           provincia = None,
                           capital = None,
-                          bairro = None
+                          bairro = None,
+                          codigo_convite = None
                           ):
         telefone = normalizar_telefone(telefone)
 
@@ -48,6 +49,7 @@ class register_user():
                 "capital":capital,
                 "bairro":bairro
             }
+            dados["codigo_convite"] = codigo_convite
             resultado, status_code = models.registrar_user_in_db(**dados)
             if status_code != 201:
                 return {

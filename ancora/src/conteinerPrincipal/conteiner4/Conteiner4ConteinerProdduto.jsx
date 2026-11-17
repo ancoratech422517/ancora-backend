@@ -1,19 +1,19 @@
 import { createElement, useEffect, useMemo, useRef, useState } from "react";
 import "./css/Conteiner4ConteinerProduto.css";
-import DataProduto from "./data/DataProduto.json";
 import CardProduto from "../conteiner2/Conteiner2RightWindowProdutsCard";
 import Cart from "../components/conteinerSvg/cart";
 import Erro from "../components/conteinerSvg/erro";
 import Editar from "../components/conteinerSvg/editar";
 import Mais from "../components/conteinerSvg/mais";
 import { Formulario } from "./js/formulario";
-import { useUserStore } from "../../useUseSotore";
+import useLojaDashboard from "./useLojaDashboard";
 
 const X0 = 48;
 const X1 = 690;
 const Y0 = 30;
 const Y1 = 490;
-const MAX_VALUE = 200;
+const MAX_ITEMS = 5;
+const formatarQuantidade = (value) => new Intl.NumberFormat("pt-AO").format(Number(value) || 0);
 const MODOS = [
     { id: "meus", label: "Meus produtos", icon: Cart },
     { id: "eliminar", label: "Eliminar produto", icon: Erro },
@@ -35,22 +35,23 @@ function ProdutoVazio({ mensagem }) {
 }
 
 export default function Conteiner4ConteinerProduto() {
-    const { ProdutoUsuario } = useUserStore();
+    const { dashboard, loading, error, refresh } = useLojaDashboard();
     const [modoGrafico, setModoGrafico] = useState("bar");
     const [modoProduto, setModoProduto] = useState("meus");
     const [animado, setAnimado] = useState(false);
     const [tooltip, setTooltip] = useState(null);
     const caixaGraficoRef = useRef(null);
-    const dados = useMemo(
-        () => DataProduto.filter((item) => Number.isFinite(Number(item.value))),
-        [],
-    );
+    const dados = useMemo(() => (dashboard?.produtos_detalhe || [])
+        .filter((item) => item?.id != null && Number.isFinite(Number(item.visualizacoes)))
+        .slice(0, MAX_ITEMS)
+        .map((item) => ({ label: item.nome || "Produto", value: Number(item.visualizacoes) || 0 })), [dashboard]);
     const total = dados.reduce((sum, item) => sum + Number(item.value), 0);
     const media = dados.length ? total / dados.length : 0;
+    const maxValue = Math.max(5, Math.ceil(Math.max(0, ...dados.map((item) => item.value)) / 5) * 5);
     const pontos = dados.map((item, index) => {
-        const step = (X1 - X0) / dados.length;
-        const x = X0 + step * (index + 0.5);
-        const y = Y1 - (Number(item.value) / MAX_VALUE) * (Y1 - Y0);
+        const step = dados.length > 1 ? (X1 - X0) / dados.length : 0;
+        const x = dados.length === 1 ? (X0 + X1) / 2 : X0 + step * (index + 0.5);
+        const y = Y1 - (Number(item.value) / maxValue) * (Y1 - Y0);
         return { item, x, y };
     });
     const linha = pontos.map(({ x, y }, index) => {
@@ -62,7 +63,7 @@ export default function Conteiner4ConteinerProduto() {
     const area = pontos.length
         ? `${linha} L${pontos[pontos.length - 1].x},${Y1} L${pontos[0].x},${Y1} Z`
         : "";
-    const produtos = Array.isArray(ProdutoUsuario) ? ProdutoUsuario : [];
+    const produtos = Array.isArray(dashboard?.produtos_lista) ? dashboard.produtos_lista : [];
     const mensagensVazias = {
         meus: "Você ainda não tem produtos registrados.",
         eliminar: "Não há produtos para eliminar.",
@@ -101,7 +102,7 @@ export default function Conteiner4ConteinerProduto() {
         <div className="Conteiner4ConteinerProduto">
             <section className="produto-grafico" ref={caixaGraficoRef}>
                 <div className="produto-grafico-cabecalho">
-                    <div className="produto-grafico-legenda"><i aria-hidden="true" />revenue</div>
+                    <div className="produto-grafico-legenda"><i aria-hidden="true" />Visualizações por produto</div>
                     <div className="produto-grafico-alternador" role="group" aria-label="Tipo de gráfico">
                         <span className={modoGrafico === "area" ? "produto-grafico-indicador is-area" : "produto-grafico-indicador"} />
                         <button
@@ -122,7 +123,16 @@ export default function Conteiner4ConteinerProduto() {
                         </button>
                     </div>
                 </div>
-                <svg className={`produto-grafico-svg${modoGrafico === "area" ? " is-area" : ""}`} viewBox="0 0 700 540" role="img" aria-label="Receita por produto">
+                {!dashboard && (
+                    <div className="produto-grafico-estado" role={error ? "alert" : "status"}>
+                        <span>{loading ? "A carregar os produtos…" : error || "Não há produtos registados nesta conta."}</span>
+                        {!loading && <button type="button" onClick={() => void refresh()}>Tentar novamente</button>}
+                    </div>
+                )}
+                {dashboard && dados.length === 0 && (
+                    <div className="produto-grafico-estado" role="status">Ainda não há produtos registados nesta conta.</div>
+                )}
+                <svg className={`produto-grafico-svg${modoGrafico === "area" ? " is-area" : ""}`} viewBox="0 0 700 540" role="img" aria-label="Visualizações reais dos produtos da conta">
                     <defs>
                         <linearGradient id="produto-gradiente-barras" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="0" stopColor="var(--chat-chart-accent, #3cc9b8)" />
@@ -143,12 +153,12 @@ export default function Conteiner4ConteinerProduto() {
                             <rect className={`produto-area-recorte${animado ? " is-animated" : ""}`} x="0" y="0" width={animado ? 700 : 0} height="540" />
                         </clipPath>
                     </defs>
-                    {Array.from({ length: 11 }, (_, index) => index * 20).map((value) => {
-                        const y = Y1 - (value / MAX_VALUE) * (Y1 - Y0);
+                    {Array.from({ length: 6 }, (_, index) => maxValue * (5 - index) / 5).map((value, index) => {
+                        const y = Y1 - (value / maxValue) * (Y1 - Y0);
                         return (
-                            <g key={value}>
+                            <g key={`${value}-${index}`}>
                                 <line className="produto-grafico-grade" x1={X0} x2={X1} y1={y} y2={y} strokeDasharray={value ? "3 6" : "0"} />
-                                <text className="produto-grafico-y-label" x={X0 - 9} y={y + 4}>{value}</text>
+                                <text className="produto-grafico-y-label" x={X0 - 9} y={y + 4}>{formatarQuantidade(value)}</text>
                             </g>
                         );
                     })}
@@ -164,7 +174,7 @@ export default function Conteiner4ConteinerProduto() {
                             {pontos.map(({ item, x }) => {
                                 const step = (X1 - X0) / dados.length;
                                 const largura = Math.min(120, step * 0.7);
-                                const altura = (Number(item.value) / MAX_VALUE) * (Y1 - Y0);
+                                const altura = (Number(item.value) / maxValue) * (Y1 - Y0);
                                 return (
                                     <g key={item.label}>
                                         <rect
@@ -179,7 +189,7 @@ export default function Conteiner4ConteinerProduto() {
                                             onPointerLeave={() => setTooltip(null)}
                                         />
                                         <text className="produto-grafico-valor" x={x} y={animado ? Y1 - altura - 12 : Y1 - 8} opacity={animado ? 1 : 0}>
-                                            {item.value}
+                                            {formatarQuantidade(item.value)}
                                         </text>
                                     </g>
                                 );
@@ -191,7 +201,7 @@ export default function Conteiner4ConteinerProduto() {
                             <path className="produto-grafico-linha" d={linha} />
                             {pontos.map(({ item, x, y }) => (
                                 <g key={item.label}>
-                                    <text className="produto-grafico-valor" x={x} y={y - 16} opacity={animado ? 1 : 0}>{item.value}</text>
+                                <text className="produto-grafico-valor" x={x} y={y - 16} opacity={animado ? 1 : 0}>{formatarQuantidade(item.value)}</text>
                                     <circle
                                         className="produto-grafico-ponto"
                                         cx={x}
@@ -208,13 +218,13 @@ export default function Conteiner4ConteinerProduto() {
                         className={`produto-grafico-media${animado ? " is-visible" : ""}`}
                         x1={X0}
                         x2={X1}
-                        y1={Y1 - (media / MAX_VALUE) * (Y1 - Y0)}
-                        y2={Y1 - (media / MAX_VALUE) * (Y1 - Y0)}
+                        y1={Y1 - (media / maxValue) * (Y1 - Y0)}
+                        y2={Y1 - (media / maxValue) * (Y1 - Y0)}
                     />
                     <g className={`produto-grafico-etiqueta-media${animado ? " is-visible" : ""}`}>
-                        <rect x={X1 - 92} y={Y1 - (media / MAX_VALUE) * (Y1 - Y0) - 11} width="92" height="22" rx="11" />
-                        <text x={X1 - 46} y={Y1 - (media / MAX_VALUE) * (Y1 - Y0) + 4}>
-                            média {media.toLocaleString("pt-PT")}
+                        <rect x={X1 - 92} y={Y1 - (media / maxValue) * (Y1 - Y0) - 11} width="92" height="22" rx="11" />
+                        <text x={X1 - 46} y={Y1 - (media / maxValue) * (Y1 - Y0) + 4}>
+                            média {formatarQuantidade(media)}
                         </text>
                     </g>
                 </svg>
@@ -222,7 +232,7 @@ export default function Conteiner4ConteinerProduto() {
                     <div className="produto-grafico-tooltip" style={{ left: tooltip.esquerda, top: tooltip.topo }}>
                         <strong>{tooltip.nome}</strong>
                         <br />
-                        {tooltip.valor} · {Math.round((tooltip.valor / total) * 100)}% do total
+                        {formatarQuantidade(tooltip.valor)} · {total ? Math.round((tooltip.valor / total) * 100) : 0}% do total
                     </div>
                 )}
             </section>

@@ -1,82 +1,63 @@
-import { useState } from "react";
-import "./css/Conteiner4RightWindowBoxCenter.css"
+import "./css/Conteiner4RightWindowBoxCenter.css";
 import Cart from "../components/conteinerSvg/cart";
 import Vendido from "../components/conteinerSvg/vendido";
 import Quantidade from "../components/conteinerSvg/quantidade";
-export default function Conteiner4RightWindowBoxCenter () {
+
+const formatarQuantidade = (value) => new Intl.NumberFormat("pt-AO").format(Number(value) || 0);
+
+export default function Conteiner4RightWindowBoxCenter({ dashboard }) {
+    const maisPedido = dashboard?.produto_mais_pedido;
+    const cards = [
+        {
+            titulo: "Minha loja",
+            Icone: Cart,
+            dados: [
+                ["Produtos publicados", formatarQuantidade(dashboard?.produtos)],
+                ["Favoritos", formatarQuantidade(dashboard?.favoritos)],
+            ],
+        },
+        {
+            titulo: "Pedidos recebidos",
+            Icone: Vendido,
+            dados: [
+                ["Total", formatarQuantidade(dashboard?.pedidos)],
+                ["Pendentes", formatarQuantidade(dashboard?.pedidos_pendentes)],
+            ],
+        },
+        {
+            titulo: "Clientes",
+            Icone: Quantidade,
+            dados: [
+                ["Clientes únicos", formatarQuantidade(dashboard?.clientes)],
+                ["Recorrentes", formatarQuantidade(dashboard?.clientes_recorrentes)],
+            ],
+        },
+        {
+            titulo: "Mais encomendado",
+            Icone: Vendido,
+            dados: [
+                ["Produto", maisPedido?.nome || "Sem pedidos"],
+                ["Pedidos", formatarQuantidade(maisPedido?.pedidos)],
+            ],
+        },
+    ];
+
     return (
         <div className="Conteiner4RightWindowBoxCenter">
-            <div className="Conteiner4RightWindowBoxCenterBoxGrafico">
-                {/* INICIO DOS DADOS DO GRAFICO DA CAXA */}
-                <div className="Conteiner4RightWindowBoxCenterGraficoCaxa">
-                    <div className="Conteiner4RightWindowBoxCenterGraficoCaxaIcone">
-                        <Cart />
+            {cards.map(({ titulo, Icone, dados }) => (
+                <article className="Conteiner4RightWindowBoxCenterBoxGrafico" key={titulo}>
+                    <div className="Conteiner4RightWindowBoxCenterGraficoCaxa dashboard-stat-heading">
+                        <div className="Conteiner4RightWindowBoxCenterGraficoCaxaIcone"><Icone /></div>
+                        <h3>{titulo}</h3>
                     </div>
-                    <h3> Loja: Produtos</h3>
-                </div>
-                <div className="Conteiner4RightWindowBoxCenterGraficoCaxa">
-                    <b>Compras realizadas:</b>
-                    <p>Total: 37%</p>
-                </div>
-                <div className="Conteiner4RightWindowBoxCenterGraficoCaxa">
-                    <b>Stock actual:</b><p>Total: 63%</p>
-                </div>
-                {/* FIM DOS DADOS DO GRAFICO DA CAXA */}
-            </div>
-            <div className="Conteiner4RightWindowBoxCenterBoxGrafico">
-                {/* INICIO DOS DADOS DO GRAFICO DA CAXA */}
-                <div className="Conteiner4RightWindowBoxCenterGraficoCaxa">
-                    <div className="Conteiner4RightWindowBoxCenterGraficoCaxaIcone">
-                        <Vendido />
-                    </div>
-                    <h3> Mais: Vendido</h3>
-                </div>
-                <div className="Conteiner4RightWindowBoxCenterGraficoCaxa">
-                    <b>Taxa do produto:</b>
-                    <p>Total: 15%</p>
-                </div>
-                <div className="Conteiner4RightWindowBoxCenterGraficoCaxa">
-                    <b>Stock actual:</b><p>Total: 10%</p>
-                </div>
-                {/* FIM DOS DADOS DO GRAFICO DA CAXA */}
-
-            </div>
-            <div className="Conteiner4RightWindowBoxCenterBoxGrafico">
-                {/* INICIO DOS DADOS DO GRAFICO DA CAXA */}
-                <div className="Conteiner4RightWindowBoxCenterGraficoCaxa">
-                    <div className="Conteiner4RightWindowBoxCenterGraficoCaxaIcone">
-                        <Cart />
-                    </div>
-                    <h3> @Meus: Clientes</h3>
-                </div>
-                <div className="Conteiner4RightWindowBoxCenterGraficoCaxa">
-                    <b>Quantidade:</b>
-                    <p>Total: 37.C</p>
-                </div>
-                <div className="Conteiner4RightWindowBoxCenterGraficoCaxa">
-                    <b>Estimativa:</b><p>Total: 200.C</p>
-                </div>
-                {/* FIM DOS DADOS DO GRAFICO DA CAXA */}
-
-            </div>
-            <div className="Conteiner4RightWindowBoxCenterBoxGrafico">
-                {/* INICIO DOS DADOS DO GRAFICO DA CAXA */}
-                <div className="Conteiner4RightWindowBoxCenterGraficoCaxa">
-                    <div className="Conteiner4RightWindowBoxCenterGraficoCaxaIcone">
-                        <Cart />
-                    </div>
-                    <h3> @Loja: Lucro</h3>
-                </div>
-                <div className="Conteiner4RightWindowBoxCenterGraficoCaxa">
-                    <b>Ganhos:</b>
-                    <p>Total: 237.000.00</p>
-                </div>
-                <div className="Conteiner4RightWindowBoxCenterGraficoCaxa">
-                    <b>Estimativa.M:</b><p>Total: O suficiente</p>
-                </div>
-                {/* FIM DOS DADOS DO GRAFICO DA CAXA */}
-
-            </div>
+                    {dados.map(([label, value]) => (
+                        <div className="Conteiner4RightWindowBoxCenterGraficoCaxa dashboard-stat-row" key={label}>
+                            <b>{label}:</b>
+                            <p className="dashboard-stat-value" title={value}>{value}</p>
+                        </div>
+                    ))}
+                </article>
+            ))}
         </div>
-    )
+    );
 }

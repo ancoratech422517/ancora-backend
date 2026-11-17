@@ -178,6 +178,25 @@
     pointer-events: none;
     white-space: nowrap;
 }
+.clientes-grafico-estado {
+    position: absolute;
+    z-index: 3;
+    inset: 52px 12px 12px;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 10px;
+    padding: 16px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    color: var(--client-muted);
+    text-align: center;
+}
+.clientes-lista-vazia {
+    margin: auto;
+    color: var(--client-muted);
+    text-align: center;
+}
 
 .clientes-lista {
     min-width: 0;

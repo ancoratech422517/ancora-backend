@@ -11,6 +11,7 @@ from sqlalchemy import text
 from ancorashield.auth.rate_limit import RateLimiter
 from models.database import db
 from service.database_schema import ensure_columns
+from service.referral_codes import ensure_referral_schema
 from service.security_audit import initialize_security_audit
 from service.security_tokens import initialize_api_security, protect_private_routes
 from service.lifecycle_cleanup import iniciar_limpeza_periodica
@@ -80,6 +81,7 @@ from routes.api_academy import academy_bp
 from routes.api_assistente_ia import assistant_bp
 from routes.api_social import social_bp
 from routes.api_todos_produtos import Todos_produtos
+from routes.api_dashboard_loja import dashboard_loja
 from routes.api_me import login_bp as me_bp
 from routes.api_logout import login_bp as logout_bp
 from routes.api_ComprarProduto import ComprarProduto
@@ -316,6 +318,7 @@ def setup_database():
                 "foto_usuario_blurhash": "VARCHAR(100)",
                 "id_app_usuario_pushy": "TEXT",
             })
+            ensure_referral_schema(db.engine)
             ensure_columns(db.engine, "Produto_usuario", {
                 "image_source_url": "TEXT",
                 "image_creator": "VARCHAR(200)",
@@ -357,6 +360,7 @@ app.register_blueprint(academy_bp)
 app.register_blueprint(assistant_bp)
 app.register_blueprint(social_bp)
 app.register_blueprint(Todos_produtos)
+app.register_blueprint(dashboard_loja)
 app.register_blueprint(me_bp)
 app.register_blueprint(ComprarProduto)
 app.register_blueprint(buscar_pedidos)

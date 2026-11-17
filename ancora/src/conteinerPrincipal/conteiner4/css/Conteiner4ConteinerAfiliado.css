@@ -189,6 +189,70 @@
     overflow-y: auto;
     scrollbar-width: none;
 }
+.afiliados-resumo {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.afiliados-resumo-total {
+    color: var(--affiliate-dark);
+    font-size: clamp(48px, 8vw, 84px);
+    line-height: 1;
+}
+.afiliados-resumo p,
+.afiliados-lista-vazia {
+    max-width: 34ch;
+    margin: 0;
+    color: var(--affiliate-muted);
+    text-align: center;
+    line-height: 1.5;
+}
+.afiliados-convite {
+    width: min(100%, 420px);
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    color: var(--affiliate-muted);
+    font-size: 13px;
+}
+.afiliados-convite code {
+    color: var(--affiliate-dark);
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: .12em;
+}
+.afiliados-convite input {
+    width: 100%;
+    min-width: 0;
+    padding: 9px 11px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--surface);
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 12px;
+}
+.afiliados-convite button {
+    min-height: 36px;
+    padding: 7px 14px;
+    border: 0;
+    border-radius: 9px;
+    background: var(--affiliate-dark);
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+.afiliados-lista-vazia {
+    margin: auto;
+}
+.afiliados-estado {
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    color: var(--affiliate-muted);
+}
 
 @media (max-width: 860px) {
     .Conteiner4ConteinerAfiliado {

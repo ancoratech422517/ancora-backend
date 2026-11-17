@@ -4,6 +4,7 @@ from cryptography.hazmat.primitives import serialization
 from sqlalchemy.exc import IntegrityError
 import logging
 from service.password_security import hash_password
+from service.referral_codes import gerar_codigo_convite
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +19,7 @@ def _is_duplicate_phone_error(error):
 
 
 class RegisterService:
-    def registrar_user_in_db(self, nome, telefone, senha , email , data_nascimento , foto_usuario , foto_usuario_blurhash=None , continente=None , pais=None , provincia=None , capital=None , bairro=None):
+    def registrar_user_in_db(self, nome, telefone, senha , email , data_nascimento , foto_usuario , foto_usuario_blurhash=None , continente=None , pais=None , provincia=None , capital=None , bairro=None, codigo_convite=None):
 
         if not isinstance(telefone, str) or not telefone or len(telefone) > 20:
             return {"erro": "O telefone é inválido."}, 400
@@ -26,6 +27,16 @@ class RegisterService:
             return {
                 "erro": "Este telefone já tem uma conta. Inicie sessão ou use outro número."
             }, 409
+
+        convidado_por_id = None
+        if codigo_convite:
+            codigo_convite = str(codigo_convite).strip().upper()
+            if len(codigo_convite) > 16 or not codigo_convite.isalnum():
+                return {"erro": "O código de convite é inválido."}, 400
+            convidador = Usuario.query.filter_by(codigo_convite=codigo_convite).first()
+            if not convidador:
+                return {"erro": "Este código de convite não existe."}, 400
+            convidado_por_id = convidador.id
 
         # 2. Gerar o Par de Chaves Assimétricas (Para Saques/Pagamentos)
         # O RSA de 2048 bits é o padrão de segurança atual
@@ -49,6 +60,9 @@ class RegisterService:
 
         # 3. Criar o Hash da Senha (Criptografia Simétrica de via única)
         senha_protegida = hash_password(senha)
+        codigo_usuario = gerar_codigo_convite()
+        while Usuario.query.filter_by(codigo_convite=codigo_usuario).first():
+            codigo_usuario = gerar_codigo_convite()
 
         # 4. Salvar no SQLAlchemy
         try:
@@ -65,7 +79,9 @@ class RegisterService:
                 pais = pais,
                 provincia = provincia,
                 capital = capital,
-                bairro = bairro
+                bairro = bairro,
+                codigo_convite=codigo_usuario,
+                convidado_por_id=convidado_por_id,
             )
             
             db.session.add(novo_usuario)
