@@ -96,50 +96,51 @@ export default function CarteiraDigital({ onBack }) {
             if (!response.ok) {
                 throw new Error(data?.error || "Não foi possível iniciar o depósito.")
             }
-
-            const openMovement = (type) => {
-                setMovementOpen(type)
-                setMovementAmount("")
-                setMovementPhone("")
-                setMovementError("")
-                setMovementResult(null)
-            }
-
-            const submitMovement = async (event) => {
-                event.preventDefault()
-                setMovementLoading(true)
-                setMovementError("")
-                setMovementResult(null)
-                try {
-                    const endpoint = movementOpen === "transfer" ? "transfers" : "withdrawals"
-                    const response = await fetchComAuth(`${backend}/api/wallet/${endpoint}`, {
-                        method: "POST",
-                        offlineQueue: false,
-                        body: JSON.stringify({
-                            amount: movementAmount,
-                            account_phone: movementPhone,
-                        }),
-                    })
-                    const data = await response.json()
-                    if (!response.ok) {
-                        throw new Error(data?.error || "Não foi possível processar a operação.")
-                    }
-                    setMovementResult(data)
-                    await loadWallet()
-                } catch (error) {
-                    setMovementError(error instanceof Error ? error.message : "Não foi possível processar a operação.")
-                } finally {
-                    setMovementLoading(false)
-                }
-            }
             setPendingDeposit(data)
             setAmount("")
             await loadWallet()
+            window.location.assign(data.checkout_url)
         } catch (error) {
             console.error("Erro ao iniciar depósito:", error)
             setDepositError(error instanceof Error ? error.message : "Não foi possível iniciar o depósito.")
         } finally {
             setCreatingDeposit(false)
+        }
+    }
+
+    const openMovement = (type) => {
+        setMovementOpen(type)
+        setMovementAmount("")
+        setMovementPhone("")
+        setMovementError("")
+        setMovementResult(null)
+    }
+
+    const submitMovement = async (event) => {
+        event.preventDefault()
+        setMovementLoading(true)
+        setMovementError("")
+        setMovementResult(null)
+        try {
+            const endpoint = movementOpen === "transfer" ? "transfers" : "withdrawals"
+            const response = await fetchComAuth(`${backend}/api/wallet/${endpoint}`, {
+                method: "POST",
+                offlineQueue: false,
+                body: JSON.stringify({
+                    amount: movementAmount,
+                    account_phone: movementPhone,
+                }),
+            })
+            const data = await response.json()
+            if (!response.ok) {
+                throw new Error(data?.error || "Não foi possível processar a operação.")
+            }
+            setMovementResult(data)
+            await loadWallet()
+        } catch (error) {
+            setMovementError(error instanceof Error ? error.message : "Não foi possível processar a operação.")
+        } finally {
+            setMovementLoading(false)
         }
     }
 
@@ -189,7 +190,7 @@ export default function CarteiraDigital({ onBack }) {
                             <span className="wallet-currency-pill">AOA</span>
                         </div>
                         <strong>{loading && !wallet ? "A carregar…" : formatKwanza(wallet?.balance)}</strong>
-                        <p>Disponível após confirmação pela BitPay</p>
+                        <p>Disponível após confirmação pela DizanPay</p>
                         <div className="wallet-card-orb" aria-hidden="true" />
                     </article>
                     <article className="wallet-metric-card">
@@ -290,7 +291,7 @@ export default function CarteiraDigital({ onBack }) {
                             </button>
                         </div>
                         <p className="wallet-dialog-copy">
-                            Confirme o pagamento no seu telemóvel. O saldo só muda depois da confirmação assinada pela BitPay.
+                            O saldo só muda depois da confirmação segura da DizanPay. Abra o checkout para concluir o pagamento.
                         </p>
                         {pendingDeposit ? (
                             <div className="wallet-pending-confirmation" role="status">
@@ -305,7 +306,7 @@ export default function CarteiraDigital({ onBack }) {
                                         target="_blank"
                                         rel="noreferrer"
                                     >
-                                        Continuar para o pagamento
+                                        Continuar para o pagamento DizanPay
                                     </a>
                                 )}
                             </div>

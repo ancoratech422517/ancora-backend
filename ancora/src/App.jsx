@@ -237,6 +237,7 @@ function App() {
       if (publicAdId) {
         return
       }
+      const returnToWallet = new URLSearchParams(window.location.search).get("wallet_return") === "1"
       const cachedUser = useUserStore.getState().dadosUsuario
       setAtivar(cachedUser?.id ? "conteiner1" : "conteiner6")
 
@@ -247,7 +248,7 @@ function App() {
         if (res.ok) {
           const dados = await res.json()
           setDados(dados)
-          setAtivar("conteiner1")
+          setAtivar(returnToWallet ? "wallet" : "conteiner1")
           console.log("✅ Sessão restaurada:", dados.nome)
         } else if (res.status === 401) {
           setAtivar("conteiner6")
@@ -258,7 +259,7 @@ function App() {
       } catch (err) {
         console.warn("Não foi possível validar a sessão com o servidor:", err)
         if (cachedUser?.id && err?.message !== "Sessão expirada") {
-          setAtivar("conteiner1")
+          setAtivar(returnToWallet ? "wallet" : "conteiner1")
         } else {
           setAtivar("conteiner6")
         }

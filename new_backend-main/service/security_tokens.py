@@ -17,7 +17,7 @@ PUBLIC_PATHS = {
     "/Login",
     "/refresh",
     "/api/Registrar",
-    "/webhooks/bitpay",
+    "/webhooks/dizanpay",
 }
 
 

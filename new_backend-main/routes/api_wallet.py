@@ -1,10 +1,10 @@
 import hashlib
 import hmac
 import re
-import time
 import uuid
 from datetime import timezone
 from decimal import Decimal, InvalidOperation
+from urllib.parse import urlparse
 
 import requests
 from flask import Blueprint, current_app, g, jsonify, request
@@ -17,7 +17,7 @@ from models.database import Usuario, WalletDeposit, WalletLedgerEntry, WalletMov
 wallet_bp = Blueprint("wallet", __name__)
 MAX_DEPOSIT_AMOUNT = Decimal("1000000000000.00")
 SUPPORTED_PAYMENT_METHOD = "multicaixa_express"
-BITPAY_DEFAULT_BASE_URL = "https://api-sandbox.bitpay.ao/v1"
+DIZANPAY_PAYMENT_URL = "https://dizanpay.com/api/v1/payments"
 
 
 def _current_user():
@@ -39,8 +39,8 @@ def _parse_amount(value):
     if not amount.is_finite() or amount != normalized:
         raise ValueError("O valor deve ter no máximo duas casas decimais.")
     if normalized != normalized.to_integral_value():
-        raise ValueError("A BitPay exige montantes inteiros em kwanzas.")
-    if amount < Decimal("100") or amount > MAX_DEPOSIT_AMOUNT:
+        raise ValueError("O valor deve ser um número inteiro de kwanzas.")
+    if amount <= 0 or amount > MAX_DEPOSIT_AMOUNT:
         raise ValueError("O valor do depósito está fora do intervalo permitido.")
     return normalized
 
@@ -52,42 +52,27 @@ def _amount_string(amount):
 def _provider_amount(amount):
     normalized = Decimal(amount).quantize(Decimal("0.01"))
     if normalized != normalized.to_integral_value():
-        raise ValueError("A BitPay exige montantes inteiros em kwanzas.")
+        raise ValueError("O valor deve ser um número inteiro de kwanzas.")
     return int(normalized)
 
 
-def _bitpay_base_url():
-    base_url = current_app.config.get("BITPAY_API_BASE_URL")
-    if not isinstance(base_url, str) or not base_url.strip():
-        base_url = BITPAY_DEFAULT_BASE_URL
-    base_url = base_url.strip().rstrip("/")
-    if not base_url.startswith(("https://api-sandbox.bitpay.ao/v1", "https://api.bitpay.ao/v1")):
-        raise ValueError("A URL da API da BitPay não é permitida.")
-    return base_url
-
-
-def _verify_bitpay_signature(raw_body, header):
+def _verify_dizanpay_signature(raw_body, header):
     if not isinstance(header, str):
         return False
-    match = re.search(
-        r"(?:^|,)\s*t=(\d+)\s*,\s*v1=([0-9a-f]{64})\s*(?:,|$)",
-        header,
-        re.IGNORECASE,
-    )
-    if not match:
+    signature = header.strip()
+    if signature.startswith("sha256="):
+        signature = signature[7:]
+    if not re.fullmatch(r"[0-9a-fA-F]{64}", signature):
         return False
-    timestamp = int(match.group(1))
-    if abs(time.time() - timestamp) > 600:
-        return False
-    secret = current_app.config.get("BITPAY_WHSEC")
+    secret = current_app.config.get("DIZANPAY_WEBHOOK_SECRET")
     if not isinstance(secret, str) or not secret.startswith("whsec_"):
         return False
     expected = hmac.new(
         secret.encode("utf-8"),
-        f"{timestamp}.{raw_body.decode('utf-8', errors='replace')}".encode("utf-8"),
+        raw_body,
         hashlib.sha256,
     ).hexdigest()
-    return hmac.compare_digest(expected, match.group(2).lower())
+    return hmac.compare_digest(expected, signature.lower())
 
 
 def _serialize_deposit(deposit):
@@ -231,15 +216,23 @@ def create_wallet_deposit():
     if user is None:
         return jsonify({"error": "Sessão inválida ou expirada."}), 401
 
-    api_key = current_app.config.get("BITPAY_SK")
-    try:
-        bitpay_base_url = _bitpay_base_url()
-    except ValueError as error:
-        current_app.logger.error("Invalid BitPay API base URL: %s", error)
+    api_key = current_app.config.get("DIZANPAY_API_KEY")
+    webhook_url = current_app.config.get("DIZANPAY_WEBHOOK_URL")
+    redirect_url = current_app.config.get("FRONTEND_URL")
+    if not isinstance(api_key, str) or not api_key.startswith(("pk_live_", "dizan_live_")):
+        current_app.logger.error("DizanPay server API key is missing or has an invalid prefix.")
         return jsonify({"error": "A integração de pagamentos não está configurada."}), 503
-    if not isinstance(api_key, str) or not api_key.strip():
-        current_app.logger.error("BitPay secret key is not configured.")
-        return jsonify({"error": "A integração de pagamentos não está configurada."}), 503
+    for callback_url in (webhook_url, redirect_url):
+        parsed_url = urlparse(callback_url) if isinstance(callback_url, str) else None
+        if (
+            parsed_url is None
+            or parsed_url.scheme != "https"
+            or not parsed_url.netloc
+            or parsed_url.username
+            or parsed_url.password
+        ):
+            current_app.logger.error("DizanPay webhook or redirect URL is not configured as HTTPS.")
+            return jsonify({"error": "Configure os endereços HTTPS do webhook e do retorno."}), 503
 
     payload = request.get_json(silent=True)
     if not isinstance(payload, dict) or set(payload) - {"amount", "payment_method"}:
@@ -256,6 +249,9 @@ def create_wallet_deposit():
     if phone is None:
         return jsonify({"error": "Atualize o telefone do perfil antes de depositar."}), 422
     mobile = phone[-9:]
+    email = user.email.strip() if isinstance(user.email, str) else ""
+    if not email:
+        return jsonify({"error": "Atualize o email do perfil antes de depositar."}), 422
 
     reference_id = f"ANCORA-DEP-{uuid.uuid4().hex.upper()}"
     deposit = WalletDeposit(
@@ -272,24 +268,28 @@ def create_wallet_deposit():
     provider_payload = {
         "amount": _provider_amount(amount),
         "currency": "AOA",
-        "payment_method": payment_method,
-        "customer": {"mobile": mobile},
-        "merchant_reference": reference_id,
+        "external_id": reference_id,
+        "phone": mobile,
+        "customer_name": user.nome,
+        "customer_email": email,
+        "description": f"Depósito de saldo {reference_id}",
+        "method": "GPO",
+        "redirect_url": f"{redirect_url.rstrip('/')}/?wallet_return=1",
+        "webhook_url": webhook_url,
     }
     try:
         response = requests.post(
-            f"{bitpay_base_url}/payment_intents",
+            DIZANPAY_PAYMENT_URL,
             json=provider_payload,
             headers={
                 "Authorization": f"Bearer {api_key.strip()}",
                 "Content-Type": "application/json",
-                "Idempotency-Key": reference_id,
             },
             timeout=(3.05, 20),
         )
     except requests.RequestException:
         current_app.logger.exception(
-            "Could not reach BitPay while creating wallet deposit %s.",
+            "Could not reach DizanPay while creating wallet deposit %s.",
             reference_id,
         )
         return jsonify({
@@ -326,14 +326,14 @@ def create_wallet_deposit():
             error_message = error_message[:200]
         if error_message:
             current_app.logger.error(
-                "BitPay rejected wallet deposit %s with HTTP %s: %s.",
+                "DizanPay rejected wallet deposit %s with HTTP %s: %s.",
                 reference_id,
                 response.status_code,
                 error_message,
             )
         else:
             current_app.logger.error(
-                "BitPay rejected wallet deposit %s with HTTP %s.",
+                "DizanPay rejected wallet deposit %s with HTTP %s.",
                 reference_id,
                 response.status_code,
             )
@@ -346,22 +346,29 @@ def create_wallet_deposit():
     try:
         provider_result = response.json()
     except ValueError:
-        current_app.logger.error("BitPay returned a non-JSON response for %s.", reference_id)
+        current_app.logger.error("DizanPay returned a non-JSON response for %s.", reference_id)
         return jsonify({
             "error": "O gateway devolveu uma resposta inválida; o depósito permanece pendente.",
             "reference_id": reference_id,
             "status": deposit.status,
         }), 502
 
-    data = provider_result if isinstance(provider_result, dict) else None
+    data = provider_result.get("data") if isinstance(provider_result, dict) else None
+    if data is None and isinstance(provider_result, dict):
+        data = provider_result
+    provider_id = (
+        data.get("transaction_id") or data.get("id")
+        if isinstance(data, dict)
+        else None
+    )
     if (
         not isinstance(data, dict)
-        or data.get("merchant_reference") != reference_id
+        or data.get("external_id") != reference_id
         or data.get("currency") != "AOA"
-        or not isinstance(data.get("id"), str)
-        or not data["id"].strip()
+        or not isinstance(provider_id, str)
+        or not provider_id.strip()
     ):
-        current_app.logger.error("BitPay returned an incomplete deposit response for %s.", reference_id)
+        current_app.logger.error("DizanPay returned an incomplete deposit response for %s.", reference_id)
         return jsonify({
             "error": "A resposta do gateway não corresponde ao depósito; ele permanece pendente.",
             "reference_id": reference_id,
@@ -371,35 +378,49 @@ def create_wallet_deposit():
     try:
         provider_amount = _parse_amount(data.get("amount"))
     except ValueError:
-        current_app.logger.error("BitPay returned an invalid amount for %s.", reference_id)
+        current_app.logger.error("DizanPay returned an invalid amount for %s.", reference_id)
         return jsonify({
             "error": "A resposta do gateway tem um valor inválido; o depósito permanece pendente.",
             "reference_id": reference_id,
             "status": deposit.status,
         }), 502
     if provider_amount != amount:
-        current_app.logger.error("BitPay amount mismatch for deposit %s.", reference_id)
+        current_app.logger.error("DizanPay amount mismatch for deposit %s.", reference_id)
         return jsonify({
             "error": "O valor devolvido pelo gateway não corresponde ao pedido.",
             "reference_id": reference_id,
             "status": deposit.status,
         }), 502
 
-    checkout_url = None
-    if isinstance(data.get("reference"), dict):
-        entity = data["reference"].get("entity")
-        number = data["reference"].get("number")
-        if isinstance(entity, str) and isinstance(number, str):
-            checkout_url = f"{entity} {number}"
+    checkout_url = next(
+        (
+            data.get(field)
+            for field in ("redirect_url", "payment_url", "hosted_url")
+            if isinstance(data.get(field), str)
+        ),
+        None,
+    )
+    parsed_checkout_url = urlparse(checkout_url) if checkout_url else None
+    if (
+        parsed_checkout_url is None
+        or parsed_checkout_url.scheme != "https"
+        or parsed_checkout_url.hostname != "pay.wiza.ao"
+    ):
+        current_app.logger.error("DizanPay returned an invalid checkout URL for %s.", reference_id)
+        return jsonify({
+            "error": "O gateway devolveu um endereço de pagamento inválido.",
+            "reference_id": reference_id,
+            "status": deposit.status,
+        }), 502
 
-    deposit.provider_transaction_id = data["id"].strip()
+    deposit.provider_transaction_id = provider_id.strip()
     deposit.checkout_url = checkout_url
     try:
         db.session.commit()
     except IntegrityError:
         db.session.rollback()
         current_app.logger.error(
-            "BitPay reused a transaction ID while creating deposit %s.",
+            "DizanPay reused a transaction ID while creating deposit %s.",
             reference_id,
         )
         return jsonify({
@@ -506,11 +527,11 @@ def create_wallet_transfer():
     }), 201
 
 
-@wallet_bp.route("/webhooks/bitpay", methods=["POST"])
-def receive_bitpay_webhook():
-    secret = current_app.config.get("BITPAY_WHSEC")
+@wallet_bp.route("/webhooks/dizanpay", methods=["POST"])
+def receive_dizanpay_webhook():
+    secret = current_app.config.get("DIZANPAY_WEBHOOK_SECRET")
     if not isinstance(secret, str) or not secret.startswith("whsec_"):
-        current_app.logger.error("BitPay webhook signing secret is not configured.")
+        current_app.logger.error("DizanPay webhook signing secret is not configured.")
         return jsonify({"error": "O webhook não está configurado."}), 503
     if request.content_length is not None and request.content_length > 65536:
         return jsonify({"error": "O evento do webhook excede o tamanho permitido."}), 413
@@ -518,23 +539,21 @@ def receive_bitpay_webhook():
     raw_body = request.get_data(cache=True)
     if len(raw_body) > 65536:
         return jsonify({"error": "O evento do webhook excede o tamanho permitido."}), 413
-    if not _verify_bitpay_signature(
+    if not _verify_dizanpay_signature(
         raw_body,
-        request.headers.get("BitPay-Signature", ""),
+        request.headers.get("X-Dizanpay-Signature", ""),
     ):
         return jsonify({"error": "Assinatura inválida."}), 403
 
     event = request.get_json(silent=True)
     if not isinstance(event, dict):
         return jsonify({"error": "O evento do webhook é inválido."}), 400
-    event_type = event.get("type")
-    if event_type not in {"payment.succeeded", "payment.failed", "payment.expired", "payment.cancelled"}:
+    event_type = event.get("event") or request.headers.get("X-Dizanpay-Event")
+    if event_type not in {"payment.paid", "payment.failed"}:
         return jsonify({"received": True, "ignored": True}), 200
-    data = event.get("data")
-    if not isinstance(data, dict):
-        return jsonify({"error": "Os dados do pagamento são inválidos."}), 400
-    reference_id = data.get("merchant_reference")
-    transaction_id = data.get("id")
+    data = event.get("data") if isinstance(event.get("data"), dict) else event
+    reference_id = data.get("external_id") or data.get("order_id")
+    transaction_id = data.get("transaction_id") or data.get("id")
     currency = data.get("currency")
     status = data.get("status")
     if (
@@ -544,8 +563,12 @@ def receive_bitpay_webhook():
         or not transaction_id
         or currency != "AOA"
         or (
-            event_type == "payment.succeeded"
-            and status != "SUCCEEDED"
+            event_type == "payment.paid"
+            and status != "paid"
+        )
+        or (
+            event_type == "payment.failed"
+            and status not in {"failed", "cancelled", "canceled"}
         )
     ):
         return jsonify({"error": "Os dados do pagamento são inválidos."}), 400
@@ -562,11 +585,11 @@ def receive_bitpay_webhook():
     )
     if deposit is None:
         current_app.logger.warning(
-            "Received a signed BitPay event for unknown reference %s.",
+            "Received a signed DizanPay event for unknown reference %s.",
             reference_id,
         )
         return jsonify({"received": True, "ignored": True, "reason": "unknown_reference"}), 200
-    if event_type != "payment.succeeded":
+    if event_type == "payment.failed":
         if (
             amount != deposit.amount
             or currency != deposit.currency
@@ -599,7 +622,7 @@ def receive_bitpay_webhook():
         )
     ):
         current_app.logger.error(
-            "BitPay payment details do not match pending deposit %s.",
+            "DizanPay payment details do not match pending deposit %s.",
             reference_id,
         )
         return jsonify({"error": "O pagamento não corresponde ao depósito pendente."}), 409
@@ -633,7 +656,7 @@ def receive_bitpay_webhook():
         ):
             return jsonify({"received": True, "duplicate": True}), 200
         current_app.logger.exception(
-            "Could not record BitPay webhook for reference %s.",
+            "Could not record DizanPay webhook for reference %s.",
             reference_id,
         )
         return jsonify({"error": "Não foi possível registar o pagamento."}), 409

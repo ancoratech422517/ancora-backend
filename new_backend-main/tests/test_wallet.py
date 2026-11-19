@@ -22,9 +22,10 @@ class WalletApiTests(unittest.TestCase):
             SQLALCHEMY_TRACK_MODIFICATIONS=False,
             SECRET_KEY="wallet-test-secret-with-at-least-32-bytes",
             TESTING=True,
-            BITPAY_SK="sk_test_test-key",
-            BITPAY_WHSEC="whsec_test-gpay-webhook-secret",
-            BITPAY_API_BASE_URL="https://api-sandbox.bitpay.ao/v1",
+            DIZANPAY_API_KEY="pk_live_test-key",
+            DIZANPAY_WEBHOOK_SECRET="whsec_test-dizanpay-webhook-secret",
+            DIZANPAY_WEBHOOK_URL="https://ancora.example/webhooks/dizanpay",
+            FRONTEND_URL="https://ancora.example",
         )
         configure_test_security(
             self.app,
@@ -70,14 +71,16 @@ class WalletApiTests(unittest.TestCase):
 
     def _create_pending_deposit(self):
         def create_payment(url, **kwargs):
-            self.assertEqual(url, "https://api-sandbox.bitpay.ao/v1/payment_intents")
+            self.assertEqual(url, "https://dizanpay.com/api/v1/payments")
             payload = kwargs["json"]
             provider_response = {
-                "id": "pay_bitpay-1",
-                "merchant_reference": payload["merchant_reference"],
+                "id": "API-DIZANPAY-1",
+                "transaction_id": "API-DIZANPAY-1",
+                "external_id": payload["external_id"],
                 "amount": payload["amount"],
                 "currency": payload["currency"],
-                "status": "PENDING",
+                "status": "pending",
+                "redirect_url": "https://pay.wiza.ao/?id=test&nonce=test",
             }
             response = Mock(ok=True, status_code=200)
             response.json.return_value = provider_response
@@ -92,26 +95,30 @@ class WalletApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(
             gateway.call_args.kwargs["headers"]["Authorization"],
-            "Bearer sk_test_test-key",
+            "Bearer pk_live_test-key",
         )
-        merchant_reference = gateway.call_args.kwargs["json"]["merchant_reference"]
-        self.assertTrue(merchant_reference.startswith("ANCORA-DEP-"))
+        provider_payload = gateway.call_args.kwargs["json"]
+        self.assertTrue(provider_payload["external_id"].startswith("ANCORA-DEP-"))
+        self.assertEqual(provider_payload["method"], "GPO")
+        self.assertEqual(
+            provider_payload["webhook_url"],
+            "https://ancora.example/webhooks/dizanpay",
+        )
         return response.get_json()
 
     def _post_signed_webhook(self, event, signature=None):
         raw_body = json.dumps(event, separators=(",", ":")).encode("utf-8")
-        timestamp = str(int(__import__("time").time()))
         if signature is None:
             signature = hmac.new(
-                b"whsec_test-gpay-webhook-secret",
-                f"{timestamp}.".encode("utf-8") + raw_body,
+                b"whsec_test-dizanpay-webhook-secret",
+                raw_body,
                 hashlib.sha256,
             ).hexdigest()
         return self.app.test_client().post(
-            "/webhooks/bitpay",
+            "/webhooks/dizanpay",
             data=raw_body,
             content_type="application/json",
-            headers={"BitPay-Signature": f"t={timestamp},v1={signature}"},
+            headers={"X-Dizanpay-Signature": signature},
         )
 
     def test_wallet_starts_at_zero_and_withdrawals_are_available(self):
@@ -133,13 +140,13 @@ class WalletApiTests(unittest.TestCase):
         self.authenticate()
         deposit = self._create_pending_deposit()
         event = {
-            "type": "payment.succeeded",
+            "event": "payment.paid",
             "data": {
                 "id": deposit["transaction_id"],
-                "merchant_reference": deposit["reference_id"],
+                "external_id": deposit["reference_id"],
                 "amount": 15000,
                 "currency": "AOA",
-                "status": "SUCCEEDED",
+                "status": "paid",
             },
         }
         mismatch = self._post_signed_webhook({
@@ -172,19 +179,19 @@ class WalletApiTests(unittest.TestCase):
         self.authenticate()
         deposit = self._create_pending_deposit()
         event = {
-            "type": "payment.succeeded",
+            "event": "payment.paid",
             "data": {
                 "id": deposit["transaction_id"],
-                "merchant_reference": deposit["reference_id"],
+                "external_id": deposit["reference_id"],
                 "amount": 15000,
                 "currency": "AOA",
-                "status": "SUCCEEDED",
+                "status": "paid",
             },
         }
 
         invalid_signature = self._post_signed_webhook(event, signature="invalid")
         unknown_reference = self._post_signed_webhook(
-            {**event, "data": {**event["data"], "merchant_reference": "ANCORA-DEP-UNKNOWN"}}
+            {**event, "data": {**event["data"], "external_id": "ANCORA-DEP-UNKNOWN"}}
         )
 
         self.assertEqual(invalid_signature.status_code, 403)
@@ -196,13 +203,13 @@ class WalletApiTests(unittest.TestCase):
         self.authenticate()
         deposit = self._create_pending_deposit()
         event = {
-            "type": "payment.succeeded",
+            "event": "payment.paid",
             "data": {
                 "id": deposit["transaction_id"],
-                "merchant_reference": deposit["reference_id"],
+                "external_id": deposit["reference_id"],
                 "amount": 15000,
                 "currency": "AOA",
-                "status": "SUCCEEDED",
+                "status": "paid",
             },
         }
         accepted = self._post_signed_webhook(event)

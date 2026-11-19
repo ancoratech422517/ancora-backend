@@ -260,10 +260,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['FRONTEND_URL'] = os.getenv('FRONTEND_URL') or 'https://ancora-ecommerc-tawny.vercel.app'
-app.config['BITPAY_SK'] = os.getenv('BITPAY_SK')
-app.config['BITPAY_WHSEC'] = os.getenv('BITPAY_WHSEC')
-app.config['BITPAY_API_BASE_URL'] = (
-    os.getenv('BITPAY_API_BASE_URL') or 'https://api-sandbox.bitpay.ao/v1'
+app.config['DIZANPAY_API_KEY'] = os.getenv('DIZANPAY_API_KEY')
+app.config['DIZANPAY_WEBHOOK_SECRET'] = os.getenv('DIZANPAY_WEBHOOK_SECRET')
+app.config['DIZANPAY_WEBHOOK_URL'] = (
+    os.getenv('DIZANPAY_WEBHOOK_URL')
+    or 'https://ancora-backend-09zc.onrender.com/webhooks/dizanpay'
 )
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'files')
 app.config['MAX_CONTENT_LENGTH'] = 128 * 1024 * 1024
