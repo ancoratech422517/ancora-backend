@@ -3,11 +3,9 @@ import "./css/Conteiner5WindowConteinerRight.css"
 import Conteiner5WindowConteinerGeral from "./Conteiner5WindowConteinerRightGeral";
 import Conteiner5WindowConteinerGrupo from "./Conteiner5WindowConteinerGrupo";
 import Conteiner5WindowConteinerTrafego from "./conteiner5WindowConteinerTrafego";
-import Conteiner5WindowConteinerCarteira from "./conteiner5WindowConteinerCarteira";
 import Erro from "../components/conteinerSvg/erro";
-import { useState } from "react";
 export default function Conteiner5WindowConteinerRight () {
-    const {setAtivarCont , AtivarCont , setMostrarContRightWindow5} = useUserStore()
+    const {setAtivarCont , setAtivar , AtivarCont , setMostrarContRightWindow5} = useUserStore()
     
     const ativar_conteiner = ()=>{
         switch(AtivarCont){
@@ -17,8 +15,6 @@ export default function Conteiner5WindowConteinerRight () {
                 return <Conteiner5WindowConteinerGrupo />
             case "Trafego":
                 return <Conteiner5WindowConteinerTrafego />
-            case "Carteira":
-                return <Conteiner5WindowConteinerCarteira />
         }
     }
 
@@ -29,7 +25,7 @@ export default function Conteiner5WindowConteinerRight () {
                     <li onClick={()=> setAtivarCont("geral")}>Geral</li>
                     <li onClick={()=> setAtivarCont("Grupo")}>Criar Grupo</li>
                     <li onClick={()=> setAtivarCont("Trafego")}>Trafego</li>
-                    <li onClick={()=> setAtivarCont("Carteira")}>Carteira</li>
+                    <li onClick={() => setAtivar("wallet")}>Carteira</li>
                 </div>
                 
             </div>

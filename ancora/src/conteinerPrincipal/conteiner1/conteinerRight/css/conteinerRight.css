@@ -39,7 +39,6 @@
     width: 130%;
     height: 130%;
     border-radius: 50%;
-    border: 1px solid var(--border);
     object-fit: cover;
 }
 .tirarConteinerRight{

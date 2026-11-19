@@ -13,7 +13,12 @@ ACCESS_TOKEN_MANAGER_KEY = "ancorashield.access_token_manager"
 REFRESH_TOKEN_MANAGER_KEY = "ancorashield.refresh_token_manager"
 UPLOAD_TOKEN_MANAGER_KEY = "ancorashield.upload_token_manager"
 SECURITY_EXTENSION_KEY = "ancorashield.api_security"
-PUBLIC_PATHS = {"/Login", "/refresh", "/api/Registrar"}
+PUBLIC_PATHS = {
+    "/Login",
+    "/refresh",
+    "/api/Registrar",
+    "/webhooks/bitpay",
+}
 
 
 def _encoded_pem(app: Flask, setting: str) -> bytes:

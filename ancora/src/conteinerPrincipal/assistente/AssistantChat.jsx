@@ -25,6 +25,7 @@ const ASSISTANT_VOICES = [
   { id: "pt-BR-FranciscaNeural", name: "Francisca", gender: "Feminina", locale: "Português (Brasil)" },
   { id: "pt-BR-AntonioNeural", name: "António", gender: "Masculina", locale: "Português (Brasil)" },
 ];
+
 const DEFAULT_ASSISTANT_VOICE = ASSISTANT_VOICES[0].id;
 
 function createMessageId() {

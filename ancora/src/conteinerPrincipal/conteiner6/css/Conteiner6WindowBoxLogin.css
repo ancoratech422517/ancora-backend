@@ -28,6 +28,7 @@
         .Conteiner_form_Icone_ancora img{
             width: 100%;
             height: 100%;
+            object-fit: cover;
         }
         .form{
             background-color: transparent;

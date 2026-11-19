@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useUserStore } from "../../useUseSotore";
 import "./css/Conteiner6WindowBoxLogin.css"
-import Logo from "../../assets/logo2.png"
+import Logo from "../../assets/IMGPERFIL.png"
 import { Login } from "./js/Conteiner6WindowBoxLogin";
 import { SwitchTab } from "./js/Conteiner6WindowBoxLogin";
 import { Registro } from "./js/Conteiner6WindowBoxRegistro";

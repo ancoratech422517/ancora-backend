@@ -92,6 +92,7 @@ from routes.api_visto_usuario import visto_usuario
 from routes.api_sistema_adoro_ancora import sistema_adoro_Ancora
 from routes.api_send_dados_trafego import Send_trafego_dados
 from routes.api_Depositar_Dinheiro import Depositar_Dinheiro
+from routes.api_wallet import wallet_bp
 from routes.api_menssage_http import messages_http_bp
 from routes.api_salvar_push_token import PushTokenAPI
 #--------------------------------------------------------------
@@ -259,6 +260,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['FRONTEND_URL'] = os.getenv('FRONTEND_URL') or 'https://ancora-ecommerc-tawny.vercel.app'
+app.config['BITPAY_SK'] = os.getenv('BITPAY_SK')
+app.config['BITPAY_WHSEC'] = os.getenv('BITPAY_WHSEC')
+app.config['BITPAY_API_BASE_URL'] = (
+    os.getenv('BITPAY_API_BASE_URL') or 'https://api-sandbox.bitpay.ao/v1'
+)
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'files')
 app.config['MAX_CONTENT_LENGTH'] = 128 * 1024 * 1024
 app.config['ANCORASHIELD_AUDIT_SIGNING_KEY'] = os.getenv(
@@ -370,6 +376,7 @@ app.register_blueprint(visto_usuario)
 app.register_blueprint(sistema_adoro_Ancora)
 app.register_blueprint(Send_trafego_dados)
 app.register_blueprint(Depositar_Dinheiro)
+app.register_blueprint(wallet_bp)
 app.register_blueprint(messages_http_bp)
 app.register_blueprint(PushTokenAPI)
 app.register_blueprint(api_validar_registro_turma)

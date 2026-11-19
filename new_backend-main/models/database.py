@@ -419,3 +419,68 @@ class RefreshSession(db.Model):
         default=_utcnow_naive,
         server_default=db.func.current_timestamp(),
     )
+
+
+class WalletDeposit(db.Model):
+    __tablename__ = "wallet_deposits"
+    __table_args__ = (
+        db.UniqueConstraint("reference_id", name="uq_wallet_deposit_reference"),
+        db.UniqueConstraint("provider_transaction_id", name="uq_wallet_deposit_provider_transaction"),
+        db.Index("ix_wallet_deposit_user_created", "user_id", "created_at"),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("usuarios.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    reference_id = db.Column(db.String(80), nullable=False)
+    provider_transaction_id = db.Column(db.String(120), nullable=True)
+    amount = db.Column(db.Numeric(18, 2), nullable=False)
+    currency = db.Column(db.String(3), nullable=False, default="AOA")
+    payment_method = db.Column(db.String(32), nullable=False)
+    status = db.Column(db.String(20), nullable=False, default="PENDING")
+    checkout_url = db.Column(db.Text, nullable=True)
+    created_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=_utcnow_naive,
+        server_default=db.func.current_timestamp(),
+    )
+    updated_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=_utcnow_naive,
+        onupdate=_utcnow_naive,
+        server_default=db.func.current_timestamp(),
+    )
+
+
+class WalletLedgerEntry(db.Model):
+    __tablename__ = "wallet_ledger_entries"
+    __table_args__ = (
+        db.UniqueConstraint("deposit_id", name="uq_wallet_ledger_deposit"),
+        db.Index("ix_wallet_ledger_user_created", "user_id", "created_at"),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("usuarios.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    deposit_id = db.Column(
+        db.Integer,
+        db.ForeignKey("wallet_deposits.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    entry_type = db.Column(db.String(20), nullable=False, default="DEPOSIT")
+    amount = db.Column(db.Numeric(18, 2), nullable=False)
+    currency = db.Column(db.String(3), nullable=False, default="AOA")
+    created_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=_utcnow_naive,
+        server_default=db.func.current_timestamp(),
+    )

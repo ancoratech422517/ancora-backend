@@ -10,6 +10,7 @@ const url = (
     ? "https://ancora-backend-09zc.onrender.com" || "https://ancora-backend-09zc.onrender.com"
     : "https://ancora-backend-09zc.onrender.com"
 ).replace(/\/+$/, "")
+
 function messageKey(message) {
   if (message.client_message_id) return `client:${message.client_message_id}`
   if (message.id != null) return `id:${message.id}`

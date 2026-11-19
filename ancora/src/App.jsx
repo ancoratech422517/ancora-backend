@@ -5,6 +5,7 @@ const Conteiner2 = lazy(() => import('./conteinerPrincipal/conteiner2/conteiner2
 const Conteiner3 = lazy(() => import('./conteinerPrincipal/conteiner3/conteiner3'))
 const Conteiner4 = lazy(() => import('./conteinerPrincipal/conteiner4/conteiner4'))
 const Conteiner5 = lazy(() => import('./conteinerPrincipal/conteiner5/conteiner5'))
+const CarteiraDigital = lazy(() => import('./conteinerPrincipal/conteiner5/CarteiraDigital'))
 const AncoraAcademy = lazy(() => import('./conteinerPrincipal/academy/AncoraAcademy'))
 const Conteiner6 = lazy(() => import("./conteinerPrincipal/conteiner6/conteiner6"))
 const Conteiner8 = lazy(() => import('./conteinerPrincipal/conteiner8/conteiner8'))
@@ -163,6 +164,7 @@ function App() {
   const assistantChatActive = containerAtual === "conteiner1"
     && ChatAtivo?.tipo_chat === ASSISTANT_CHAT_TYPE
   const academyActive = containerAtual === "academy"
+  const walletActive = containerAtual === "wallet"
 
   useEffect(() => {
     preparePrivateMediaStorage().catch((error) => {
@@ -280,6 +282,7 @@ function App() {
       case "conteiner4": return <Conteiner4 />
       case "conteiner8": return <Conteiner8 />
       case "conteiner5": return <Conteiner5 dadosUsuario={dadosUsuario} />
+      case "wallet": return <CarteiraDigital onBack={() => setAtivar("conteiner5")} />
       case "academy": return <AncoraAcademy />
       case "conteiner6": return <Conteiner6 ativarConteiner={setAtivar} setConta={setAtivar} />
       default:
@@ -308,7 +311,7 @@ function App() {
       }
       style={chatThemePalette?.style}
     >
-      {!carregandoSessao && containerAtual !== "conteiner6" && !academyActive && (
+      {!carregandoSessao && containerAtual !== "conteiner6" && !academyActive && !walletActive && (
         <MenuConteinerLeft ativarConteiner={setAtivar} setDadosUsuario={setDados} />
       )}
       <div className="conteinerPrincipalConteudo">
