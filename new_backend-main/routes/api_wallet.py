@@ -370,7 +370,8 @@ def receive_bitpay_webhook():
     event = request.get_json(silent=True)
     if not isinstance(event, dict):
         return jsonify({"error": "O evento do webhook é inválido."}), 400
-    if event.get("type") != "payment.succeeded":
+    event_type = event.get("type")
+    if event_type not in {"payment.succeeded", "payment.failed", "payment.expired", "payment.cancelled"}:
         return jsonify({"received": True, "ignored": True}), 200
     data = event.get("data")
     if not isinstance(data, dict):
@@ -385,7 +386,10 @@ def receive_bitpay_webhook():
         or not isinstance(transaction_id, str)
         or not transaction_id
         or currency != "AOA"
-        or status != "SUCCEEDED"
+        or (
+            event_type == "payment.succeeded"
+            and status != "SUCCEEDED"
+        )
     ):
         return jsonify({"error": "Os dados do pagamento são inválidos."}), 400
     try:
@@ -401,10 +405,28 @@ def receive_bitpay_webhook():
     )
     if deposit is None:
         current_app.logger.warning(
-            "Received a signed BitPay success event for unknown reference %s.",
+            "Received a signed BitPay event for unknown reference %s.",
             reference_id,
         )
         return jsonify({"error": "Referência de depósito não encontrada."}), 404
+    if event_type != "payment.succeeded":
+        if (
+            amount != deposit.amount
+            or currency != deposit.currency
+            or (
+                deposit.provider_transaction_id
+                and deposit.provider_transaction_id != transaction_id
+            )
+        ):
+            return jsonify({"error": "O pagamento não corresponde ao depósito pendente."}), 409
+        if deposit.status == "COMPLETED":
+            return jsonify({"received": True, "duplicate": True}), 200
+        if deposit.status != "PENDING":
+            return jsonify({"error": "O depósito não está pendente."}), 409
+        deposit.provider_transaction_id = transaction_id
+        deposit.status = "FAILED"
+        db.session.commit()
+        return jsonify({"received": True}), 200
     if deposit.status == "COMPLETED":
         if deposit.provider_transaction_id == transaction_id and amount == deposit.amount:
             return jsonify({"received": True, "duplicate": True}), 200

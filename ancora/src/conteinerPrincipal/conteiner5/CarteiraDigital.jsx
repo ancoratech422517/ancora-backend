@@ -246,7 +246,9 @@ export default function CarteiraDigital({ onBack }) {
                             <div className="wallet-pending-confirmation" role="status">
                                 <strong>Pedido de depósito criado</strong>
                                 <span>Referência: {pendingDeposit.reference_id}</span>
+                                <span>Valor: {formatKwanza(pendingDeposit.amount)}</span>
                                 <span>Estado: Aguardando pagamento</span>
+                                <span>Confirme o pedido na aplicação Multicaixa Express.</span>
                                 {pendingDeposit.checkout_url && (
                                     <a
                                         href={pendingDeposit.checkout_url}
@@ -263,7 +265,7 @@ export default function CarteiraDigital({ onBack }) {
                                 <input
                                     id="wallet-deposit-amount"
                                     type="number"
-                                    min="1"
+                                    min="100"
                                     max="1000000000000"
                                     step="0.01"
                                     inputMode="decimal"
