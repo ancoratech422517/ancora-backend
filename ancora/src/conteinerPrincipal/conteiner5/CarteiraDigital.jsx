@@ -36,6 +36,12 @@ export default function CarteiraDigital({ onBack }) {
     const [creatingDeposit, setCreatingDeposit] = useState(false)
     const [depositError, setDepositError] = useState("")
     const [pendingDeposit, setPendingDeposit] = useState(null)
+    const [movementOpen, setMovementOpen] = useState(null)
+    const [movementAmount, setMovementAmount] = useState("")
+    const [movementPhone, setMovementPhone] = useState("")
+    const [movementLoading, setMovementLoading] = useState(false)
+    const [movementError, setMovementError] = useState("")
+    const [movementResult, setMovementResult] = useState(null)
 
     const loadWallet = useCallback(async () => {
         setLoading(true)
@@ -89,6 +95,42 @@ export default function CarteiraDigital({ onBack }) {
             const data = await response.json()
             if (!response.ok) {
                 throw new Error(data?.error || "Não foi possível iniciar o depósito.")
+            }
+
+            const openMovement = (type) => {
+                setMovementOpen(type)
+                setMovementAmount("")
+                setMovementPhone("")
+                setMovementError("")
+                setMovementResult(null)
+            }
+
+            const submitMovement = async (event) => {
+                event.preventDefault()
+                setMovementLoading(true)
+                setMovementError("")
+                setMovementResult(null)
+                try {
+                    const endpoint = movementOpen === "transfer" ? "transfers" : "withdrawals"
+                    const response = await fetchComAuth(`${backend}/api/wallet/${endpoint}`, {
+                        method: "POST",
+                        offlineQueue: false,
+                        body: JSON.stringify({
+                            amount: movementAmount,
+                            account_phone: movementPhone,
+                        }),
+                    })
+                    const data = await response.json()
+                    if (!response.ok) {
+                        throw new Error(data?.error || "Não foi possível processar a operação.")
+                    }
+                    setMovementResult(data)
+                    await loadWallet()
+                } catch (error) {
+                    setMovementError(error instanceof Error ? error.message : "Não foi possível processar a operação.")
+                } finally {
+                    setMovementLoading(false)
+                }
             }
             setPendingDeposit(data)
             setAmount("")
@@ -158,7 +200,7 @@ export default function CarteiraDigital({ onBack }) {
                     <article className="wallet-metric-card">
                         <span>Saídas</span>
                         <strong>{formatKwanza(wallet?.total_outgoing ?? "0.00")}</strong>
-                        <small>Levantamentos desativados</small>
+                        <small>Levantamentos e transferências</small>
                     </article>
                 </section>
 
@@ -167,11 +209,11 @@ export default function CarteiraDigital({ onBack }) {
                         <span aria-hidden="true">↓</span>
                         <span>Depositar</span>
                     </button>
-                    <button className="wallet-action-disabled" type="button" disabled title="Levantamentos desativados">
+                    <button type="button" onClick={() => openMovement("withdrawal")}>
                         <span aria-hidden="true">↑</span>
                         <span>Levantar</span>
                     </button>
-                    <button className="wallet-action-disabled" type="button" disabled title="Transferências não disponíveis">
+                    <button type="button" onClick={() => openMovement("transfer")}>
                         <span aria-hidden="true">⇄</span>
                         <span>Transferir</span>
                     </button>
@@ -201,7 +243,13 @@ export default function CarteiraDigital({ onBack }) {
                                 <article className="wallet-transaction" key={transaction.reference_id}>
                                     <span className="wallet-transaction-icon" aria-hidden="true">↓</span>
                                     <div className="wallet-transaction-description">
-                                        <strong>Depósito Multicaixa Express</strong>
+                                        <strong>
+                                            {transaction.movement_type === "TRANSFER"
+                                                ? (transaction.direction === "IN" ? "Transferência recebida" : "Transferência enviada")
+                                                : transaction.movement_type === "WITHDRAWAL"
+                                                    ? "Levantar para Multicaixa Express"
+                                                    : "Depósito Multicaixa Express"}
+                                        </strong>
                                         <span>{transaction.reference_id}</span>
                                         <time dateTime={transaction.created_at}>
                                             {new Date(transaction.created_at).toLocaleString("pt-AO")}
@@ -211,7 +259,9 @@ export default function CarteiraDigital({ onBack }) {
                                         {transactionStatus(transaction.status)}
                                     </span>
                                     <strong className="wallet-transaction-amount">
-                                        + {formatKwanza(transaction.amount)}
+                                        {transaction.direction === "OUT" || transaction.movement_type === "WITHDRAWAL" || transaction.movement_type === "TRANSFER"
+                                            ? `${transaction.direction === "IN" ? "+" : "-"} ${formatKwanza(transaction.amount)}`
+                                            : `+ ${formatKwanza(transaction.amount)}`}
                                     </strong>
                                 </article>
                             ))}
@@ -281,6 +331,64 @@ export default function CarteiraDigital({ onBack }) {
                                 {depositError && <p className="wallet-error-message" role="alert">{depositError}</p>}
                                 <button type="submit" disabled={creatingDeposit}>
                                     {creatingDeposit ? "A criar pedido…" : "Continuar"}
+                                </button>
+                            </form>
+                        )}
+                    </section>
+                </div>
+            )}
+
+            {movementOpen && (
+                <div className="wallet-dialog-backdrop" role="presentation" onMouseDown={(event) => {
+                    if (event.target === event.currentTarget) setMovementOpen(null)
+                }}>
+                    <section className="wallet-dialog" role="dialog" aria-modal="true" aria-labelledby="wallet-movement-title">
+                        <div className="wallet-dialog-heading">
+                            <div>
+                                <p className="wallet-eyebrow">
+                                    {movementOpen === "transfer" ? "TRANSFERÊNCIA ENTRE CONTAS" : "LEVANTAMENTO MULTICAIXA EXPRESS"}
+                                </p>
+                                <h2 id="wallet-movement-title">
+                                    {movementOpen === "transfer" ? "Transferir saldo" : "Levantar saldo"}
+                                </h2>
+                            </div>
+                            <button type="button" onClick={() => setMovementOpen(null)} aria-label="Fechar">×</button>
+                        </div>
+                        {movementResult ? (
+                            <div className="wallet-pending-confirmation" role="status">
+                                <strong>{movementOpen === "transfer" ? "Transferência concluída" : "Pedido de levantamento criado"}</strong>
+                                <span>Referência: {movementResult.reference_id}</span>
+                                <span>Valor: {formatKwanza(movementResult.amount)}</span>
+                                <span>Estado: {movementResult.status}</span>
+                            </div>
+                        ) : (
+                            <form className="wallet-deposit-form" onSubmit={submitMovement}>
+                                <label htmlFor="wallet-movement-phone">Número associado ao Multicaixa Express</label>
+                                <input
+                                    id="wallet-movement-phone"
+                                    type="tel"
+                                    inputMode="numeric"
+                                    pattern="[0-9]{9}"
+                                    maxLength="9"
+                                    value={movementPhone}
+                                    onChange={(event) => setMovementPhone(event.target.value.replace(/\D/g, ""))}
+                                    placeholder="923 000 000"
+                                    required
+                                />
+                                <label htmlFor="wallet-movement-amount">Valor (Kz)</label>
+                                <input
+                                    id="wallet-movement-amount"
+                                    type="number"
+                                    min="100"
+                                    max="1000000000000"
+                                    step="1"
+                                    value={movementAmount}
+                                    onChange={(event) => setMovementAmount(event.target.value)}
+                                    required
+                                />
+                                {movementError && <p className="wallet-error-message" role="alert">{movementError}</p>}
+                                <button type="submit" disabled={movementLoading}>
+                                    {movementLoading ? "A processar…" : movementOpen === "transfer" ? "Confirmar transferência" : "Solicitar levantamento"}
                                 </button>
                             </form>
                         )}

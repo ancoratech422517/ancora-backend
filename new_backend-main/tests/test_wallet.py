@@ -7,7 +7,7 @@ from unittest.mock import Mock, patch
 
 from flask import Flask
 
-from models.database import Usuario, WalletDeposit, WalletLedgerEntry, db
+from models.database import Usuario, WalletDeposit, WalletLedgerEntry, WalletMovement, db
 from routes.api_wallet import wallet_bp
 from service.security_tokens import ACCESS_TOKEN_MANAGER_KEY, protect_private_routes
 from tests.security_test_utils import configure_test_security
@@ -114,17 +114,20 @@ class WalletApiTests(unittest.TestCase):
             headers={"BitPay-Signature": f"t={timestamp},v1={signature}"},
         )
 
-    def test_wallet_starts_at_zero_and_withdrawals_are_disabled(self):
+    def test_wallet_starts_at_zero_and_withdrawals_are_available(self):
         self.authenticate()
 
         summary = self.client.get("/api/wallet")
-        withdrawal = self.client.post("/api/wallet/withdrawals", json={"amount": 1})
+        withdrawal = self.client.post(
+            "/api/wallet/withdrawals",
+            json={"amount": 100, "account_phone": "923000000"},
+        )
 
         self.assertEqual(summary.status_code, 200)
         self.assertEqual(summary.get_json()["balance"], "0.00")
         self.assertEqual(summary.get_json()["transactions"], [])
-        self.assertFalse(summary.get_json()["withdrawals_enabled"])
-        self.assertEqual(withdrawal.status_code, 503)
+        self.assertTrue(summary.get_json()["withdrawals_enabled"])
+        self.assertEqual(withdrawal.status_code, 409)
 
     def test_deposit_is_credited_only_by_valid_matching_webhook_and_is_idempotent(self):
         self.authenticate()
@@ -185,8 +188,38 @@ class WalletApiTests(unittest.TestCase):
         )
 
         self.assertEqual(invalid_signature.status_code, 403)
-        self.assertEqual(unknown_reference.status_code, 404)
+        self.assertEqual(unknown_reference.status_code, 200)
+        self.assertTrue(unknown_reference.get_json()["ignored"])
         self.assertEqual(self.client.get("/api/wallet").get_json()["balance"], "0.00")
+
+    def test_transfer_uses_multicaixa_phone_and_updates_both_balances(self):
+        self.authenticate()
+        deposit = self._create_pending_deposit()
+        event = {
+            "type": "payment.succeeded",
+            "data": {
+                "id": deposit["transaction_id"],
+                "merchant_reference": deposit["reference_id"],
+                "amount": 15000,
+                "currency": "AOA",
+                "status": "SUCCEEDED",
+            },
+        }
+        accepted = self._post_signed_webhook(event)
+        self.assertEqual(accepted.status_code, 200)
+
+        transfer = self.client.post(
+            "/api/wallet/transfers",
+            json={"amount": "5000", "account_phone": "923000001"},
+        )
+        self.assertEqual(transfer.status_code, 201)
+        self.assertEqual(self.client.get("/api/wallet").get_json()["balance"], "10000.00")
+
+        self.authenticate(user_id=2)
+        recipient_wallet = self.client.get("/api/wallet").get_json()
+        self.assertEqual(recipient_wallet["balance"], "5000.00")
+        with self.app.app_context():
+            self.assertEqual(WalletMovement.query.count(), 1)
 
     def test_deposit_rejects_invalid_amount_before_calling_gateway(self):
         self.authenticate()

@@ -8,10 +8,10 @@ from decimal import Decimal, InvalidOperation
 
 import requests
 from flask import Blueprint, current_app, g, jsonify, request
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from sqlalchemy.exc import IntegrityError
 
-from models.database import Usuario, WalletDeposit, WalletLedgerEntry, db
+from models.database import Usuario, WalletDeposit, WalletLedgerEntry, WalletMovement, db
 
 
 wallet_bp = Blueprint("wallet", __name__)
@@ -114,16 +114,67 @@ def _customer_phone(value):
     return None
 
 
+def _normalize_account_phone(value):
+    customer_phone = _customer_phone(value)
+    if customer_phone is None:
+        return None
+    return customer_phone[-9:]
+
+
+def _wallet_balance(user_id):
+    deposit_total = (
+        db.session.query(func.coalesce(func.sum(WalletLedgerEntry.amount), 0))
+        .filter(WalletLedgerEntry.user_id == user_id)
+        .scalar()
+    )
+    sent_total = (
+        db.session.query(func.coalesce(func.sum(WalletMovement.amount), 0))
+        .filter(WalletMovement.sender_id == user_id)
+        .scalar()
+    )
+    received_total = (
+        db.session.query(func.coalesce(func.sum(WalletMovement.amount), 0))
+        .filter(
+            WalletMovement.recipient_id == user_id,
+            WalletMovement.movement_type == "TRANSFER",
+        )
+        .scalar()
+    )
+    return (
+        Decimal(str(deposit_total or 0))
+        - Decimal(str(sent_total or 0))
+        + Decimal(str(received_total or 0))
+    )
+
+
 @wallet_bp.route("/api/wallet", methods=["GET"])
 def wallet_summary():
     user = _current_user()
     if user is None:
         return jsonify({"error": "Sessão inválida ou expirada."}), 401
 
-    balance = (
+    deposit_total = (
         db.session.query(func.coalesce(func.sum(WalletLedgerEntry.amount), 0))
         .filter(WalletLedgerEntry.user_id == user.id)
         .scalar()
+    )
+    sent_total = (
+        db.session.query(func.coalesce(func.sum(WalletMovement.amount), 0))
+        .filter(WalletMovement.sender_id == user.id)
+        .scalar()
+    )
+    received_total = (
+        db.session.query(func.coalesce(func.sum(WalletMovement.amount), 0))
+        .filter(
+            WalletMovement.recipient_id == user.id,
+            WalletMovement.movement_type == "TRANSFER",
+        )
+        .scalar()
+    )
+    balance = (
+        Decimal(str(deposit_total or 0))
+        - Decimal(str(sent_total or 0))
+        + Decimal(str(received_total or 0))
     )
     deposits = (
         WalletDeposit.query
@@ -140,13 +191,37 @@ def wallet_summary():
         )
         .scalar()
     )
+    movements = (
+        WalletMovement.query
+        .filter(or_(WalletMovement.sender_id == user.id, WalletMovement.recipient_id == user.id))
+        .order_by(WalletMovement.created_at.desc(), WalletMovement.id.desc())
+        .limit(100)
+        .all()
+    )
+    transactions = [_serialize_deposit(deposit) for deposit in deposits]
+    for movement in movements:
+        incoming = movement.recipient_id == user.id and movement.movement_type == "TRANSFER"
+        transactions.append({
+            "reference_id": movement.reference_id,
+            "transaction_id": None,
+            "amount": _amount_string(movement.amount),
+            "currency": movement.currency,
+            "payment_method": "wallet_transfer" if movement.movement_type == "TRANSFER" else "multicaixa_express",
+            "status": movement.status,
+            "created_at": movement.created_at.isoformat(),
+            "direction": "IN" if incoming else "OUT",
+            "movement_type": movement.movement_type,
+            "account_phone": movement.account_phone,
+        })
+    transactions.sort(key=lambda item: item["created_at"], reverse=True)
     return jsonify({
         "currency": "AOA",
         "balance": _amount_string(balance or 0),
         "total_incoming": _amount_string(total_incoming or 0),
-        "total_outgoing": "0.00",
-        "withdrawals_enabled": False,
-        "transactions": [_serialize_deposit(deposit) for deposit in deposits],
+        "total_outgoing": _amount_string(sent_total or 0),
+        "withdrawals_enabled": True,
+        "transfers_enabled": True,
+        "transactions": transactions[:100],
     })
 
 
@@ -341,12 +416,94 @@ def create_wallet_deposit():
 
 @wallet_bp.route("/api/wallet/withdrawals", methods=["POST"])
 def create_wallet_withdrawal():
-    if _current_user() is None:
+    user = _current_user()
+    if user is None:
         return jsonify({"error": "Sessão inválida ou expirada."}), 401
+
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict) or set(payload) - {"amount", "account_phone"}:
+        return jsonify({"error": "O pedido de levantamento é inválido."}), 400
+    try:
+        amount = _parse_amount(payload.get("amount"))
+    except ValueError as error:
+        return jsonify({"error": str(error)}), 400
+    account_phone = _normalize_account_phone(payload.get("account_phone"))
+    if account_phone is None:
+        return jsonify({"error": "Informe o número de 9 dígitos associado ao Multicaixa Express."}), 400
+    balance = _wallet_balance(user.id)
+    if amount > balance:
+        return jsonify({"error": "Saldo insuficiente.", "balance": _amount_string(balance)}), 409
+
+    reference_id = f"ANCORA-WD-{uuid.uuid4().hex.upper()}"
+    movement = WalletMovement(
+        reference_id=reference_id,
+        sender_id=user.id,
+        recipient_id=None,
+        account_phone=account_phone,
+        movement_type="WITHDRAWAL",
+        amount=amount,
+        currency="AOA",
+        status="PENDING",
+    )
+    db.session.add(movement)
+    db.session.commit()
     return jsonify({
-        "error": "Os levantamentos estão desativados até existir um endpoint de pagamento de saída.",
-        "withdrawals_enabled": False,
-    }), 503
+        "reference_id": reference_id,
+        "amount": _amount_string(amount),
+        "currency": "AOA",
+        "account_phone": account_phone,
+        "status": "PENDING",
+        "message": "Pedido de levantamento reservado. Aguarde a confirmação de processamento.",
+    }), 201
+
+
+@wallet_bp.route("/api/wallet/transfers", methods=["POST"])
+def create_wallet_transfer():
+    sender = _current_user()
+    if sender is None:
+        return jsonify({"error": "Sessão inválida ou expirada."}), 401
+
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict) or set(payload) - {"amount", "account_phone"}:
+        return jsonify({"error": "O pedido de transferência é inválido."}), 400
+    try:
+        amount = _parse_amount(payload.get("amount"))
+    except ValueError as error:
+        return jsonify({"error": str(error)}), 400
+    account_phone = _normalize_account_phone(payload.get("account_phone"))
+    if account_phone is None:
+        return jsonify({"error": "Informe o número de 9 dígitos associado ao Multicaixa Express."}), 400
+
+    recipient = Usuario.query.filter(Usuario.telefone.ilike(f"%{account_phone}%")).first()
+    if recipient is None:
+        return jsonify({"error": "Não existe uma conta Âncora associada a esse número."}), 404
+    if recipient.id == sender.id:
+        return jsonify({"error": "Não pode transferir para a sua própria conta."}), 400
+
+    balance = _wallet_balance(sender.id)
+    if amount > balance:
+        return jsonify({"error": "Saldo insuficiente.", "balance": _amount_string(balance)}), 409
+
+    reference_id = f"ANCORA-TF-{uuid.uuid4().hex.upper()}"
+    movement = WalletMovement(
+        reference_id=reference_id,
+        sender_id=sender.id,
+        recipient_id=recipient.id,
+        account_phone=account_phone,
+        movement_type="TRANSFER",
+        amount=amount,
+        currency="AOA",
+        status="COMPLETED",
+    )
+    db.session.add(movement)
+    db.session.commit()
+    return jsonify({
+        "reference_id": reference_id,
+        "amount": _amount_string(amount),
+        "currency": "AOA",
+        "recipient_name": recipient.nome,
+        "status": "COMPLETED",
+    }), 201
 
 
 @wallet_bp.route("/webhooks/bitpay", methods=["POST"])
@@ -408,7 +565,7 @@ def receive_bitpay_webhook():
             "Received a signed BitPay event for unknown reference %s.",
             reference_id,
         )
-        return jsonify({"error": "Referência de depósito não encontrada."}), 404
+        return jsonify({"received": True, "ignored": True, "reason": "unknown_reference"}), 200
     if event_type != "payment.succeeded":
         if (
             amount != deposit.amount
