@@ -1,30 +1,36 @@
 import { useUserStore } from "../../../useUseSotore";
 import { optimizeImage } from "../../../utils/imageOptimizer";
 import { fetchComAuth } from "../../../utils/api";
-export async function Registrar_produto(even, id_usuario , dadosUsuario_nome) {
-    // 1. Pegar as referências dos elementos
+
+export async function Registrar_produto(event, id_usuario, dadosUsuario_nome, onSuccess) {
+    event.preventDefault();
+    const formulario = event.currentTarget;
+    const dadosFormulario = new FormData(formulario);
     const URL_BACKEND_ANCORA = useUserStore.getState().urlBancoDeDados
-    const nome = document.getElementById("nome").value;
-    const descricao = document.getElementById("descricao").value;
-    const tipo = document.getElementById("tipo").value;
-    const preco = document.getElementById("preco").value;
-    const inputImagem = document.getElementById("imagem");
+    const nome = String(dadosFormulario.get("nome_produto") || "").trim();
+    const descricao = String(dadosFormulario.get("descricao_produto") || "").trim();
+    const tipo = String(dadosFormulario.get("tipo_produto") || "").trim();
+    const preco = String(dadosFormulario.get("preco_produto") || "").trim();
+    const arquivoOriginal = dadosFormulario.get("imagem_produto");
 
     if (!nome.trim() || nome.trim().length > 65) {
         alert("O nome do produto deve ter entre 1 e 65 caracteres.");
         return;
     }
+    if (!descricao || descricao.length > 10000) {
+        alert("A descrição deve ter entre 1 e 10000 caracteres.");
+        return;
+    }
+    if (!tipo || tipo.length > 80) {
+        alert("O tipo de produto é inválido.");
+        return;
+    }
 
-    // 2. Verificar se existe um arquivo selecionado
-    if (!inputImagem || inputImagem.files.length === 0) {
+    if (!(arquivoOriginal instanceof File) || arquivoOriginal.size === 0) {
         alert("Por favor, selecione uma imagem.");
         return;
     }
 
-    const arquivoOriginal = inputImagem.files[0];
-
-    
-    // 3. Criar o FormData e preencher
     const formdata = new FormData();
     formdata.append("nome_produto", nome);
     formdata.append("descricao_produto", descricao);
@@ -33,23 +39,23 @@ export async function Registrar_produto(even, id_usuario , dadosUsuario_nome) {
     formdata.append("tipo_produto" , tipo)
     formdata.append("nome_vendedor" , dadosUsuario_nome)
 
-    // 4. Enviar imediatamente
     try {
         const otimizado = await optimizeImage(arquivoOriginal, "feed");
         const arquivo = otimizado.file;
         formdata.append("imagem_produto", arquivo);
         formdata.append("imagem_blurhash", otimizado.blurHash || "");
         const registrar_produto_usuario = await fetchComAuth(`${URL_BACKEND_ANCORA}/registrar_produto`, {
-            method: "POST", // Use maiúsculas por convenção
+            method: "POST",
             body: formdata
-            // Nota: NÃO defina 'Content-Type' manualmente ao usar FormData. 
-            // O navegador faz isso sozinho com o "boundary" correto.
         });
 
         const get_response = await registrar_produto_usuario.json();
         if (!registrar_produto_usuario.ok) {
             throw new Error(get_response.error || get_response.mensagem || "Não foi possível registar o produto.");
         }
+        formulario.reset();
+        window.alert(tipo === "Cursos" ? "Curso registado com sucesso." : "Produto registado com sucesso.");
+        onSuccess?.();
     } catch (erro) {
         console.error("Erro na requisição:", erro);
         alert(erro.message || "Não foi possível registar o produto.");

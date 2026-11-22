@@ -13,7 +13,20 @@ import { useUserStore } from "../../useUseSotore";
 import { Tirar_formulario } from "./js/tirar_formulario";
 export default function Conteiner4RightWindow () {
     const [telaAtiva , setTelaAtiva] = useState("dashboard")
+    const [cursoAtivo, setCursoAtivo] = useState(false)
     const {dadosUsuario} = useUserStore()
+    const fecharFormulario = () => {
+        setCursoAtivo(false)
+        Tirar_formulario()
+    }
+
+    const registarItem = (event) => {
+        void Registrar_produto(event, dadosUsuario.id, dadosUsuario.nome, () => {
+            setCursoAtivo(false)
+            Tirar_formulario()
+        })
+    }
+
     const RenderizarConteiner = ()=>{
         switch(telaAtiva){
             case "dashboard":
@@ -42,30 +55,45 @@ export default function Conteiner4RightWindow () {
                     <div className="novo_produto_capa">
                         <img src={Capa} alt="" />
                     </div>
-                    <div className="novo_produto_inputs">
-                        <div className="tirar_formulario" onClick={Tirar_formulario}>
+                    <form className={`novo_produto_inputs${cursoAtivo ? " is-course-form" : ""}`} onSubmit={registarItem}>
+                        <div className="tirar_formulario" onClick={fecharFormulario}>
                             <Erro />
                         </div>
                         <div className="novo_produto_inputs_logo">
 
                         </div>
-                        
-                        <input id="nome" type="text" placeholder="Nome do produto" maxLength={65} />
-                        <input id="descricao" type="text" placeholder="Descrição do produto" />
-                        <select id="tipo">
-                            <option id="moda" value="Moda">Moda</option>
-                            <option id="eletronica" value="Eletronica">Eletronica</option>
-                            <option id="Curos" value="Cursos">Cursos</option>
-                            <option id="telefone" value="telefones">Telefones</option>
-                            <option id="computadore" value="computadores">Computadores</option>
-                            <option id="opcional" value="opcional">Outros</option>
-                        </select>
-                        <input id="preco" type="text" placeholder="Preço do produto" />
-                        <label htmlFor="imagem">carregar imagem</label>
-                        <input  type="file" style={{display:"none"}} id="imagem" />
-                        
-                        <button onClick={(e)=> Registrar_produto(e , dadosUsuario.id , dadosUsuario.nome)}>Registrar produto</button>
-                    </div>
+                        {cursoAtivo ? (
+                            <>
+                                <h3 className="novo_produto_form_titulo">Registar curso</h3>
+                                <input name="nome_produto" type="text" placeholder="Nome do curso" maxLength={65} required />
+                                <textarea name="descricao_produto" placeholder="Descrição do curso" maxLength={10000} required />
+                                <input name="preco_produto" type="number" min="0.01" step="any" inputMode="decimal" placeholder="Preço do curso (Kz)" required />
+                                <input name="tipo_produto" type="hidden" value="Cursos" readOnly />
+                                <label htmlFor="imagem-curso">Carregar capa do curso</label>
+                                <input name="imagem_produto" type="file" accept="image/*" style={{display:"none"}} id="imagem-curso" />
+                                <button type="submit">Registar curso</button>
+                                <button type="button" className="novo_produto_curso" onClick={() => setCursoAtivo(false)}>Voltar ao produto</button>
+                            </>
+                        ) : (
+                            <>
+                                <input name="nome_produto" type="text" placeholder="Nome do produto" maxLength={65} required />
+                                <input name="descricao_produto" type="text" placeholder="Descrição do produto" maxLength={10000} required />
+                                <select name="tipo_produto" defaultValue="Moda">
+                                    <option value="Moda">Moda</option>
+                                    <option value="Eletronica">Eletrónica</option>
+                                    <option value="Cursos">Cursos</option>
+                                    <option value="telefones">Telefones</option>
+                                    <option value="computadores">Computadores</option>
+                                    <option value="opcional">Outros</option>
+                                </select>
+                                <input name="preco_produto" type="number" min="0.01" step="any" inputMode="decimal" placeholder="Preço do produto (Kz)" required />
+                                <label htmlFor="imagem-produto">Carregar imagem</label>
+                                <input name="imagem_produto" type="file" accept="image/*" style={{display:"none"}} id="imagem-produto" />
+                                <button type="submit">Registar produto</button>
+                                <button type="button" className="novo_produto_curso" onClick={() => setCursoAtivo(true)}>Vender um curso</button>
+                            </>
+                        )}
+                    </form>
                 </div>
                 {/* FIM DA FORMATAÇÃO DO NOVO PRODUTO */}
             </div>

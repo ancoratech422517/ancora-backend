@@ -128,6 +128,11 @@ const formatPrice = (price: number, currency: string) => currency === "AOA"
   ? `${Math.round(price).toLocaleString("pt-AO")} Kz`
   : `${price.toFixed(2).replace(".", ",")} €`;
 
+const isCourse = (category: string) => {
+  const normalized = category.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  return normalized === "curso" || normalized === "cursos";
+};
+
 function Logo() {
   return (
     <a className="brand" href="#top" aria-label="Âncora Ecommerce — início">
@@ -164,6 +169,7 @@ export default function Home({
   const [cart, setCart] = useState<CartLine[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [courseOnly, setCourseOnly] = useState(false);
   const maxAvailablePrice = Math.max(24, ...products.map((product) => product.price));
   const [priceMax, setPriceMax] = useState(maxAvailablePrice);
   const categories = useMemo(() => {
@@ -185,7 +191,9 @@ export default function Home({
   const filteredProducts = useMemo(() => {
     const normalized = search.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     const result = products.filter((product) => {
-      const matchesCategory = activeCategory === "Todos" || product.category === activeCategory;
+      const matchesCategory = courseOnly
+        ? isCourse(product.category)
+        : activeCategory === "Todos" || product.category === activeCategory;
       const searchableText = `${product.name} ${product.category} ${product.seller ?? ""}`.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       const matchesSearch = !normalized || searchableText.includes(normalized);
       return matchesCategory && matchesSearch && product.price <= priceMax;
@@ -194,7 +202,7 @@ export default function Home({
     if (sort === "Preço mais alto") return [...result].sort((a, b) => b.price - a.price);
     if (sort === "Mais populares") return [...result].sort((a, b) => (b.likes ?? b.rating ?? 0) - (a.likes ?? a.rating ?? 0));
     return result;
-  }, [activeCategory, priceMax, search, sort]);
+  }, [activeCategory, courseOnly, priceMax, products, search, sort]);
 
   const isLiked = (product: Product) => onToggleFavorite
     ? Boolean(product.isFavorite)
@@ -260,8 +268,9 @@ export default function Home({
         <div className="container nav-wrap">
           <Logo />
           <nav className={`main-nav ${mobileOpen ? "is-open" : ""}`} aria-label="Navegação principal">
-            <a href="#catalogo" onClick={() => setMobileOpen(false)}>Comprar</a>
-            <a href="#categorias" onClick={() => setMobileOpen(false)}>Categorias</a>
+            <a href="#catalogo" onClick={() => { setCourseOnly(false); setActiveCategory("Todos"); setMobileOpen(false); }}>Comprar</a>
+            <a href="#catalogo" onClick={(event) => { event.preventDefault(); setCourseOnly(true); setActiveCategory("Todos"); setSearch(""); setPriceMax(maxAvailablePrice); setSort("Destaques"); setMobileOpen(false); scrollToShop(); }}>Cursos</a>
+            <a href="#categorias" onClick={() => { setCourseOnly(false); setActiveCategory("Todos"); setMobileOpen(false); }}>Categorias</a>
             <a href="#manifesto" onClick={() => setMobileOpen(false)}>Manifesto</a>
             <a href="#apoio" onClick={() => setMobileOpen(false)}>Apoio</a>
           </nav>
@@ -302,7 +311,7 @@ export default function Home({
         <section className="category-section" id="categorias">
           <div className="container">
             <div className="section-heading"><div><span className="eyebrow">02 · Explora por intenção</span><h2>Encontra o teu<br /><em>próximo favorito.</em></h2></div><p>Uma selecção viva de coisas que tornam a casa mais tua, o corpo mais leve e os dias mais interessantes.</p></div>
-            <div className="category-list">{categories.slice(1).map((category) => <button key={category.label} className={`category-row ${activeCategory === category.label ? "active" : ""}`} onClick={() => { setActiveCategory(category.label); scrollToShop(); }}><span className="category-number">{category.number}</span><span className="category-name">{category.label}</span><span className="category-count">{category.count}</span><ArrowUpRight className="category-arrow" size={24} /></button>)}</div>
+            <div className="category-list">{categories.slice(1).map((category) => <button key={category.label} className={`category-row ${!courseOnly && activeCategory === category.label ? "active" : ""}`} onClick={() => { setCourseOnly(false); setActiveCategory(category.label); scrollToShop(); }}><span className="category-number">{category.number}</span><span className="category-name">{category.label}</span><span className="category-count">{category.count}</span><ArrowUpRight className="category-arrow" size={24} /></button>)}</div>
           </div>
         </section>
 
@@ -310,7 +319,7 @@ export default function Home({
           <div className="container">
             <div className="catalog-head"><div><span className="eyebrow">03 · A selecção</span><h2>O que nos está<br /><em>a inspirar agora.</em></h2></div><span className="catalog-note">{filteredProducts.length} de {products.length} produtos</span></div>
             <div className="catalog-toolbar">
-              <div className="filter-tabs">{categories.map((category) => <button key={category.label} className={activeCategory === category.label ? "active" : ""} onClick={() => setActiveCategory(category.label)}>{category.label}</button>)}</div>
+              <div className="filter-tabs">{categories.map((category) => <button key={category.label} className={!courseOnly && activeCategory === category.label ? "active" : ""} onClick={() => { setCourseOnly(false); setActiveCategory(category.label); }}>{category.label}</button>)}</div>
               <div className="toolbar-controls">
                 <label className="price-filter">Até {formatPrice(priceMax, currency)}<input aria-label="Preço máximo" type="range" min="0" max={maxAvailablePrice} step={Math.max(1, Math.ceil(maxAvailablePrice / 100))} value={Math.min(priceMax, maxAvailablePrice)} onChange={(event) => setPriceMax(Number(event.target.value))} /></label>
                 <label className="sort-select"><span>Ordenar:</span><select value={sort} onChange={(event) => setSort(event.target.value)}><option>Destaques</option><option>Mais populares</option><option>Preço mais baixo</option><option>Preço mais alto</option></select><ChevronDown size={15} /></label>
@@ -328,8 +337,8 @@ export default function Home({
               </div>
               <div className="product-info"><div><span className="product-category">{product.category}</span><h3>{onSelectProduct ? <button className="product-title" onClick={() => onSelectProduct(product)}>{product.name}</button> : product.name}</h3></div><strong>{formatPrice(product.price, currency)}</strong></div>
               <div className="product-bottom">{product.likes !== undefined ? <span className="rating"><Heart size={13} fill="currentColor" /> {product.likes} favoritos</span> : <Rating value={product.rating ?? 0} reviews={product.reviews ?? 0} />}<span>{product.description}</span></div>
-            </article>)}</div> : <div className="empty-state"><Search size={24} /><h3>Não encontrámos esse caminho.</h3><p>Tenta outra palavra ou abre a selecção completa.</p><button className="button button-dark" onClick={() => { setSearch(""); setPriceMax(maxAvailablePrice); setActiveCategory("Todos"); }}>Limpar filtros</button></div>}
-            <div className="catalog-footer"><span>{products.length} produtos disponíveis</span><button className="text-link" onClick={() => { setActiveCategory("Todos"); setPriceMax(maxAvailablePrice); setSort("Destaques"); }}>Ver todos os produtos <ArrowRight size={15} /></button></div>
+            </article>)}</div> : <div className="empty-state"><Search size={24} /><h3>{courseOnly ? "Ainda não há cursos publicados." : "Não encontrámos esse caminho."}</h3><p>{courseOnly ? "Volta mais tarde para descobrir os cursos da comunidade." : "Tenta outra palavra ou abre a selecção completa."}</p><button className="button button-dark" onClick={() => { setSearch(""); setPriceMax(maxAvailablePrice); setCourseOnly(false); setActiveCategory("Todos"); }}>Limpar filtros</button></div>}
+            <div className="catalog-footer"><span>{courseOnly ? `${filteredProducts.length} cursos disponíveis` : `${products.length} produtos disponíveis`}</span><button className="text-link" onClick={() => { setCourseOnly(false); setActiveCategory("Todos"); setPriceMax(maxAvailablePrice); setSort("Destaques"); }}>Ver todos os produtos <ArrowRight size={15} /></button></div>
           </div>
         </section>
 
