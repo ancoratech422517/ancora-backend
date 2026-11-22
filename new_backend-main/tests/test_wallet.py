@@ -136,6 +136,112 @@ class WalletApiTests(unittest.TestCase):
         self.assertTrue(summary.get_json()["withdrawals_enabled"])
         self.assertEqual(withdrawal.status_code, 409)
 
+    def test_withdrawal_reserves_balance_until_admin_confirms_or_rejects(self):
+        self.authenticate()
+        deposit = self._create_pending_deposit()
+        self._post_signed_webhook({
+            "event": "payment.paid",
+            "data": {
+                "id": deposit["transaction_id"],
+                "external_id": deposit["reference_id"],
+                "amount": 15000,
+                "currency": "AOA",
+                "status": "paid",
+            },
+        })
+
+        pending = self.client.post(
+            "/api/wallet/withdrawals",
+            json={"amount": 5000, "account_phone": "923000000"},
+        )
+        self.assertEqual(pending.status_code, 201)
+        self.assertEqual(self.client.get("/api/wallet").get_json()["balance"], "10000.00")
+
+        forbidden = self.client.get("/api/admin/wallet/withdrawals")
+        self.assertEqual(forbidden.status_code, 403)
+
+        self.app.config["WALLET_ADMIN_USER_IDS"] = {1}
+        self.authenticate(user_id=2)
+        other_user_forbidden = self.client.get("/api/admin/wallet/withdrawals")
+        self.assertEqual(other_user_forbidden.status_code, 403)
+
+        self.authenticate(user_id=1)
+        admin_queue = self.client.get("/api/admin/wallet/withdrawals")
+        self.assertEqual(admin_queue.status_code, 200)
+        self.assertEqual(len(admin_queue.get_json()["withdrawals"]), 1)
+
+        completed = self.client.post(
+            f"/api/admin/wallet/withdrawals/{pending.get_json()['reference_id']}/process",
+            json={"action": "complete", "payout_reference": "MCX-RECIBO-01"},
+        )
+        self.assertEqual(completed.status_code, 200)
+        duplicate_completion = self.client.post(
+            f"/api/admin/wallet/withdrawals/{pending.get_json()['reference_id']}/process",
+            json={"action": "complete", "payout_reference": "MCX-RECIBO-01"},
+        )
+        self.assertEqual(duplicate_completion.status_code, 409)
+        summary = self.client.get("/api/wallet").get_json()
+        self.assertEqual(summary["balance"], "10000.00")
+        self.assertEqual(summary["total_outgoing"], "5000.00")
+        completed_transaction = next(
+            transaction
+            for transaction in summary["transactions"]
+            if transaction["reference_id"] == pending.get_json()["reference_id"]
+        )
+        self.assertEqual(completed_transaction["payout_reference"], "MCX-RECIBO-01")
+
+        rejected = self.client.post(
+            "/api/wallet/withdrawals",
+            json={"amount": 3000, "account_phone": "923000000"},
+        )
+        self.assertEqual(rejected.status_code, 201)
+        self.assertEqual(self.client.get("/api/wallet").get_json()["balance"], "7000.00")
+        rejected_by_admin = self.client.post(
+            f"/api/admin/wallet/withdrawals/{rejected.get_json()['reference_id']}/process",
+            json={"action": "reject", "reason": "Número de conta não confirmado."},
+        )
+        self.assertEqual(rejected_by_admin.status_code, 200)
+        summary = self.client.get("/api/wallet").get_json()
+        self.assertEqual(summary["balance"], "10000.00")
+        rejected_transaction = next(
+            transaction
+            for transaction in summary["transactions"]
+            if transaction["reference_id"] == rejected.get_json()["reference_id"]
+        )
+        self.assertEqual(rejected_transaction["status_message"], "Número de conta não confirmado.")
+
+    def test_admin_cannot_complete_withdrawal_without_payout_reference(self):
+        self.authenticate()
+        self.app.config["WALLET_ADMIN_USER_IDS"] = {1}
+        pending = self.client.post(
+            "/api/wallet/withdrawals",
+            json={"amount": 100, "account_phone": "923000000"},
+        )
+        self.assertEqual(pending.status_code, 409)
+
+        self._create_pending_deposit()
+        with self.app.app_context():
+            deposit = WalletDeposit.query.one()
+            db.session.add(WalletLedgerEntry(
+                user_id=1,
+                deposit_id=deposit.id,
+                entry_type="DEPOSIT",
+                amount=100,
+                currency="AOA",
+            ))
+            db.session.commit()
+        pending = self.client.post(
+            "/api/wallet/withdrawals",
+            json={"amount": 100, "account_phone": "923000000"},
+        )
+        self.assertEqual(pending.status_code, 201)
+        response = self.client.post(
+            f"/api/admin/wallet/withdrawals/{pending.get_json()['reference_id']}/process",
+            json={"action": "complete", "payout_reference": ""},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(self.client.get("/api/wallet").get_json()["balance"], "0.00")
+
     def test_deposit_is_credited_only_by_valid_matching_webhook_and_is_idempotent(self):
         self.authenticate()
         deposit = self._create_pending_deposit()

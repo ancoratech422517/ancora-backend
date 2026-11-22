@@ -4,17 +4,14 @@ export async function CloseSombraCard(dados , setDadosSombra , setEstado){
     const dadosUser = useUserStore.getState().dadosUsuario
     const URLBACKEND_ANCORA = useUserStore.getState().urlBancoDeDados
     let CloseCardSombra = document.querySelector(".Conteiner2RightWindowProdutsSombra")
-    if (CloseCardSombra.style.display !== "flex"){
-        CloseCardSombra.style.display = "flex"
-        setDadosSombra(dados)
-        
-    }
-
-    else{
+    if (!dados || CloseCardSombra.style.display === "flex"){
         CloseCardSombra.style.display = "none"
-        setEstado("produto")
+        setEstado?.("produto")
+        return
     }
 
+    CloseCardSombra.style.display = "flex"
+    setDadosSombra(dados)
     const send_estado = await fetch(`${URLBACKEND_ANCORA}/visto_usuario` , {
         method: "post" , 
         headers:{
@@ -22,7 +19,7 @@ export async function CloseSombraCard(dados , setDadosSombra , setEstado){
         },
         body: JSON.stringify({"id_usuario":dadosUser.id , "id_produto":dados.id})
     })
-    const getResponse = await send_estado.json()
+    await send_estado.json()
 
 
 }

@@ -510,6 +510,14 @@ class WalletMovement(db.Model):
     amount = db.Column(db.Numeric(18, 2), nullable=False)
     currency = db.Column(db.String(3), nullable=False, default="AOA")
     status = db.Column(db.String(20), nullable=False, default="COMPLETED")
+    processed_by = db.Column(
+        db.Integer,
+        db.ForeignKey("usuarios.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    processed_at = db.Column(db.DateTime, nullable=True)
+    payout_reference = db.Column(db.String(120), nullable=True)
+    admin_note = db.Column(db.String(500), nullable=True)
     created_at = db.Column(
         db.DateTime,
         nullable=False,

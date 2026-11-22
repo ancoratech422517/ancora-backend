@@ -42,6 +42,33 @@ export default function CarteiraDigital({ onBack }) {
     const [movementLoading, setMovementLoading] = useState(false)
     const [movementError, setMovementError] = useState("")
     const [movementResult, setMovementResult] = useState(null)
+    const [adminWithdrawals, setAdminWithdrawals] = useState([])
+    const [adminQueueLoading, setAdminQueueLoading] = useState(false)
+    const [adminProcessingReference, setAdminProcessingReference] = useState("")
+    const [adminPayoutReferences, setAdminPayoutReferences] = useState({})
+    const [adminRejectionReasons, setAdminRejectionReasons] = useState({})
+    const [adminError, setAdminError] = useState("")
+    const [adminMessage, setAdminMessage] = useState("")
+
+    const loadAdminWithdrawals = useCallback(async () => {
+        setAdminQueueLoading(true)
+        setAdminError("")
+        try {
+            const response = await fetchComAuth(`${backend}/api/admin/wallet/withdrawals`, {
+                offlineQueue: false,
+            })
+            const data = await response.json()
+            if (!response.ok) {
+                throw new Error(data?.error || "Não foi possível carregar os levantamentos pendentes.")
+            }
+            setAdminWithdrawals(data.withdrawals ?? [])
+        } catch (error) {
+            console.error("Erro ao carregar levantamentos pendentes:", error)
+            setAdminError(error instanceof Error ? error.message : "Não foi possível carregar os levantamentos pendentes.")
+        } finally {
+            setAdminQueueLoading(false)
+        }
+    }, [backend])
 
     const loadWallet = useCallback(async () => {
         setLoading(true)
@@ -55,13 +82,18 @@ export default function CarteiraDigital({ onBack }) {
                 throw new Error(data?.error || "Não foi possível carregar a carteira.")
             }
             setWallet(data)
+            if (data.is_wallet_admin) {
+                await loadAdminWithdrawals()
+            } else {
+                setAdminWithdrawals([])
+            }
         } catch (error) {
             console.error("Erro ao carregar a carteira:", error)
             setLoadError(error instanceof Error ? error.message : "Não foi possível carregar a carteira.")
         } finally {
             setLoading(false)
         }
-    }, [backend])
+    }, [backend, loadAdminWithdrawals])
 
     useEffect(() => {
         const requestId = window.setTimeout(loadWallet, 0)
@@ -144,6 +176,45 @@ export default function CarteiraDigital({ onBack }) {
         }
     }
 
+    const processAdminWithdrawal = async (referenceId, action) => {
+        const payoutReference = adminPayoutReferences[referenceId]?.trim()
+        const reason = adminRejectionReasons[referenceId]?.trim()
+        if (action === "complete" && !payoutReference) {
+            setAdminError("Registe a referência do comprovativo antes de confirmar o envio.")
+            return
+        }
+        if (action === "reject" && !reason) {
+            setAdminError("Indique o motivo antes de recusar o pedido.")
+            return
+        }
+
+        setAdminProcessingReference(referenceId)
+        setAdminError("")
+        setAdminMessage("")
+        try {
+            const response = await fetchComAuth(
+                `${backend}/api/admin/wallet/withdrawals/${encodeURIComponent(referenceId)}/process`,
+                {
+                    method: "POST",
+                    offlineQueue: false,
+                    body: JSON.stringify(action === "complete"
+                        ? { action, payout_reference: payoutReference }
+                        : { action, reason }),
+                },
+            )
+            const data = await response.json()
+            if (!response.ok) {
+                throw new Error(data?.error || "Não foi possível processar o levantamento.")
+            }
+            setAdminMessage(data.message)
+            await loadWallet()
+        } catch (error) {
+            setAdminError(error instanceof Error ? error.message : "Não foi possível processar o levantamento.")
+        } finally {
+            setAdminProcessingReference("")
+        }
+    }
+
     const transactions = wallet?.transactions ?? []
 
     return (
@@ -218,8 +289,84 @@ export default function CarteiraDigital({ onBack }) {
                         <span aria-hidden="true">⇄</span>
                         <span>Transferir</span>
                     </button>
-                    <p>O saldo e o extrato refletem apenas movimentos confirmados pelo servidor.</p>
+                    <p>Os levantamentos pendentes ficam reservados até serem pagos ou recusados.</p>
                 </section>
+
+                {wallet?.is_wallet_admin && (
+                    <section className="wallet-activity wallet-admin-queue">
+                        <div className="wallet-section-heading">
+                            <div>
+                                <p className="wallet-eyebrow">PROCESSAMENTO MANUAL</p>
+                                <h2>Levantamentos pendentes</h2>
+                            </div>
+                            <span>{adminWithdrawals.length} pedido(s)</span>
+                        </div>
+                        <p className="wallet-admin-instructions">
+                            Envie o valor ao número indicado fora da plataforma. Só depois de confirmar a operação, registe a referência do comprovativo.
+                        </p>
+                        {adminError && <p className="wallet-error-message" role="alert">{adminError}</p>}
+                        {adminMessage && <p className="wallet-admin-success" role="status">{adminMessage}</p>}
+                        {adminQueueLoading ? (
+                            <p className="wallet-empty-state">A carregar pedidos…</p>
+                        ) : adminWithdrawals.length === 0 ? (
+                            <p className="wallet-empty-state">Não há levantamentos pendentes.</p>
+                        ) : (
+                            <div className="wallet-admin-list">
+                                {adminWithdrawals.map((withdrawal) => (
+                                    <article className="wallet-admin-withdrawal" key={withdrawal.reference_id}>
+                                        <div className="wallet-admin-details">
+                                            <strong>{withdrawal.customer_name} · {formatKwanza(withdrawal.amount)}</strong>
+                                            <span>Multicaixa Express: {withdrawal.account_phone}</span>
+                                            <span>Referência: {withdrawal.reference_id}</span>
+                                            <time dateTime={withdrawal.created_at}>
+                                                {new Date(withdrawal.created_at).toLocaleString("pt-AO")}
+                                            </time>
+                                        </div>
+                                        <label>
+                                            Referência do envio
+                                            <input
+                                                type="text"
+                                                maxLength="120"
+                                                value={adminPayoutReferences[withdrawal.reference_id] ?? ""}
+                                                onChange={(event) => setAdminPayoutReferences((current) => ({
+                                                    ...current,
+                                                    [withdrawal.reference_id]: event.target.value,
+                                                }))}
+                                            />
+                                        </label>
+                                        <button
+                                            type="button"
+                                            disabled={adminProcessingReference === withdrawal.reference_id}
+                                            onClick={() => processAdminWithdrawal(withdrawal.reference_id, "complete")}
+                                        >
+                                            Registar envio concluído
+                                        </button>
+                                        <label>
+                                            Motivo de recusa
+                                            <input
+                                                type="text"
+                                                maxLength="500"
+                                                value={adminRejectionReasons[withdrawal.reference_id] ?? ""}
+                                                onChange={(event) => setAdminRejectionReasons((current) => ({
+                                                    ...current,
+                                                    [withdrawal.reference_id]: event.target.value,
+                                                }))}
+                                            />
+                                        </label>
+                                        <button
+                                            type="button"
+                                            className="wallet-admin-reject"
+                                            disabled={adminProcessingReference === withdrawal.reference_id}
+                                            onClick={() => processAdminWithdrawal(withdrawal.reference_id, "reject")}
+                                        >
+                                            Recusar e libertar saldo
+                                        </button>
+                                    </article>
+                                ))}
+                            </div>
+                        )}
+                    </section>
+                )}
 
                 <section className="wallet-activity">
                     <div className="wallet-section-heading">
@@ -252,6 +399,12 @@ export default function CarteiraDigital({ onBack }) {
                                                     : "Depósito Multicaixa Express"}
                                         </strong>
                                         <span>{transaction.reference_id}</span>
+                                        {transaction.payout_reference && (
+                                            <span>Comprovativo: {transaction.payout_reference}</span>
+                                        )}
+                                        {transaction.status_message && (
+                                            <span>{transaction.status_message}</span>
+                                        )}
                                         <time dateTime={transaction.created_at}>
                                             {new Date(transaction.created_at).toLocaleString("pt-AO")}
                                         </time>
@@ -357,10 +510,11 @@ export default function CarteiraDigital({ onBack }) {
                         </div>
                         {movementResult ? (
                             <div className="wallet-pending-confirmation" role="status">
-                                <strong>{movementOpen === "transfer" ? "Transferência concluída" : "Pedido de levantamento criado"}</strong>
+                                <strong>{movementOpen === "transfer" ? "Transferência concluída" : "Pedido de levantamento recebido"}</strong>
                                 <span>Referência: {movementResult.reference_id}</span>
                                 <span>Valor: {formatKwanza(movementResult.amount)}</span>
                                 <span>Estado: {movementResult.status}</span>
+                                {movementOpen === "withdrawal" && <span>{movementResult.message}</span>}
                             </div>
                         ) : (
                             <form className="wallet-deposit-form" onSubmit={submitMovement}>

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUserStore } from "../../useUseSotore";
-import LogoAncora from "../../assets/logo2.png";
+import LogoAncora from "../../assets/IMGPERFIL.png";
 import CachedImage from "../../components/CachedImage";
 import { socialApi } from "./socialApi";
 import "./css/Conteiner8RedeSocial.css";

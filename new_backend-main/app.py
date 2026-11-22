@@ -266,6 +266,15 @@ app.config['DIZANPAY_WEBHOOK_URL'] = (
     os.getenv('DIZANPAY_WEBHOOK_URL')
     or 'https://ancora-backend-09zc.onrender.com/webhooks/dizanpay'
 )
+wallet_admin_user_ids = os.getenv('WALLET_ADMIN_USER_IDS', '').strip()
+try:
+    app.config['WALLET_ADMIN_USER_IDS'] = {
+        int(user_id.strip())
+        for user_id in wallet_admin_user_ids.split(',')
+        if user_id.strip()
+    }
+except ValueError as error:
+    raise RuntimeError("WALLET_ADMIN_USER_IDS must be a comma-separated list of user IDs.") from error
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'files')
 app.config['MAX_CONTENT_LENGTH'] = 128 * 1024 * 1024
 app.config['ANCORASHIELD_AUDIT_SIGNING_KEY'] = os.getenv(

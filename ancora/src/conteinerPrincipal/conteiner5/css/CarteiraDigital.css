@@ -279,6 +279,102 @@
     background: #0d1a20;
 }
 
+.wallet-admin-queue {
+    margin-bottom: 20px;
+}
+
+.wallet-admin-instructions {
+    margin: 18px 0 8px;
+    color: #92a9ad;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.wallet-admin-list {
+    margin-top: 16px;
+}
+
+.wallet-admin-withdrawal {
+    display: grid;
+    grid-template-columns: minmax(190px, 1fr) minmax(160px, .8fr) auto;
+    align-items: end;
+    gap: 12px;
+    padding: 17px 0;
+    border-top: 1px solid rgba(220, 244, 241, .08);
+}
+
+.wallet-admin-details {
+    display: flex;
+    grid-row: span 2;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.wallet-admin-details strong {
+    color: #e0eceb;
+    font-size: 13px;
+}
+
+.wallet-admin-details span,
+.wallet-admin-details time {
+    overflow-wrap: anywhere;
+    color: #799096;
+    font-size: 10px;
+}
+
+.wallet-admin-withdrawal label {
+    display: grid;
+    gap: 6px;
+    color: #b9ccce;
+    font-size: 11px;
+}
+
+.wallet-admin-withdrawal input {
+    width: 100%;
+    min-height: 40px;
+    padding: 0 10px;
+    border: 1px solid rgba(220, 244, 241, .14);
+    border-radius: 10px;
+    outline: none;
+    color: #eef7f6;
+    background: #09171d;
+    font: inherit;
+}
+
+.wallet-admin-withdrawal input:focus {
+    border-color: #42cfb9;
+}
+
+.wallet-admin-withdrawal > button {
+    min-height: 40px;
+    padding: 0 12px;
+    border: 1px solid #47d6bf;
+    border-radius: 10px;
+    color: #06231f;
+    background: linear-gradient(135deg, #72efda, #38cbb5);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.wallet-admin-withdrawal > .wallet-admin-reject {
+    border-color: rgba(237, 129, 129, .35);
+    color: #ffc2c2;
+    background: rgba(140, 40, 40, .15);
+}
+
+.wallet-admin-withdrawal > button:disabled {
+    cursor: progress;
+    opacity: .6;
+}
+
+.wallet-admin-success {
+    margin: 8px 0;
+    color: #81ddc9;
+    font-size: 12px;
+}
+
 .wallet-section-heading h2 {
     margin-bottom: 0;
     font-size: 23px;
@@ -626,6 +722,16 @@
     .wallet-activity {
         padding: 18px 14px;
         border-radius: 18px;
+    }
+
+    .wallet-admin-withdrawal {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .wallet-admin-details {
+        grid-row: auto;
     }
 
     .wallet-transaction {

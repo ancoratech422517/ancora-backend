@@ -67,9 +67,9 @@
   letter-spacing: -.04em;
 }
 .social-brand img {
-  width: 34px;
-  height: 34px;
-  object-fit: contain;
+  width: 50px;
+  height: 45px;
+  object-fit: cover;
 }
 .social-top-nav {
   display: flex;
@@ -137,6 +137,7 @@
   background: transparent;
   color: var(--text-primary);
   font-size: 13px !important;
+  outline: none;
 }
 .social-search input::placeholder,
 .social-network textarea::placeholder,

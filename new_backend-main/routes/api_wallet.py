@@ -2,13 +2,13 @@ import hashlib
 import hmac
 import re
 import uuid
-from datetime import timezone
+from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
 from urllib.parse import urlparse
 
 import requests
 from flask import Blueprint, current_app, g, jsonify, request
-from sqlalchemy import func, or_
+from sqlalchemy import and_, func, or_
 from sqlalchemy.exc import IntegrityError
 
 from models.database import Usuario, WalletDeposit, WalletLedgerEntry, WalletMovement, db
@@ -106,6 +106,31 @@ def _normalize_account_phone(value):
     return customer_phone[-9:]
 
 
+def _is_wallet_admin(user_id):
+    configured_ids = current_app.config.get("WALLET_ADMIN_USER_IDS", ())
+    if isinstance(configured_ids, str):
+        configured_ids = configured_ids.split(",")
+    try:
+        admin_ids = {int(value) for value in configured_ids}
+    except (TypeError, ValueError):
+        current_app.logger.error("WALLET_ADMIN_USER_IDS contains an invalid user ID.")
+        return False
+    return user_id in admin_ids
+
+
+def _wallet_outgoing_filter():
+    return or_(
+        and_(
+            WalletMovement.movement_type == "TRANSFER",
+            WalletMovement.status == "COMPLETED",
+        ),
+        and_(
+            WalletMovement.movement_type == "WITHDRAWAL",
+            WalletMovement.status.in_(("PENDING", "COMPLETED")),
+        ),
+    )
+
+
 def _wallet_balance(user_id):
     deposit_total = (
         db.session.query(func.coalesce(func.sum(WalletLedgerEntry.amount), 0))
@@ -114,7 +139,10 @@ def _wallet_balance(user_id):
     )
     sent_total = (
         db.session.query(func.coalesce(func.sum(WalletMovement.amount), 0))
-        .filter(WalletMovement.sender_id == user_id)
+        .filter(
+            WalletMovement.sender_id == user_id,
+            _wallet_outgoing_filter(),
+        )
         .scalar()
     )
     received_total = (
@@ -145,7 +173,10 @@ def wallet_summary():
     )
     sent_total = (
         db.session.query(func.coalesce(func.sum(WalletMovement.amount), 0))
-        .filter(WalletMovement.sender_id == user.id)
+        .filter(
+            WalletMovement.sender_id == user.id,
+            _wallet_outgoing_filter(),
+        )
         .scalar()
     )
     received_total = (
@@ -176,6 +207,14 @@ def wallet_summary():
         )
         .scalar()
     )
+    total_outgoing = (
+        db.session.query(func.coalesce(func.sum(WalletMovement.amount), 0))
+        .filter(
+            WalletMovement.sender_id == user.id,
+            WalletMovement.status == "COMPLETED",
+        )
+        .scalar()
+    )
     movements = (
         WalletMovement.query
         .filter(or_(WalletMovement.sender_id == user.id, WalletMovement.recipient_id == user.id))
@@ -197,15 +236,18 @@ def wallet_summary():
             "direction": "IN" if incoming else "OUT",
             "movement_type": movement.movement_type,
             "account_phone": movement.account_phone,
+            "payout_reference": movement.payout_reference,
+            "status_message": movement.admin_note if movement.status == "FAILED" else None,
         })
     transactions.sort(key=lambda item: item["created_at"], reverse=True)
     return jsonify({
         "currency": "AOA",
         "balance": _amount_string(balance or 0),
         "total_incoming": _amount_string(total_incoming or 0),
-        "total_outgoing": _amount_string(sent_total or 0),
+        "total_outgoing": _amount_string(total_outgoing or 0),
         "withdrawals_enabled": True,
         "transfers_enabled": True,
+        "is_wallet_admin": _is_wallet_admin(user.id),
         "transactions": transactions[:100],
     })
 
@@ -451,6 +493,7 @@ def create_wallet_withdrawal():
     account_phone = _normalize_account_phone(payload.get("account_phone"))
     if account_phone is None:
         return jsonify({"error": "Informe o número de 9 dígitos associado ao Multicaixa Express."}), 400
+    db.session.query(Usuario.id).filter_by(id=user.id).with_for_update().scalar()
     balance = _wallet_balance(user.id)
     if amount > balance:
         return jsonify({"error": "Saldo insuficiente.", "balance": _amount_string(balance)}), 409
@@ -474,8 +517,109 @@ def create_wallet_withdrawal():
         "currency": "AOA",
         "account_phone": account_phone,
         "status": "PENDING",
-        "message": "Pedido de levantamento reservado. Aguarde a confirmação de processamento.",
+        "message": "Pedido recebido. O saldo fica reservado até ao processamento manual do levantamento.",
     }), 201
+
+
+@wallet_bp.route("/api/admin/wallet/withdrawals", methods=["GET"])
+def list_wallet_withdrawals():
+    admin = _current_user()
+    if admin is None:
+        return jsonify({"error": "Sessão inválida ou expirada."}), 401
+    if not _is_wallet_admin(admin.id):
+        return jsonify({"error": "Sem permissão para gerir levantamentos."}), 403
+
+    pending = (
+        db.session.query(WalletMovement, Usuario.nome)
+        .join(Usuario, Usuario.id == WalletMovement.sender_id)
+        .filter(
+            WalletMovement.movement_type == "WITHDRAWAL",
+            WalletMovement.status == "PENDING",
+        )
+        .order_by(WalletMovement.created_at.asc(), WalletMovement.id.asc())
+        .all()
+    )
+    return jsonify({
+        "withdrawals": [
+            {
+                "reference_id": movement.reference_id,
+                "user_id": movement.sender_id,
+                "customer_name": customer_name,
+                "account_phone": movement.account_phone,
+                "amount": _amount_string(movement.amount),
+                "currency": movement.currency,
+                "status": movement.status,
+                "created_at": movement.created_at.isoformat(),
+            }
+            for movement, customer_name in pending
+        ],
+    })
+
+
+@wallet_bp.route(
+    "/api/admin/wallet/withdrawals/<reference_id>/process",
+    methods=["POST"],
+)
+def process_wallet_withdrawal(reference_id):
+    admin = _current_user()
+    if admin is None:
+        return jsonify({"error": "Sessão inválida ou expirada."}), 401
+    if not _is_wallet_admin(admin.id):
+        return jsonify({"error": "Sem permissão para gerir levantamentos."}), 403
+
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict) or set(payload) - {
+        "action",
+        "payout_reference",
+        "reason",
+    }:
+        return jsonify({"error": "Os dados de processamento são inválidos."}), 400
+
+    action = payload.get("action")
+    if action == "complete":
+        payout_reference = payload.get("payout_reference")
+        if (
+            not isinstance(payout_reference, str)
+            or not payout_reference.strip()
+            or len(payout_reference.strip()) > 120
+        ):
+            return jsonify({"error": "Informe a referência da operação de envio."}), 400
+        admin_note = None
+    elif action == "reject":
+        reason = payload.get("reason")
+        if not isinstance(reason, str) or not reason.strip() or len(reason.strip()) > 500:
+            return jsonify({"error": "Informe o motivo da recusa (máximo de 500 caracteres)."}), 400
+        payout_reference = None
+        admin_note = reason.strip()
+    else:
+        return jsonify({"error": "Ação de processamento inválida."}), 400
+
+    movement = (
+        WalletMovement.query
+        .filter_by(reference_id=reference_id)
+        .with_for_update()
+        .first()
+    )
+    if movement is None or movement.movement_type != "WITHDRAWAL":
+        return jsonify({"error": "Pedido de levantamento não encontrado."}), 404
+    if movement.status != "PENDING":
+        return jsonify({"error": "Este pedido já foi processado."}), 409
+
+    movement.status = "COMPLETED" if action == "complete" else "FAILED"
+    movement.processed_by = admin.id
+    movement.processed_at = datetime.now(timezone.utc).replace(tzinfo=None)
+    movement.payout_reference = payout_reference.strip() if payout_reference else None
+    movement.admin_note = admin_note
+    db.session.commit()
+    return jsonify({
+        "reference_id": movement.reference_id,
+        "status": movement.status,
+        "message": (
+            "Envio externo registado como concluído."
+            if action == "complete"
+            else "Pedido recusado e saldo libertado."
+        ),
+    })
 
 
 @wallet_bp.route("/api/wallet/transfers", methods=["POST"])
@@ -501,6 +645,7 @@ def create_wallet_transfer():
     if recipient.id == sender.id:
         return jsonify({"error": "Não pode transferir para a sua própria conta."}), 400
 
+    db.session.query(Usuario.id).filter_by(id=sender.id).with_for_update().scalar()
     balance = _wallet_balance(sender.id)
     if amount > balance:
         return jsonify({"error": "Saldo insuficiente.", "balance": _amount_string(balance)}), 409
