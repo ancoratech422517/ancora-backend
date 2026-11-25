@@ -83,7 +83,7 @@ export default function GeralChatUsuario({setViewChat}) {
             <div className="GeralChatUsuarioPrivado">
               <div className="GeralChatUsuarioPrivadoConteinerPai">
                 <h2>Login</h2>
-                <p>A ancora necessita conferir que e voce mesmo que esta acessar as suas conversas privada</p>
+                <p>A Âncora precisa de confirmar que és tu para acederes às tuas conversas privadas.</p>
                 <label htmlFor="">Telefone</label>
                 <input type="text" id="telefone-credencias"/>
                 <label htmlFor="">Senha</label>

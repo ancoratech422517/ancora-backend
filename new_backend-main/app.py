@@ -6,6 +6,7 @@ load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 from gevent import monkey
 monkey.patch_all()
 from flask import Flask, jsonify, request
+from werkzeug.exceptions import HTTPException
 from flask_cors import CORS
 from sqlalchemy import text
 from ancorashield.auth.rate_limit import RateLimiter
@@ -206,6 +207,16 @@ def handle_cors_preflight():
     if request.method == "OPTIONS":
         return app.make_default_options_response()
     return None
+
+
+@app.errorhandler(HTTPException)
+def handle_http_exception(error):
+    message = (
+        "A rota solicitada não existe."
+        if error.code == 404
+        else "Não foi possível concluir o pedido."
+    )
+    return jsonify({"error": message}), error.code
 
 
 @app.after_request

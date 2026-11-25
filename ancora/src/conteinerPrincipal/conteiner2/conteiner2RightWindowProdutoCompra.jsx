@@ -3,6 +3,7 @@ import "./css/Conteiner2RightWindowProdutoCompra.css"
 import Multicaixa from "../../assets/multicaixa2.png"
 import AncoraPay from "../../assets/ancorapay2.png"
 import { useUserStore } from "../../useUseSotore";
+import { formatKwanzas } from "../../utils/formatCurrency";
 import { ConteinerComprarProduto } from "./js/ConteinerEnviarDijnheiro";
 import Logo from "../../assets/logo2.png"
 import Loading3 from "../components/conteinerComponentesJsx/loading3";
@@ -71,16 +72,16 @@ export default function Conteiner2RightWindowProddutoCompra ({setEstado}) {
                         <div className="Conteiner2RightWindowProdutoCompraEscolhaImageTop">
                             <img src={Logo} alt="" />
                         </div>
-                        <h3>Ancora Ecommerce</h3>
-                        <p>escolha o a sua carteira digital para efetuar o pagamanto</p>
+                        <h3>Âncora Ecommerce</h3>
+                        <p>Escolhe a carteira digital para efetuar o pagamento.</p>
                         <div className="conteiner2RightWindowProdutoCompraEscolhaProduto">
                             <div className="conteiner2RightWindowProdutoCompraEscolhaProdutoImage">
                                 <img src={getUrlVideo(DadosCompraVendedor.urlImage)} alt="" />
                             </div>
                             <div className="conteiner2RightWindowProdutoCompraEscolhaProdutoCont">
                                 <b> {DadosCompraVendedor.nome_produto} </b>
-                                <h2> {DadosCompraVendedor.preco_produto} </h2>
-                                <li>Finalize a sua compra dentro da Ancora</li>
+                                <h2>{formatKwanzas(DadosCompraVendedor.preco_produto)}</h2>
+                                <li>Finaliza a tua compra na Âncora.</li>
                             </div>
                         </div>
                         <div className="Conteiner2RightWindowProdutoCompraBox">
@@ -93,7 +94,7 @@ export default function Conteiner2RightWindowProddutoCompra ({setEstado}) {
                             <div className="Conteiner2RightWindowProdutoCompraBoxIcone">
                                 <img src={AncoraPay} alt="" />
                             </div>
-                            <button className="ancoraPay">AncoraPay</button>
+                            <button className="ancoraPay">ÂncoraPay</button>
                         </div>
                     </div>
                 )
@@ -110,7 +111,7 @@ export default function Conteiner2RightWindowProddutoCompra ({setEstado}) {
                             </div>
                             <div className="DadosProdutosCompraCarteiraCont">
                                 <li>Produto - <b>{DadosCompraVendedor.nome_produto}</b> </li>
-                                <li>Preço - <b>{DadosCompraVendedor.preco_produto}</b> </li>
+                                <li>Preço - <b>{formatKwanzas(DadosCompraVendedor.preco_produto)}</b> </li>
                             </div>
                         </div>
                         <div className="iconeCarteira">

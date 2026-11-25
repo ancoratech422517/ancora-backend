@@ -85,7 +85,7 @@ export default function Conteiner5WindowConteinerLeft () {
                         
                     </div>
                     <h3> {dadosUsuario.nome} </h3>
-                    <li>Ancora-commerce plantaforma digital</li>
+                    <li>Âncora Ecommerce · plataforma digital</li>
                     <div className="Conteiner5WindowConteinerLeftNameEmpresa">
                         <b><span>★★★★★</span> - 4.7</b>
                         <li>Empresa-Ancora</li>

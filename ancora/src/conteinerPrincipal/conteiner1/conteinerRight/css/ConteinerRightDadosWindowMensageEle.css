@@ -90,10 +90,46 @@
 .textoUserEle li{
         padding: 8px 10px;
 }
+.assistantResponse .textoUserEle{
+    max-width: 550px;
+    font-size: 14px;
+}
+.assistantResponse .assistantMessageContent{
+    font-size: 14px;
+    line-height: 1.55;
+}
+.assistantResponse .iconeUserEleIcone img{
+    object-fit: contain;
+    padding: 2px;
+    background: var(--surface);
+}
+@media screen and (max-width: 700px) {
+    .assistantResponse .textoUserEle{
+        max-width: 300px;
+    }
+}
 .assistantMessageContent {
     font-size: 14px;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
+}
+.assistantLongMessage {
+    min-width: 0;
+    margin: 6px 0;
+}
+.assistantLongMessage summary {
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: var(--surface-2);
+    color: var(--text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+}
+.assistantLongMessage[open] .assistantMessageContent {
+    display: block;
+    max-height: min(55vh, 480px);
+    margin-top: 8px;
+    overflow: auto;
 }
 .assistantMessageContent a {
     color: var(--primary-dark, #1686e8);

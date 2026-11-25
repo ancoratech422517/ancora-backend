@@ -1,7 +1,7 @@
-import { useState } from "react";
 import "./css/ConteinerRightMenuMobileScrollDados.css"
 import { Enviar_menssagem } from "../../../service/socket_service_enviar_menssagem";
 import { useUserStore } from "../../../useUseSotore";
+import { formatKwanzas } from "../../../utils/formatCurrency";
 export default function ConteinerRightMenuMobileSCrollDados ({dados}) {
     const {socket , dadosUsuario , ChatAtivo , urlBancoDeDados} = useUserStore()
     const getUrlVideo = (url) => {
@@ -61,7 +61,7 @@ export default function ConteinerRightMenuMobileSCrollDados ({dados}) {
             </div>
             <div className="ConteinerRightMenuMobileScrollDadosCont">
                 <b>{dados.nome_produto}</b>
-                <li>{dados.preco_produto}</li>
+                <li>{formatKwanzas(dados.preco_produto)}</li>
                 <strong onClick={enviar_menssagem_produto}>send to chat →</strong>
             </div>
         </div>

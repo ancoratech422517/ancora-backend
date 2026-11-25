@@ -48,6 +48,11 @@ export default function useLojaDashboard() {
         requestRef.current?.abort();
         const controller = new AbortController();
         requestRef.current = controller;
+        let timedOut = false;
+        const timeoutId = window.setTimeout(() => {
+            timedOut = true;
+            controller.abort();
+        }, 20000);
         setLoading(!dashboardRef.current);
         setError("");
 
@@ -68,10 +73,13 @@ export default function useLojaDashboard() {
             dashboardRef.current = data;
             setDashboard(data);
         } catch (requestError) {
-            if (requestError?.name !== "AbortError") {
+            if (timedOut) {
+                setError("O serviço demorou demasiado a responder. Tente novamente.");
+            } else if (requestError?.name !== "AbortError") {
                 setError(requestError.message || "Não foi possível carregar os dados da loja.");
             }
         } finally {
+            window.clearTimeout(timeoutId);
             if (requestRef.current === controller) {
                 requestRef.current = null;
                 setLoading(false);

@@ -12,6 +12,7 @@ import { CHAT_THEMES, DEFAULT_CHAT_THEME } from "./chatThemes";
 import { ANIMATED_CHAT_SCENES } from "./animatedChatScenes";
 import { iniciarChamadaVoz } from "./voiceCalls";
 import { ASSISTANT_CHAT_TYPE } from "../../assistente/assistantConfig";
+import AssistantLogo from "../../../assets/IMGPERFIL.png";
 export default function ConteinerRightMenuTop({
     ativarConteiner,
     chatTheme,
@@ -116,7 +117,9 @@ export default function ConteinerRightMenuTop({
                 <div className="ConteinerRightMenuTopBoxLeftCaxa2">
                     {/* Exibe as iniciais do nome */}
                     {isAssistantChat ? (
-                        <div className="assistantAvatar" aria-hidden="true">A</div>
+                        <div className="assistantAvatar">
+                            <img src={AssistantLogo} alt="Logótipo da Âncora" />
+                        </div>
                     ) : estadoFotoPerfilUser()}
                 </div>
                 

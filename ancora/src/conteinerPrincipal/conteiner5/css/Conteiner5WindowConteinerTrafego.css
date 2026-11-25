@@ -69,6 +69,13 @@
     justify-content: center;
     border-bottom: 1px solid var(--border);
 }
+.trafego-empty-state{
+    padding: 24px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: center;
+}
 .Conteiner5WindowConteinerTrafegoEstausBtn{
     position: absolute;
     top: 0;

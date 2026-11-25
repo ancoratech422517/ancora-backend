@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import { fetchComAuth } from "../../utils/api"
+import { fetchJsonComAuth } from "../../utils/api"
 import { useUserStore } from "../../useUseSotore"
 import "./css/CarteiraDigital.css"
 
@@ -54,10 +54,9 @@ export default function CarteiraDigital({ onBack }) {
         setAdminQueueLoading(true)
         setAdminError("")
         try {
-            const response = await fetchComAuth(`${backend}/api/admin/wallet/withdrawals`, {
+            const { response, data } = await fetchJsonComAuth(`${backend}/api/admin/wallet/withdrawals`, {
                 offlineQueue: false,
             })
-            const data = await response.json()
             if (!response.ok) {
                 throw new Error(data?.error || "Não foi possível carregar os levantamentos pendentes.")
             }
@@ -74,10 +73,9 @@ export default function CarteiraDigital({ onBack }) {
         setLoading(true)
         setLoadError("")
         try {
-            const response = await fetchComAuth(`${backend}/api/wallet`, {
+            const { response, data } = await fetchJsonComAuth(`${backend}/api/wallet`, {
                 offlineQueue: false,
             })
-            const data = await response.json()
             if (!response.ok) {
                 throw new Error(data?.error || "Não foi possível carregar a carteira.")
             }
@@ -116,15 +114,14 @@ export default function CarteiraDigital({ onBack }) {
         setDepositError("")
         setPendingDeposit(null)
         try {
-            const response = await fetchComAuth(`${backend}/api/wallet/deposits`, {
+            const { response, data } = await fetchJsonComAuth(`${backend}/api/wallet/deposits`, {
                 method: "POST",
                 offlineQueue: false,
                 body: JSON.stringify({
                     amount,
                     payment_method: "multicaixa_express",
                 }),
-            })
-            const data = await response.json()
+            }, 30000)
             if (!response.ok) {
                 throw new Error(data?.error || "Não foi possível iniciar o depósito.")
             }
@@ -155,7 +152,7 @@ export default function CarteiraDigital({ onBack }) {
         setMovementResult(null)
         try {
             const endpoint = movementOpen === "transfer" ? "transfers" : "withdrawals"
-            const response = await fetchComAuth(`${backend}/api/wallet/${endpoint}`, {
+            const { response, data } = await fetchJsonComAuth(`${backend}/api/wallet/${endpoint}`, {
                 method: "POST",
                 offlineQueue: false,
                 body: JSON.stringify({
@@ -163,7 +160,6 @@ export default function CarteiraDigital({ onBack }) {
                     account_phone: movementPhone,
                 }),
             })
-            const data = await response.json()
             if (!response.ok) {
                 throw new Error(data?.error || "Não foi possível processar a operação.")
             }
@@ -192,7 +188,7 @@ export default function CarteiraDigital({ onBack }) {
         setAdminError("")
         setAdminMessage("")
         try {
-            const response = await fetchComAuth(
+            const { response, data } = await fetchJsonComAuth(
                 `${backend}/api/admin/wallet/withdrawals/${encodeURIComponent(referenceId)}/process`,
                 {
                     method: "POST",
@@ -202,7 +198,6 @@ export default function CarteiraDigital({ onBack }) {
                         : { action, reason }),
                 },
             )
-            const data = await response.json()
             if (!response.ok) {
                 throw new Error(data?.error || "Não foi possível processar o levantamento.")
             }

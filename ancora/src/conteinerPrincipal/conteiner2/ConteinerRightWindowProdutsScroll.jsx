@@ -315,7 +315,7 @@ export default function ConteinerRightWindowProdutsScroll ({ pesquisaProduto = "
             )}
             {/* <div className="ConteinerRightWindowProdutosScrollComentario">
                 <h1>Saiba o que os outros utilizadores acham da <b>Ancora E-commerce</b> </h1>
-                <li>estes são os usuarios mais ativos e fies da Ancora Ecommerce as suas opniões são de bom grato escutadas para que os usuarios tenham uma noa perfomence na Ancora</li>
+                <li>A comunidade Âncora valoriza as opiniões de quem compra e vende. O teu feedback ajuda a melhorar a experiência de todos.</li>
                 <li>tenha mais confiança nas suas compras ouvindo opniões de quem já fez a sua venda ou compra na ancora ecommerce.</li>
             </div>
             <div className="ConteinerRightWindowProdutosScrollComentarioConteiner">

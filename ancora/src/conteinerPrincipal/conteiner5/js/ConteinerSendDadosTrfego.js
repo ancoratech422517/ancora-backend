@@ -1,4 +1,5 @@
 import { useUserStore } from "../../../useUseSotore";
+import { fetchJsonComAuth } from "../../../utils/api";
 
 export async function ConteinerSendDadosTrafego(setEstadoRespostaTrafego, setRespostaTrafego, setEstadoTrafegoConteiner, setEstadoTrafegoAtivo, setEstado) {
     const store = useUserStore.getState()
@@ -6,12 +7,12 @@ export async function ConteinerSendDadosTrafego(setEstadoRespostaTrafego, setRes
     setEstadoRespostaTrafego("Loading")
 
     try {
-        const response = await fetch(`${URLBACKEND_ANCORA}/send_dados_trafego`, {
+        const { response, data } = await fetchJsonComAuth(`${URLBACKEND_ANCORA}/send_dados_trafego`, {
             method: "post",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(store.dadosTrafego)
+            body: JSON.stringify(store.dadosTrafego),
+            offlineQueue: false,
         })
-        const data = await response.json()
         if (!response.ok) {
             setRespostaTrafego(data.message || data.error || "Pagamento nao confirmado.")
             setEstadoRespostaTrafego("Error")

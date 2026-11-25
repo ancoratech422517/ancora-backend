@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./css/Conteiner2RightWindowProdutsSombraCard.css"
 import { CloseSombraCard } from "./js/Conteiner2SomraCard";
 import { useUserStore } from "../../useUseSotore";
+import { formatKwanzas } from "../../utils/formatCurrency";
 import ImageDefault from "../../assets/image_card.png"
 import { Enviar_menssagem } from "../../service/socket_service_enviar_menssagem";
 import CachedImage from "../../components/CachedImage";
@@ -161,7 +162,7 @@ export default function Conteiner2RightWindowProdutsSombraCard ({setEstado}) {
                     </div>
                 )}
                 <div className="textCardSombraBox1">
-                    <h3>{DadosSombra.preco_produto}</h3>
+                    <h3>{formatKwanzas(DadosSombra.preco_produto)}</h3>
                     <div className="boxBox1CardText">
                         <li>★★★★★</li>
                         <b className="avaliacao">4.9</b>

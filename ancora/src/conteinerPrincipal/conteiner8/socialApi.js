@@ -1,4 +1,4 @@
-import { fetchComAuth } from "../../utils/api";
+import { fetchComAuth, fetchJsonComAuth } from "../../utils/api";
 import { optimizeImage } from "../../utils/imageOptimizer";
 import { useUserStore } from "../../useUseSotore";
 
@@ -33,8 +33,9 @@ async function request(path, options = {}) {
   const method = (options.method || "GET").toUpperCase();
   const cacheable = method === "GET";
   let response;
+  let payload;
   try {
-    response = await fetchComAuth(`${backend}/api/social${path}`, {
+    ({ response, data: payload } = await fetchJsonComAuth(`${backend}/api/social${path}`, {
       ...options,
       headers: {
         ...(options.body && !(options.body instanceof FormData)
@@ -42,13 +43,12 @@ async function request(path, options = {}) {
           : {}),
         ...options.headers,
       },
-    });
+    }));
   } catch (error) {
     const cached = cacheable ? readOfflineCache(path) : null;
     if (cached && (error instanceof TypeError || !navigator.onLine)) return cached;
     throw error;
   }
-  const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
     throw new Error(payload.error || payload.menssagem || "Não foi possível concluir a operação.");
   }

@@ -120,6 +120,15 @@
     color: var(--chat-message-own-text, var(--text-on-primary));
     font-size: 19px;
     font-weight: 700;
+    overflow: hidden;
+}
+.assistantAvatar img{
+    width: 100%;
+    height: 100%;
+    padding: 3px;
+    border-radius: 50%;
+    background: var(--surface);
+    object-fit: contain;
 }
 .assistantWho{
     min-width: 0;
@@ -345,7 +354,7 @@
     content: "";
 }
 .assistantMessageBubble p{
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.55;
     white-space: pre-wrap;
 }

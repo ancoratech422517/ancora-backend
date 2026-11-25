@@ -48,7 +48,7 @@ export default function Conteiner5WindowConteinerCarteira () {
                                 <div className="cvv-label">CVV / CVC</div>
                                 <div className="cvv-bar">•••</div>
                                 </div>
-                                <div className="back-brand">AncoraPay</div>
+                                <div className="back-brand">ÂncoraPay</div>
                                 <div className="back-site">ancora-commerce.ao</div>
                             </div>
                         </div>

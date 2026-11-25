@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "./css/ConteinerRightDadosWindowMenssageMim.css"
 import { Selecionar_menssagem } from "./js/conteinerRightDadosMenssage";
 import { useUserStore } from "../../../useUseSotore";
@@ -7,36 +6,19 @@ import Perfil from "../../../assets/img_fundo_vazio/perfil.png"
 export default function ConteinerRightDadosWindowMenssageMim ({texto , hora , nome , fundo , id , nossa_sala , id_remitente , foto_usuario, mensagemOriginal, nomeOriginal}) {
     const {socket , urlBancoDeDados} = useUserStore()
     const {setIdMenssagem} = useUserStore()
-    const getUrlVideo = (url) => {
-      if (!url) return "";
-        // Verifica se a URL já começa com http ou https
-        const isUrlCompleta = url.startsWith("http://") || url.startsWith("https://");
-        
-        return isUrlCompleta ? url : `${urlBancoDeDados}/${url}`;
-      };
-
-    let valor = "none"
-    if (foto_usuario !== "none"){
-        valor = "ativo"
-    }
-    const [estadoFotoPerfil , setEstadoFotoPerfil] = useState(valor)
-    const condicaoEstadoFotoPerfil = ()=>{
-        switch(estadoFotoPerfil){
-            case "none":
-                return (
-                    <div className="IconeUserMimIcone IconePerfilElePadrao">
-                        <img src={Perfil} alt="" />
-                    </div>
-                )
-            case "ativo":
-                const URLIMAGE = `${getUrlVideo(foto_usuario)}`
-                return (
-                    <div className="IconeUserMimIcone">
-                        <img src={URLIMAGE} alt="" />
-                    </div>
-                )
-        }
-    }
+    const fotoPerfil = typeof foto_usuario === "string" ? foto_usuario.trim() : "";
+    const temFotoPerfil = Boolean(
+        fotoPerfil
+        && fotoPerfil.toLowerCase() !== "none"
+        && !fotoPerfil.toLowerCase().endsWith("/none")
+    );
+    const imagemPerfil = temFotoPerfil
+        ? (fotoPerfil.startsWith("http://") || fotoPerfil.startsWith("https://") || fotoPerfil.startsWith("data:")
+            ? fotoPerfil
+            : fotoPerfil.startsWith("/assets/") || fotoPerfil.startsWith("/src/assets/")
+                ? fotoPerfil
+                : `${urlBancoDeDados}/${fotoPerfil.replace(/^\/+/, "")}`)
+        : Perfil;
     const iniciais = nome 
         ? nome.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase() 
         : "??";
@@ -59,7 +41,16 @@ export default function ConteinerRightDadosWindowMenssageMim ({texto , hora , no
                                 
                             </div>
                             <div className="IconeUserMim">
-                                {condicaoEstadoFotoPerfil()}
+                                <div className={`IconeUserMimIcone${temFotoPerfil ? "" : " IconePerfilElePadrao"}`}>
+                                    <img
+                                        src={imagemPerfil}
+                                        alt={temFotoPerfil ? "Foto de perfil do utilizador" : "Imagem de perfil padrão"}
+                                        onError={(event) => {
+                                            event.currentTarget.onerror = null;
+                                            event.currentTarget.src = Perfil;
+                                        }}
+                                    />
+                                </div>
                             </div>
                         </div>
                         <span className="horaMim"> {hora} </span>

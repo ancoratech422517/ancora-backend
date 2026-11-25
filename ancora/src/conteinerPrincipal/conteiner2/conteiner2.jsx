@@ -4,6 +4,7 @@ import Home from "../../../ancora/client/src/pages/Home";
 import ImageDefault from "../../assets/image_card.png";
 import Loja from "../../assets/loja.jfif";
 import { useUserStore } from "../../useUseSotore";
+import { parseKwanzas } from "../../utils/formatCurrency";
 import { Sistema_de_adoro_dinamico } from "./js/ConteinerSistemaAdoro";
 import { CloseSombraCard } from "./js/Conteiner2SomraCard";
 import Conteiner2RightWindowProdutsSombra from "./Conteiner2RightWindowProdutsMarketPlaceSompbra";
@@ -13,15 +14,8 @@ import "./marketplace.css";
 const productTones = ["tone-sand", "tone-ink", "tone-teal", "tone-rose", "tone-stone", "tone-clay"];
 
 function parsePrice(value) {
-    const raw = String(value ?? "").replace(/[^\d.,-]/g, "");
-    if (!raw) return 0;
-
-    const lastSeparator = Math.max(raw.lastIndexOf("."), raw.lastIndexOf(","));
-    if (lastSeparator >= 0 && raw.length - lastSeparator - 1 <= 2) {
-        return Number(raw.slice(0, lastSeparator).replace(/[.,]/g, "") + "." + raw.slice(lastSeparator + 1));
-    }
-
-    return Number(raw.replace(/[.,]/g, ""));
+    const price = parseKwanzas(value);
+    return Number.isFinite(price) ? price : 0;
 }
 
 function getProductImage(path, baseUrl) {

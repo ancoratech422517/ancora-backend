@@ -3,6 +3,7 @@ import "./css/Conteiner5WindowBottom.css"
 import Fundo4 from "../../assets/fundo4.jpg"
 import Conteiner5WindowBottomCarteiraBox2GraficoBar from "./Conteiner5WindowBottomCarteiraBox2Grafico";
 import { useUserStore } from "../../useUseSotore";
+import { formatKwanzas } from "../../utils/formatCurrency";
 import Conteiner5WindowConteinerLeft from "./conteiner5windowConteinerLeft";
 import Conteiner5WindowConteinerRight from "./Conteiner5WindowConteinerRight";
 import LogoAncora from "../../assets/logo2.png" 
@@ -83,7 +84,7 @@ export default function Conteiner5WindowBottom () {
                                                 <img src={AncoraPay} alt="" />
                                             </div>
                                             <div className="ConteinerDepositarDinheiroBoxCarteiraCont">
-                                                AncoraPay
+                                                ÂncoraPay
                                             </div>
                                         </div>
         
@@ -180,7 +181,7 @@ export default function Conteiner5WindowBottom () {
                                     </div>
                                     <div className="Conteiner_dados_produtos_trafegoCont">
                                         <b> {trafegoEscolhido.nome_produto} </b>
-                                        <h2> {trafegoEscolhido.preco_produto} </h2>
+                                        <h2>{formatKwanzas(trafegoEscolhido.preco_produto)}</h2>
                                     </div>
                                 </div>
                                 {condicaoEstadoConteinerTrafego()}
@@ -199,7 +200,7 @@ export default function Conteiner5WindowBottom () {
             case "cont1":
                 return (
                         <div className="ConteinerEscolhaTipoTrafegoConteiner1">
-                            <label htmlFor="valor">Quanto de envestimento?</label>
+                            <label htmlFor="valor">Quanto pretende investir?</label>
                                 <select name="valor_envestimento" id="valor_envestimento">
                                     <option value="500">500 Kz</option>
                                     <option value="1000">1000 Kz</option>
@@ -207,7 +208,7 @@ export default function Conteiner5WindowBottom () {
                                     <option value="5000">5.000 Kz</option>
                                     <option value="10000">10.000 Kz</option>
                                 </select>
-                                <label htmlFor="publico_alvo">Publico Alvo</label>
+                                <label htmlFor="publico_alvo">Público-alvo</label>
                                 <select name="publico_alvo" id="publico_alvo">
                                     <option value="10 17">dos 10 a 17 anos</option>
                                     <option value="18 35"> dos 18 a 35 anos</option>
@@ -234,7 +235,7 @@ export default function Conteiner5WindowBottom () {
                                         <div className="ConteinerEscolhaTipoTrafegoCnteinerCarteiraBoxIcone">
                                             <img src={AncoraPay} alt="" />
                                         </div>
-                                        <button className="teal_carteira">AncoraPay</button>
+                                        <button className="teal_carteira">ÂncoraPay</button>
                                     </div>
                                 </div>
 
@@ -244,7 +245,7 @@ export default function Conteiner5WindowBottom () {
                                 <div className="ConteinerEscolhaTipoTrafegoConteinerTipoPagamentoExpress">
                                     <label htmlFor="numero_conta">Digite o Numero da sua conta </label>
                                     <input type="text" placeholder="+244 ••• ••• •••" />
-                                    <button onClick={()=> ConteinerSendDadosTrafego(setEstadoRespostaTrafego , setRespostaTrafego , setEstadoTrafegoConteiner , setEstadoTrafegoAtivo , setEstado)}>Finalizar Trafego Pago</button>
+                                    <button onClick={()=> ConteinerSendDadosTrafego(setEstadoRespostaTrafego , setRespostaTrafego , setEstadoTrafegoConteiner , setEstadoTrafegoAtivo , setEstado)}>Finalizar Tráfego Pago</button>
                                 </div>
 
                 )
@@ -269,7 +270,7 @@ export default function Conteiner5WindowBottom () {
                                                     </div>
                                                     <div className="ConteinerBoxProdutosEscolhaTrafegoScrollDadosCont">
                                                         <b> {item.nome_produto} </b>
-                                                        <h3> {item.preco_produto} </h3>
+                                                        <h3>{formatKwanzas(item.preco_produto)}</h3>
                                                     </div>
                                                     <button onClick={()=> setTrafegoEscolhido(item , setMostrarProdutoTrafego("false") , setEstadoTrafegoAtivo("True"))}>publicitar</button>
                                                 </div>

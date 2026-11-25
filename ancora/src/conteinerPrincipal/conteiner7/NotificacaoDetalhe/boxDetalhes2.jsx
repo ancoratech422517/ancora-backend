@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "./css/BoxDetalhes2.css"
 import Logo from "../../../assets/logo2.png"
 import { useUserStore } from "../../../useUseSotore";
@@ -13,7 +12,7 @@ export default function BoxDetalhes2 ({DetalhesProduto}) {
                     </div>
                 </div>
                 <div className="BoxDetalhes2BoxCont">
-                    <h3>Ancora Ecommerce</h3>
+                    <h3>Âncora Ecommerce</h3>
                     <li>a sua publicidade esta em andamento</li>
                 </div>
             </div>

@@ -1,4 +1,5 @@
 import { useUserStore } from "../../../useUseSotore"
+import { fetchJsonComAuth } from "../../../utils/api"
 
 export async function ConteinerDepositarDinheiroNaConta(setEstadoMenssageBaner, setEstadoConteinerDeposito, setEstadoCarteiraDeposito, setMensagemErroDeposito) {
     const store = useUserStore.getState()
@@ -7,12 +8,12 @@ export async function ConteinerDepositarDinheiroNaConta(setEstadoMenssageBaner, 
 
     setEstadoMenssageBaner("False")
     try {
-        const response = await fetch(`${store.urlBancoDeDados}/depositar_pinheiro`, {
+        const { response, data } = await fetchJsonComAuth(`${store.urlBancoDeDados}/depositar_pinheiro`, {
             method: "post",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ numero_conta, valor_sacar_conta: valorConta })
+            body: JSON.stringify({ numero_conta, valor_sacar_conta: valorConta }),
+            offlineQueue: false,
         })
-        const data = await response.json()
         if (!response.ok) {
             setMensagemErroDeposito(data.message || data.error || "Deposito nao confirmado.")
             setEstadoMenssageBaner("Error")

@@ -4,6 +4,7 @@ import { Conteiner2ScrollDadosDeletarSms } from "./js/Conteiner2ScrolldadosDelet
 import { Conteiner2ScrollDadosDetalhesProduto } from "./js/Conteiner2ScrollDadosDetalhesProduto";
 import { useUserStore } from "../../useUseSotore";
 import Perfil from "../../assets/img_fundo_vazio/perfil.png";
+import { formatKwanzas } from "../../utils/formatCurrency";
 export default function Conteiner7ScrollDados3 ({dados}) {
 
     const {setAtivarDetalhes , setDetalhesProduto , dadosUsuario , buscar_notificacao , urlBancoDeDados} = useUserStore()
@@ -34,7 +35,7 @@ export default function Conteiner7ScrollDados3 ({dados}) {
                 <div className="Conteiner7ScrollDados3Estado">
                     <li>fez o pagamento do seu produto</li> <li> pendente </li>
                 </div>
-                <h3> {dados.preco_produto} </h3>
+                <h3>{formatKwanzas(dados.preco_produto)}</h3>
                 <div className="Conteiner7ScrollDadosContBtns">
                     <button onClick={()=> Conteiner2ScrollDadosDeletarSms(dados.id , dadosUsuario.id , dados.tipo_notificacao , setEstado)}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">

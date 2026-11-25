@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { fetchComAuth } from "../../utils/api";
+import { fetchJsonComAuth } from "../../utils/api";
 import { useUserStore } from "../../useUseSotore";
 import CachedImage from "../../components/CachedImage";
 import { api, useList } from "./api";
@@ -113,17 +113,15 @@ export default function AnunciosPage() {
       setSourcesLoading(true);
       setSourcesError("");
       try {
-        const [productsResponse, coursesResponse] = await Promise.all([
-          fetchComAuth(`${backend}/buscar_produto_usuario/${user.id}`),
-          fetchComAuth(`${backend}/buscar_turma_usuario/${user.id}`),
+        const [productsResult, coursesResult] = await Promise.all([
+          fetchJsonComAuth(`${backend}/buscar_produto_usuario/${user.id}`),
+          fetchJsonComAuth(`${backend}/buscar_turma_usuario/${user.id}`),
         ]);
+        const { response: productsResponse, data: productRows } = productsResult;
+        const { response: coursesResponse, data: courseRows } = coursesResult;
         if (!productsResponse.ok || !coursesResponse.ok) {
           throw new Error("Não foi possível carregar os seus produtos e cursos.");
         }
-        const [productRows, courseRows] = await Promise.all([
-          productsResponse.json(),
-          coursesResponse.json(),
-        ]);
         if (!Array.isArray(productRows) || !Array.isArray(courseRows)) {
           throw new Error("O servidor devolveu uma lista inválida de produtos ou cursos.");
         }

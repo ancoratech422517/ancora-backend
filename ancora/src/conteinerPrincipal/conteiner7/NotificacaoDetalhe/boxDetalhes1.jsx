@@ -1,6 +1,6 @@
-import { useState } from "react";
 import "./css/boxDetalhes1.css"
 import { useUserStore } from "../../../useUseSotore";
+import { formatKwanzas } from "../../../utils/formatCurrency";
 export default function BoxDetalhes1 ({DetalhesProduto}) {
     const {setAtivarDetalhes} = useUserStore()
     return (
@@ -12,7 +12,7 @@ export default function BoxDetalhes1 ({DetalhesProduto}) {
                                 </div>
                                 <div className="Box_Modal_dados_produttoImageCont">
                                     <b> {DetalhesProduto.nome_produto} </b>
-                                    <h2>{DetalhesProduto.preco_produto}</h2>
+                                    <h2>{formatKwanzas(DetalhesProduto.preco_produto)}</h2>
                                     <li>data <b> {DetalhesProduto.data} </b></li>
 
                                     <div className="Credencias_vendedor">
@@ -21,7 +21,7 @@ export default function BoxDetalhes1 ({DetalhesProduto}) {
                                         </div>
                                         <div className="Credencias_vendedorCont">
                                             <b> {DetalhesProduto.nome_remetente} </b>
-                                            <li>Vendedor Oficial da Ancora</li>
+                                            <li>Vendedor oficial da Âncora</li>
                                         </div>
                                     </div>
                                 </div>

@@ -108,7 +108,7 @@ function App() {
               <div className="ConteinerViseualizacaoVideoTurmaConteiner">
                   <div className="ConteinerViseualizacaoVideoTurmaConteinerListaVideo">
                     <div className="ConteinerViseualizacaoVideoTurmaConteinerListaVideoMenuTop">
-                      <b>Ancora Ecommerce</b>
+                      <b>Âncora Ecommerce</b>
                       <li> Aproveite o seu Curso de Javascript</li>
                     </div>
 

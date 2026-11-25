@@ -109,6 +109,8 @@ class AssistantAiRouteTests(unittest.TestCase):
         self.assertEqual(kwargs["json"]["model"], DEFAULT_GROQ_MODEL)
         self.assertEqual(kwargs["json"]["max_completion_tokens"], 900)
         self.assertEqual(kwargs["json"]["messages"][0]["role"], "system")
+        self.assertIn("Sê sempre simpático, paciente, acolhedor e amável", kwargs["json"]["messages"][0]["content"])
+        self.assertIn("Inclui sempre um ou dois emojis relevantes", kwargs["json"]["messages"][0]["content"])
         self.assertEqual(kwargs["json"]["messages"][-1], {"role": "user", "content": "Olá"})
 
     def test_chat_uses_concise_response_settings_in_audio_mode(self):

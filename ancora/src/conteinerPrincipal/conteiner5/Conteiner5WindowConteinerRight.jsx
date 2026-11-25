@@ -24,7 +24,7 @@ export default function Conteiner5WindowConteinerRight () {
                 <div className="Conteiner5WindowConteinerRightMenuTopCont">
                     <li onClick={()=> setAtivarCont("geral")}>Geral</li>
                     <li onClick={()=> setAtivarCont("Grupo")}>Criar Grupo</li>
-                    <li onClick={()=> setAtivarCont("Trafego")}>Trafego</li>
+                    <li onClick={()=> setAtivarCont("Trafego")}>Tráfego</li>
                     <li onClick={() => setAtivar("wallet")}>Carteira</li>
                 </div>
                 

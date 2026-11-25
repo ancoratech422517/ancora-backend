@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "sonner";
+import { formatKwanzas } from "../../../../src/utils/formatCurrency.js";
 
 type Category = string;
 type Product = {
@@ -125,7 +126,7 @@ const demoProducts: Product[] = [
 ];
 
 const formatPrice = (price: number, currency: string) => currency === "AOA"
-  ? `${Math.round(price).toLocaleString("pt-AO")} Kz`
+  ? formatKwanzas(price)
   : `${price.toFixed(2).replace(".", ",")} €`;
 
 const isCourse = (category: string) => {

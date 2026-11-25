@@ -6,7 +6,7 @@ import ArrendamentoProjectModal from "./ArrendamentoProjectModal";
 
 /* [chave, rótulo, tipo (text|number|date|time|sel), extra (opções do select | "kz" | "%")] */
 export const CFG = {
-  projectos: { t: "Projectos", n: "Novo Projecto", f: [["nome", "Nome"], ["cliente", "Cliente"], ["estado", "Estado", "sel", ["Planeado", "Em curso", "Pausado", "Concluído"]], ["orcamento", "Orçamento", "number", "kz"], ["prazo", "Prazo", "date"], ["progresso", "Progresso", "number", "%"]] },
+  projectos: { t: "Projetos", n: "Novo projeto", f: [["nome", "Nome"], ["cliente", "Cliente"], ["estado", "Estado", "sel", ["Planeado", "Em curso", "Pausado", "Concluído"]], ["orcamento", "Orçamento", "number", "kz"], ["prazo", "Prazo", "date"], ["progresso", "Progresso", "number", "%"]] },
   clientes: { t: "Clientes", n: "Novo Cliente", f: [["nome", "Nome"], ["email", "Email"], ["telefone", "Telefone"], ["empresa", "Empresa"], ["estado", "Estado", "sel", ["Activo", "Inactivo"]]] },
   financeiro: { t: "Financeiro", n: "Novo Movimento", f: [["descricao", "Descrição"], ["tipo", "Tipo", "sel", ["Receita", "Despesa"]], ["categoria", "Categoria", "sel", ["Vendas", "Parede", "Afiliados", "Ferramentas", "Tráfego Pago"]], ["valor", "Valor", "number", "kz"], ["data", "Data", "date"]] },
   faturas: { t: "Faturas", n: "Nova Fatura", f: [["numero", "Nº"], ["cliente", "Cliente"], ["valor", "Valor", "number", "kz"], ["emissao", "Emissão", "date"], ["vencimento", "Vencimento", "date"], ["estado", "Estado", "sel", ["Pendente", "Paga", "Atrasada"]]] },
@@ -67,7 +67,15 @@ export function DataPage({ res, novo = 0 }) {
         <tbody>
           {lista.map(r => <tr key={r.id}>{c.f.map(a => <td key={a[0]} data-label={a[1]}>{show(a, r[a[0]])}</td>)}
             <td className="acts"><button onClick={() => setM(r)}><Ico n="edit" /></button><button onClick={() => del(r)}><Ico n="trash" /></button></td></tr>)}
-          {!lista.length && <tr><td colSpan={c.f.length + 1}>{load ? "A carregar…" : "Sem registos."}</td></tr>}
+          {!lista.length && <tr><td colSpan={c.f.length + 1}>
+            {load
+              ? "A carregar…"
+              : error
+                ? "Não foi possível apresentar os registos."
+                : rows.length
+                  ? "Não foram encontrados resultados para esta pesquisa."
+                  : "Ainda não há registos. Cria o primeiro para começar."}
+          </td></tr>}
         </tbody></table></div>
       {m && <FormModal f={c.f} init={m} titulo={m.id ? "Editar " + c.t : c.n} onClose={() => setM(null)}
         onSave={d => (m.id ? api.update(res, m.id, d) : api.create(res, d)).then(reload)} />}

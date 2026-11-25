@@ -131,7 +131,7 @@ export default function ConteinerRightMenuMobile () {
                             {textoProgresso}
                         </li>
                         <div>
-                            A ancora agradece por escolheres a plantaforma certas para o ensino dos seus curso.
+                            A Âncora agradece por escolheres a plataforma para aprenderes.
                             
                         </div>
                         <div className="svgVideoA">

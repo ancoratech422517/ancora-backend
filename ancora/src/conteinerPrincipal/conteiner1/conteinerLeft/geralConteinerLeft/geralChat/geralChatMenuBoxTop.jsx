@@ -3,7 +3,6 @@ import "../css/GeralChatMenuBoxTop.css";
 import Button8 from "../../../../components/conteinerComponentesJsx/btn8";
 import Mais from "../../../../components/conteinerSvg/mais";
 import { Limpar_notificacao } from "../js/geralChatMenuBox";
-import { useState } from "react";
 import Logo from "../../../../../assets/IMGPERFIL.png"
 export default function GeralChatMenuBoxTop ({ setViewChat }) {
     
@@ -41,8 +40,8 @@ export default function GeralChatMenuBoxTop ({ setViewChat }) {
                     <img src={Logo} alt="" />
                 </div>
                 <h2>
-                    <li><b className="ancora">An</b>cora</li>
-                    <p className="GeralChatMenuTopTextP">Claudio Avelino-Dev Tech</p>
+                    <li><b className="ancora">Â</b>ncora</li>
+                    <p className="GeralChatMenuTopTextP">{dados?.nome || "Conta Âncora"}</p>
                 </h2>
             </div>
             <div className="GeralChatMenuTopIcone">

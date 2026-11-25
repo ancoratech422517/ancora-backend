@@ -188,4 +188,37 @@ export async function fetchComAuth(url, options = {}) {
   }
 }
 
+export async function fetchJsonComAuth(url, options = {}, timeoutMs = 20000) {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+
+  try {
+    const response = await fetchComAuth(url, {
+      ...options,
+      signal: controller.signal,
+    })
+    const text = response.status === 204 ? "" : await response.text()
+    let data
+
+    try {
+      data = text ? JSON.parse(text) : null
+    } catch {
+      throw new Error(
+        response.ok
+          ? "O servidor devolveu uma resposta inválida. Tente novamente."
+          : "O serviço está temporariamente indisponível. Tente novamente.",
+      )
+    }
+
+    return { response, data }
+  } catch (error) {
+    if (controller.signal.aborted) {
+      throw new Error("A ligação demorou demasiado tempo. Tente novamente.")
+    }
+    throw error
+  } finally {
+    clearTimeout(timeoutId)
+  }
+}
+
 export { startOfflineRequestSync }

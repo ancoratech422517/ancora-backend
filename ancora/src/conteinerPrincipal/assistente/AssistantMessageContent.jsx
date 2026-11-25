@@ -30,5 +30,15 @@ export default function AssistantMessageContent({ text }) {
   }
 
   if (lastIndex < text.length) parts.push(text.slice(lastIndex));
-  return <span className="assistantMessageContent">{parts}</span>;
+  const message = <span className="assistantMessageContent">{parts}</span>;
+  const isLongTechnicalAnswer = text.length > 1400 || /```[\s\S]{500,}/.test(text);
+
+  if (!isLongTechnicalAnswer) return message;
+
+  return (
+    <details className="assistantLongMessage">
+      <summary>Resposta técnica extensa · expandir</summary>
+      {message}
+    </details>
+  );
 }

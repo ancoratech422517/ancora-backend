@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useUserStore } from "../../useUseSotore"
-import { fetchComAuth } from "../../utils/api"
+import { fetchJsonComAuth } from "../../utils/api"
 import "./ancoraAcademy.css"
 
 const NAV_ITEMS = {
@@ -62,8 +62,7 @@ export default function AncoraAcademy() {
   const [notice, setNotice] = useState("")
 
   const fetchAcademyData = useCallback(async () => {
-    const response = await fetchComAuth(`${urlBancoDeDados}/api/academy`)
-    const result = await response.json()
+    const { response, data: result } = await fetchJsonComAuth(`${urlBancoDeDados}/api/academy`)
     if (!response.ok) {
       throw new Error(result.error || "Não foi possível carregar a Âncora Academy.")
     }
@@ -130,11 +129,10 @@ export default function AncoraAcademy() {
     setSaving(true)
     setError("")
     try {
-      const response = await fetchComAuth(`${urlBancoDeDados}${endpoint}`, {
+      const { response, data: result } = await fetchJsonComAuth(`${urlBancoDeDados}${endpoint}`, {
         method: "POST",
         body: JSON.stringify(body),
       })
-      const result = await response.json()
       if (!response.ok) {
         throw new Error(result.error || "Não foi possível guardar os dados.")
       }

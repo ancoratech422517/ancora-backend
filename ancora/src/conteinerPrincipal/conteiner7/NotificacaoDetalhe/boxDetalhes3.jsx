@@ -1,7 +1,7 @@
-import { useState } from "react";
 import "./css/BoxDetalhes3.css"
 import Logo from "../../../assets/logo2.png"
 import { useUserStore } from "../../../useUseSotore";
+import { formatKwanzas } from "../../../utils/formatCurrency";
 export default function BoxDetalhes3 ({DetalhesProduto}){
     const {setAtivarDetalhes} = useUserStore()
     return (
@@ -13,20 +13,20 @@ export default function BoxDetalhes3 ({DetalhesProduto}){
                     </div>
                 </div>
                 <div className="BoxDetalhes3BoxCont">
-                    <h3>Ancora Ecommerce</h3>
-                    <li>o seu deposito foi realizado com sucessso!</li>
+                    <h3>Âncora Ecommerce</h3>
+                    <li>O seu depósito foi realizado com sucesso!</li>
                 </div>
             </div>
             <div className="BoxDetalhes3Box">
                 <li className="alignLeft">
-                    voce deposito {DetalhesProduto?.valor_deposito || 0} kz para a sua conta 
+                    Depositaste {formatKwanzas(DetalhesProduto?.valor_deposito || 0)} na tua conta
                     <b>
-                        AncoraPay
+                        ÂncoraPay
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-credit-card-2-back-fill" viewBox="0 0 16 16">
                         <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5H0zm11.5 1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM0 11v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1z"/>
                         </svg>
                     </b>
-                    caso haja um incoveniente na quantia recebida <a className="link" href="tel:+946212157">fale com o suporte</a>
+                    . Se houver alguma divergência no valor recebido, <a className="link" href="tel:+946212157">contacta o suporte</a>.
                 </li>
             </div>
             <div className="closeDetalhe3" onClick={() => setAtivarDetalhes("False")}>

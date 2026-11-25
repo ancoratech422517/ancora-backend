@@ -14,6 +14,7 @@ import { confirmQueuedChatMessage } from "../../../service/chatOfflineSync";
 import { ASSISTANT_CHAT_ID, ASSISTANT_CHAT_TYPE, ASSISTANT_CHAT_NAME } from "../../assistente/assistantConfig";
 import AssistantVoiceVisualizer from "../../assistente/AssistantVoiceVisualizer";
 import AssistantMessageContent from "../../assistente/AssistantMessageContent";
+import AssistantLogo from "../../../assets/IMGPERFIL.png";
 // Função para gerar as iniciais
 
 
@@ -1304,7 +1305,7 @@ if (isAudio) {
       id={msg.id}
       nossa_sala={msg.nossa_sala}
       id_remitente={msg.id_remitente}
-      foto_usuario={ChatAtivo?.foto_usuario}
+      foto_usuario={isAssistantChat ? dadosUsuario?.foto_usuario : ChatAtivo?.foto_usuario}
       mensagemOriginal={mensagemOriginal}
       nomeOriginal={nomeOriginal}
     />
@@ -1318,7 +1319,8 @@ if (isAudio) {
       id={msg.id}
       nossa_sala={msg.nossa_sala}
       id_remitente={msg.id_remitente}
-      foto_amigo={ChatAtivo?.foto_amigo}
+      foto_amigo={isAssistantChat ? AssistantLogo : ChatAtivo?.foto_amigo}
+      isAssistant={isAssistantChat}
       mensagemOriginal={mensagemOriginal}
       nomeOriginal={nomeOriginal}
     />
@@ -1350,7 +1352,7 @@ if (isAudio) {
                 id={msg.id}
                 nossa_sala={msg.nossa_sala}
                 id_remitente={msg.id_remitente}
-                foto_usuario = {ChatAtivo?.foto_usuario}
+                foto_usuario = {isAssistantChat ? dadosUsuario?.foto_usuario : ChatAtivo?.foto_usuario}
                 mensagemOriginal={msg.reply_to_menssagem || msg.mensagemOriginal || msg.conteudoOriginal}
                 nomeOriginal={msg.reply_to_nome || msg.nome_original}
               />
@@ -1364,7 +1366,8 @@ if (isAudio) {
                 id={msg.id}
                 nossa_sala={msg.nossa_sala}
                 id_remitente={msg.id_remitente}
-                foto_amigo = {ChatAtivo?.foto_amigo}
+                foto_amigo = {isAssistantChat ? AssistantLogo : ChatAtivo?.foto_amigo}
+                isAssistant={isAssistantChat}
                 mensagemOriginal={msg.reply_to_menssagem || msg.mensagemOriginal || msg.conteudoOriginal}
                 nomeOriginal={msg.reply_to_nome || msg.nome_original}
               />

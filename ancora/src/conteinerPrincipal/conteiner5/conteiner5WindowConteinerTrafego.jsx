@@ -1,4 +1,3 @@
-import { useState } from "react";   
 import "./css/Conteiner5WindowConteinerTrafego.css"
 import { useUserStore } from "../../useUseSotore";
 export default function Conteiner5WindowConteinerTrafego () {
@@ -11,7 +10,7 @@ export default function Conteiner5WindowConteinerTrafego () {
                     <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1zm1 12h2V2h-2zm-3 0V7H7v7zm-5 0v-3H2v3z"/>
                     </svg>
                 </span>
-                <h3>Dados de Trafego</h3>
+                <h3>Dados de Tráfego</h3>
                 <li>Visualize o tráfego de visitas e conversões do seu perfil.</li>
                 <button className="Conteiner5WindowConteinerTrafegoEstausBtn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard2-data-fill" viewBox="0 0 16 16">
@@ -30,12 +29,9 @@ export default function Conteiner5WindowConteinerTrafego () {
                     <li>👀 Visto</li>
                 </div>
                 <div className="Conteiner5WindowConteinerTrafegoBoxScrollConteiner">
-                    <div className="Conteiner5WindowConteinerTrafegoBoxScrollConteinerDados">
-                        <li>📦 Iphone</li>
-                        <li>❣️ 45 </li>
-                        <li>💰 53</li>
-                        <li>👀 128 </li>
-                    </div>
+                    <p className="trafego-empty-state">
+                        As métricas das campanhas aparecerão aqui depois da primeira publicação.
+                    </p>
                     
                 </div>
             </div>

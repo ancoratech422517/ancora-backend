@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"; // Adicionei useEffect aqui
 import "./css/Conteiner2RightWindowProdutsCard.css";
 import { CloseSombraCard } from "./js/Conteiner2SomraCard";
 import { useUserStore } from "../../useUseSotore";
+import { formatKwanzas } from "../../utils/formatCurrency";
 import { Sistema_de_adoro_dinamico } from "./js/ConteinerSistemaAdoro";
 // Importamos uma imagem padrão caso o produto não tenha foto
 import ImageDefault from "../../assets/image_card.png";
@@ -114,8 +115,8 @@ export default function Conteiner2RightWindowProdutsCard({ dados }) {
                 
                 <div className="boxCardButtom">
                     <div className="dadosBoxCard1">
-                        <h4>{dados.preco_produto}</h4>
-                        <s>{dados.preco_antigo || "---"} KZ</s>
+                        <h4>{formatKwanzas(dados.preco_produto)}</h4>
+                        <s>{dados.preco_antigo ? formatKwanzas(dados.preco_antigo) : "—"}</s>
                     </div>
                     
                     <li onClick={() => CloseSombraCard(dados , setDadosSombra)} style={{ cursor: 'pointer' }}>

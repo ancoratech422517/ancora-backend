@@ -34,7 +34,7 @@ export default function ConteinerMenuRightCRM({ page, onPage, onMenu }) {
                 </div>
                 <div className="ConteinerMenuRightCRMMenuTopBox2">
                     <button onClick={exportSvgs} title="Exportar SVG"><Ico n="download" /><span className="lbl">Exportar SVG</span></button>
-                    <button onClick={() => { onPage("projectos"); setNovo(n => n + 1); }} title="Novo Projecto"><Ico n="plus" /><span className="lbl">Novo Projecto</span></button>
+                    <button onClick={() => { onPage("projectos"); setNovo(n => n + 1); }} title="Novo projeto"><Ico n="plus" /><span className="lbl">Novo projeto</span></button>
                 </div>
             </div>
             {P[page] || <DataPage key={page} res={page} novo={page === "projectos" ? novo : 0} />}

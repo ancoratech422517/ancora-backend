@@ -3,6 +3,7 @@ import "./css/ConteinerScrollDados2.css"
 import { Conteiner2ScrollDadosDeletarSms } from "./js/Conteiner2ScrolldadosDeletarSms";
 import { Conteiner2ScrollDadosDetalhesProduto } from "./js/Conteiner2ScrollDadosDetalhesProduto";
 import { useUserStore } from "../../useUseSotore";
+import { formatKwanzas } from "../../utils/formatCurrency";
 export default function ConteinerScrollDados2 ({dados}) {
     const {dadosUsuario , buscar_notificacao , setDetalhesProduto , setAtivarDetalhes , urlBancoDeDados} = useUserStore()
     const [estado , setEstado] = useState("none")
@@ -48,7 +49,7 @@ export default function ConteinerScrollDados2 ({dados}) {
             <div className="ConteinerScrollDados2Cont">
                 <b> {dados.mensagem} - {dados.data}</b>
                 <div className="ConteinerScroll2ContBox">
-                    <h4>valor:{dados.preco_produto}</h4>
+                    <h4>Valor: {formatKwanzas(dados.preco_produto)}</h4>
                     <li>pendente</li>
                 </div>
                 <div className="ConteinerScrollDados2ContBtn">

@@ -29,7 +29,7 @@ export default function ConteinerMenuRightCRMDashboard() {
         ["Saldo Actual", "dollar", kz(k.saldo), sg(k.dRec)],
         ["Recebido", "up", kz(k.recebido), sg(k.dRec)],
         ["Gastos", "down", kz(k.gastos), sg(k.dGas), k.dGas > 0],
-        ["Projectos Ativos", "briefcase", k.activos, k.totalProj + " Totais"],
+        ["Projetos ativos", "briefcase", k.activos, k.totalProj + " no total"],
         ["Faturas Pendente", "faturas", kz(k.pendente), k.nPend + " em aberto", k.nPend > 0],
     ];
     return (
@@ -59,7 +59,7 @@ export default function ConteinerMenuRightCRMDashboard() {
             </div>
             <div className={C + "BoxBottom"}>
                 <div className={C + "BoxBottomBoxLeft"}>
-                    <div className={C + "BoxBottomBoxLeftBox1 chartBox"}><h3>Projectos por Estado</h3><BarChart id="projectos-estado" data={projEstado} /></div>
+                    <div className={C + "BoxBottomBoxLeftBox1 chartBox"}><h3>Projetos por estado</h3><BarChart id="projectos-estado" data={projEstado} /></div>
                     <div className={C + "BoxBottomBoxLeftBox2 chartBox"}><h3>Faturas por Estado</h3><Donut id="faturas-estado" data={fatEstado} /></div>
                 </div>
                 <div className={C + "BoxBottomRight chartBox"}>
