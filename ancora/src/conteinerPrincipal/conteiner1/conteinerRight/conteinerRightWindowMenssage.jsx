@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { Component, lazy, Suspense, useEffect, useRef, useState, useCallback } from "react";
 import "./css/ConteinerRightWindowMenssage.css";
 import ConteinerRightDadosWindowMenssageMim from "./conteinerRightDadosWindowMenssageMim";
 import ConteinerRightDadosWindowMenssageEle from "./ConteinerRightDadosWindowMenssageEle";
@@ -13,8 +13,28 @@ import { getOutboxEntries, loadChatHistory } from "../../../utils/offlineStorage
 import { confirmQueuedChatMessage } from "../../../service/chatOfflineSync";
 import { ASSISTANT_CHAT_ID, ASSISTANT_CHAT_TYPE, ASSISTANT_CHAT_NAME } from "../../assistente/assistantConfig";
 import AssistantVoiceVisualizer from "../../assistente/AssistantVoiceVisualizer";
-import AssistantMessageContent from "../../assistente/AssistantMessageContent";
 import AssistantLogo from "../../../assets/IMGPERFIL.png";
+
+const AssistantMessageContent = lazy(() => import("../../assistente/AssistantMessageContent"));
+
+class AssistantMessageErrorBoundary extends Component {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error) {
+    console.error("Não foi possível formatar a resposta do Assistente:", error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div className="assistantMessageContent">{this.props.fallbackText}</div>;
+    }
+    return this.props.children;
+  }
+}
 // Função para gerar as iniciais
 
 
@@ -1328,7 +1348,13 @@ if (isAudio) {
 }           const meuGradiente = gerarGradienteElegante(msg.id_destinatario);
             const conteudoFinal = formatarConteudo(msg, souEu);
             const conteudoRenderizado = isAssistantChat && !souEu && typeof conteudoFinal === "string"
-              ? <AssistantMessageContent text={conteudoFinal} />
+              ? (
+                <Suspense fallback={<span className="assistantMessageContent">{conteudoFinal}</span>}>
+                  <AssistantMessageErrorBoundary fallbackText={conteudoFinal}>
+                    <AssistantMessageContent text={conteudoFinal} />
+                  </AssistantMessageErrorBoundary>
+                </Suspense>
+              )
               : conteudoFinal;
 
             return souEu ? (

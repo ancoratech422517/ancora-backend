@@ -95,6 +95,10 @@
     font-size: 14px;
 }
 .assistantResponse .assistantMessageContent{
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
     font-size: 14px;
     line-height: 1.55;
 }
@@ -109,9 +113,123 @@
     }
 }
 .assistantMessageContent {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
     font-size: 14px;
-    white-space: pre-wrap;
     overflow-wrap: anywhere;
+}
+.assistantResponse .assistantMessageContent p{
+    margin: 0 0 0.75em;
+}
+.assistantResponse .assistantMessageContent > :first-child{
+    margin-top: 0;
+}
+.assistantResponse .assistantMessageContent > :last-child{
+    margin-bottom: 0;
+}
+.assistantResponse .assistantMessageContent ul,
+.assistantResponse .assistantMessageContent ol{
+    margin: 0.4em 0 0.8em;
+    padding-left: 1.5em;
+}
+.assistantResponse .assistantMessageContent a{
+    color: var(--primary-dark, #1686e8);
+    cursor: pointer;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+    word-break: break-word;
+}
+.assistantResponse .assistantMessageContent a:hover{
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+.assistantResponse .assistantMessageContent code:not(.assistantCodeText){
+    display: inline-block;
+    max-width: 100%;
+    padding: 0.12em 0.4em;
+    overflow-x: auto;
+    border: 1px solid #30363d;
+    border-radius: 5px;
+    background: #1e293b;
+    color: #e6edf3;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 0.9em;
+    white-space: pre;
+    vertical-align: middle;
+}
+.assistantResponse .assistantCodeBlock{
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0.75em 0;
+    overflow: hidden;
+    border: 1px solid #30363d;
+    border-radius: 9px;
+    background: #0d1117;
+}
+.assistantResponse .assistantCodeBlockHeader{
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 5px 10px;
+    border-bottom: 1px solid #30363d;
+    background: #161b22;
+    color: #c9d1d9;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 11px;
+}
+.assistantResponse .assistantCodeBlockHeader button{
+    min-height: 26px;
+    padding: 4px 8px;
+    border: 1px solid #3d444d;
+    border-radius: 5px;
+    background: #21262d;
+    color: #e6edf3;
+    font: inherit;
+    cursor: pointer;
+}
+.assistantResponse .assistantCodeBlockHeader button:hover{
+    background: #30363d;
+}
+.assistantResponse .assistantCodeBlockHeader button:focus-visible{
+    outline: 2px solid var(--primary, #58a6ff);
+    outline-offset: 2px;
+}
+.assistantResponse .assistantCodeBlock .assistantCodeHighlight{
+    max-width: 100%;
+    overflow-x: auto !important;
+    overflow-wrap: normal;
+    word-break: normal;
+    white-space: pre !important;
+}
+.assistantResponse .assistantCodeText{
+    font-family: Consolas, "Courier New", monospace !important;
+    overflow-wrap: normal;
+    word-break: normal;
+    white-space: pre !important;
+}
+.assistantResponse .assistantCodeCopyError{
+    display: block;
+    padding: 4px 10px;
+    background: #3d1f24;
+    color: #ffb4ab;
+    font-size: 11px;
+}
+.assistantResponse .assistantCodeFallback{
+    max-width: 100%;
+    margin: 0;
+    padding: 14px 16px;
+    overflow-x: auto;
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 13px;
+    overflow-wrap: normal;
+    word-break: normal;
+    white-space: pre;
 }
 .assistantLongMessage {
     min-width: 0;

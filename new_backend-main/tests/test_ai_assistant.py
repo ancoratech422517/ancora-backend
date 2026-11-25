@@ -111,6 +111,8 @@ class AssistantAiRouteTests(unittest.TestCase):
         self.assertEqual(kwargs["json"]["messages"][0]["role"], "system")
         self.assertIn("Sê sempre simpático, paciente, acolhedor e amável", kwargs["json"]["messages"][0]["content"])
         self.assertIn("Inclui sempre um ou dois emojis relevantes", kwargs["json"]["messages"][0]["content"])
+        self.assertIn("blocos Markdown delimitados por três crases", kwargs["json"]["messages"][0]["content"])
+        self.assertIn("endereço HTTPS completo", kwargs["json"]["messages"][0]["content"])
         self.assertEqual(kwargs["json"]["messages"][-1], {"role": "user", "content": "Olá"})
 
     def test_chat_uses_concise_response_settings_in_audio_mode(self):

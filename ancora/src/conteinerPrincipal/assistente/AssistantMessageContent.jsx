@@ -1,44 +1,74 @@
-const LINK_PATTERN = /\[([^\]]+)\]\((https:\/\/[^\s)]+)\)|(https:\/\/[^\s<>"']+)/g;
+import { Children, isValidElement, lazy, Suspense, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
-function splitTrailingPunctuation(url) {
-  let cleanUrl = url;
-  let trailing = "";
-  while (/[.,!?;:)\]}]$/.test(cleanUrl)) {
-    trailing = cleanUrl.slice(-1) + trailing;
-    cleanUrl = cleanUrl.slice(0, -1);
+const AssistantCodeBlock = lazy(() => import("./AssistantCodeBlock"));
+
+function getSafeHref(href) {
+  if (typeof href !== "string") return null;
+
+  try {
+    const url = new URL(href);
+    return url.protocol === "https:" || url.protocol === "http:" ? url.href : null;
+  } catch {
+    return null;
   }
-  return { cleanUrl, trailing };
 }
 
-export default function AssistantMessageContent({ text }) {
-  const parts = [];
-  let lastIndex = 0;
-
-  for (const match of text.matchAll(LINK_PATTERN)) {
-    const [matchedText, markdownLabel, markdownUrl, plainUrl] = match;
-    const { cleanUrl, trailing } = splitTrailingPunctuation(markdownUrl || plainUrl);
-    if (!cleanUrl) continue;
-
-    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
-    parts.push(
-      <a key={`source-${match.index}`} href={cleanUrl} target="_blank" rel="noreferrer">
-        {markdownLabel || cleanUrl}
-      </a>,
-    );
-    if (trailing) parts.push(trailing);
-    lastIndex = match.index + matchedText.length;
+function renderCodeBlock({ children }) {
+  const codeElement = Children.toArray(children).find(isValidElement);
+  if (!codeElement || codeElement.type !== "code") {
+    return <pre className="assistantCodeFallback">{children}</pre>;
   }
 
-  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
-  const message = <span className="assistantMessageContent">{parts}</span>;
+  const className = typeof codeElement.props.className === "string"
+    ? codeElement.props.className
+    : "";
+  const language = className.match(/language-([\w+#.-]+)/i)?.[1] || "";
+  const code = String(codeElement.props.children ?? "").replace(/\n$/, "");
+
+  return (
+    <Suspense fallback={<pre className="assistantCodeFallback">{code}</pre>}>
+      <AssistantCodeBlock language={language} code={code} />
+    </Suspense>
+  );
+}
+
+const markdownComponents = {
+  a({ href, children }) {
+    const safeHref = getSafeHref(href);
+    if (!safeHref) return <span className="assistantInvalidLink">{children}</span>;
+
+    return (
+      <a href={safeHref} target="_blank" rel="noopener noreferrer">
+        {children}
+      </a>
+    );
+  },
+  pre: renderCodeBlock,
+};
+
+export default function AssistantMessageContent({ text }) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const isLongTechnicalAnswer = text.length > 1400 || /```[\s\S]{500,}/.test(text);
+  const message = (
+    <div className="assistantMessageContent">
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+        {text}
+      </ReactMarkdown>
+    </div>
+  );
 
   if (!isLongTechnicalAnswer) return message;
 
   return (
-    <details className="assistantLongMessage">
+    <details
+      className="assistantLongMessage"
+      open={isExpanded}
+      onToggle={(event) => setIsExpanded(event.currentTarget.open)}
+    >
       <summary>Resposta técnica extensa · expandir</summary>
-      {message}
+      {isExpanded && message}
     </details>
   );
 }
